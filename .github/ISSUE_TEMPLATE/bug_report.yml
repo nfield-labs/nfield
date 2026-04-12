@@ -1,0 +1,106 @@
+name: Bug Report
+description: Report a reproducible bug or unexpected behaviour in FormatShield
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to file a bug report. Please fill in as much detail as possible so we can reproduce and fix the issue quickly.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is.
+      placeholder: "When I call `formatshield generate` with the `openai` backend, I get …"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Minimal, complete steps that reproduce the problem.
+      placeholder: |
+        1. Install FormatShield `pip install formatshield`
+        2. Run `formatshield generate --backend openai --prompt "hello"`
+        3. Observe the error …
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behaviour
+      description: What did you expect to happen?
+      placeholder: "The command should return a structured response with format scores."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behaviour
+      description: What actually happened? Paste the full error message / traceback if available.
+      render: shell
+    validations:
+      required: true
+
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Backend
+      description: Which backend adapter were you using when the bug occurred?
+      options:
+        - openai
+        - anthropic
+        - google-gemini
+        - cohere
+        - mistral
+        - ollama (local)
+        - multiple / all backends
+        - not applicable
+    validations:
+      required: true
+
+  - type: input
+    id: python_version
+    attributes:
+      label: Python Version
+      description: Output of `python --version`
+      placeholder: "e.g. Python 3.11.9"
+    validations:
+      required: true
+
+  - type: input
+    id: formatshield_version
+    attributes:
+      label: FormatShield Version
+      description: Output of `formatshield --version` or `pip show formatshield`
+      placeholder: "e.g. 0.0.1"
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Additional Environment Details
+      description: OS, virtual environment manager (uv / venv / conda), any relevant configuration.
+      placeholder: "macOS 14.4, uv 0.4.1, FORMATSHIELD_BACKEND=openai in .env"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I searched existing issues and this is not a duplicate.
+          required: true
+        - label: I am using a supported Python version (3.11 or 3.12).
+          required: true
+        - label: I have included the full error traceback where applicable.
+          required: false

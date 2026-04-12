@@ -1,0 +1,78 @@
+name: Feature Request
+description: Propose a new feature or enhancement for FormatShield
+title: "[Feature]: "
+labels: ["enhancement", "needs-discussion"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping make FormatShield better! Please describe your idea in enough detail for the maintainers to evaluate it.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: |
+        What problem does this feature solve? Describe the pain point you are experiencing.
+        A clear statement of the form "I am trying to do X, but I cannot because Y" helps us understand the motivation.
+      placeholder: "I am trying to benchmark FormatShield against a custom dataset, but the CLI only supports the default artifact set from the paper."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature you would like to see. Be as concrete as possible — API sketches, CLI flags, or config file snippets are very welcome.
+      placeholder: |
+        Add a `--dataset` flag to `formatshield benchmark` that accepts a JSONL file path.
+        Each record should have `prompt` and optional `expected_format` fields.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you explored any workarounds or alternative approaches? Why are they insufficient?
+      placeholder: "I tried using the Python API directly, but the BenchmarkHarness class doesn't expose a public method for custom datasets."
+    validations:
+      required: false
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use Case / Impact
+      description: Who benefits from this feature and how? Concrete examples of workflows it unlocks are very helpful.
+      placeholder: "Researchers comparing FormatShield against their own evaluation sets. Teams with proprietary prompt libraries."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      description: Which area of FormatShield does this feature primarily affect?
+      options:
+        - Core library (TTF engine / CRANE)
+        - Backend adapters
+        - CLI
+        - BenchmarkHarness / paper artifacts
+        - LangChain integration
+        - Streaming / SSE
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I searched existing issues and this has not been requested before.
+          required: true
+        - label: I am willing to help implement or test this feature.
+          required: false

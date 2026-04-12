@@ -1,0 +1,59 @@
+name: Type Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pyright:
+    name: pyright (standard mode)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install project with dev dependencies
+        run: uv pip install -e ".[dev]"
+
+      - name: Install pyright
+        run: uv pip install pyright
+
+      - name: Run pyright
+        run: pyright src/ --outputjson | tee pyright-report.json || true
+
+      - name: Summarise pyright results
+        run: |
+          python - <<'PY'
+          import json, sys
+          with open("pyright-report.json") as f:
+              report = json.load(f)
+          summary = report.get("summary", {})
+          errors   = summary.get("errorCount", 0)
+          warnings = summary.get("warningCount", 0)
+          info     = summary.get("informationCount", 0)
+          print(f"pyright summary — errors: {errors}, warnings: {warnings}, info: {info}")
+          for diag in report.get("generalDiagnostics", []):
+              sev = diag.get("severity", "")
+              msg = diag.get("message", "")
+              rng = diag.get("range", {})
+              start = rng.get("start", {})
+              file_ = diag.get("file", "")
+              line  = start.get("line", 0) + 1
+              print(f"  [{sev.upper()}] {file_}:{line}: {msg}")
+          if errors:
+              sys.exit(1)
+          PY
+
+      - name: Upload pyright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pyright-report
+          path: pyright-report.json
+          retention-days: 14

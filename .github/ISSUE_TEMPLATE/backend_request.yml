@@ -1,0 +1,89 @@
+name: Backend Request
+description: Request support for a new LLM backend adapter
+title: "[Backend]: Please add support for "
+labels: ["backend", "needs-discussion"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        FormatShield currently ships adapters for OpenAI, Anthropic, Google Gemini, Cohere, Mistral, and Ollama.
+        Use this template to request a new backend or to volunteer to implement one.
+
+  - type: input
+    id: backend_name
+    attributes:
+      label: Backend Name
+      description: The name of the provider or model family you would like supported.
+      placeholder: "e.g. AWS Bedrock, Azure OpenAI, Together AI, Groq, Fireworks AI"
+    validations:
+      required: true
+
+  - type: textarea
+    id: why_needed
+    attributes:
+      label: Why Is This Backend Needed?
+      description: |
+        Explain the motivation. Does this provider offer unique models, pricing advantages,
+        enterprise compliance features, or on-premises deployment that the existing adapters do not cover?
+      placeholder: "AWS Bedrock is required for teams operating in AWS GovCloud where direct OpenAI API access is restricted."
+    validations:
+      required: true
+
+  - type: input
+    id: docs_link
+    attributes:
+      label: Official Documentation / API Reference
+      description: Link to the provider's developer documentation or Python SDK.
+      placeholder: "https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started.html"
+    validations:
+      required: true
+
+  - type: input
+    id: sdk_package
+    attributes:
+      label: Python SDK / Package Name
+      description: The PyPI package name that FormatShield would need to depend on (if applicable).
+      placeholder: "e.g. boto3, groq, together"
+    validations:
+      required: false
+
+  - type: textarea
+    id: streaming_support
+    attributes:
+      label: Streaming Support
+      description: Does the backend's Python SDK support streaming responses? Link to relevant docs if known.
+      placeholder: "Yes — boto3 invoke_model_with_response_stream returns an event stream."
+    validations:
+      required: false
+
+  - type: dropdown
+    id: willing_to_implement
+    attributes:
+      label: Willing to Implement?
+      description: Would you be able to submit a pull request adding this backend?
+      options:
+        - "Yes — I can submit a PR"
+        - "Possibly — I can help but may need guidance"
+        - "No — requesting maintainer implementation"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information, such as authentication requirements, rate-limit considerations, or model identifiers.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I confirmed this backend is not already tracked in an open issue or PR.
+          required: true
+        - label: I have read the CONTRIBUTING.md guide on adding new backends.
+          required: false

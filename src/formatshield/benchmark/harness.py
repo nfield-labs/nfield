@@ -14,9 +14,11 @@ The harness drives the full benchmark loop:
 5. After all runs, it writes raw JSONL files, summary CSVs, and optional
    LaTeX table code for the paper.
 
-The harness is intentionally backend-agnostic; it calls the backend through
-a thin simulation layer so that the benchmark logic can be unit-tested without
-live API access.
+The harness is backend-agnostic; pass any object that implements the
+:class:`~formatshield.backends.protocol.Backend` protocol via the
+``backend_obj`` / ``backend_objects`` parameters.  When no backend object is
+supplied the :class:`~formatshield.backends.dryrun_backend.DryRunBackend` is
+used automatically, making CI runs and unit tests possible without API keys.
 """
 
 from __future__ import annotations
@@ -25,6 +27,7 @@ import asyncio
 import json
 import logging
 import random
+import time
 from pathlib import Path
 from typing import Any
 
@@ -34,114 +37,8 @@ logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
-# Internal simulation helpers
-# (In production these would call real backends via formatshield.backends)
+# Deterministic helpers (real logic — not simulation)
 # ---------------------------------------------------------------------------
-
-
-def _simulate_ttf_response(
-    problem: dict[str, Any],
-    task_name: str,
-    backend: str,
-    rng: random.Random,
-) -> tuple[dict[str, Any], float]:
-    """
-    Simulate a TTF (Think-Then-Format) model response and latency.
-
-    TTF tends to be more accurate for complex tasks but slower.
-    Returns ``(response_dict, latency_ms)``.
-    """
-    # TTF adds reasoning overhead: 200–800 ms extra on top of base latency
-    base_latency = _base_latency(backend)
-    ttf_overhead = rng.uniform(200.0, 800.0)
-    latency = base_latency + ttf_overhead
-
-    # Simulate response quality — TTF is better for reasoning tasks
-    response = _build_mock_response(problem, task_name, quality="high", rng=rng)
-    return response, latency
-
-
-def _simulate_direct_response(
-    problem: dict[str, Any],
-    task_name: str,
-    backend: str,
-    rng: random.Random,
-) -> tuple[dict[str, Any], float]:
-    """
-    Simulate a direct-generation model response and latency.
-
-    Direct generation is faster but less accurate on complex tasks.
-    Returns ``(response_dict, latency_ms)``.
-    """
-    base_latency = _base_latency(backend)
-    latency = base_latency + rng.uniform(10.0, 80.0)
-
-    quality = "medium" if task_name in ("gsm_symbolic", "medical_ner") else "high"
-    response = _build_mock_response(problem, task_name, quality=quality, rng=rng)
-    return response, latency
-
-
-def _base_latency(backend: str) -> float:
-    """Return a realistic base latency in ms for the given backend."""
-    latencies = {
-        "groq": 150.0,
-        "ollama": 400.0,
-        "openrouter": 250.0,
-        "vllm": 120.0,
-        "outlines": 180.0,
-        "guidance": 200.0,
-    }
-    return latencies.get(backend, 300.0)
-
-
-def _build_mock_response(
-    problem: dict[str, Any],
-    task_name: str,
-    quality: str,
-    rng: random.Random,
-) -> dict[str, Any]:
-    """
-    Build a mock structured response dict for a problem.
-
-    Quality levels:
-      ``"high"``   — correct answer with high probability (0.85)
-      ``"medium"`` — correct answer with medium probability (0.60)
-      ``"low"``    — correct answer with low probability (0.30)
-    """
-    hit_prob = {"high": 0.85, "medium": 0.60, "low": 0.30}.get(quality, 0.60)
-    correct = rng.random() < hit_prob
-
-    if task_name == "gsm_symbolic":
-        ground_truth_answer = float(problem.get("answer", 0.0))
-        final_answer = (
-            ground_truth_answer if correct else ground_truth_answer * rng.uniform(0.5, 1.5)
-        )
-        return {
-            "reasoning_steps": ["Step 1: identify the quantities", "Step 2: compute"],
-            "final_answer": final_answer,
-            "unit": "units",
-        }
-
-    if task_name == "medical_ner":
-        entities = problem.get("entities", {})
-        if correct:
-            return dict(entities)
-        # Drop ~40% of entities to simulate partial extraction
-        return {cat: [e for e in ents if rng.random() > 0.4] for cat, ents in entities.items()}
-
-    if task_name == "template_fill":
-        expected = problem.get("expected", {})
-        if correct:
-            return dict(expected)
-        # Corrupt name for incorrect responses
-        return {
-            "name": expected.get("name", "Unknown") if correct else "Unknown",
-            "age": expected.get("age", 0),
-            "city": expected.get("city", "Unknown"),
-        }
-
-    # Generic fallback
-    return {"answer": problem.get("answer", "")} if correct else {}
 
 
 def _compute_complexity_score(task_name: str) -> float:
@@ -188,6 +85,41 @@ def _detect_failure_modes(
     return modes
 
 
+def _get_problem_prompt(task: Any, problem: dict[str, Any]) -> str:
+    """Extract the prompt string from a problem dict, using task.build_prompt() when available."""
+    if hasattr(task, "build_prompt") and "question" in problem:
+        return task.build_prompt(problem["question"])
+    return str(problem.get("prompt", problem.get("question", "")))
+
+
+def _get_task_schema(task: Any) -> dict[str, Any] | None:
+    """Return a JSON Schema dict for *task*, or ``None`` if the task has no schema."""
+    schema_attr = getattr(task, "schema", None)
+    if schema_attr is None:
+        return None
+    # Pydantic BaseModel subclass
+    if hasattr(schema_attr, "model_json_schema"):
+        try:
+            return schema_attr.model_json_schema()  # type: ignore[no-any-return]
+        except Exception:
+            logger.debug("_get_task_schema: model_json_schema() failed, skipping")
+    # Plain dict schema
+    if isinstance(schema_attr, dict):
+        return schema_attr
+    return None
+
+
+def _parse_response(raw: str) -> dict[str, Any]:
+    """Parse a JSON string to a dict, returning ``{}`` on failure."""
+    try:
+        result = json.loads(raw)
+        if isinstance(result, dict):
+            return result
+    except (json.JSONDecodeError, ValueError):
+        pass
+    return {}
+
+
 # ---------------------------------------------------------------------------
 # BenchmarkHarness
 # ---------------------------------------------------------------------------
@@ -197,9 +129,12 @@ class BenchmarkHarness:
     """
     Orchestrates the FormatShield benchmark across multiple tasks and backends.
 
-    The harness is designed for reproducibility: it uses a seeded random
-    number generator for its simulation layer, and it writes all raw results
-    to JSONL files before aggregating.
+    The harness is designed for reproducibility and uses real backend calls
+    via the :class:`~formatshield.ttf.engine.TTFEngine` for TTF runs and
+    direct ``backend.generate()`` calls for the direct-generation baseline.
+    When no backend object is provided the
+    :class:`~formatshield.backends.dryrun_backend.DryRunBackend` is used so
+    that the full pipeline can be exercised without API keys.
 
     Parameters
     ----------
@@ -207,17 +142,18 @@ class BenchmarkHarness:
         Root directory for all benchmark output files.  Created automatically
         if it does not exist.
     seed:
-        Random seed for the simulation layer.  Set to a fixed value for
-        reproducible runs.
+        Seed stored on the instance for reproducible DryRunBackend instances.
 
     Example::
+
+        from formatshield.backends.dryrun_backend import DryRunBackend
 
         harness = BenchmarkHarness(output_dir=Path("benchmark_results"))
         results = asyncio.run(harness.run(
             tasks=["gsm_symbolic", "medical_ner", "template_fill"],
-            backends=["groq", "ollama"],
-            models={"groq": "groq/llama-3.1-70b-versatile",
-                    "ollama": "ollama/llama3.1:70b"},
+            backends=["dryrun"],
+            models={"dryrun": "dryrun/default"},
+            backend_objects={"dryrun": DryRunBackend(seed=42)},
             quick=True,
         ))
         artifacts = harness.generate_artifacts(results)
@@ -232,7 +168,9 @@ class BenchmarkHarness:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         (self.output_dir / "raw").mkdir(exist_ok=True)
         (self.output_dir / "artifacts").mkdir(exist_ok=True)
-        self._rng = random.Random(seed)  # noqa: S311 — seeded RNG for reproducible benchmarks, not cryptography
+        self._seed = seed
+        # Keep _rng for backwards compatibility with callers that inspect it
+        self._rng = random.Random(seed)  # noqa: S311 — seeded for reproducibility, not cryptography
         logger.info("BenchmarkHarness initialised, output_dir=%s", self.output_dir)
 
     # ------------------------------------------------------------------
@@ -245,6 +183,7 @@ class BenchmarkHarness:
         backend: str,
         model: str,
         quick: bool = False,
+        backend_obj: Any | None = None,
     ) -> list[BenchmarkResult]:
         """
         Run a single task against a single backend and return per-problem results.
@@ -263,21 +202,34 @@ class BenchmarkHarness:
             A task instance with ``name``, ``expected_ttf_benefit``,
             ``get_problems(quick)``, and ``score_response()`` attributes.
         backend:
-            Backend identifier (e.g. ``"groq"``).
+            Backend identifier string (e.g. ``"groq"``).
         model:
             Model string passed to the backend (e.g. ``"groq/llama-3.1-70b-versatile"``).
         quick:
             When ``True``, uses the reduced problem set from ``task.get_problems()``.
+        backend_obj:
+            Optional backend instance implementing the Backend protocol.
+            When ``None`` a :class:`~formatshield.backends.dryrun_backend.DryRunBackend`
+            is used automatically.
 
         Returns
         -------
         list[BenchmarkResult]
             One result per problem in the task's problem set.
         """
+        from formatshield.backends.dryrun_backend import DryRunBackend
+        from formatshield.ttf.engine import TTFEngine
+
+        effective_backend = (
+            backend_obj if backend_obj is not None else DryRunBackend(seed=self._seed)
+        )
+        engine = TTFEngine(effective_backend)
+
         problems = task.get_problems(quick=quick)
         task_name: str = task.name
         expected_ttf_benefit: bool = task.expected_ttf_benefit
         complexity_score = _compute_complexity_score(task_name)
+        schema_dict = _get_task_schema(task)
 
         results: list[BenchmarkResult] = []
 
@@ -290,31 +242,48 @@ class BenchmarkHarness:
                 len(problems),
             )
 
-            # --- TTF run ---
-            ttf_response, ttf_latency = _simulate_ttf_response(
-                problem, task_name, backend, self._rng
-            )
-
-            # --- Direct run ---
-            direct_response, direct_latency = _simulate_direct_response(
-                problem, task_name, backend, self._rng
-            )
-
-            # --- Score both responses ---
+            prompt = _get_problem_prompt(task, problem)
             ground_truth = (
                 problem.get("answer") or problem.get("entities") or problem.get("expected")
             )
 
+            # --- TTF run ---
+            t0_ttf = time.monotonic()
+            try:
+                _, ttf_raw = await engine.generate(prompt, schema=schema_dict)
+                ttf_response = _parse_response(ttf_raw)
+            except Exception as exc:
+                logger.warning(
+                    "run_task_on_backend: TTF run failed (%s) — using empty response", exc
+                )
+                ttf_response = {}
+            ttf_latency = (time.monotonic() - t0_ttf) * 1000.0
+
+            # --- Direct run ---
+            t0_direct = time.monotonic()
+            try:
+                direct_raw = await effective_backend.generate(
+                    prompt, schema=schema_dict, constraints="json"
+                )
+                direct_response = _parse_response(direct_raw)
+            except Exception as exc:
+                logger.warning(
+                    "run_task_on_backend: direct run failed (%s) — using empty response", exc
+                )
+                direct_response = {}
+            direct_latency = (time.monotonic() - t0_direct) * 1000.0
+
+            # Ensure latencies are positive (clock resolution guard)
+            ttf_latency = max(ttf_latency, 0.001)
+            direct_latency = max(direct_latency, 0.001)
+
+            # --- Score both responses ---
             ttf_score = task.score_response(ttf_response, ground_truth)
             direct_score = task.score_response(direct_response, ground_truth)
 
             # --- Compute derived metrics ---
             accuracy_delta = ttf_score - direct_score
-            overhead_pct = (
-                (ttf_latency - direct_latency) / direct_latency * 100.0
-                if direct_latency > 0
-                else 0.0
-            )
+            overhead_pct = (ttf_latency - direct_latency) / direct_latency * 100.0
 
             # --- Failure mode detection ---
             failure_modes = _detect_failure_modes(
@@ -351,14 +320,14 @@ class BenchmarkHarness:
         backends: list[str],
         models: dict[str, str],
         quick: bool = False,
+        backend_objects: dict[str, Any] | None = None,
     ) -> list[BenchmarkResult]:
         """
         Run all task × backend combinations and return aggregated results.
 
-        Uses :class:`asyncio.TaskGroup` (Python 3.11+) for concurrent execution
-        of backend calls.  All results are written to JSONL files in
-        ``output_dir/raw/`` and a summary CSV is written to
-        ``output_dir/summary.csv``.
+        Uses :func:`asyncio.gather` for concurrent execution of backend calls.
+        All results are written to JSONL files in ``output_dir/raw/`` and a
+        summary CSV is written to ``output_dir/summary.csv``.
 
         Parameters
         ----------
@@ -371,6 +340,11 @@ class BenchmarkHarness:
             Dict mapping backend name → model identifier string.
         quick:
             When ``True``, each task uses its reduced problem set for fast runs.
+        backend_objects:
+            Optional mapping of backend name → backend instance.  When a
+            backend name is not present in this dict, a
+            :class:`~formatshield.backends.dryrun_backend.DryRunBackend` is
+            used for that backend automatically.
 
         Returns
         -------
@@ -399,13 +373,20 @@ class BenchmarkHarness:
                 continue
             task_objects.append(_task_registry[name])
 
+        effective_backend_objects = backend_objects or {}
+
         all_results: list[BenchmarkResult] = []
         coroutines = []
 
         for task_obj in task_objects:
             for backend in backends:
                 model = models.get(backend, f"{backend}/default")
-                coroutines.append(self.run_task_on_backend(task_obj, backend, model, quick=quick))
+                backend_obj = effective_backend_objects.get(backend)
+                coroutines.append(
+                    self.run_task_on_backend(
+                        task_obj, backend, model, quick=quick, backend_obj=backend_obj
+                    )
+                )
 
         # Run all (task, backend) pairs concurrently
         batch_results = await asyncio.gather(*coroutines, return_exceptions=True)

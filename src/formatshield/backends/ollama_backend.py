@@ -7,6 +7,7 @@ from collections.abc import AsyncIterator
 
 from ollama import AsyncClient, ResponseError
 
+from formatshield._retry import API_RETRY, with_retry
 from formatshield.scorer.features import StreamEvent
 
 
@@ -145,17 +146,28 @@ class OllamaBackend:
         if schema:
             kwargs["format"] = "json"
 
-        try:
-            response = await client.chat(**kwargs)
-        except ResponseError as exc:
-            model_hint = ""
-            if "not found" in str(exc).lower() or "does not exist" in str(exc).lower():
-                model_hint = f"  Hint: run `ollama pull {self.model}` to download the model."
-            raise RuntimeError(
-                f"Ollama error for model '{self.model}': {exc}.{model_hint}"
-            ) from exc
+        async def _call() -> str:
+            try:
+                response = await client.chat(**kwargs)
+            except ResponseError as exc:
+                model_hint = ""
+                if "not found" in str(exc).lower() or "does not exist" in str(exc).lower():
+                    model_hint = (
+                        f"  Hint: run `ollama pull {self.model}` to download the model."
+                    )
+                    # Model-not-found errors are not retryable — raise directly
+                    raise RuntimeError(
+                        f"Ollama error for model '{self.model}': {exc}.{model_hint}"
+                    ) from exc
+                raise  # other ResponseErrors (connection, timeout) are retryable
+            return response.message.content or ""
 
-        return response.message.content or ""
+        return await with_retry(
+            _call,
+            API_RETRY,
+            retryable=(ResponseError,),
+            operation_name=f"ollama.generate({self.model})",
+        )
 
     async def stream(
         self,

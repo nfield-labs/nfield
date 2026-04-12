@@ -2,7 +2,7 @@
 Unit tests for formatshield.benchmark.harness.
 
 Covers BenchmarkHarness initialisation, per-backend task running,
-full run(), artifact generation, and all internal simulation helpers.
+full run(), artifact generation, and internal helper functions.
 """
 
 from __future__ import annotations
@@ -17,8 +17,6 @@ from formatshield.benchmark.harness import (
     BenchmarkHarness,
     _compute_complexity_score,
     _detect_failure_modes,
-    _simulate_direct_response,
-    _simulate_ttf_response,
 )
 from formatshield.scorer.features import BenchmarkResult
 
@@ -38,19 +36,6 @@ class _MockTask:
         if isinstance(response, dict) and "final_answer" in response:
             return 1.0 if abs(response["final_answer"] - float(ground_truth)) < 0.01 else 0.0
         return 0.0
-
-
-class _MockSimpleTask:
-    """A generic, non-reasoning task (expected_ttf_benefit=False)."""
-
-    name = "template_fill"
-    expected_ttf_benefit = False
-
-    def get_problems(self, quick: bool = False) -> list[dict[str, Any]]:
-        return [{"prompt": "Fill in the blank.", "answer": "hello"}] * 2
-
-    def score_response(self, response: Any, ground_truth: Any) -> float:
-        return 1.0 if response == {"answer": ground_truth} else 0.0
 
 
 # ---------------------------------------------------------------------------
@@ -111,7 +96,6 @@ def test_harness_creates_artifacts_subdir(tmp_path: Path) -> None:
 def test_harness_seed_is_stored(tmp_path: Path) -> None:
     """The harness must store an RNG seeded with the given seed."""
     harness = BenchmarkHarness(output_dir=tmp_path / "out", seed=99)
-    # The RNG must be a random.Random instance (not the module-level Random)
     assert isinstance(harness._rng, random.Random)
 
 
@@ -220,6 +204,32 @@ async def test_run_task_on_backend_complexity_score(tmp_path: Path) -> None:
         assert r.complexity_score == pytest.approx(0.82)
 
 
+@pytest.mark.asyncio
+async def test_run_task_on_backend_uses_dryrun_by_default(tmp_path: Path) -> None:
+    """run_task_on_backend with no backend_obj must succeed using DryRunBackend."""
+    harness = BenchmarkHarness(output_dir=tmp_path / "out")
+    results = await harness.run_task_on_backend(
+        task=_MockTask(), backend="dryrun", model="dryrun/default", quick=True
+    )
+    assert len(results) == 3
+    for r in results:
+        assert r.backend == "dryrun"
+
+
+@pytest.mark.asyncio
+async def test_run_task_on_backend_with_explicit_dryrun(tmp_path: Path) -> None:
+    """run_task_on_backend with an explicit DryRunBackend must succeed."""
+    from formatshield.backends.dryrun_backend import DryRunBackend
+
+    harness = BenchmarkHarness(output_dir=tmp_path / "out")
+    backend = DryRunBackend(seed=0)
+    results = await harness.run_task_on_backend(
+        task=_MockTask(), backend="dryrun", model="dryrun/default", quick=True,
+        backend_obj=backend,
+    )
+    assert len(results) == 3
+
+
 # ---------------------------------------------------------------------------
 # BenchmarkHarness.run() (uses mock task objects passed via run_task_on_backend)
 # ---------------------------------------------------------------------------
@@ -294,6 +304,24 @@ async def test_run_writes_raw_jsonl(tmp_path: Path) -> None:
     assert len(raw_files) >= 1
 
 
+@pytest.mark.asyncio
+async def test_run_with_backend_objects(tmp_path: Path) -> None:
+    """run() must use provided backend_objects instead of DryRunBackend."""
+    from formatshield.backends.dryrun_backend import DryRunBackend
+
+    harness = BenchmarkHarness(output_dir=tmp_path / "out")
+    dryrun = DryRunBackend(seed=7)
+    results = await harness.run(
+        tasks=["gsm_symbolic"],
+        backends=["dryrun"],
+        models={"dryrun": "dryrun/default"},
+        backend_objects={"dryrun": dryrun},
+        quick=True,
+    )
+    assert len(results) > 0
+    assert dryrun.call_count > 0
+
+
 # ---------------------------------------------------------------------------
 # BenchmarkHarness.generate_artifacts()
 # ---------------------------------------------------------------------------
@@ -341,94 +369,6 @@ def test_generate_artifacts_empty_results(tmp_path: Path) -> None:
     harness = BenchmarkHarness(output_dir=tmp_path / "out")
     artifacts = harness.generate_artifacts([])
     assert isinstance(artifacts, dict)
-
-
-# ---------------------------------------------------------------------------
-# _simulate_ttf_response
-# ---------------------------------------------------------------------------
-
-
-def test_simulate_ttf_response_returns_tuple() -> None:
-    """_simulate_ttf_response must return a (dict, float) tuple."""
-    rng = random.Random(0)
-    problem = {"prompt": "Solve x+1=3", "answer": 2.0}
-    result = _simulate_ttf_response(problem, "gsm_symbolic", "groq", rng)
-    assert isinstance(result, tuple)
-    assert len(result) == 2
-
-
-def test_simulate_ttf_response_dict_type() -> None:
-    """The response component must be a dict."""
-    rng = random.Random(1)
-    problem = {"prompt": "What is 3*3?", "answer": 9.0}
-    response, _ = _simulate_ttf_response(problem, "gsm_symbolic", "groq", rng)
-    assert isinstance(response, dict)
-
-
-def test_simulate_ttf_response_latency_positive() -> None:
-    """TTF latency must be positive."""
-    rng = random.Random(2)
-    problem = {"prompt": "Compute 5+5", "answer": 10.0}
-    _, latency = _simulate_ttf_response(problem, "gsm_symbolic", "groq", rng)
-    assert latency > 0.0
-
-
-def test_simulate_ttf_response_gsm_symbolic_has_final_answer() -> None:
-    """gsm_symbolic TTF response must contain 'final_answer' key."""
-    rng = random.Random(3)
-    problem = {"prompt": "2+2?", "answer": 4.0}
-    response, _ = _simulate_ttf_response(problem, "gsm_symbolic", "groq", rng)
-    assert "final_answer" in response
-
-
-def test_simulate_ttf_response_higher_latency_than_direct() -> None:
-    """TTF latency must exceed direct latency on the same RNG sequence."""
-    rng_ttf = random.Random(42)
-    rng_direct = random.Random(42)
-    problem = {"prompt": "What is 1+1?", "answer": 2.0}
-    _, ttf_lat = _simulate_ttf_response(problem, "gsm_symbolic", "groq", rng_ttf)
-    _, direct_lat = _simulate_direct_response(problem, "gsm_symbolic", "groq", rng_direct)
-    # TTF has 200-800 ms overhead; direct has 10-80 ms overhead — TTF always higher
-    assert ttf_lat > direct_lat
-
-
-# ---------------------------------------------------------------------------
-# _simulate_direct_response
-# ---------------------------------------------------------------------------
-
-
-def test_simulate_direct_response_returns_tuple() -> None:
-    """_simulate_direct_response must return a (dict, float) tuple."""
-    rng = random.Random(10)
-    problem = {"prompt": "What is 7-3?", "answer": 4.0}
-    result = _simulate_direct_response(problem, "gsm_symbolic", "groq", rng)
-    assert isinstance(result, tuple)
-    assert len(result) == 2
-
-
-def test_simulate_direct_response_dict_type() -> None:
-    """The response component must be a dict."""
-    rng = random.Random(11)
-    problem = {"prompt": "8/2?", "answer": 4.0}
-    response, _ = _simulate_direct_response(problem, "gsm_symbolic", "groq", rng)
-    assert isinstance(response, dict)
-
-
-def test_simulate_direct_response_latency_positive() -> None:
-    """Direct latency must be positive."""
-    rng = random.Random(12)
-    problem = {"prompt": "Compute 6+6", "answer": 12.0}
-    _, latency = _simulate_direct_response(problem, "gsm_symbolic", "groq", rng)
-    assert latency > 0.0
-
-
-def test_simulate_direct_response_generic_task() -> None:
-    """_simulate_direct_response handles a generic (unknown) task name."""
-    rng = random.Random(13)
-    problem = {"answer": "unknown_answer"}
-    response, latency = _simulate_direct_response(problem, "unknown_task", "groq", rng)
-    assert isinstance(response, dict)
-    assert latency > 0.0
 
 
 # ---------------------------------------------------------------------------

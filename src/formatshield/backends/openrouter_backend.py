@@ -10,6 +10,7 @@ from collections.abc import AsyncIterator
 import openai
 from openai import AsyncOpenAI
 
+from formatshield._retry import API_RETRY, with_retry
 from formatshield.scorer.features import StreamEvent
 
 _OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -158,13 +159,24 @@ class OpenRouterBackend:
         if constraints == "json":
             kwargs["response_format"] = {"type": "json_object"}
 
-        try:
-            response = await self._client.chat.completions.create(**kwargs)
-        except openai.APIError as exc:
-            raise RuntimeError(f"OpenRouter API error: {exc}") from exc
+        async def _call() -> str:
+            try:
+                response = await self._client.chat.completions.create(**kwargs)
+            except (openai.RateLimitError, openai.InternalServerError, openai.APIConnectionError):
+                raise  # propagate retryable errors un-wrapped
+            except openai.APIError as exc:
+                raise RuntimeError(f"OpenRouter API error: {exc}") from exc
+            content = response.choices[0].message.content
+            return content if content is not None else ""
 
-        content = response.choices[0].message.content
-        return content if content is not None else ""
+        return await with_retry(
+            _call,
+            API_RETRY,
+            retryable=(
+                openai.RateLimitError, openai.InternalServerError, openai.APIConnectionError
+            ),
+            operation_name=f"openrouter.generate({self.model})",
+        )
 
     async def stream(
         self,
