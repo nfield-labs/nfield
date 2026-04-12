@@ -1,0 +1,57 @@
+# Environment & secrets — NEVER COMMIT
+.env
+.env.local
+.env.*.local
+*.key
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+MANIFEST
+
+# Virtual environments — uv creates .venv automatically
+.venv/
+venv/
+env/
+ENV/
+
+# uv
+uv.lock
+
+# Test / coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.hypothesis/
+
+# Benchmark outputs (large data files, not source)
+benchmark_results/
+paper/figures/*.png
+paper/figures/*.pdf
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Distribution
+dist/
+build/
+
+# llms/
+.claude/
+
+#data
+examples-repo/
+project-details/
