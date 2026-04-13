@@ -109,7 +109,7 @@ line-length = 100
 src = ["src"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "N", "S", "B", "A", "C4", "PT", "RUF", "PIE", "PERF"]
+select = ["E", "F", "I", "UP", "N", "S", "B", "A", "C4", "PT", "RUF", "PIE"]
 ignore = [
     "S101",   # assert in tests is fine
     "S105",   # hardcoded passwords - not applicable
