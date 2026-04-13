@@ -15,7 +15,6 @@ import pytest
 
 from formatshield.backends.protocol import get_backend_name_from_model, get_model_family
 
-
 # ===========================================================================
 # get_backend_name_from_model
 # ===========================================================================
@@ -25,37 +24,46 @@ class TestGetBackendNameFromModel:
     """Tests for get_backend_name_from_model() — covers lines 208-212."""
 
     # Known prefix → known backend (line 211-212)
-    @pytest.mark.parametrize("model_id,expected", [
-        ("groq/llama-3.1-70b-versatile", "groq"),
-        ("vllm/meta-llama/Llama-3-70b-Instruct", "vllm"),
-        ("ollama/llama3", "ollama"),
-        ("openrouter/anthropic/claude-3-5-sonnet", "openrouter"),
-        ("outlines/mistral-7b", "outlines"),
-        ("guidance/gpt-4o", "guidance"),
-    ])
+    @pytest.mark.parametrize(
+        ("model_id", "expected"),
+        [
+            ("groq/llama-3.1-70b-versatile", "groq"),
+            ("vllm/meta-llama/Llama-3-70b-Instruct", "vllm"),
+            ("ollama/llama3", "ollama"),
+            ("openrouter/anthropic/claude-3-5-sonnet", "openrouter"),
+            ("outlines/mistral-7b", "outlines"),
+            ("guidance/gpt-4o", "guidance"),
+        ],
+    )
     def test_known_prefix_returns_mapped_backend(self, model_id: str, expected: str) -> None:
         """Recognised prefix maps to the correct BackendName (line 212)."""
         assert get_backend_name_from_model(model_id) == expected
 
     # Unknown prefix → falls through to "openrouter"
-    @pytest.mark.parametrize("model_id", [
-        "unknown_provider/some-model",
-        "azure/gpt-4",
-        "huggingface/llama-2",
-        "bedrock/claude",
-    ])
+    @pytest.mark.parametrize(
+        "model_id",
+        [
+            "unknown_provider/some-model",
+            "azure/gpt-4",
+            "huggingface/llama-2",
+            "bedrock/claude",
+        ],
+    )
     def test_unknown_prefix_returns_openrouter(self, model_id: str) -> None:
         """Unrecognised prefix defaults to 'openrouter'."""
         assert get_backend_name_from_model(model_id) == "openrouter"
 
     # No slash at all → defaults to "openrouter"
-    @pytest.mark.parametrize("model_id", [
-        "gpt-4o",
-        "claude-3-5-sonnet",
-        "llama-3.1-70b",
-        "mistral-7b-instruct",
-        "",
-    ])
+    @pytest.mark.parametrize(
+        "model_id",
+        [
+            "gpt-4o",
+            "claude-3-5-sonnet",
+            "llama-3.1-70b",
+            "mistral-7b-instruct",
+            "",
+        ],
+    )
     def test_no_slash_returns_openrouter(self, model_id: str) -> None:
         """Model IDs without a slash default to 'openrouter'."""
         assert get_backend_name_from_model(model_id) == "openrouter"
@@ -79,86 +87,110 @@ class TestGetModelFamily:
     """Tests for get_model_family() — covers lines 244-255."""
 
     # OpenAI family
-    @pytest.mark.parametrize("model_id,expected", [
-        ("gpt-4o", "openai"),
-        ("gpt-3.5-turbo", "openai"),
-        ("text-davinci-003", "openai"),
-        ("o1-mini", "openai"),
-        ("o3-mini", "openai"),
-        ("o4-preview", "openai"),
-    ])
+    @pytest.mark.parametrize(
+        ("model_id", "expected"),
+        [
+            ("gpt-4o", "openai"),
+            ("gpt-3.5-turbo", "openai"),
+            ("text-davinci-003", "openai"),
+            ("o1-mini", "openai"),
+            ("o3-mini", "openai"),
+            ("o4-preview", "openai"),
+        ],
+    )
     def test_openai_family(self, model_id: str, expected: str) -> None:
         assert get_model_family(model_id) == expected
 
     # Anthropic family
-    @pytest.mark.parametrize("model_id", [
-        "claude-3-5-sonnet",
-        "claude-2",
-        "claude-instant-1",
-        "claude-3-opus",
-    ])
+    @pytest.mark.parametrize(
+        "model_id",
+        [
+            "claude-3-5-sonnet",
+            "claude-2",
+            "claude-instant-1",
+            "claude-3-opus",
+        ],
+    )
     def test_anthropic_family(self, model_id: str) -> None:
         assert get_model_family(model_id) == "anthropic"
 
     # Meta / LLaMA family
-    @pytest.mark.parametrize("model_id", [
-        "llama-3.1-70b-versatile",
-        "llama-2-13b-chat",
-        "meta-llama/Llama-3-70b",
-    ])
+    @pytest.mark.parametrize(
+        "model_id",
+        [
+            "llama-3.1-70b-versatile",
+            "llama-2-13b-chat",
+            "meta-llama/Llama-3-70b",
+        ],
+    )
     def test_meta_family(self, model_id: str) -> None:
         assert get_model_family(model_id) == "meta"
 
     # Mistral family
-    @pytest.mark.parametrize("model_id", [
-        "mistral-7b-instruct",
-        "mixtral-8x7b",
-        "mistral-large",
-    ])
+    @pytest.mark.parametrize(
+        "model_id",
+        [
+            "mistral-7b-instruct",
+            "mixtral-8x7b",
+            "mistral-large",
+        ],
+    )
     def test_mistral_family(self, model_id: str) -> None:
         assert get_model_family(model_id) == "mistral"
 
     # DeepSeek family
-    @pytest.mark.parametrize("model_id", [
-        "deepseek-r1",
-        "deepseek-v2",
-        "deepseek-coder-33b",
-    ])
+    @pytest.mark.parametrize(
+        "model_id",
+        [
+            "deepseek-r1",
+            "deepseek-v2",
+            "deepseek-coder-33b",
+        ],
+    )
     def test_deepseek_family(self, model_id: str) -> None:
         assert get_model_family(model_id) == "deepseek"
 
     # Google family
-    @pytest.mark.parametrize("model_id", [
-        "gemini-pro",
-        "gemini-1.5-flash",
-        "gemma-7b",
-        "palm-2",
-        "bison-001",
-    ])
+    @pytest.mark.parametrize(
+        "model_id",
+        [
+            "gemini-pro",
+            "gemini-1.5-flash",
+            "gemma-7b",
+            "palm-2",
+            "bison-001",
+        ],
+    )
     def test_google_family(self, model_id: str) -> None:
         assert get_model_family(model_id) == "google"
 
     # Unknown family
-    @pytest.mark.parametrize("model_id", [
-        "completely-unknown-model-xyz",
-        "falcon-40b",
-        "starcoder-15b",
-        "phi-2",
-        "",
-    ])
+    @pytest.mark.parametrize(
+        "model_id",
+        [
+            "completely-unknown-model-xyz",
+            "falcon-40b",
+            "starcoder-15b",
+            "phi-2",
+            "",
+        ],
+    )
     def test_unknown_family_returns_unknown(self, model_id: str) -> None:
         """No pattern matches → 'unknown'."""
         assert get_model_family(model_id) == "unknown"
 
     # Backend prefix stripping (lines 245-249)
-    @pytest.mark.parametrize("model_id,expected", [
-        ("groq/llama-3.1-70b-versatile", "meta"),
-        ("openrouter/anthropic/claude-3-5-sonnet", "anthropic"),
-        ("vllm/gpt-4o", "openai"),
-        ("ollama/mistral-7b", "mistral"),
-        ("outlines/deepseek-r1", "deepseek"),
-        ("guidance/gemini-pro", "google"),
-    ])
+    @pytest.mark.parametrize(
+        ("model_id", "expected"),
+        [
+            ("groq/llama-3.1-70b-versatile", "meta"),
+            ("openrouter/anthropic/claude-3-5-sonnet", "anthropic"),
+            ("vllm/gpt-4o", "openai"),
+            ("ollama/mistral-7b", "mistral"),
+            ("outlines/deepseek-r1", "deepseek"),
+            ("guidance/gemini-pro", "google"),
+        ],
+    )
     def test_strips_backend_prefix_before_matching(self, model_id: str, expected: str) -> None:
         """Backend prefix is stripped so 'groq/llama-…' → 'meta' (lines 244-249)."""
         assert get_model_family(model_id) == expected
@@ -214,12 +246,12 @@ class TestFormatShieldInit:
         assert "BenchmarkResult" in fs.__all__
 
     def test_fs_routing_decision_importable(self) -> None:
-        from formatshield import RoutingDecision  # noqa: F401
+        from formatshield import RoutingDecision
 
         assert RoutingDecision is not None
 
     def test_fs_complexity_features_importable(self) -> None:
-        from formatshield import ComplexityFeatures  # noqa: F401
+        from formatshield import ComplexityFeatures
 
         assert ComplexityFeatures is not None
 
@@ -230,8 +262,6 @@ class TestFormatShieldInit:
         Simulate python-dotenv not being installed.  The try/except in __init__.py
         (lines 27-31) must not propagate the ImportError.
         """
-        import importlib
-        import sys
 
         # Remove the cached module so re-import runs the module top-level again
         # We test this indirectly: the module should already be loaded without error.

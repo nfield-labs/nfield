@@ -8,16 +8,15 @@ any API keys, network access, or GPU resources.
 from __future__ import annotations
 
 from typing import Any
+from unittest.mock import patch
 
 import pytest
 from pydantic import BaseModel
 
 from formatshield.backends.dryrun_backend import DryRunBackend
-from unittest.mock import patch
 from formatshield.core import FormatShield, GenerationResult, generate
 from formatshield.oracle.routing_decision import RoutingDecision
 from formatshield.scorer.features import StreamEvent
-
 
 # ---------------------------------------------------------------------------
 # Shared helpers
@@ -590,7 +589,8 @@ async def test_stream_complete_event_has_content() -> None:
         if event.type == "complete":
             complete_event = event
     assert complete_event is not None
-    assert complete_event.content is not None and len(complete_event.content) > 0
+    assert complete_event.content is not None
+    assert len(complete_event.content) > 0
 
 
 @pytest.mark.asyncio
@@ -741,7 +741,9 @@ async def test_module_level_generate_raises_without_patching() -> None:
 
 
 @pytest.mark.asyncio
-async def test_module_level_generate_constructs_formatshield(monkeypatch: pytest.MonkeyPatch) -> None:
+async def test_module_level_generate_constructs_formatshield(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """The module-level generate() must instantiate FormatShield and call generate()."""
     import formatshield.core as core_module
 

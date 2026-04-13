@@ -21,9 +21,7 @@ Uncovered lines targeted:
 from __future__ import annotations
 
 import csv
-import unittest.mock as mock
 from pathlib import Path
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -85,10 +83,17 @@ def _low_complexity_features() -> ComplexityFeatures:
 def _write_benchmark_csv(path: Path, n_rows: int = 15, *, malformed: bool = False) -> None:
     """Write a minimal benchmark CSV to *path*."""
     fieldnames = [
-        "task", "backend", "model",
-        "direct_accuracy", "ttf_accuracy", "accuracy_delta",
-        "direct_latency_ms", "ttf_latency_ms", "overhead_pct",
-        "complexity_score", "failure_modes_detected",
+        "task",
+        "backend",
+        "model",
+        "direct_accuracy",
+        "ttf_accuracy",
+        "accuracy_delta",
+        "direct_latency_ms",
+        "ttf_latency_ms",
+        "overhead_pct",
+        "complexity_score",
+        "failure_modes_detected",
     ]
     with path.open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=fieldnames)
@@ -201,23 +206,37 @@ def test_from_benchmark_data_too_many_malformed_rows_raises(tmp_path: Path) -> N
     """If too many rows are malformed, a ValueError is raised (line 252)."""
     csv_path = tmp_path / "all_malformed.csv"
     fieldnames = [
-        "task", "backend", "model",
-        "direct_accuracy", "ttf_accuracy", "accuracy_delta",
-        "direct_latency_ms", "ttf_latency_ms", "overhead_pct",
-        "complexity_score", "failure_modes_detected",
+        "task",
+        "backend",
+        "model",
+        "direct_accuracy",
+        "ttf_accuracy",
+        "accuracy_delta",
+        "direct_latency_ms",
+        "ttf_latency_ms",
+        "overhead_pct",
+        "complexity_score",
+        "failure_modes_detected",
     ]
     with csv_path.open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=fieldnames)
         w.writeheader()
         for _ in range(12):
-            w.writerow({
-                "task": "x", "backend": "y", "model": "z",
-                "direct_accuracy": "BAD", "ttf_accuracy": "BAD",
-                "accuracy_delta": "NOT_A_NUMBER",
-                "direct_latency_ms": "BAD", "ttf_latency_ms": "BAD",
-                "overhead_pct": "BAD", "complexity_score": "BAD",
-                "failure_modes_detected": "",
-            })
+            w.writerow(
+                {
+                    "task": "x",
+                    "backend": "y",
+                    "model": "z",
+                    "direct_accuracy": "BAD",
+                    "ttf_accuracy": "BAD",
+                    "accuracy_delta": "NOT_A_NUMBER",
+                    "direct_latency_ms": "BAD",
+                    "ttf_latency_ms": "BAD",
+                    "overhead_pct": "BAD",
+                    "complexity_score": "BAD",
+                    "failure_modes_detected": "",
+                }
+            )
 
     with pytest.raises(ValueError, match="Too few valid rows"):
         ThresholdOracle.from_benchmark_data(
@@ -362,12 +381,14 @@ def test_predict_sklearn_with_raw_lr_model(tmp_path: Path) -> None:
 
     # Inject a raw LR model (not a dict)
     clf = LogisticRegression(max_iter=500)
-    x = np.array([
-        [0.1, 1, 0, 0.5, 1, 1],
-        [0.9, 8, 15, 0.8, 3, 25],
-        [0.2, 0, 0, 0.3, 0, 0],
-        [0.8, 6, 10, 0.7, 2, 20],
-    ])
+    x = np.array(
+        [
+            [0.1, 1, 0, 0.5, 1, 1],
+            [0.9, 8, 15, 0.8, 3, 25],
+            [0.2, 0, 0, 0.3, 0, 0],
+            [0.8, 6, 10, 0.7, 2, 20],
+        ]
+    )
     y = np.array([0, 1, 0, 1])
     clf.fit(x, y)
 
@@ -399,14 +420,16 @@ def test_predict_sklearn_ttf_branch(tmp_path: Path) -> None:
     clf = LogisticRegression(max_iter=1000)
     scaler = StandardScaler()
 
-    x = np.array([
-        [0.05, 0, 0, 0.3, 0, 0],
-        [0.05, 0, 0, 0.3, 0, 0],
-        [0.05, 0, 0, 0.3, 0, 0],
-        [0.95, 9, 18, 0.9, 3, 28],
-        [0.95, 9, 18, 0.9, 3, 28],
-        [0.95, 9, 18, 0.9, 3, 28],
-    ])
+    x = np.array(
+        [
+            [0.05, 0, 0, 0.3, 0, 0],
+            [0.05, 0, 0, 0.3, 0, 0],
+            [0.05, 0, 0, 0.3, 0, 0],
+            [0.95, 9, 18, 0.9, 3, 28],
+            [0.95, 9, 18, 0.9, 3, 28],
+            [0.95, 9, 18, 0.9, 3, 28],
+        ]
+    )
     y = np.array([0, 0, 0, 1, 1, 1])
     x_scaled = scaler.fit_transform(x)
     clf.fit(x_scaled, y)
@@ -505,8 +528,8 @@ def test_features_from_benchmark_row_float_except_branch() -> None:
     # Provide a row where token_entropy (mapped from complexity_score) is not a number
     row = {
         "complexity_score": "INVALID",  # triggers except in _float
-        "token_entropy": "ALSO_BAD",    # triggers except in _float
-        "schema_depth": "NOT_INT",      # triggers except in _int
+        "token_entropy": "ALSO_BAD",  # triggers except in _float
+        "schema_depth": "NOT_INT",  # triggers except in _int
         "required_reasoning_ops": "BAD",
         "instruction_tune_score": "BAD",
         "prompt_length_bucket": "BAD",
@@ -523,7 +546,7 @@ def test_features_from_benchmark_row_int_except_branch() -> None:
 
     row = {
         "complexity_score": "0.5",  # valid float
-        "schema_depth": "not_an_int",   # triggers except in _int (line 593-594)
+        "schema_depth": "not_an_int",  # triggers except in _int (line 593-594)
         "required_reasoning_ops": "???",
         "instruction_tune_score": "0.5",
         "prompt_length_bucket": "nope",
@@ -585,10 +608,13 @@ def test_low_complexity_direct_for_all_backends(backend: str) -> None:
     assert result.strategy == "direct"
 
 
-@pytest.mark.parametrize("model_id,expected_strategy", [
-    ("openai/gpt-4o", "direct"),         # not a native thinker but valid model
-    ("anthropic/claude-3-5-sonnet", "direct"),  # low complexity → direct
-])
+@pytest.mark.parametrize(
+    ("model_id", "expected_strategy"),
+    [
+        ("openai/gpt-4o", "direct"),  # not a native thinker but valid model
+        ("anthropic/claude-3-5-sonnet", "direct"),  # low complexity → direct
+    ],
+)
 def test_various_model_ids_low_complexity(model_id: str, expected_strategy: str) -> None:
     """Low-complexity requests route to direct regardless of model family."""
     oracle = ThresholdOracle(model_path="/nonexistent/dummy.pkl")
