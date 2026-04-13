@@ -261,7 +261,7 @@ class TemplateFillTask:
                 continue
 
             # Numeric comparison (age)
-            if isinstance(truth_value, (int, float)):
+            if isinstance(truth_value, int | float):
                 try:
                     if int(pred_value) == int(truth_value):
                         hits += 1

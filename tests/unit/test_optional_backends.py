@@ -231,8 +231,6 @@ class TestOutlinesBackendStream:
 
         with _remove_outlines_from_modules():
             with pytest.raises(ImportError, match="pip install outlines"):
-                # The generator is an async generator; the ImportError is raised
-                # when the first value is requested, not at construction time.
                 async for _ in backend.stream("prompt"):
                     pass
 

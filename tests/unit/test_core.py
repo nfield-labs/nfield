@@ -266,7 +266,7 @@ async def test_generate_with_pydantic_schema_parsed_is_model_or_dict() -> None:
     """result.parsed must be a SimpleSchema instance or a dict."""
     shield = _make_shield()
     result = await shield.generate(_LOW_COMPLEXITY_PROMPT, schema=SimpleSchema)
-    assert isinstance(result.parsed, (SimpleSchema, dict))
+    assert isinstance(result.parsed, SimpleSchema | dict)
 
 
 @pytest.mark.asyncio
