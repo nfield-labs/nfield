@@ -6,6 +6,30 @@ and [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **CohereBackend** — optional `cohere>=5.0.0` backend with JSON-mode and streaming support
+- **MistralBackend** — optional `mistralai>=1.0.0` backend with structured output and streaming
+- **TogetherBackend** — Together AI via OpenAI-compatible client (`openai` SDK, custom `base_url`)
+- **SQLExtractionTask** — 15 NL-to-SQL benchmark problems (JOIN, aggregation, window functions, subqueries)
+- **CodeExtractionTask** — 15 Python function entity-extraction benchmark problems
+- All 11 benchmark tasks now registered in `BenchmarkHarness` and `tasks/__init__.py`
+- `BackendName` Literal expanded: `cohere`, `mistral`, `together`, `openai`, `anthropic`, `fireworks`
+- `core.py` `_build_backend()` resolves all new backend prefixes with lazy imports
+- `examples/streaming_example.py` — four streaming demos (unstructured, Pydantic schema, dict schema, latency comparison)
+- 40 new backend unit tests (Cohere, Mistral, Together, BackendName protocol routing)
+- 61 new edge-case tests (ComplexityScorer, FailureModeDetector, ThresholdOracle, TTFEngine boundaries)
+
+### Fixed
+
+- `benchmarks.yml` CI: corrected `--dry-run` flag (does not exist) to `--backends dryrun --tasks gsm`
+- `pyproject.toml`: `together` extra now correctly declares `openai>=1.0.0` (TogetherBackend uses the OpenAI SDK)
+- `ci.yml`: removed duplicate `publish` job (handled by `release.yml`)
+
+---
+
 ## [0.0.1] — 2026-04-12
 
 ### Added

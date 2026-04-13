@@ -9,9 +9,11 @@ Usage:
     export GROQ_API_KEY=your_key_here
     python examples/rag_extraction.py
 """
+
 from __future__ import annotations
 
 import asyncio
+
 from pydantic import BaseModel, Field
 
 import formatshield as fs
@@ -19,7 +21,9 @@ import formatshield as fs
 
 class Entity(BaseModel):
     name: str = Field(description="The entity name as it appears in the text")
-    type: str = Field(description="Entity type, e.g. 'organization', 'person', 'location', 'concept'")
+    type: str = Field(
+        description="Entity type, e.g. 'organization', 'person', 'location', 'concept'"
+    )
     relevance_score: float = Field(description="Relevance to the document topic, 0.0 to 1.0")
 
 
@@ -85,8 +89,7 @@ async def main() -> None:
         prompt=(
             "Extract structured facts from the following retrieved document chunk. "
             "Identify key factual claims, named entities with their types and relevance, "
-            "a one-sentence summary, and your confidence in the extraction:\n\n"
-            + CLIMATE_CHUNK
+            "a one-sentence summary, and your confidence in the extraction:\n\n" + CLIMATE_CHUNK
         ),
         schema=DocumentFacts,
     )
@@ -102,7 +105,7 @@ async def main() -> None:
 
     if result.parsed and isinstance(result.parsed, DocumentFacts):
         facts = result.parsed
-        print(f"\n--- Extracted Document Facts ---")
+        print("\n--- Extracted Document Facts ---")
         print(f"Summary:    {facts.summary}")
         print(f"Confidence: {facts.confidence:.2f}")
         print(f"\nKey facts ({len(facts.key_facts)}):")

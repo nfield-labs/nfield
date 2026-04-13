@@ -7,6 +7,7 @@
 [![PyPI version](https://badge.fury.io/py/formatshield.svg)](https://badge.fury.io/py/formatshield)
 [![CI](https://github.com/formatshield/formatshield/workflows/CI/badge.svg)](https://github.com/formatshield/formatshield/actions)
 [![Coverage](https://codecov.io/gh/formatshield/formatshield/branch/main/graph/badge.svg)](https://codecov.io/gh/formatshield/formatshield)
+[![Docs](https://img.shields.io/badge/docs-formatshield.github.io-blueviolet)](https://formatshield.github.io/formatshield/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
@@ -35,21 +36,34 @@ result = await fs.generate(
 # result.parsed            →  ContractObligations(...)  ← typed Pydantic model
 ```
 
-| | Outlines | Instructor | **FormatShield** |
-|--|:-------:|:---------:|:--------------:|
-| Produces valid JSON | ✅ | ✅ | ✅ |
-| Fixes reasoning accuracy loss | ❌ | ❌ | ✅ |
-| Routes direct vs. TTF automatically | ❌ | ❌ | ✅ |
-| Works across all backends | partial | ✅ | ✅ |
-| Generates benchmark tables for your pipeline | ❌ | ❌ | ✅ |
+| | Outlines | Instructor | Guidance | RouteLLM | **FormatShield** |
+|--|:-------:|:---------:|:-------:|:-------:|:--------------:|
+| Produces valid JSON | ✅ | ✅ | ✅ | ❌ | ✅ |
+| Fixes reasoning accuracy loss | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Routes direct vs. TTF automatically | ❌ | ❌ | ❌ | ✅ (cost) | ✅ |
+| Works across all backends | partial | ✅ | partial | ✅ | ✅ |
+| Generates benchmark tables for your pipeline | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Failure mode taxonomy | ❌ | ❌ | ❌ | ❌ | ✅ |
+
+---
+
+## News
+
+- **2026/04** — FormatShield v0.0.1 released: 7 backends, 9 benchmark tasks, TTF engine, 567 tests, 81% coverage
+- **2026/04** — "The Format Tax" (arXiv 2604.03616) confirms accuracy loss across 6 open-weight models and 4 output formats — the definitive empirical study
+- **2025/06** — CRANE (arXiv 2502.09061) accepted at **ICML 2025** — the research basis for TTF. FormatShield productionizes the algorithm across all backends
+- **2024/12** — "Let Me Speak Freely?" (arXiv 2408.02442) published at **EMNLP 2024** — quantifies 27.3pp accuracy loss from constrained decoding. The reason FormatShield exists
+- **(Upcoming v0.1.0)** — Together AI, Fireworks AI, Mistral AI backends · 12-task benchmark harness · LangChain `FormatShieldLLM` · `formatshield benchmark --reproduce-paper`
 
 ---
 
 ## Table of Contents
 
+- [Philosophy](#philosophy)
 - [The Problem](#the-problem)
 - [How FormatShield Fixes It](#how-formatshield-fixes-it)
 - [Installation](#installation)
+- [Who Is This For?](#who-is-this-for)
 - [Quick Start](#quick-start)
 - [Supported Backends](#supported-backends)
 - [Real-World Use Cases](#real-world-use-cases)
@@ -61,6 +75,23 @@ result = await fs.generate(
 - [Research Background](#research-background)
 - [Contributing](#contributing)
 - [Citation](#citation)
+
+---
+
+## Philosophy
+
+> *"The king who is energetic, who has sharp intellect, who is endowed with prowess — he alone is capable of winning over the world."*
+> — Chanakya, Arthashastra (c. 350 BCE)
+
+Most libraries ask: **"How do we get valid JSON?"**
+
+FormatShield asks: **"When does asking for JSON cost you accuracy — and is that cost worth it?"**
+
+This is a different question. Instructor answers the first question brilliantly. Outlines answers it elegantly. FormatShield is the only library that answers the second — and backs the answer with empirical measurement per backend, per task, per schema complexity.
+
+Constrained decoding is not a neutral operation. Every FSM mask applied to the vocabulary during generation is a tax paid in reasoning accuracy. The tax varies by model, task complexity, and schema structure. Sometimes it's 0%. Sometimes it's 27%. FormatShield measures this tax on your specific pipeline and routes around it only when the measurement justifies it.
+
+That's not prompting. That's not retry logic. That's understanding the physics of structured generation.
 
 ---
 
@@ -142,6 +173,18 @@ pip install formatshield[benchmark]
 # Everything
 pip install formatshield[all]
 ```
+
+---
+
+## Who Is This For?
+
+**ML Engineers** running structured extraction pipelines who need accuracy, not just valid JSON. If your pipeline does RAG, NER, contract parsing, or any multi-step reasoning task — the format tax is silently costing you. FormatShield measures it and routes around it automatically.
+
+**AI Researchers** who want to measure format tax on their models empirically. The benchmark harness generates publication-ready CSV and LaTeX tables. Run `formatshield benchmark --reproduce-paper` to see your numbers.
+
+**AI Agent Developers** who need structured tool call outputs from fast, cheap models (Groq, Ollama). TTF lets models reason through which tool to call before committing to the structured format. This matters when tools have complex parameters.
+
+**LLM Application Developers** who already use Instructor or Outlines and want to drop in accuracy recovery without changing schemas or provider logic. FormatShield wraps your existing stack — it doesn't replace it.
 
 ---
 
@@ -467,21 +510,28 @@ FormatShield is the production implementation of findings from:
 | arXiv 2604.03616 (April 2026, Format Tax) | Confirmed across 6 models, 4 formats | Benchmark design |
 | arXiv 2309.06180 (vLLM) | PagedAttention prefix caching | vLLM KV cache reuse |
 
-**The routing gap no paper addresses:** At what complexity score does TTF become beneficial? Does this vary by backend? FormatShield measures this empirically and makes the data public. That's the paper: "When Does Think-Then-Format Help?"
+**The routing gap no paper addresses:** At what complexity score does TTF become beneficial? Does this vary by backend? FormatShield measures this empirically and makes the data public. That's the paper: *"When Does Think-Then-Format Help?"*
 
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). **5 `good-first-issue` tasks open at launch.** Your name in the paper acknowledgments.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide. **10 `good-first-issue` tasks open at launch.** Your name in the paper acknowledgments.
 
 ```bash
 git clone https://github.com/formatshield/formatshield
 cd formatshield
 pip install uv
-uv sync --extra dev
-uv run pytest tests/unit/ -v
+uv sync --all-extras
+uv run pre-commit install
+uv run pytest tests/unit/ -v   # all green, no API keys needed
 ```
+
+**Community:**
+- [GitHub Discussions](https://github.com/formatshield/formatshield/discussions) — questions, show and tell, ideas
+- [Good First Issues](https://github.com/formatshield/formatshield/labels/good-first-issue) — start contributing today
+- [Security Policy](SECURITY.md) — responsible disclosure
+- [Governance](GOVERNANCE.md) — how decisions are made
 
 ## License
 

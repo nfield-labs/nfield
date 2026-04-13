@@ -8,9 +8,11 @@ Usage:
     export GROQ_API_KEY=your_key_here
     python examples/medical_ner.py
 """
+
 from __future__ import annotations
 
 import asyncio
+
 from pydantic import BaseModel, Field
 
 import formatshield as fs
@@ -68,11 +70,11 @@ async def main() -> None:
         print(f"Latency: {result.latency_ms:.0f}ms")
 
         if result.thinking:
-            print(f"\nThinking (first 200 chars):")
+            print("\nThinking (first 200 chars):")
             print(result.thinking[:200] + "...")
 
         if result.parsed and isinstance(result.parsed, MedicalEntities):
-            print(f"\nExtracted entities:")
+            print("\nExtracted entities:")
             print(f"  Conditions:  {result.parsed.conditions}")
             print(f"  Medications: {result.parsed.medications}")
             print(f"  Dosages:     {result.parsed.dosages}")

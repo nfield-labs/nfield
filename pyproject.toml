@@ -13,22 +13,32 @@ keywords = [
     "structured-output",
     "llm-inference",
     "constrained-decoding",
-    "vllm",
-    "outlines",
-    "pydantic",
-    "async",
     "think-then-format",
     "ttf",
+    "format-tax",
+    "routing",
+    "accuracy",
+    "vllm",
+    "outlines",
+    "groq",
+    "pydantic",
+    "async",
+    "benchmark",
+    "langchain",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
 ]
 dependencies = [
     "pydantic>=2.6.0",
@@ -49,6 +59,10 @@ dependencies = [
 [project.optional-dependencies]
 openai = ["openai>=1.0.0"]
 anthropic = ["anthropic>=0.20.0"]
+cohere = ["cohere>=5.0.0"]
+mistral = ["mistralai>=1.0.0"]
+fireworks = ["fireworks-ai>=0.15.0"]
+together = ["openai>=1.0.0"]  # TogetherBackend uses openai SDK with custom base_url
 vllm = ["vllm>=0.4.0"]
 outlines = ["outlines>=0.0.46"]
 guidance = ["guidance>=0.1.0"]
@@ -58,6 +72,11 @@ benchmark = [
     "pandas>=2.0.0",
     "hypothesis>=6.100.0",
 ]
+docs = [
+    "mkdocs-material>=9.5.0",
+    "mkdocstrings[python]>=0.25.0",
+    "pymdown-extensions>=10.0",
+]
 dev = [
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
@@ -66,8 +85,9 @@ dev = [
     "ruff>=0.4.0",
     "pyright>=1.1.360",
     "pre-commit>=3.7.0",
+    "bandit>=1.9.4",
 ]
-all = ["formatshield[openai,anthropic,vllm,outlines,guidance,benchmark,dev]"]
+all = ["formatshield[openai,anthropic,cohere,mistral,fireworks,together,vllm,outlines,guidance,benchmark,docs,dev]"]
 
 [project.scripts]
 formatshield = "formatshield.cli:app"
@@ -77,6 +97,8 @@ Homepage = "https://github.com/formatshield/formatshield"
 Repository = "https://github.com/formatshield/formatshield"
 Documentation = "https://formatshield.github.io/formatshield"
 Issues = "https://github.com/formatshield/formatshield/issues"
+Changelog = "https://github.com/formatshield/formatshield/blob/main/CHANGELOG.md"
+"Bug Tracker" = "https://github.com/formatshield/formatshield/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/formatshield"]
@@ -87,7 +109,7 @@ line-length = 100
 src = ["src"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "N", "S", "B", "A", "C4", "PT", "RUF"]
+select = ["E", "F", "I", "UP", "N", "S", "B", "A", "C4", "PT", "RUF", "PIE", "PERF"]
 ignore = [
     "S101",   # assert in tests is fine
     "S105",   # hardcoded passwords - not applicable
@@ -110,6 +132,12 @@ include = ["src"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 addopts = "-v --tb=short"
+markers = [
+    "asyncio: async tests (auto-detected by pytest-asyncio)",
+    "integration: requires live API keys — skipped in CI unless secrets set",
+    "slow: test takes >2 seconds",
+    "benchmark: runs the benchmark harness",
+]
 
 [tool.coverage.run]
 source = ["src/formatshield"]
@@ -118,8 +146,20 @@ omit = ["tests/*"]
 [tool.coverage.report]
 fail_under = 80
 show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if TYPE_CHECKING:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "@(abc\\.)?abstractmethod",
+]
 
 [dependency-groups]
 dev = [
     "bandit>=1.9.4",
+    "mkdocs-material>=9.7.6",
+    "mkdocstrings[python]>=1.0.3",
+    "pymdown-extensions>=10.21.2",
 ]

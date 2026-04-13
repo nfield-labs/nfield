@@ -3,6 +3,8 @@ name: Docs
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -25,14 +27,21 @@ jobs:
       - uses: astral-sh/setup-uv@v3
         with:
           version: "latest"
+          enable-cache: true
 
       - name: Set up Python
         run: uv python install 3.11
 
       - name: Build documentation
-        run: uvx --with mkdocs-material mkdocs build
+        run: >-
+          uvx
+          --with mkdocs-material
+          --with mkdocstrings[python]
+          --with pymdown-extensions
+          mkdocs build --strict
 
       - name: Upload Pages artifact
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: site/

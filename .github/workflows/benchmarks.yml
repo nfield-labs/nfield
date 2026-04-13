@@ -25,7 +25,7 @@ jobs:
         id: benchmark
         run: |
           set -e
-          OUTPUT=$(uv run formatshield benchmark --quick --dry-run 2>&1)
+          OUTPUT=$(uv run formatshield benchmark --tasks gsm --backends dryrun --quick 2>&1)
           echo "$OUTPUT"
           echo "benchmark_output<<EOF" >> "$GITHUB_OUTPUT"
           echo "$OUTPUT" >> "$GITHUB_OUTPUT"

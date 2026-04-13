@@ -143,6 +143,47 @@ def _build_backend(
         url = base_url or "http://localhost:8000/v1"
         return VLLMBackend(base_url=url, model=model_name)
 
+    if backend_name == "dryrun":
+        from formatshield.backends.dryrun_backend import DryRunBackend
+
+        return DryRunBackend()
+
+    if backend_name == "openai":
+        from formatshield.backends.openai_backend import OpenAIBackend
+
+        return OpenAIBackend(api_key=api_key, model=model_name)
+
+    if backend_name == "anthropic":
+        from formatshield.backends.anthropic_backend import AnthropicBackend
+
+        return AnthropicBackend(api_key=api_key, model=model_name)
+
+    if backend_name == "cohere":
+        from formatshield.backends.cohere_backend import (
+            CohereBackend,  # type: ignore[import-not-found]
+        )
+
+        return CohereBackend(api_key=api_key, model=model_name)
+
+    if backend_name == "mistral":
+        from formatshield.backends.mistral_backend import (
+            MistralBackend,  # type: ignore[import-not-found]
+        )
+
+        return MistralBackend(api_key=api_key, model=model_name)
+
+    if backend_name == "together":
+        from formatshield.backends.together_backend import (
+            TogetherBackend,  # type: ignore[import-not-found]
+        )
+
+        return TogetherBackend(api_key=api_key, model=model_name)
+
+    if backend_name == "fireworks":
+        from formatshield.backends.openrouter_backend import OpenRouterBackend
+
+        return OpenRouterBackend(api_key=api_key, model=f"fireworks/{model_name}")
+
     # Fallback: OpenRouter handles most OpenAI-compatible APIs
     from formatshield.backends.openrouter_backend import OpenRouterBackend
 
@@ -182,6 +223,7 @@ class FormatShield:
         debug: bool = False,
         metrics: MetricsCollector | None = None,
         log_level: str = "WARNING",
+        backend: Any | None = None,
     ) -> None:
         self.model = model
         self._latency_budget_ms = latency_budget_ms
@@ -191,7 +233,11 @@ class FormatShield:
         self._debug = debug
 
         self.backend_name: BackendName = get_backend_name_from_model(model)
-        self._backend = _build_backend(model, self.backend_name, base_url, api_key)
+        self._backend = (
+            backend
+            if backend is not None
+            else _build_backend(model, self.backend_name, base_url, api_key)
+        )
 
         self._scorer = ComplexityScorer()
         self._oracle = ThresholdOracle()

@@ -10,9 +10,11 @@ Usage:
     export GROQ_API_KEY=your_key_here
     python examples/document_classification.py
 """
+
 from __future__ import annotations
 
 import asyncio
+
 from pydantic import BaseModel, Field
 
 import formatshield as fs
@@ -79,8 +81,7 @@ async def main() -> None:
             "Classify the following legal document for a document management system. "
             "Identify the document type, jurisdiction, all applicable regulations or statutes, "
             "the appropriate confidentiality level, and whether legal review is required "
-            "before execution:\n\n"
-            + DOCUMENT_EXCERPT
+            "before execution:\n\n" + DOCUMENT_EXCERPT
         ),
         schema=DocumentClassification,
     )
@@ -91,7 +92,7 @@ async def main() -> None:
     print(f"Latency:  {result.latency_ms:.0f}ms")
     print(f"Failure modes detected: {result.failure_modes or 'none'}")
 
-    print(f"\n--- Routing Decision Detail ---")
+    print("\n--- Routing Decision Detail ---")
     print(f"  Strategy:          {result.routing.strategy}")
     print(f"  Confidence:        {result.routing.confidence:.2f}")
     print(f"  Expected Δ acc:    {result.routing.expected_accuracy_delta:+.3f}")
@@ -103,7 +104,7 @@ async def main() -> None:
 
     if result.parsed and isinstance(result.parsed, DocumentClassification):
         doc = result.parsed
-        print(f"\n--- Document Classification ---")
+        print("\n--- Document Classification ---")
         print(f"Document type:          {doc.document_type}")
         print(f"Jurisdiction:           {doc.jurisdiction or 'Undetermined'}")
         print(f"Confidentiality level:  {doc.confidentiality_level}")

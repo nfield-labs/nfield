@@ -9,9 +9,11 @@ Usage:
     export GROQ_API_KEY=your_key_here
     python examples/customer_support.py
 """
+
 from __future__ import annotations
 
 import asyncio
+
 from pydantic import BaseModel, Field
 
 import formatshield as fs
@@ -20,12 +22,16 @@ import formatshield as fs
 class TicketAnalysis(BaseModel):
     category: str = Field(description="Support category, e.g. 'billing', 'technical', 'account'")
     priority: str = Field(description="Ticket priority: LOW, MEDIUM, HIGH, or URGENT")
-    sentiment: float = Field(description="Customer sentiment score from 0.0 (negative) to 1.0 (positive)")
+    sentiment: float = Field(
+        description="Customer sentiment score from 0.0 (negative) to 1.0 (positive)"
+    )
     required_actions: list[str] = Field(
         default_factory=list,
         description="List of concrete actions the support team must take",
     )
-    escalate_to_human: bool = Field(description="Whether this ticket requires human agent escalation")
+    escalate_to_human: bool = Field(
+        description="Whether this ticket requires human agent escalation"
+    )
 
 
 SUPPORT_TICKET = """
@@ -66,8 +72,7 @@ async def main() -> None:
         prompt=(
             "Analyze the following customer support ticket and classify it. "
             "Identify the category, urgency level, customer sentiment, required actions, "
-            "and whether a human agent must handle this:\n\n"
-            + SUPPORT_TICKET
+            "and whether a human agent must handle this:\n\n" + SUPPORT_TICKET
         ),
         schema=TicketAnalysis,
     )
@@ -83,7 +88,7 @@ async def main() -> None:
 
     if result.parsed and isinstance(result.parsed, TicketAnalysis):
         ticket = result.parsed
-        print(f"\n--- Ticket Analysis ---")
+        print("\n--- Ticket Analysis ---")
         print(f"Category:           {ticket.category}")
         print(f"Priority:           {ticket.priority}")
         print(f"Sentiment score:    {ticket.sentiment:.2f}  (0=negative, 1=positive)")

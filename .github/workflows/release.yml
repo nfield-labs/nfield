@@ -1,0 +1,144 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  validate:
+    name: Validate release tag
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: extract
+        run: |
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Releasing version: ${VERSION}"
+
+      - name: Verify version matches pyproject.toml
+        run: |
+          TOML_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          TAG_VERSION="${{ steps.extract.outputs.version }}"
+          if [ "$TOML_VERSION" != "$TAG_VERSION" ]; then
+            echo "ERROR: pyproject.toml version ($TOML_VERSION) != tag version ($TAG_VERSION)"
+            exit 1
+          fi
+          echo "Version match confirmed: ${TOML_VERSION}"
+
+  test:
+    name: Full test suite (pre-release gate)
+    runs-on: ubuntu-latest
+    needs: validate
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+          enable-cache: true
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --python ${{ matrix.python-version }} --extra dev --extra benchmark
+
+      - name: Run full test suite
+        run: >-
+          uv run pytest tests/unit/
+          --cov=src/formatshield
+          --cov-fail-under=80
+          -q
+
+  publish:
+    name: Build & Publish to PyPI
+    runs-on: ubuntu-latest
+    needs: [validate, test]
+    environment:
+      name: pypi
+      url: https://pypi.org/project/formatshield/${{ needs.validate.outputs.version }}/
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Build wheel and sdist
+        run: uv build
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [validate, publish]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Build artifacts for release
+        run: uv build
+
+      - name: Extract CHANGELOG entry
+        id: changelog
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          # Extract the section for this version from CHANGELOG.md
+          NOTES=$(awk "/^## \[${VERSION}\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md)
+          if [ -z "$NOTES" ]; then
+            NOTES="See [CHANGELOG.md](CHANGELOG.md) for details."
+          fi
+          {
+            echo "notes<<ENDOFNOTES"
+            echo "$NOTES"
+            echo "ENDOFNOTES"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: FormatShield ${{ github.ref_name }}
+          body: |
+            ## FormatShield ${{ github.ref_name }}
+
+            ${{ steps.changelog.outputs.notes }}
+
+            ---
+
+            **Install:**
+            ```bash
+            pip install formatshield==${{ needs.validate.outputs.version }}
+            ```
+
+            **Full changelog:** [CHANGELOG.md](https://github.com/formatshield/formatshield/blob/main/CHANGELOG.md)
+
+            **PyPI:** https://pypi.org/project/formatshield/${{ needs.validate.outputs.version }}/
+          files: dist/*
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'a') || contains(github.ref_name, 'b') || contains(github.ref_name, 'rc') }}

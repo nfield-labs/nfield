@@ -1,6 +1,8 @@
 # Contributing to FormatShield
 
-Thank you for considering a contribution to FormatShield. This document explains how to get started.
+Thank you for considering a contribution to FormatShield. Every bug fix, benchmark result, backend adapter, and documentation improvement makes the Format Tax easier for the world to measure and fix.
+
+Your name goes in the paper acknowledgments. Let's build this together.
 
 ---
 
@@ -24,19 +26,94 @@ uv run pytest tests/unit/ -v
 # 5. You're ready to contribute
 ```
 
+All unit tests must pass before you open a PR. If they don't on a clean checkout, please file a bug.
+
+---
+
+## Response Commitment
+
+We take contributor time seriously.
+
+| Channel | Response time |
+|---------|--------------|
+| Issues (bugs) | Acknowledged within 48 hours |
+| Issues (features) | Triaged within 5 business days |
+| Pull requests | First review within 72 hours |
+| Security vulnerabilities | See [SECURITY.md](SECURITY.md) |
+| Questions | Use [GitHub Discussions](https://github.com/formatshield/formatshield/discussions) |
+
+---
+
+## Architecture Overview
+
+Understanding the data flow helps you know where to make changes:
+
+```
+Request
+   │
+   ▼
+FormatShield.generate(prompt, schema, model)       ← src/formatshield/core.py
+   │
+   ├──► ComplexityScorer.score()                    ← src/formatshield/scorer/complexity_scorer.py
+   │        6 features → float [0.0, 1.0]
+   │
+   ├──► FailureModeDetector.detect()                ← src/formatshield/ttf/failure_detector.py
+   │        Detects when TTF would hurt
+   │
+   ├──► ThresholdOracle.route()                     ← src/formatshield/oracle/threshold_oracle.py
+   │        Returns RoutingDecision (strategy: "ttf" | "direct")
+   │
+   ├──► [if TTF] TTFEngine.generate()               ← src/formatshield/ttf/engine.py
+   │        Pass 1 (unconstrained) + Pass 2 (constrained)
+   │
+   └──► Backend.generate()                           ← src/formatshield/backends/
+            Groq / OpenAI / Anthropic / Ollama / vLLM / Outlines / DryRun
+   │
+   ▼
+GenerationResult(output, parsed, thinking, routing, complexity_score, ...)
+```
+
+For the complete AI contributor guide (commands, patterns, code style), see [CLAUDE.md](CLAUDE.md).
+
 ---
 
 ## Good First Issues
 
-These are tagged `good-first-issue` on GitHub and are genuinely doable in < 1 day:
+These are tagged [`good-first-issue`](https://github.com/formatshield/formatshield/labels/good-first-issue) and are genuinely doable in under a day:
 
-| Issue | File | Effort |
-|-------|------|--------|
-| Add Cohere backend | `src/formatshield/backends/cohere_backend.py` | ~50 lines |
-| Add SQL extraction task | `src/formatshield/benchmark/tasks/sql_extraction.py` | ~30 lines |
-| Non-English ComplexityScorer | `src/formatshield/scorer/complexity_scorer.py` | ~20 lines |
-| Benchmark visualization | `src/formatshield/benchmark/exporters/png_exporter.py` | ~40 lines |
-| Streaming integration test | `tests/unit/test_streaming.py` | ~30 lines |
+### Backends (~ 45–60 lines each)
+
+| Issue | File to create | Effort | What to do |
+|-------|---------------|--------|------------|
+| Add Cohere backend | `src/formatshield/backends/cohere_backend.py` | ~50 lines | Implement `Backend` protocol using the `cohere` SDK. Use `client.chat()` with JSON response format. Add unit test. |
+| Add Mistral AI backend | `src/formatshield/backends/mistral_backend.py` | ~50 lines | Implement using `mistralai` SDK. Mistral supports JSON mode via `response_format`. Follow the GroqBackend pattern. |
+| Add Together AI backend | `src/formatshield/backends/together_backend.py` | ~45 lines | Together AI has an OpenAI-compatible API. Reuse the OpenAIBackend with a custom `base_url`. |
+
+### Benchmark Tasks (~ 30–40 lines each)
+
+| Issue | File to create | Effort | What to do |
+|-------|---------------|--------|------------|
+| Add SQL extraction task | `src/formatshield/benchmark/tasks/sql_extraction.py` | ~30 lines | Extract SQL from natural language. Schema: `{"query": str, "tables": list[str]}`. Embed 10+ test problems inline. |
+| Add code entity extraction task | `src/formatshield/benchmark/tasks/code_extraction.py` | ~35 lines | Extract function names, arguments, return types from code snippets. Follow the `medical_ner.py` pattern. |
+
+### Scorer Improvements (~ 20–25 lines)
+
+| Issue | File | Effort | What to do |
+|-------|------|--------|------------|
+| Non-English ComplexityScorer test | `tests/unit/test_scorer_multilingual.py` | ~25 lines | Add tests verifying Arabic and Greek prompts score correctly. tiktoken handles Unicode — verify token fragmentation increases the score. |
+
+### CLI (~ 30 lines)
+
+| Issue | File | Effort | What to do |
+|-------|------|--------|------------|
+| Add `--format table` flag | `src/formatshield/cli.py` | ~30 lines | Add `--format` option to `formatshield benchmark` that prints results as a `rich` table to stdout. `rich` is already a dependency. |
+
+### Tests (~ 25–30 lines each)
+
+| Issue | File | Effort | What to do |
+|-------|------|--------|------------|
+| Streaming integration test | `tests/unit/test_streaming.py` | ~30 lines | Verify `StreamingEngine` yields at least one `output` event and exactly one `complete` event using `DryRunBackend`. |
+| Threshold oracle calibration tests | `tests/unit/test_oracle_calibration.py` | ~25 lines | Test that `ThresholdOracle` routes differently at different complexity thresholds. Verify conservative mode, learned mode. |
 
 ---
 
@@ -45,7 +122,7 @@ These are tagged `good-first-issue` on GitHub and are genuinely doable in < 1 da
 - **Python 3.11+** only — use modern type syntax (`list[str]` not `List[str]`)
 - **Ruff** for linting: `uv run ruff check src/ tests/`
 - **Pyright** for types: `uv run pyright src/`
-- **pytest** for tests: every new function needs a test
+- **pytest** for tests: every new function needs a meaningful test
 - **No stubs** — every method must have a real implementation
 - All tests in `tests/unit/` must pass without any API key or GPU
 
@@ -54,43 +131,101 @@ These are tagged `good-first-issue` on GitHub and are genuinely doable in < 1 da
 1. Create `src/formatshield/backends/<name>_backend.py`
 2. Implement the `Backend` protocol from `backends/protocol.py`
 3. Add to `backends/__init__.py`
-4. Add test in `tests/unit/test_<name>_backend.py` using `MockBackend` pattern
-5. Add integration test in `tests/integration/test_<name>_backend.py` with `skipif` guard
+4. Add unit test in `tests/unit/test_<name>_backend.py` using `DryRunBackend` pattern
+5. Add integration test in `tests/integration/test_<name>_backend.py` with `@pytest.mark.skipif` guard
+6. Add optional dependency to `pyproject.toml` under `[project.optional-dependencies]`
 
 Minimum backend implementation:
+
 ```python
 from formatshield.backends.protocol import Backend
-from formatshield.scorer.features import StreamEvent
+from formatshield.streaming.engine import StreamEvent
 
 class MyBackend:
     name = "mybackend"
     supports_kv_cache_reuse = False
-    accuracy_loss_baseline = None
+    accuracy_loss_baseline: float | None = None
 
-    async def generate(self, prompt, schema=None, constraints=None, kv_cache_prefix=None) -> str:
-        ...
+    async def generate(self, prompt: str, schema: dict | None = None,
+                       constraints: str | None = None, kv_cache_prefix: str | None = None) -> str:
+        ...  # call your API here
 
-    async def stream(self, prompt, schema=None, constraints=None):
+    async def stream(self, prompt: str, schema: dict | None = None, constraints: str | None = None):
         yield StreamEvent(type="complete", content="done")
 ```
 
 ### Adding a Benchmark Task
 
 1. Create `src/formatshield/benchmark/tasks/<name>.py`
-2. Implement `get_problems(quick=False) -> list[dict]` and `score_response(predicted, ground_truth) -> float`
-3. Add to `benchmark/tasks/__init__.py`
-4. Tasks must work without external API calls (embed test data directly)
+2. Implement `get_problems(quick: bool = False) -> list[dict]` — embed all test data inline, no external API calls
+3. Implement `score_response(predicted: str, ground_truth: Any) -> float` — returns 0.0–1.0
+4. Add to `benchmark/tasks/__init__.py`
+5. Write tests in `tests/unit/test_benchmark_<name>.py`
+
+---
+
+## Testing Philosophy
+
+**Unit tests** (`tests/unit/`): Zero API keys, zero GPU, zero network. Use `DryRunBackend` for all generation.
+
+**Integration tests** (`tests/integration/`): Require real API keys. Guarded with `@pytest.mark.skipif`.
+
+**Meaningful vs theater**:
+
+```python
+# THEATER — proves nothing:
+def test_scorer_init():
+    scorer = ComplexityScorer()
+    assert scorer is not None
+
+# MEANINGFUL — proves behavior:
+def test_nested_schema_scores_higher_than_flat():
+    scorer = ComplexityScorer()
+    flat = {"type": "string"}
+    nested = {"type": "object", "properties": {"a": {"type": "object", "properties": {"b": {"type": "string"}}}}}
+    assert scorer.score("test", nested) > scorer.score("test", flat)
+```
+
+---
+
+## Development Tips
+
+```bash
+# Run only one test file
+uv run pytest tests/unit/test_core.py -v
+
+# Stop at first failure
+uv run pytest tests/unit/ -x --tb=short
+
+# Check complexity score without generating
+python -c "
+from formatshield.scorer.complexity_scorer import ComplexityScorer
+scorer = ComplexityScorer()
+print(scorer.score('Extract all medications', {'type': 'object'}))
+"
+
+# Use debug routing trace
+python -c "
+import formatshield as fs
+shield = fs.FormatShield(model='dryrun/test', debug=True)
+result = shield.generate_sync('test', schema={'type': 'string'})
+"
+```
 
 ---
 
 ## Commit Convention
 
 We use [Conventional Commits](https://www.conventionalcommits.org/):
-- `feat: add Cohere backend`
-- `fix: handle None schema in ComplexityScorer`
-- `docs: update README with benchmark instructions`
-- `test: add streaming integration test`
-- `bench: update GSM benchmark results`
+
+```
+feat: add Cohere backend with JSON-mode support
+fix: handle None schema in ComplexityScorer
+docs: add tutorial for streaming with TTF
+test: add streaming integration test with DryRunBackend
+bench: update GSM benchmark with Groq results
+ci: add Python 3.13 to test matrix
+```
 
 ---
 
@@ -98,9 +233,12 @@ We use [Conventional Commits](https://www.conventionalcommits.org/):
 
 - [ ] All unit tests pass (`uv run pytest tests/unit/ -v`)
 - [ ] Ruff passes (`uv run ruff check src/ tests/`)
-- [ ] New functions have tests
+- [ ] Pyright passes (`uv run pyright src/`)
+- [ ] New public functions have docstrings and type annotations
+- [ ] New functions have meaningful tests (not coverage theater)
 - [ ] No hardcoded API keys
-- [ ] CHANGELOG entry added (conventional commit message is sufficient)
+- [ ] CHANGELOG.md entry added under `[Unreleased]`
+- [ ] PR description references the issue (`Closes #42`)
 
 ---
 
@@ -108,4 +246,6 @@ We use [Conventional Commits](https://www.conventionalcommits.org/):
 
 Contributors are listed in `CONTRIBUTORS.md`. Sustained contributors (3+ merged PRs) are invited to the maintainer team and acknowledged in the arXiv paper.
 
-"We need someone to write the Guidance backend adapter — it's one class, one interface, and your name goes in the paper acknowledgments."
+See [GOVERNANCE.md](GOVERNANCE.md) for the full governance model.
+
+*"We need someone to write the Guidance backend adapter — it's one class, one interface, and your name goes in the paper acknowledgments."*

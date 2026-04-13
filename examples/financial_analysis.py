@@ -10,9 +10,11 @@ Usage:
     export GROQ_API_KEY=your_key_here
     python examples/financial_analysis.py
 """
+
 from __future__ import annotations
 
 import asyncio
+
 from pydantic import BaseModel, Field
 
 import formatshield as fs
@@ -81,8 +83,7 @@ async def main() -> None:
         prompt=(
             "Analyze this earnings call excerpt. Extract all financial metrics, "
             "assess whether guidance was raised, identify risks, and provide a "
-            "sentiment score and analyst recommendation:\n\n"
-            + EARNINGS_TRANSCRIPT
+            "sentiment score and analyst recommendation:\n\n" + EARNINGS_TRANSCRIPT
         ),
         schema=EarningsAnalysis,
     ):
@@ -103,7 +104,7 @@ async def main() -> None:
     if final_json:
         try:
             analysis = EarningsAnalysis.model_validate(final_json)
-            print(f"\n--- Earnings Analysis ---")
+            print("\n--- Earnings Analysis ---")
             print(f"Revenue mentioned:      {analysis.revenue_mentioned}")
             print(f"Guidance raised:        {analysis.guidance_raised}")
             print(f"Sentiment score:        {analysis.sentiment_score:.2f}  (0=bearish, 1=bullish)")

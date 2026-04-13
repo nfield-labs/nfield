@@ -1,0 +1,47 @@
+# CODEOWNERS
+# Each line is a pattern followed by one or more GitHub usernames or teams.
+# The last matching pattern takes precedence.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default: maintainers review everything
+* @formatshield/maintainers
+
+# Core library and TTF engine — maintainers
+/src/formatshield/core.py @formatshield/maintainers
+/src/formatshield/ttf/ @formatshield/maintainers
+/src/formatshield/oracle/ @formatshield/maintainers
+/src/formatshield/scorer/ @formatshield/maintainers
+
+# Backend adapters — backend reviewers
+/src/formatshield/backends/ @formatshield/backend-reviewers @formatshield/maintainers
+
+# Benchmark harness and tasks — research reviewers
+/src/formatshield/benchmark/ @formatshield/research-reviewers @formatshield/maintainers
+
+# Streaming engine
+/src/formatshield/streaming/ @formatshield/maintainers
+
+# Observability
+/src/formatshield/observability/ @formatshield/maintainers
+
+# Integrations (LangChain, etc.)
+/src/formatshield/integrations/ @formatshield/maintainers
+
+# Documentation — docs reviewers
+/docs/ @formatshield/docs-reviewers @formatshield/maintainers
+/mkdocs.yml @formatshield/docs-reviewers @formatshield/maintainers
+
+# CI/CD and infrastructure — maintainers only
+/.github/ @formatshield/maintainers
+/pyproject.toml @formatshield/maintainers
+/uv.lock @formatshield/maintainers
+/.pre-commit-config.yaml @formatshield/maintainers
+
+# Tests — any committer can review
+/tests/ @formatshield/committers @formatshield/maintainers
+
+# Community files
+/CONTRIBUTING.md @formatshield/maintainers
+/CODE_OF_CONDUCT.md @formatshield/maintainers
+/GOVERNANCE.md @formatshield/maintainers
+/SECURITY.md @formatshield/maintainers

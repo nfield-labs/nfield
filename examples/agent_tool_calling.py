@@ -10,9 +10,11 @@ Usage:
     export GROQ_API_KEY=your_key_here
     python examples/agent_tool_calling.py
 """
+
 from __future__ import annotations
 
 import asyncio
+
 from pydantic import BaseModel, Field
 
 import formatshield as fs
@@ -29,7 +31,9 @@ class ToolCallPlan(BaseModel):
         None,
         description="What to do if the tool call fails, or null if no fallback is needed",
     )
-    explanation: str = Field(description="One-sentence rationale for choosing this tool and parameters")
+    explanation: str = Field(
+        description="One-sentence rationale for choosing this tool and parameters"
+    )
 
 
 # Three sequential agent steps derived from a single user instruction.
@@ -93,7 +97,7 @@ async def main() -> None:
     )
 
     print("\nUser instruction:")
-    print(f"  \"{AGENT_STEPS[0]['user_instruction']}\"")
+    print(f'  "{AGENT_STEPS[0]["user_instruction"]}"')
     print(f"\nRunning agent loop ({len(AGENT_STEPS)} steps)...")
 
     for step_info in AGENT_STEPS:
@@ -122,7 +126,7 @@ async def main() -> None:
             print(f"Confidence:        {plan.confidence:.2f}")
             print(f"Fallback strategy: {plan.fallback_strategy or 'none'}")
             print(f"Explanation:       {plan.explanation}")
-            print(f"Parameters:")
+            print("Parameters:")
             for k, v in plan.parameters.items():
                 print(f"  {k}: {v}")
 

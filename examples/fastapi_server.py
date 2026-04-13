@@ -26,7 +26,6 @@ from pydantic import BaseModel
 
 import formatshield as fs
 
-
 # ---------------------------------------------------------------------------
 # FastAPI app (imported lazily so the file is importable without fastapi)
 # ---------------------------------------------------------------------------

@@ -12,7 +12,21 @@ if TYPE_CHECKING:
 # Type aliases
 # ---------------------------------------------------------------------------
 
-BackendName = Literal["vllm", "ollama", "groq", "openrouter", "outlines", "guidance"]
+BackendName = Literal[
+    "vllm",
+    "ollama",
+    "groq",
+    "openrouter",
+    "outlines",
+    "guidance",
+    "dryrun",
+    "cohere",
+    "mistral",
+    "together",
+    "openai",
+    "anthropic",
+    "fireworks",
+]
 """Union of all recognised backend identifiers."""
 
 ModelFamily = Literal["openai", "anthropic", "meta", "mistral", "deepseek", "google", "unknown"]
@@ -148,6 +162,13 @@ _PREFIX_TO_BACKEND: dict[str, BackendName] = {
     "openrouter": "openrouter",
     "outlines": "outlines",
     "guidance": "guidance",
+    "dryrun": "dryrun",
+    "cohere": "cohere",
+    "mistral": "mistral",
+    "together": "together",
+    "openai": "openai",
+    "anthropic": "anthropic",
+    "fireworks": "fireworks",
 }
 
 # Mapping of model id sub-strings to ModelFamily

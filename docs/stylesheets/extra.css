@@ -1,0 +1,34 @@
+/* FormatShield custom styles */
+
+:root {
+  --fs-accent: #7c3aed;
+  --fs-accent-light: #a78bfa;
+}
+
+/* Hero code block */
+.md-typeset .highlight .hll {
+  background-color: rgba(124, 58, 237, 0.1);
+}
+
+/* Admonition accent */
+.md-typeset .admonition.tip,
+.md-typeset details.tip {
+  border-color: var(--fs-accent);
+}
+
+/* Table header */
+.md-typeset table:not([class]) th {
+  background-color: rgba(124, 58, 237, 0.08);
+  font-weight: 600;
+}
+
+/* Badge row spacing */
+.md-typeset p img + img {
+  margin-left: 4px;
+}
+
+/* Routing diagram */
+.md-typeset pre code.language-text {
+  font-size: 0.78em;
+  line-height: 1.4;
+}

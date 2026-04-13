@@ -6,13 +6,49 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  test:
-    name: Test Python ${{ matrix.python-version }}
+  lint:
+    name: Lint & Format
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install dev dependencies
+        run: uv sync --python 3.11 --extra dev
+
+      - name: Run ruff linter
+        run: uv run ruff check src/ tests/
+
+      - name: Run ruff formatter check
+        run: uv run ruff format --check src/ tests/
+
+  test:
+    name: Test Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: lint
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        # Only upload coverage from one combination
+        include:
+          - python-version: "3.11"
+            os: ubuntu-latest
+            upload-coverage: true
 
     steps:
       - uses: actions/checkout@v4
@@ -21,6 +57,8 @@ jobs:
         uses: astral-sh/setup-uv@v3
         with:
           version: "latest"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
       - name: Set up Python ${{ matrix.python-version }}
         run: uv python install ${{ matrix.python-version }}
@@ -28,25 +66,27 @@ jobs:
       - name: Install dependencies
         run: uv sync --python ${{ matrix.python-version }} --extra dev --extra benchmark
 
-      - name: Run ruff linter
-        run: uv run ruff check src/ tests/
-
-      - name: Run ruff formatter check
-        run: uv run ruff format --check src/ tests/
-
       - name: Run unit tests
-        run: uv run pytest tests/unit/ -v --cov=src/formatshield --cov-report=xml --cov-report=term-missing
+        run: >-
+          uv run pytest tests/unit/
+          --cov=src/formatshield
+          --cov-report=xml
+          --cov-report=term-missing
+          --cov-fail-under=80
+          -q
 
-      - name: Upload coverage
+      - name: Upload coverage to Codecov
+        if: matrix.upload-coverage
         uses: codecov/codecov-action@v4
-        if: matrix.python-version == '3.11'
         with:
           file: ./coverage.xml
           fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   integration:
     name: Integration Tests (Groq)
     runs-on: ubuntu-latest
+    needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
@@ -54,6 +94,9 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+          enable-cache: true
 
       - name: Set up Python
         run: uv python install 3.11
@@ -67,22 +110,3 @@ jobs:
         run: uv run pytest tests/integration/ -v -k "groq"
         if: env.GROQ_API_KEY != ''
 
-  publish:
-    name: Publish to PyPI
-    runs-on: ubuntu-latest
-    needs: test
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    permissions:
-      id-token: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v3
-
-      - name: Build package
-        run: uv build
-
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1

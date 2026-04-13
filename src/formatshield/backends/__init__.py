@@ -1,4 +1,16 @@
-"""FormatShield inference backends package."""
+"""FormatShield inference backends package.
+
+Core backends (always available):
+    GroqBackend, OpenAIBackend, OpenRouterBackend, OllamaBackend,
+    AnthropicBackend, VLLMBackend, DryRunBackend
+
+Optional backends (require extras):
+    CohereBackend   — pip install 'formatshield[cohere]'
+    MistralBackend  — pip install 'formatshield[mistral]'
+    TogetherBackend — pip install 'formatshield[together]'
+    OutlinesBackend — pip install 'formatshield[outlines]'
+    GuidanceBackend — pip install 'formatshield[guidance]'
+"""
 
 from formatshield.backends.anthropic_backend import AnthropicBackend
 from formatshield.backends.groq_backend import GroqBackend

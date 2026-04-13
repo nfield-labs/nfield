@@ -354,9 +354,17 @@ class BenchmarkHarness:
         # Lazy import to avoid circular dependency issues at module load time
         from formatshield.benchmark.exporters import CSVExporter
         from formatshield.benchmark.tasks import (
+            AgentStateTask,
+            ClassificationTask,
+            CodeExtractionTask,
+            FinancialTask,
             GSMSymbolicTask,
+            LegalExtractTask,
+            Math500Task,
             MedicalNERTask,
+            SQLExtractionTask,
             TemplateFillTask,
+            ToolCallTask,
         )
 
         _task_registry: dict[str, Any] = {
@@ -364,6 +372,16 @@ class BenchmarkHarness:
             "gsm": GSMSymbolicTask(),  # alias
             "medical_ner": MedicalNERTask(),
             "template_fill": TemplateFillTask(),
+            "classification": ClassificationTask(),
+            "financial": FinancialTask(),
+            "legal_extract": LegalExtractTask(),
+            "math500": Math500Task(),
+            "agent_state": AgentStateTask(),
+            "tool_call": ToolCallTask(),
+            "sql_extraction": SQLExtractionTask(),
+            "sql": SQLExtractionTask(),  # alias
+            "code_extraction": CodeExtractionTask(),
+            "code": CodeExtractionTask(),  # alias
         }
 
         task_objects = []

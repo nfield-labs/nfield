@@ -25,13 +25,10 @@ from __future__ import annotations
 import csv
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from formatshield.oracle.routing_decision import RoutingDecision
 from formatshield.scorer.features import ComplexityFeatures
-
-if TYPE_CHECKING:
-    pass
 
 logger = logging.getLogger(__name__)
 

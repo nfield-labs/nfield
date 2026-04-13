@@ -8,9 +8,11 @@ Usage:
     export GROQ_API_KEY=your_key_here
     python examples/contract_extraction.py
 """
+
 from __future__ import annotations
 
 import asyncio
+
 from pydantic import BaseModel, Field
 
 import formatshield as fs
@@ -20,7 +22,9 @@ class Obligation(BaseModel):
     party: str = Field(description="The party responsible for this obligation")
     action: str = Field(description="What they must do")
     deadline: str | None = Field(None, description="When it must be done")
-    conditions: list[str] = Field(default_factory=list, description="Conditions that trigger this obligation")
+    conditions: list[str] = Field(
+        default_factory=list, description="Conditions that trigger this obligation"
+    )
 
 
 class ContractAnalysis(BaseModel):
@@ -70,7 +74,7 @@ async def main() -> None:
         schema=ContractAnalysis,
     )
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Routing: {result.routing.strategy.upper()}")
     print(f"Complexity: {result.complexity_score:.3f}")
     print(f"Latency: {result.latency_ms:.0f}ms")
@@ -81,7 +85,7 @@ async def main() -> None:
 
     if result.parsed and isinstance(result.parsed, ContractAnalysis):
         analysis = result.parsed
-        print(f"\n--- Contract Analysis ---")
+        print("\n--- Contract Analysis ---")
         print(f"Risk Level: {analysis.risk_level}")
         print(f"\nObligations ({len(analysis.obligations)}):")
         for ob in analysis.obligations:
