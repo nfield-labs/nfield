@@ -29,11 +29,8 @@ jobs:
       - name: Set up Python
         run: uv python install 3.11
 
-      - name: Install mkdocs-material
-        run: uv tool install mkdocs-material
-
       - name: Build documentation
-        run: uv tool run mkdocs build --strict
+        run: uvx --with mkdocs-material mkdocs build --strict
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

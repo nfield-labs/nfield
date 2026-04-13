@@ -23,8 +23,8 @@ venv/
 env/
 ENV/
 
-# uv
-uv.lock
+# uv — lock file IS committed for reproducible CI
+# uv.lock
 
 # Test / coverage
 .pytest_cache/
