@@ -14,10 +14,10 @@ Usage::
         confidence: float
 
     # Async (default):
-    result = await fs.generate(prompt, MySchema, model="groq/llama-3.1-70b-versatile")
+    result = await fs.generate(prompt, MySchema, model="groq/llama-3.3-70b-versatile")
 
     # Sync:
-    shield = fs.FormatShield(model="groq/llama-3.1-70b-versatile")
+    shield = fs.FormatShield(model="groq/llama-3.3-70b-versatile")
     result = shield.generate_sync(prompt, MySchema)
 """
 

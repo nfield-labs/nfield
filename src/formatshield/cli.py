@@ -24,7 +24,7 @@ console = Console()
 def generate(
     prompt: str = typer.Argument(..., help="The prompt to send to the model"),
     model: str = typer.Option(
-        "groq/llama-3.1-70b-versatile",
+        "groq/llama-3.3-70b-versatile",
         "--model",
         "-m",
         help="Model in 'provider/model' format",
@@ -126,7 +126,7 @@ def benchmark(
     harness = BenchmarkHarness(output_dir=output_dir)
 
     default_models = {
-        "groq": "groq/llama-3.1-70b-versatile",
+        "groq": "groq/llama-3.3-70b-versatile",
         "ollama": "ollama/llama3.1:70b",
         "openrouter": "openrouter/meta-llama/llama-3.1-70b-instruct",
         "vllm": "vllm/meta-llama/Llama-3-70b-Instruct",

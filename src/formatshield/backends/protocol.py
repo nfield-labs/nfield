@@ -189,7 +189,7 @@ def get_backend_name_from_model(model_id: str) -> BackendName:
     ----------
     model_id:
         Model identifier in ``"backend/model-name"`` format, e.g.
-        ``"groq/llama-3.1-70b-versatile"`` or ``"vllm/meta-llama/Llama-3-70b"``.
+        ``"groq/llama-3.3-70b-versatile"`` or ``"vllm/meta-llama/Llama-3-70b"``.
 
     Returns
     -------
@@ -198,7 +198,7 @@ def get_backend_name_from_model(model_id: str) -> BackendName:
 
     Examples
     --------
-    >>> get_backend_name_from_model("groq/llama-3.1-70b-versatile")
+    >>> get_backend_name_from_model("groq/llama-3.3-70b-versatile")
     'groq'
     >>> get_backend_name_from_model("vllm/meta-llama/Llama-3-70b-Instruct")
     'vllm'
@@ -223,7 +223,7 @@ def get_model_family(model_id: str) -> ModelFamily:
     ----------
     model_id:
         Model identifier, optionally prefixed with a backend name
-        (e.g. ``"groq/llama-3.1-70b-versatile"``).  The backend prefix is
+        (e.g. ``"groq/llama-3.3-70b-versatile"``).  The backend prefix is
         stripped before matching.
 
     Returns
@@ -233,7 +233,7 @@ def get_model_family(model_id: str) -> ModelFamily:
 
     Examples
     --------
-    >>> get_model_family("groq/llama-3.1-70b-versatile")
+    >>> get_model_family("groq/llama-3.3-70b-versatile")
     'meta'
     >>> get_model_family("openrouter/anthropic/claude-3-5-sonnet")
     'anthropic'

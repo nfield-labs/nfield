@@ -11,7 +11,7 @@ from formatshield.scorer.features import BenchmarkResult
 logger = logging.getLogger(__name__)
 
 _DEFAULT_MODELS: dict[str, str] = {
-    "groq": "groq/llama-3.1-70b-versatile",
+    "groq": "groq/llama-3.3-70b-versatile",
     "ollama": "ollama/llama3.1:70b",
     "openrouter": "openrouter/meta-llama/llama-3.1-70b-instruct",
     "vllm": "vllm/meta-llama/Llama-3-70b-Instruct",

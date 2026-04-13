@@ -204,7 +204,7 @@ class BenchmarkHarness:
         backend:
             Backend identifier string (e.g. ``"groq"``).
         model:
-            Model string passed to the backend (e.g. ``"groq/llama-3.1-70b-versatile"``).
+            Model string passed to the backend (e.g. ``"groq/llama-3.3-70b-versatile"``).
         quick:
             When ``True``, uses the reduced problem set from ``task.get_problems()``.
         backend_obj:

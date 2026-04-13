@@ -13,7 +13,7 @@ Usage::
     result = await fs.generate(
         prompt="What is the capital of France?",
         schema=MySchema,
-        model="groq/llama-3.1-70b-versatile",
+        model="groq/llama-3.3-70b-versatile",
     )
     print(result.parsed.answer)
 """
@@ -165,7 +165,7 @@ class FormatShield:
 
     Example::
 
-        shield = FormatShield(model="groq/llama-3.1-70b-versatile", debug=True)
+        shield = FormatShield(model="groq/llama-3.3-70b-versatile", debug=True)
         result = await shield.generate(prompt, schema=MySchema)
         print(result.parsed)
     """
@@ -503,7 +503,7 @@ class FormatShield:
 async def generate(
     prompt: str,
     schema: type[BaseModel] | dict[str, Any] | None = None,
-    model: str = "groq/llama-3.1-70b-versatile",
+    model: str = "groq/llama-3.3-70b-versatile",
     **kwargs: Any,
 ) -> GenerationResult:
     """One-liner API: ``result = await fs.generate(prompt, MySchema, model='groq/llama3')``.

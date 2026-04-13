@@ -107,7 +107,7 @@ class StructuredLogger:
     --------
     >>> logger = StructuredLogger(name="formatshield.router", level="DEBUG")
     >>> logger.log_routing_decision(
-    ...     model="groq/llama-3.1-70b-versatile",
+    ...     model="groq/llama-3.3-70b-versatile",
     ...     complexity=0.72,
     ...     decision="ttf",
     ...     latency_ms=1.4,

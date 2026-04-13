@@ -8,7 +8,7 @@ Usage::
 
     from formatshield.integrations.langchain import FormatShieldLLM
 
-    llm = FormatShieldLLM(model="groq/llama-3.1-70b-versatile")
+    llm = FormatShieldLLM(model="groq/llama-3.3-70b-versatile")
     chain = prompt_template | llm | output_parser
     result = chain.invoke({"input": user_message})
 """
@@ -45,13 +45,13 @@ class FormatShieldLLM:
         from formatshield.integrations.langchain import FormatShieldLLM
         from langchain_core.prompts import ChatPromptTemplate
 
-        llm = FormatShieldLLM(model="groq/llama-3.1-70b-versatile")
+        llm = FormatShieldLLM(model="groq/llama-3.3-70b-versatile")
         prompt = ChatPromptTemplate.from_messages([("human", "{input}")])
         chain = prompt | llm
         result = chain.invoke({"input": "What is 2+2?"})
     """
 
-    def __init__(self, model: str = "groq/llama-3.1-70b-versatile", **kwargs: Any) -> None:
+    def __init__(self, model: str = "groq/llama-3.3-70b-versatile", **kwargs: Any) -> None:
         from formatshield.core import FormatShield
 
         self._shield = FormatShield(model=model, **kwargs)

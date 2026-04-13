@@ -109,7 +109,7 @@ class FailureModeDetector:
             prompt_length_bucket=0,
             schema_constraint_count=1,
         )
-        modes = detector.detect(features, "groq/llama-3.1-70b-versatile", schema)
+        modes = detector.detect(features, "groq/llama-3.3-70b-versatile", schema)
         # → ["simple_extraction", "short_prompt"]
         if detector.should_override_to_direct(modes):
             decision = RoutingDecision(strategy="direct", ...)
@@ -132,7 +132,7 @@ class FailureModeDetector:
         features:
             Complexity features from :class:`~formatshield.scorer.ComplexityScorer`.
         model_id:
-            Full model identifier (e.g. ``"groq/llama-3.1-70b-versatile"``).
+            Full model identifier (e.g. ``"groq/llama-3.3-70b-versatile"``).
         schema:
             Optional JSON Schema dict for schema-specific checks.
 

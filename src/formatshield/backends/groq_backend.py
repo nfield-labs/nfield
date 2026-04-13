@@ -31,7 +31,7 @@ class GroqBackend:
         neither source provides a key.
     model:
         Model identifier.  Accepts both plain Groq model names (e.g.
-        ``"llama-3.1-70b-versatile"``) and the ``"groq/model-name"``
+        ``"llama-3.3-70b-versatile"``) and the ``"groq/model-name"``
         prefixed format used by FormatShield's router.
     """
 
@@ -41,7 +41,7 @@ class GroqBackend:
     def __init__(
         self,
         api_key: str | None = None,
-        model: str = "llama-3.1-70b-versatile",
+        model: str = "llama-3.3-70b-versatile",
     ) -> None:
         resolved_key = api_key or os.environ.get("GROQ_API_KEY")
         if not resolved_key:
