@@ -118,6 +118,7 @@ ignore = [
     "RUF002", # EN DASH / unicode in docstrings — intentional range notation
     "RUF003", # EN DASH / unicode in comments — intentional range notation
     "A002",   # LangChain interface requires `input` parameter name
+    "PT012",  # async generators must be iterated to trigger ImportError — no single-statement alternative
 ]
 
 [tool.ruff.lint.per-file-ignores]
