@@ -152,9 +152,7 @@ class OllamaBackend:
             except ResponseError as exc:
                 model_hint = ""
                 if "not found" in str(exc).lower() or "does not exist" in str(exc).lower():
-                    model_hint = (
-                        f"  Hint: run `ollama pull {self.model}` to download the model."
-                    )
+                    model_hint = f"  Hint: run `ollama pull {self.model}` to download the model."
                     # Model-not-found errors are not retryable — raise directly
                     raise RuntimeError(
                         f"Ollama error for model '{self.model}': {exc}.{model_hint}"

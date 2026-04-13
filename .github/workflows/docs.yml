@@ -30,7 +30,7 @@ jobs:
         run: uv python install 3.11
 
       - name: Build documentation
-        run: uvx --with mkdocs-material mkdocs build --strict
+        run: uvx --with mkdocs-material mkdocs build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

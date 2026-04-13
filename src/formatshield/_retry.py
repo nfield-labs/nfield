@@ -68,9 +68,7 @@ class RetryConfig:
     base_delay: float = 1.0
     max_delay: float = 30.0
     jitter: bool = True
-    retryable_exceptions: tuple[type[Exception], ...] = field(
-        default_factory=lambda: (Exception,)
-    )
+    retryable_exceptions: tuple[type[Exception], ...] = field(default_factory=lambda: (Exception,))
 
     def delay_for(self, attempt: int) -> float:
         """Return the back-off delay in seconds for *attempt* (0-indexed).

@@ -187,7 +187,9 @@ class VLLMBackend:
             _call,
             API_RETRY,
             retryable=(
-                openai.RateLimitError, openai.InternalServerError, openai.APIConnectionError
+                openai.RateLimitError,
+                openai.InternalServerError,
+                openai.APIConnectionError,
             ),
             operation_name=f"vllm.generate({self.model})",
         )

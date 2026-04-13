@@ -179,9 +179,7 @@ async def test_generate_with_schema_enum_field() -> None:
     backend = DryRunBackend()
     schema = {
         "type": "object",
-        "properties": {
-            "status": {"type": "string", "enum": ["pending", "done", "failed"]}
-        },
+        "properties": {"status": {"type": "string", "enum": ["pending", "done", "failed"]}},
     }
     result = await backend.generate("test", schema=schema)
     parsed = json.loads(result)
@@ -238,9 +236,7 @@ async def test_generate_schema_anyof_fallback() -> None:
     backend = DryRunBackend()
     schema = {
         "type": "object",
-        "properties": {
-            "val": {"anyOf": [{"type": "string"}, {"type": "integer"}]}
-        },
+        "properties": {"val": {"anyOf": [{"type": "string"}, {"type": "integer"}]}},
     }
     result = await backend.generate("test", schema=schema)
     parsed = json.loads(result)

@@ -245,9 +245,9 @@ class TestExportComplexityBreakdown:
     def test_export_complexity_breakdown_three_buckets(self, tmp_path: Path) -> None:
         """Output must contain all three complexity bucket labels."""
         results = [
-            make_result(complexity_score=0.1),   # [0.0, 0.3)
+            make_result(complexity_score=0.1),  # [0.0, 0.3)
             make_result(complexity_score=0.45),  # [0.3, 0.6)
-            make_result(complexity_score=0.8),   # [0.6, 1.0]
+            make_result(complexity_score=0.8),  # [0.6, 1.0]
         ]
         exporter = LaTeXExporter()
         out = tmp_path / "complexity.tex"
@@ -283,9 +283,7 @@ class TestExportComplexityBreakdown:
         content = out.read_text(encoding="utf-8")
         assert r"\caption" in content
 
-    def test_export_complexity_breakdown_dash_for_empty_bucket(
-        self, tmp_path: Path
-    ) -> None:
+    def test_export_complexity_breakdown_dash_for_empty_bucket(self, tmp_path: Path) -> None:
         """A bucket with no results must render '---' as its mean delta."""
         # All scores in [0.6, 1.0], so [0.0, 0.3) and [0.3, 0.6) are empty
         results = [make_result(complexity_score=0.9)]
@@ -345,9 +343,7 @@ class TestGeneratePaperTables:
         for path in result.values():
             assert isinstance(path, Path)
 
-    def test_generate_paper_tables_empty_results_does_not_raise(
-        self, tmp_path: Path
-    ) -> None:
+    def test_generate_paper_tables_empty_results_does_not_raise(self, tmp_path: Path) -> None:
         """generate_paper_tables([]) must not raise and must still create files."""
         exporter = LaTeXExporter()
         tables_dir = tmp_path / "empty_tables"

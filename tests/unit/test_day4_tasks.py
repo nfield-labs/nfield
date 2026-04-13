@@ -582,9 +582,7 @@ def test_all_tasks_problems_are_dicts() -> None:
     ]
     for task in tasks:
         for problem in task.get_problems():
-            assert isinstance(problem, dict), (
-                f"{task.name}: problem is not a dict: {type(problem)}"
-            )
+            assert isinstance(problem, dict), f"{task.name}: problem is not a dict: {type(problem)}"
 
 
 def test_math500_first_problem_answer_is_correct() -> None:

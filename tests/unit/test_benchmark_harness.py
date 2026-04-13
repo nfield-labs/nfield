@@ -224,7 +224,10 @@ async def test_run_task_on_backend_with_explicit_dryrun(tmp_path: Path) -> None:
     harness = BenchmarkHarness(output_dir=tmp_path / "out")
     backend = DryRunBackend(seed=0)
     results = await harness.run_task_on_backend(
-        task=_MockTask(), backend="dryrun", model="dryrun/default", quick=True,
+        task=_MockTask(),
+        backend="dryrun",
+        model="dryrun/default",
+        quick=True,
         backend_obj=backend,
     )
     assert len(results) == 3

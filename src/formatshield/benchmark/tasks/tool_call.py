@@ -76,8 +76,7 @@ _PROBLEMS: list[dict[str, Any]] = [
     },
     {
         "request": (
-            "I need to know if it will rain in London today."
-            " Show me temperatures in Fahrenheit."
+            "I need to know if it will rain in London today. Show me temperatures in Fahrenheit."
         ),
         "expected_tool": "get_weather",
     },

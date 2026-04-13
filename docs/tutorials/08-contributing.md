@@ -277,7 +277,7 @@ mypy src/formatshield/
 
 ## Code of Conduct
 
-All contributors are expected to follow the [Contributor Covenant Code of Conduct](../CODE_OF_CONDUCT.md). Please read it before contributing.
+All contributors are expected to follow the [Contributor Covenant Code of Conduct](https://github.com/dhanavanthesh/formatshield/blob/main/CODE_OF_CONDUCT.md). Please read it before contributing.
 
 ---
 

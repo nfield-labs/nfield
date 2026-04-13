@@ -205,12 +205,8 @@ class LaTeXExporter:
                 if n > 1:
                     std_delta = stdev(deltas)
                     std_overhead = stdev(overheads)
-                    delta_cell = (
-                        f"{mean_delta:.2f} $\\pm$ {std_delta:.2f}"
-                    )
-                    overhead_cell = (
-                        f"{mean_overhead:.2f} $\\pm$ {std_overhead:.2f}"
-                    )
+                    delta_cell = f"{mean_delta:.2f} $\\pm$ {std_delta:.2f}"
+                    overhead_cell = f"{mean_overhead:.2f} $\\pm$ {std_overhead:.2f}"
                 else:
                     delta_cell = f"{mean_delta:.2f}"
                     overhead_cell = f"{mean_overhead:.2f}"
@@ -328,9 +324,7 @@ class LaTeXExporter:
 
         content = "\n".join(lines) + "\n"
         output_path.write_text(content, encoding="utf-8")
-        logger.info(
-            "LaTeXExporter.export_complexity_breakdown: wrote %s", output_path
-        )
+        logger.info("LaTeXExporter.export_complexity_breakdown: wrote %s", output_path)
 
     def generate_paper_tables(
         self,

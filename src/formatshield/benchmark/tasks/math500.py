@@ -42,20 +42,12 @@ class MathAnswer(BaseModel):
 
 _PROBLEMS: list[dict[str, Any]] = [
     {
-        "question": (
-            "Solve the system of equations:\n"
-            "  3x + 2y = 16\n"
-            "  5x - y = 9\n"
-            "Find x and y."
-        ),
+        "question": ("Solve the system of equations:\n  3x + 2y = 16\n  5x - y = 9\nFind x and y."),
         "answer": "x=2, y=5",
         "answer_type": "integer",
     },
     {
-        "question": (
-            "Find all real solutions to the quadratic equation:\n"
-            "  2x² - 7x + 3 = 0"
-        ),
+        "question": ("Find all real solutions to the quadratic equation:\n  2x² - 7x + 3 = 0"),
         "answer": "x=3, x=1/2",
         "answer_type": "fraction",
     },
@@ -85,10 +77,7 @@ _PROBLEMS: list[dict[str, Any]] = [
         "answer_type": "integer",
     },
     {
-        "question": (
-            "Find the derivative of f(x) = 3x⁴ - 5x³ + 2x - 7 and evaluate "
-            "it at x = 2."
-        ),
+        "question": ("Find the derivative of f(x) = 3x⁴ - 5x³ + 2x - 7 and evaluate it at x = 2."),
         "answer": "54",
         "answer_type": "integer",
     },
@@ -110,17 +99,12 @@ _PROBLEMS: list[dict[str, Any]] = [
         "answer_type": "integer",
     },
     {
-        "question": (
-            "Find the area enclosed between the parabola y = x² and the line y = 4."
-        ),
+        "question": ("Find the area enclosed between the parabola y = x² and the line y = 4."),
         "answer": "32/3",
         "answer_type": "fraction",
     },
     {
-        "question": (
-            "Solve for x:\n"
-            "  log₂(x + 3) + log₂(x - 1) = 5"
-        ),
+        "question": ("Solve for x:\n  log₂(x + 3) + log₂(x - 1) = 5"),
         "answer": "5",
         "answer_type": "integer",
     },
@@ -134,10 +118,7 @@ _PROBLEMS: list[dict[str, Any]] = [
         "answer_type": "integer",
     },
     {
-        "question": (
-            "Find the number of integer solutions to the inequality:\n"
-            "  |2x - 5| < 9"
-        ),
+        "question": ("Find the number of integer solutions to the inequality:\n  |2x - 5| < 9"),
         "answer": "9",
         "answer_type": "integer",
     },
@@ -150,10 +131,7 @@ _PROBLEMS: list[dict[str, Any]] = [
         "answer_type": "integer",
     },
     {
-        "question": (
-            "Evaluate the definite integral:\n"
-            "  ∫₁³ (2x² + 3x - 1) dx"
-        ),
+        "question": ("Evaluate the definite integral:\n  ∫₁³ (2x² + 3x - 1) dx"),
         "answer": "32",
         "answer_type": "integer",
     },
@@ -170,6 +148,7 @@ _PROBLEMS: list[dict[str, Any]] = [
 
 # Quick-mode uses the first 5 problems only
 _QUICK_SLICE = 5
+
 
 def _normalise(text: str) -> str:
     """Return a lower-cased, whitespace-stripped comparison string."""

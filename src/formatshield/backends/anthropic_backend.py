@@ -249,9 +249,7 @@ class AnthropicBackend:
                             latency_ms=(time.monotonic() - t0) * 1000,
                         )
         except anthropic.APIError as exc:
-            raise RuntimeError(
-                f"Anthropic API streaming error: {exc}"
-            ) from exc
+            raise RuntimeError(f"Anthropic API streaming error: {exc}") from exc
 
         yield StreamEvent(
             type="complete",

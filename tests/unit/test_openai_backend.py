@@ -55,6 +55,7 @@ def test_openai_backend_requires_api_key() -> None:
     with patch.dict("os.environ", {}, clear=True):
         # Ensure OPENAI_API_KEY is not set
         import os
+
         os.environ.pop("OPENAI_API_KEY", None)
         with pytest.raises(ValueError, match="OPENAI_API_KEY"):
             OpenAIBackend(api_key=None)
