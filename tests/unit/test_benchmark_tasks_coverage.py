@@ -21,7 +21,6 @@ from formatshield.benchmark.tasks.gsm_symbolic import GSMSymbolicTask
 from formatshield.benchmark.tasks.medical_ner import MedicalNERTask, _entity_f1, _token_set
 from formatshield.benchmark.tasks.template_fill import TemplateFillTask
 
-
 # ---------------------------------------------------------------------------
 # Shared helpers
 # ---------------------------------------------------------------------------
@@ -346,7 +345,9 @@ class TestTemplateFillScoring:
     def test_non_dict_predicted_returns_zero(self) -> None:
         """Covers lines 248-250: non-dict predicted → 0.0."""
         task = _template_task()
-        assert task.score_response("not a dict", {"name": "John", "age": 25, "city": "Paris"}) == 0.0
+        assert (
+            task.score_response("not a dict", {"name": "John", "age": 25, "city": "Paris"}) == 0.0
+        )
         assert task.score_response(None, {"name": "John", "age": 25, "city": "Paris"}) == 0.0
 
     def test_empty_ground_truth_returns_one(self) -> None:
@@ -551,8 +552,12 @@ class TestFinancialScoring:
 
     def test_correct_revenue_within_tolerance_returns_one(self) -> None:
         task = _financial_task()
-        predicted = {"revenue_usd": 2_400_000_000.0, "net_income_usd": 312_000_000.0,
-                     "gross_margin_pct": 61.5, "yoy_growth_pct": 18.0}
+        predicted = {
+            "revenue_usd": 2_400_000_000.0,
+            "net_income_usd": 312_000_000.0,
+            "gross_margin_pct": 61.5,
+            "yoy_growth_pct": 18.0,
+        }
         ground_truth = {"expected_revenue": 2_400_000_000.0}
         assert task.score_response(predicted, ground_truth) == pytest.approx(1.0)
 

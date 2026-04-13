@@ -206,9 +206,7 @@ async def test_ollama_generate_response_error_not_found_raises_runtime() -> None
 
     with patch("formatshield.backends.ollama_backend.AsyncClient") as mock_cls:
         mock_client = MagicMock()
-        mock_client.chat = AsyncMock(
-            side_effect=ResponseError("model 'missing-model' not found")
-        )
+        mock_client.chat = AsyncMock(side_effect=ResponseError("model 'missing-model' not found"))
         mock_cls.return_value = mock_client
 
         with pytest.raises(RuntimeError, match="missing-model"):
