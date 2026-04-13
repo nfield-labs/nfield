@@ -1,11 +1,25 @@
-# FormatShield
+<div align="center">
 
-**Prior work shows constrained decoding costs LLMs up to 27% accuracy on reasoning tasks (arXiv 2408.02442).
-FormatShield routes around it automatically — one import.**
+<h1>FormatShield</h1>
+
+<p><strong>Stop losing 15–30% LLM accuracy to JSON constraints. Route automatically. Measure everything.</strong></p>
+
+[![PyPI version](https://badge.fury.io/py/formatshield.svg)](https://badge.fury.io/py/formatshield)
+[![CI](https://github.com/formatshield/formatshield/workflows/CI/badge.svg)](https://github.com/formatshield/formatshield/actions)
+[![Coverage](https://codecov.io/gh/formatshield/formatshield/branch/main/graph/badge.svg)](https://codecov.io/gh/formatshield/formatshield)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 ```bash
 pip install formatshield
 ```
+
+</div>
+
+---
+
+**Grammar-constrained decoding costs LLMs up to 27% accuracy on reasoning tasks** (arXiv 2408.02442). FormatShield routes around it — one import, zero schema changes.
 
 ```python
 import formatshield as fs
@@ -15,24 +29,44 @@ result = await fs.generate(
     schema=ContractObligations,
     model="groq/llama-3.1-70b-versatile"
 )
-# Automatically detected: complex reasoning task → two-pass TTF generation
-# Prior literature: up to 27% accuracy gap from constrained decoding (arXiv 2408.02442)
-# FormatShield measures your pipeline's specific delta and routes accordingly.
+# Complex task detected → two-pass TTF generation (reason free, then format)
+# result.routing.strategy  →  "ttf"
+# result.complexity_score  →  0.82
+# result.parsed            →  ContractObligations(...)  ← typed Pydantic model
 ```
 
 | | Outlines | Instructor | **FormatShield** |
-|--|---------|-----------|--------------|
-| Fixes invalid JSON | ✅ | ✅ | ✅ |
+|--|:-------:|:---------:|:--------------:|
+| Produces valid JSON | ✅ | ✅ | ✅ |
 | Fixes reasoning accuracy loss | ❌ | ❌ | ✅ |
-| Works across backends | partial | ✅ | ✅ |
-| Routes automatically | ❌ | ❌ | ✅ |
-| Generates benchmark tables | ❌ | ❌ | ✅ |
+| Routes direct vs. TTF automatically | ❌ | ❌ | ✅ |
+| Works across all backends | partial | ✅ | ✅ |
+| Generates benchmark tables for your pipeline | ❌ | ❌ | ✅ |
+
+---
+
+## Table of Contents
+
+- [The Problem](#the-problem)
+- [How FormatShield Fixes It](#how-formatshield-fixes-it)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Supported Backends](#supported-backends)
+- [Real-World Use Cases](#real-world-use-cases)
+- [Benchmark Your Pipeline](#benchmark-your-pipeline)
+- [Ecosystem Integrations](#ecosystem-integrations)
+- [Agent Framework Integration](#agent-framework-integration)
+- [Architecture](#architecture-9-components)
+- [The 5 Objections](#why-not-just----the-5-objections)
+- [Research Background](#research-background)
+- [Contributing](#contributing)
+- [Citation](#citation)
 
 ---
 
 ## The Problem
 
-Grammar-constrained decoding — the dominant technique for getting LLMs to produce valid JSON — silently degrades model reasoning.
+Grammar-constrained decoding — the dominant technique for structured LLM output — silently degrades model reasoning.
 
 **arXiv 2408.02442** (EMNLP 2024, "Let Me Speak Freely?") found that forcing JSON output reduces GSM8K accuracy by **27.3 percentage points** compared to unconstrained generation.
 
@@ -68,7 +102,7 @@ Pass 2: constrained  → {"answer": 42, "unit": "dollars", "steps": [...]}
 
 The model reasons freely in Pass 1. Only Pass 2 is constrained — after all reasoning is complete.
 
-**Smart routing:** FormatShield doesn't apply TTF blindly. It scores the complexity of each (prompt, schema) pair and routes to TTF only when the benefit exceeds the overhead.
+**Smart routing:** FormatShield scores each (prompt, schema) pair and routes to TTF only when the benefit exceeds the overhead.
 
 ```python
 # Debug mode shows every routing decision:
@@ -87,16 +121,22 @@ result = await shield.generate(prompt, schema, debug=True)
 ## Installation
 
 ```bash
-# Base (Groq + Ollama + OpenRouter — works on all platforms)
+# Base — Groq + Ollama + OpenRouter (works on all platforms)
 pip install formatshield
+
+# With OpenAI
+pip install formatshield[openai]
+
+# With Anthropic (Claude models)
+pip install formatshield[anthropic]
 
 # With vLLM (Linux + NVIDIA GPU only)
 pip install formatshield[vllm]
 
-# With Outlines
+# With Outlines (local constrained decoding)
 pip install formatshield[outlines]
 
-# With benchmark tools (for running benchmarks and generating paper figures)
+# With benchmark tools
 pip install formatshield[benchmark]
 
 # Everything
@@ -124,7 +164,7 @@ result = await fs.generate(
     model="groq/llama-3.1-70b-versatile"
 )
 
-print(result.parsed.conclusion)       # typed pydantic model
+print(result.parsed.conclusion)       # typed Pydantic model
 print(result.routing.strategy)        # "ttf" or "direct"
 print(result.complexity_score)        # 0.0–1.0
 ```
@@ -164,21 +204,107 @@ async for event in shield.stream(prompt, schema=MySchema):
 
 ## Supported Backends
 
-| Backend | Model string | Platform | Notes |
-|---------|-------------|----------|-------|
-| Groq | `groq/llama-3.1-70b-versatile` | All | Free tier available. Fastest API backend. |
-| OpenRouter | `openrouter/meta-llama/llama-3.1-70b-instruct` | All | Access 100+ models |
-| Ollama | `ollama/llama3.1:70b` | All | Local inference |
-| vLLM | `vllm/meta-llama/Llama-3-70b-Instruct` | Linux+GPU | Native KV cache reuse → <10% TTF overhead |
-| Outlines | `outlines/mistralai/Mistral-7B-v0.1` | Linux+GPU | `pip install formatshield[outlines]` |
+| Backend | Model string | Install | Notes |
+|---------|-------------|---------|-------|
+| **Groq** | `groq/llama-3.1-70b-versatile` | `pip install formatshield` | Free tier. Fastest API inference. |
+| **OpenAI** | `openai/gpt-4o-mini` | `pip install formatshield[openai]` | GPT-4o, o1, o3 series |
+| **Anthropic** | `anthropic/claude-3-5-haiku-20241022` | `pip install formatshield[anthropic]` | Claude 3.5 Sonnet/Haiku/Opus |
+| **OpenRouter** | `openrouter/meta-llama/llama-3.1-70b` | `pip install formatshield` | 100+ models via one API |
+| **Ollama** | `ollama/llama3.1:70b` | `pip install formatshield` | Local inference, any GGUF model |
+| **vLLM** | `vllm/meta-llama/Llama-3-70b-Instruct` | `pip install formatshield[vllm]` | Native KV-cache reuse → <10% TTF overhead |
+| **Outlines** | `outlines/mistralai/Mistral-7B-v0.1` | `pip install formatshield[outlines]` | Local constrained decoding |
 
 ```python
-# Switch backends with one parameter change:
+# Switch backends with one parameter:
 result = await fs.generate(prompt, schema, model="groq/llama-3.1-70b-versatile")
+result = await fs.generate(prompt, schema, model="openai/gpt-4o-mini")
+result = await fs.generate(prompt, schema, model="anthropic/claude-3-5-sonnet-20241022")
 result = await fs.generate(prompt, schema, model="ollama/llama3.1")
 result = await fs.generate(prompt, schema, model="openrouter/anthropic/claude-3.5-sonnet")
 result = await fs.generate(prompt, schema, model="vllm/llama-3-70b", base_url="http://localhost:8000")
 ```
+
+**Native thinker detection:** o1, o3, DeepSeek-R1, Claude-3.5 with extended thinking, and QwQ models are automatically detected and skip TTF (they already think freely).
+
+---
+
+## Real-World Use Cases
+
+### Customer Support — Ticket Triage
+
+```python
+class TicketAnalysis(BaseModel):
+    category: str
+    priority: Literal["LOW", "MEDIUM", "HIGH", "URGENT"]
+    sentiment: float          # 0.0 (angry) – 1.0 (happy)
+    required_actions: list[str]
+    escalate_to_human: bool
+
+result = await fs.generate(
+    prompt=f"Analyze this support ticket: {ticket_text}",
+    schema=TicketAnalysis,
+    model="groq/llama-3.1-70b-versatile"
+)
+# FormatShield routes to direct (template fill, low complexity)
+# result.routing.strategy → "direct"
+```
+
+### RAG Pipeline — Document Fact Extraction
+
+```python
+class DocumentFacts(BaseModel):
+    key_facts: list[str]
+    entities: list[Entity]    # name, type, relevance_score
+    summary: str
+    confidence: float
+
+# Complex multi-entity reasoning → TTF
+result = await fs.generate(prompt=f"Extract facts from: {chunk}", schema=DocumentFacts)
+```
+
+### Financial Analysis — Earnings Call Parsing
+
+```python
+class EarningsAnalysis(BaseModel):
+    revenue_mentioned: bool
+    guidance_raised: bool
+    key_metrics: list[Metric]
+    risks: list[str]
+    analyst_recommendation: str
+
+# Stream the analysis as it generates
+async for event in shield.stream(earnings_transcript, schema=EarningsAnalysis):
+    if event.type == "output":
+        print(event.token, end="", flush=True)
+```
+
+### Legal — Contract Obligation Extraction
+
+```python
+# See examples/contract_extraction.py — full working example
+result = await shield.generate(contract_text, schema=ContractAnalysis)
+# Complexity: 0.82 → routes to TTF → recovers ~18% accuracy
+```
+
+### Medical NER — Clinical Note Parsing
+
+```python
+# See examples/medical_ner.py — HIPAA-aware structured extraction
+result = await shield.generate(clinical_note, schema=ClinicalEntities)
+```
+
+More examples in [`examples/`](examples/):
+
+| Example | Use Case | Routing |
+|---------|---------|---------|
+| [`contract_extraction.py`](examples/contract_extraction.py) | Legal obligation extraction | TTF (complex) |
+| [`medical_ner.py`](examples/medical_ner.py) | Clinical entity recognition | TTF (complex) |
+| [`customer_support.py`](examples/customer_support.py) | Ticket triage & routing | Direct (template) |
+| [`rag_extraction.py`](examples/rag_extraction.py) | RAG structured fact extraction | TTF (complex) |
+| [`financial_analysis.py`](examples/financial_analysis.py) | Earnings call parsing + streaming | TTF (complex) |
+| [`document_classification.py`](examples/document_classification.py) | Multi-label legal doc classification | Direct (low complexity) |
+| [`agent_tool_calling.py`](examples/agent_tool_calling.py) | Agent tool call extraction loop | TTF (complex) |
+| [`fastapi_server.py`](examples/fastapi_server.py) | Production HTTP API server | — |
 
 ---
 
@@ -217,6 +343,46 @@ ollama      | gsm_symbolic | 0.58       | 0.72    | +0.14  | 24%
 
 ---
 
+## Ecosystem Integrations
+
+> FormatShield works with every major inference provider and framework. The list grows as the community adds backends.
+
+**Inference Backends**
+
+| Provider | Status | Install |
+|----------|--------|---------|
+| Groq (LPU) | ✅ Supported | `pip install formatshield` |
+| OpenAI | ✅ Supported | `pip install formatshield[openai]` |
+| Anthropic | ✅ Supported | `pip install formatshield[anthropic]` |
+| OpenRouter (100+ models) | ✅ Supported | `pip install formatshield` |
+| Ollama (local) | ✅ Supported | `pip install formatshield` |
+| vLLM (self-hosted) | ✅ Supported | `pip install formatshield[vllm]` |
+| Outlines (constrained local) | ✅ Supported | `pip install formatshield[outlines]` |
+| Together AI | 🔜 v0.1.0 | — |
+| Fireworks AI | 🔜 v0.1.0 | — |
+| Mistral AI | 🔜 v0.1.0 | — |
+| Cohere | 🔜 Community PR welcome | — |
+
+**Agent Frameworks**
+
+| Framework | Status |
+|-----------|--------|
+| LangChain | 🔜 v0.1.0 (`FormatShieldLLM`) |
+| LangGraph | 🔜 v0.1.0 (node integration) |
+| AutoGen | 🔜 v1.0.0 |
+| CrewAI | Drop-in today (use `FormatShield` as LLM layer) |
+| OpenAI Agents SDK | Drop-in today |
+
+**Schema Libraries**
+
+| Library | Notes |
+|---------|-------|
+| Pydantic v2 | ✅ Native — pass any `BaseModel` subclass directly |
+| JSON Schema (dict) | ✅ Native — pass raw schema dict |
+| Pydantic v1 | ✅ Compatible |
+
+---
+
 ## Agent Framework Integration
 
 FormatShield is transparent to the agent above and the backend below:
@@ -236,33 +402,15 @@ FormatShield is transparent to the agent above and the backend below:
                    ▼
 ┌─────────────────────────────────────┐
 │   ANY LLM BACKEND                   │
-│   (Groq / Ollama / vLLM / OpenAI)  │
+│   (Groq / OpenAI / Anthropic / vLLM)│
 └─────────────────────────────────────┘
 ```
 
 ```python
-# LangChain drop-in:
+# LangChain drop-in (v0.1.0):
 from formatshield.integrations.langchain import FormatShieldLLM
 llm = FormatShieldLLM(model="groq/llama-3.1-70b-versatile")
 chain = prompt_template | llm | output_parser
-```
-
----
-
-## "Why Not Just..." — The 5 Objections
-
-| Objection | Answer |
-|-----------|--------|
-| "Why not Instructor?" | Instructor fixes **invalid JSON** via retry. FormatShield fixes **wrong reasoning**. Root cause, not symptom. |
-| "Why not just prompt better?" | Prompting doesn't fix constrained decoding — it's architectural. The model can't reason freely while inside JSON. |
-| "Why not o1/o3?" | FormatShield detects native thinkers (o1, o3, DeepSeek-R1) and skips TTF automatically. Works on free Groq models for all other cases. |
-| "Will this break my code?" | No. Drop-in at the call site. Your agent, schema, and framework don't change. |
-| "Why not wait for Outlines to add this?" | Outlines is one backend. FormatShield routes across all backends. Different layers. |
-
-**FormatShield + Instructor = the complete stack:**
-```
-Instructor: "Your JSON might be invalid — we'll retry until valid."
-FormatShield: "Your JSON is valid but 23% less accurate — we'll reason first, then format."
 ```
 
 ---
@@ -282,10 +430,28 @@ ComplexityScorer → ThresholdOracle → FailureModeDetector → TTFEngine → B
 3. **CrossBackendBenchmark** — measures format tax per backend, generates paper Table 1
 4. **TTF Engine** — two-pass generation (CRANE pattern, arXiv 2502.09061)
 5. **FailureModeDetector** — 6 checks for when TTF would hurt (simple extraction, schema_too_constrained, native_thinker, short_prompt, template_fill, ambiguous_schema)
-6. **Backend Adapters** — Groq, OpenRouter, Ollama, vLLM, Outlines (same interface, swappable)
+6. **Backend Adapters** — Groq, OpenAI, Anthropic, OpenRouter, Ollama, vLLM, Outlines (same interface, swappable)
 7. **StreamingEngine** — SSE-compatible async generator
 8. **BenchmarkHarness** — runs tasks, generates paper artifacts (CSV, LaTeX, PNG)
 9. **CLI** — `formatshield generate` + `formatshield benchmark`
+
+---
+
+## "Why Not Just..." — The 5 Objections
+
+| Objection | Answer |
+|-----------|--------|
+| "Why not Instructor?" | Instructor fixes **invalid JSON** via retry. FormatShield fixes **wrong reasoning**. Root cause, not symptom. |
+| "Why not just prompt better?" | Prompting doesn't fix constrained decoding — it's architectural. The model can't reason freely while inside JSON. |
+| "Why not o1/o3?" | FormatShield detects native thinkers (o1, o3, DeepSeek-R1, Claude with extended thinking) and skips TTF automatically. Works on free Groq models for all other cases. |
+| "Will this break my code?" | No. Drop-in at the call site. Your agent, schema, and framework don't change. |
+| "Why not wait for Outlines to add this?" | Outlines is one backend. FormatShield routes across all backends. Different layers. |
+
+**FormatShield + Instructor = the complete stack:**
+```
+Instructor:    "Your JSON might be invalid — we'll retry until valid."
+FormatShield:  "Your JSON is valid but 23% less accurate — we'll reason first, then format."
+```
 
 ---
 
@@ -305,15 +471,23 @@ FormatShield is the production implementation of findings from:
 
 ---
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). **5 `good-first-issue` tasks open at launch.** Your name in the paper acknowledgments.
+
+```bash
+git clone https://github.com/formatshield/formatshield
+cd formatshield
+pip install uv
+uv sync --extra dev
+uv run pytest tests/unit/ -v
+```
+
 ## License
 
 MIT — use freely, commercially, academically. No CLA required.
 
 ---
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md). 5 `good-first-issue` tasks open at launch. Your name in the paper acknowledgments.
 
 ## Citation
 

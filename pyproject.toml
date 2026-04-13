@@ -40,12 +40,15 @@ dependencies = [
     "groq>=0.5.0",
     "ollama>=0.1.0",
     "openai>=1.0.0",
+    "anthropic>=0.20.0",
     "numpy>=1.26.0",
     "rich>=13.0.0",
     "python-dotenv>=1.0.0",
 ]
 
 [project.optional-dependencies]
+openai = ["openai>=1.0.0"]
+anthropic = ["anthropic>=0.20.0"]
 vllm = ["vllm>=0.4.0"]
 outlines = ["outlines>=0.0.46"]
 guidance = ["guidance>=0.1.0"]
@@ -64,7 +67,7 @@ dev = [
     "pyright>=1.1.360",
     "pre-commit>=3.7.0",
 ]
-all = ["formatshield[vllm,outlines,guidance,benchmark,dev]"]
+all = ["formatshield[openai,anthropic,vllm,outlines,guidance,benchmark,dev]"]
 
 [project.scripts]
 formatshield = "formatshield.cli:app"

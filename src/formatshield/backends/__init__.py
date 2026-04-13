@@ -1,7 +1,9 @@
 """FormatShield inference backends package."""
 
+from formatshield.backends.anthropic_backend import AnthropicBackend
 from formatshield.backends.groq_backend import GroqBackend
 from formatshield.backends.ollama_backend import OllamaBackend
+from formatshield.backends.openai_backend import OpenAIBackend
 from formatshield.backends.openrouter_backend import OpenRouterBackend
 from formatshield.backends.protocol import (
     Backend,
@@ -13,11 +15,13 @@ from formatshield.backends.protocol import (
 from formatshield.backends.vllm_backend import VLLMBackend
 
 __all__ = [
+    "AnthropicBackend",
     "Backend",
     "BackendName",
     "GroqBackend",
     "ModelFamily",
     "OllamaBackend",
+    "OpenAIBackend",
     "OpenRouterBackend",
     "VLLMBackend",
     "get_backend_name_from_model",
