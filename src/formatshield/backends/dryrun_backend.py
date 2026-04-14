@@ -107,6 +107,15 @@ class DryRunBackend:
         schema: dict | None = None,  # type: ignore[type-arg]
         constraints: str | None = None,
         kv_cache_prefix: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> str:
         """
         Return a deterministic structured response without making any API call.
@@ -129,6 +138,22 @@ class DryRunBackend:
             Pass ``"json"`` to signal that a JSON response is expected.
         kv_cache_prefix:
             Ignored; DryRunBackend does not simulate prefix caching.
+        temperature:
+            Ignored; DryRunBackend uses deterministic generation.
+        top_p:
+            Ignored; DryRunBackend uses deterministic generation.
+        top_k:
+            Ignored; DryRunBackend uses deterministic generation.
+        max_tokens:
+            Ignored; DryRunBackend uses deterministic generation.
+        seed:
+            Ignored; DryRunBackend uses its own internal RNG seed.
+        frequency_penalty:
+            Ignored; DryRunBackend uses deterministic generation.
+        presence_penalty:
+            Ignored; DryRunBackend uses deterministic generation.
+        stop:
+            Ignored; DryRunBackend uses deterministic generation.
 
         Returns
         -------
@@ -151,6 +176,15 @@ class DryRunBackend:
         prompt: str,
         schema: dict | None = None,  # type: ignore[type-arg]
         constraints: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> AsyncIterator[StreamEvent]:
         """
         Stream the response as an async iterator of

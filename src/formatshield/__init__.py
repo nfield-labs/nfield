@@ -30,9 +30,19 @@ try:
 except ImportError:
     pass  # python-dotenv not installed — env vars must be set manually
 
+from formatshield import types as types
 from formatshield.core import FormatShield, GenerationResult, generate
 from formatshield.oracle.routing_decision import RoutingDecision
 from formatshield.scorer.features import BenchmarkResult, ComplexityFeatures, StreamEvent
+from formatshield.types import (
+    cfg as cfg,
+)
+from formatshield.types import (
+    json_schema as json_schema,
+)
+from formatshield.types import (
+    regex as regex,
+)
 
 __version__ = "0.0.1"
 
@@ -44,5 +54,9 @@ __all__ = [
     "RoutingDecision",
     "StreamEvent",
     "__version__",
+    "cfg",
     "generate",
+    "json_schema",
+    "regex",
+    "types",
 ]

@@ -129,6 +129,15 @@ class VLLMBackend:
         schema: dict | None = None,
         constraints: str | None = None,
         kv_cache_prefix: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> str:
         """
         Generate a response using the local vLLM server and return the full
@@ -151,6 +160,24 @@ class VLLMBackend:
         kv_cache_prefix:
             Optional prefix string injected as a system message to enable
             vLLM prefix-caching.
+        temperature:
+            Sampling temperature.  Defaults to ``0`` for deterministic output.
+        top_p:
+            Nucleus sampling probability.  ``None`` defers to the API default.
+        top_k:
+            Ignored; vLLM's OpenAI-compatible endpoint does not expose top-k.
+        max_tokens:
+            Maximum number of tokens to generate.  ``None`` defers to the API
+            default.
+        seed:
+            Random seed for reproducible sampling.  ``None`` defers to the API
+            default.
+        frequency_penalty:
+            Frequency penalty.  ``None`` defers to the API default.
+        presence_penalty:
+            Presence penalty.  ``None`` defers to the API default.
+        stop:
+            Stop sequence(s).  ``None`` defers to the API default.
 
         Returns
         -------
@@ -167,8 +194,21 @@ class VLLMBackend:
         kwargs: dict = {
             "model": self.model,
             "messages": messages,
-            "temperature": 0,
+            "temperature": temperature if temperature is not None else 0,
         }
+
+        if top_p is not None:
+            kwargs["top_p"] = top_p
+        if max_tokens is not None:
+            kwargs["max_tokens"] = max_tokens
+        if seed is not None:
+            kwargs["seed"] = seed
+        if frequency_penalty is not None:
+            kwargs["frequency_penalty"] = frequency_penalty
+        if presence_penalty is not None:
+            kwargs["presence_penalty"] = presence_penalty
+        if stop is not None:
+            kwargs["stop"] = stop
 
         if constraints == "json":
             kwargs["response_format"] = {"type": "json_object"}
@@ -199,6 +239,15 @@ class VLLMBackend:
         prompt: str,
         schema: dict | None = None,
         constraints: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> AsyncIterator[StreamEvent]:
         """
         Stream the model's response as :class:`~formatshield.scorer.features.StreamEvent` objects.
@@ -214,6 +263,24 @@ class VLLMBackend:
             Optional JSON schema dict.
         constraints:
             Pass ``"json"`` to request JSON-mode output.
+        temperature:
+            Sampling temperature.  Defaults to ``0`` for deterministic output.
+        top_p:
+            Nucleus sampling probability.  ``None`` defers to the API default.
+        top_k:
+            Ignored; vLLM's OpenAI-compatible endpoint does not expose top-k.
+        max_tokens:
+            Maximum number of tokens to generate.  ``None`` defers to the API
+            default.
+        seed:
+            Random seed for reproducible sampling.  ``None`` defers to the API
+            default.
+        frequency_penalty:
+            Frequency penalty.  ``None`` defers to the API default.
+        presence_penalty:
+            Presence penalty.  ``None`` defers to the API default.
+        stop:
+            Stop sequence(s).  ``None`` defers to the API default.
 
         Yields
         ------
@@ -225,13 +292,34 @@ class VLLMBackend:
         RuntimeError
             Wraps any :exc:`openai.APIError` with a human-readable message.
         """
-        return self._stream_impl(prompt, schema, constraints)
+        return self._stream_impl(
+            prompt,
+            schema,
+            constraints,
+            temperature=temperature,
+            top_p=top_p,
+            top_k=top_k,
+            max_tokens=max_tokens,
+            seed=seed,
+            frequency_penalty=frequency_penalty,
+            presence_penalty=presence_penalty,
+            stop=stop,
+        )
 
     async def _stream_impl(
         self,
         prompt: str,
         schema: dict | None,
         constraints: str | None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> AsyncIterator[StreamEvent]:
         # Note: kv_cache_prefix is not forwarded to streaming; prefix caching
         # primarily benefits single-shot generation where many requests share
@@ -241,9 +329,22 @@ class VLLMBackend:
         kwargs: dict = {
             "model": self.model,
             "messages": messages,
-            "temperature": 0,
+            "temperature": temperature if temperature is not None else 0,
             "stream": True,
         }
+
+        if top_p is not None:
+            kwargs["top_p"] = top_p
+        if max_tokens is not None:
+            kwargs["max_tokens"] = max_tokens
+        if seed is not None:
+            kwargs["seed"] = seed
+        if frequency_penalty is not None:
+            kwargs["frequency_penalty"] = frequency_penalty
+        if presence_penalty is not None:
+            kwargs["presence_penalty"] = presence_penalty
+        if stop is not None:
+            kwargs["stop"] = stop
 
         if constraints == "json":
             kwargs["response_format"] = {"type": "json_object"}

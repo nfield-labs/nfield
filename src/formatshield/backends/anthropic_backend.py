@@ -118,6 +118,15 @@ class AnthropicBackend:
         schema: dict | None = None,
         constraints: str | None = None,
         kv_cache_prefix: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> str:
         """
         Generate a response and return the full text.
@@ -136,6 +145,23 @@ class AnthropicBackend:
             Pass ``"json"`` to request a JSON-formatted response.
         kv_cache_prefix:
             Ignored; Anthropic does not support prefix caching.
+        temperature:
+            Sampling temperature.  ``None`` defers to the API default.
+        top_p:
+            Nucleus sampling probability.  ``None`` defers to the API default.
+        top_k:
+            Top-k sampling cutoff.  ``None`` defers to the API default.
+        max_tokens:
+            Maximum number of tokens to generate.  Overrides the default of
+            ``4096`` when provided.
+        seed:
+            Ignored; Anthropic does not expose a seed parameter.
+        frequency_penalty:
+            Ignored; Anthropic does not expose a frequency penalty parameter.
+        presence_penalty:
+            Ignored; Anthropic does not expose a presence penalty parameter.
+        stop:
+            Stop sequence(s).  ``None`` defers to the API default.
 
         Returns
         -------
@@ -152,9 +178,18 @@ class AnthropicBackend:
 
         kwargs: dict = {
             "model": self.model,
-            "max_tokens": 4096,
+            "max_tokens": max_tokens if max_tokens is not None else 4096,
             "messages": [{"role": "user", "content": prompt}],
         }
+
+        if temperature is not None:
+            kwargs["temperature"] = temperature
+        if top_p is not None:
+            kwargs["top_p"] = top_p
+        if top_k is not None:
+            kwargs["top_k"] = top_k
+        if stop is not None:
+            kwargs["stop_sequences"] = [stop] if isinstance(stop, str) else stop
 
         if system_prompt is not None:
             kwargs["system"] = system_prompt
@@ -188,6 +223,15 @@ class AnthropicBackend:
         prompt: str,
         schema: dict | None = None,
         constraints: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> AsyncIterator[StreamEvent]:
         """
         Stream the model's response as
@@ -204,6 +248,23 @@ class AnthropicBackend:
             Optional JSON schema dict.
         constraints:
             Pass ``"json"`` to request a JSON-formatted response.
+        temperature:
+            Sampling temperature.  ``None`` defers to the API default.
+        top_p:
+            Nucleus sampling probability.  ``None`` defers to the API default.
+        top_k:
+            Top-k sampling cutoff.  ``None`` defers to the API default.
+        max_tokens:
+            Maximum number of tokens to generate.  Overrides the default of
+            ``4096`` when provided.
+        seed:
+            Ignored; Anthropic does not expose a seed parameter.
+        frequency_penalty:
+            Ignored; Anthropic does not expose a frequency penalty parameter.
+        presence_penalty:
+            Ignored; Anthropic does not expose a presence penalty parameter.
+        stop:
+            Stop sequence(s).  ``None`` defers to the API default.
 
         Yields
         ------
@@ -215,21 +276,51 @@ class AnthropicBackend:
         RuntimeError
             Wraps any :exc:`anthropic.APIError` with a human-readable message.
         """
-        return self._stream_impl(prompt, schema, constraints)
+        return self._stream_impl(
+            prompt,
+            schema,
+            constraints,
+            temperature=temperature,
+            top_p=top_p,
+            top_k=top_k,
+            max_tokens=max_tokens,
+            seed=seed,
+            frequency_penalty=frequency_penalty,
+            presence_penalty=presence_penalty,
+            stop=stop,
+        )
 
     async def _stream_impl(
         self,
         prompt: str,
         schema: dict | None,
         constraints: str | None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> AsyncIterator[StreamEvent]:
         system_prompt = self._build_system_prompt(schema, constraints)
 
         kwargs: dict = {
             "model": self.model,
-            "max_tokens": 4096,
+            "max_tokens": max_tokens if max_tokens is not None else 4096,
             "messages": [{"role": "user", "content": prompt}],
         }
+
+        if temperature is not None:
+            kwargs["temperature"] = temperature
+        if top_p is not None:
+            kwargs["top_p"] = top_p
+        if top_k is not None:
+            kwargs["top_k"] = top_k
+        if stop is not None:
+            kwargs["stop_sequences"] = [stop] if isinstance(stop, str) else stop
 
         if system_prompt is not None:
             kwargs["system"] = system_prompt

@@ -103,6 +103,15 @@ class OllamaBackend:
         schema: dict | None = None,
         constraints: str | None = None,
         kv_cache_prefix: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> str:
         """
         Generate a response using the local Ollama server and return the full
@@ -122,6 +131,24 @@ class OllamaBackend:
             *schema* check.
         kv_cache_prefix:
             Ignored; Ollama does not support prefix caching.
+        temperature:
+            Sampling temperature.  Defaults to ``0`` for deterministic output.
+        top_p:
+            Nucleus sampling probability.  ``None`` defers to the Ollama default.
+        top_k:
+            Top-k sampling cutoff.  ``None`` defers to the Ollama default.
+        max_tokens:
+            Maximum number of tokens to generate.  Passed as ``num_predict``
+            to Ollama.  ``None`` defers to the Ollama default.
+        seed:
+            Random seed for reproducible sampling.  ``None`` defers to the
+            Ollama default.
+        frequency_penalty:
+            Ignored; Ollama does not expose a frequency penalty parameter.
+        presence_penalty:
+            Ignored; Ollama does not expose a presence penalty parameter.
+        stop:
+            Stop sequence(s).  ``None`` defers to the Ollama default.
 
         Returns
         -------
@@ -137,10 +164,22 @@ class OllamaBackend:
         client = AsyncClient(host=self.host)
         messages = self._build_messages(prompt, schema, constraints)
 
+        options: dict = {"temperature": temperature if temperature is not None else 0}
+        if top_p is not None:
+            options["top_p"] = top_p
+        if top_k is not None:
+            options["top_k"] = top_k
+        if max_tokens is not None:
+            options["num_predict"] = max_tokens
+        if seed is not None:
+            options["seed"] = seed
+        if stop is not None:
+            options["stop"] = [stop] if isinstance(stop, str) else stop
+
         kwargs: dict = {
             "model": self.model,
             "messages": messages,
-            "options": {"temperature": 0},
+            "options": options,
         }
 
         if schema:
@@ -172,6 +211,15 @@ class OllamaBackend:
         prompt: str,
         schema: dict | None = None,
         constraints: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> AsyncIterator[StreamEvent]:
         """
         Stream the model's response as :class:`~formatshield.scorer.features.StreamEvent` objects.
@@ -187,6 +235,23 @@ class OllamaBackend:
             Optional JSON schema dict.  When present, JSON-mode is activated.
         constraints:
             Optional constraint hint string.
+        temperature:
+            Sampling temperature.  Defaults to ``0`` for deterministic output.
+        top_p:
+            Nucleus sampling probability.  ``None`` defers to the Ollama default.
+        top_k:
+            Top-k sampling cutoff.  ``None`` defers to the Ollama default.
+        max_tokens:
+            Maximum number of tokens to generate.  Passed as ``num_predict``.
+            ``None`` defers to the Ollama default.
+        seed:
+            Random seed.  ``None`` defers to the Ollama default.
+        frequency_penalty:
+            Ignored; Ollama does not expose a frequency penalty parameter.
+        presence_penalty:
+            Ignored; Ollama does not expose a presence penalty parameter.
+        stop:
+            Stop sequence(s).  ``None`` defers to the Ollama default.
 
         Yields
         ------
@@ -198,22 +263,55 @@ class OllamaBackend:
         RuntimeError
             Wraps :exc:`ollama.ResponseError` with a human-readable message.
         """
-        return self._stream_impl(prompt, schema, constraints)
+        return self._stream_impl(
+            prompt,
+            schema,
+            constraints,
+            temperature=temperature,
+            top_p=top_p,
+            top_k=top_k,
+            max_tokens=max_tokens,
+            seed=seed,
+            frequency_penalty=frequency_penalty,
+            presence_penalty=presence_penalty,
+            stop=stop,
+        )
 
     async def _stream_impl(
         self,
         prompt: str,
         schema: dict | None,
         constraints: str | None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> AsyncIterator[StreamEvent]:
         client = AsyncClient(host=self.host)
         messages = self._build_messages(prompt, schema, constraints)
+
+        options: dict = {"temperature": temperature if temperature is not None else 0}
+        if top_p is not None:
+            options["top_p"] = top_p
+        if top_k is not None:
+            options["top_k"] = top_k
+        if max_tokens is not None:
+            options["num_predict"] = max_tokens
+        if seed is not None:
+            options["seed"] = seed
+        if stop is not None:
+            options["stop"] = [stop] if isinstance(stop, str) else stop
 
         kwargs: dict = {
             "model": self.model,
             "messages": messages,
             "stream": True,
-            "options": {"temperature": 0},
+            "options": options,
         }
 
         if schema:

@@ -113,6 +113,15 @@ class TogetherBackend:
         schema: dict[str, Any] | None = None,
         constraints: str | None = None,
         kv_cache_prefix: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> str:
         """Generate a response and return the full text.
 
@@ -125,6 +134,14 @@ class TogetherBackend:
             schema: Optional JSON schema dict.
             constraints: Pass ``"json"`` to activate JSON response mode.
             kv_cache_prefix: Ignored; Together AI does not support prefix caching.
+            temperature: Sampling temperature. Defaults to ``0``.
+            top_p: Nucleus sampling probability. ``None`` defers to the API default.
+            top_k: Ignored; Together AI OpenAI-compat endpoint does not expose top-k.
+            max_tokens: Maximum tokens to generate. ``None`` defers to the API default.
+            seed: Random seed. ``None`` defers to the API default.
+            frequency_penalty: Frequency penalty. ``None`` defers to the API default.
+            presence_penalty: Presence penalty. ``None`` defers to the API default.
+            stop: Stop sequence(s). ``None`` defers to the API default.
 
         Returns:
             The model's response text.
@@ -140,8 +157,21 @@ class TogetherBackend:
         kwargs: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
-            "temperature": 0,
+            "temperature": temperature if temperature is not None else 0,
         }
+
+        if top_p is not None:
+            kwargs["top_p"] = top_p
+        if max_tokens is not None:
+            kwargs["max_tokens"] = max_tokens
+        if seed is not None:
+            kwargs["seed"] = seed
+        if frequency_penalty is not None:
+            kwargs["frequency_penalty"] = frequency_penalty
+        if presence_penalty is not None:
+            kwargs["presence_penalty"] = presence_penalty
+        if stop is not None:
+            kwargs["stop"] = stop
 
         if constraints == "json":
             kwargs["response_format"] = {"type": "json_object"}
@@ -168,6 +198,15 @@ class TogetherBackend:
         prompt: str,
         schema: dict[str, Any] | None = None,
         constraints: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> AsyncIterator[StreamEvent]:
         """Stream the model's response as StreamEvent objects.
 
@@ -178,6 +217,14 @@ class TogetherBackend:
             prompt: The user prompt.
             schema: Optional JSON schema dict.
             constraints: Pass ``"json"`` to activate JSON response mode.
+            temperature: Sampling temperature. Defaults to ``0``.
+            top_p: Nucleus sampling probability. ``None`` defers to the API default.
+            top_k: Ignored; Together AI does not expose top-k.
+            max_tokens: Maximum tokens to generate. ``None`` defers to the API default.
+            seed: Random seed. ``None`` defers to the API default.
+            frequency_penalty: Frequency penalty. ``None`` defers to the API default.
+            presence_penalty: Presence penalty. ``None`` defers to the API default.
+            stop: Stop sequence(s). ``None`` defers to the API default.
 
         Yields:
             Incremental output tokens followed by a final complete event.
@@ -185,13 +232,34 @@ class TogetherBackend:
         Raises:
             RuntimeError: Wraps any Together AI API error with a human-readable message.
         """
-        return self._stream_impl(prompt, schema, constraints)
+        return self._stream_impl(
+            prompt,
+            schema,
+            constraints,
+            temperature=temperature,
+            top_p=top_p,
+            top_k=top_k,
+            max_tokens=max_tokens,
+            seed=seed,
+            frequency_penalty=frequency_penalty,
+            presence_penalty=presence_penalty,
+            stop=stop,
+        )
 
     async def _stream_impl(
         self,
         prompt: str,
         schema: dict[str, Any] | None,
         constraints: str | None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> AsyncIterator[StreamEvent]:
         import openai  # type: ignore[import-not-found]
 
@@ -200,9 +268,22 @@ class TogetherBackend:
         kwargs: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
-            "temperature": 0,
+            "temperature": temperature if temperature is not None else 0,
             "stream": True,
         }
+
+        if top_p is not None:
+            kwargs["top_p"] = top_p
+        if max_tokens is not None:
+            kwargs["max_tokens"] = max_tokens
+        if seed is not None:
+            kwargs["seed"] = seed
+        if frequency_penalty is not None:
+            kwargs["frequency_penalty"] = frequency_penalty
+        if presence_penalty is not None:
+            kwargs["presence_penalty"] = presence_penalty
+        if stop is not None:
+            kwargs["stop"] = stop
 
         if constraints == "json":
             kwargs["response_format"] = {"type": "json_object"}

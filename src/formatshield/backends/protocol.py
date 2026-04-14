@@ -61,6 +61,15 @@ class Backend(Protocol):
         schema: dict | None = None,
         constraints: str | None = None,
         kv_cache_prefix: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> str:
         """
         Generate a response for *prompt* and return the full text.
@@ -80,6 +89,27 @@ class Backend(Protocol):
             Optional prefix string to prepend as a system message.  When
             provided by a backend that supports prefix caching (e.g. vLLM),
             the prefix's KV activations can be reused across requests.
+        temperature:
+            Sampling temperature.  ``None`` defers to the backend default.
+        top_p:
+            Nucleus sampling probability.  ``None`` defers to the backend default.
+        top_k:
+            Top-k sampling cutoff.  ``None`` defers to the backend default.
+        max_tokens:
+            Maximum number of tokens to generate.  ``None`` defers to the
+            backend default.
+        seed:
+            Random seed for reproducible sampling.  ``None`` defers to the
+            backend default.
+        frequency_penalty:
+            Penalty for token frequency (OpenAI-compatible).  ``None``
+            defers to the backend default.
+        presence_penalty:
+            Penalty for token presence (OpenAI-compatible).  ``None``
+            defers to the backend default.
+        stop:
+            Stop sequence(s).  Generation halts when any stop string is
+            produced.  ``None`` defers to the backend default.
 
         Returns
         -------
@@ -93,6 +123,15 @@ class Backend(Protocol):
         prompt: str,
         schema: dict | None = None,
         constraints: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> AsyncIterator[StreamEvent]:
         """
         Stream the model's response as an async iterator of :class:`StreamEvent`.
@@ -109,6 +148,26 @@ class Backend(Protocol):
         constraints:
             Optional constraint hint string.  Same semantics as in
             :meth:`generate`.
+        temperature:
+            Sampling temperature.  ``None`` defers to the backend default.
+        top_p:
+            Nucleus sampling probability.  ``None`` defers to the backend default.
+        top_k:
+            Top-k sampling cutoff.  ``None`` defers to the backend default.
+        max_tokens:
+            Maximum number of tokens to generate.  ``None`` defers to the
+            backend default.
+        seed:
+            Random seed for reproducible sampling.  ``None`` defers to the
+            backend default.
+        frequency_penalty:
+            Penalty for token frequency (OpenAI-compatible).  ``None``
+            defers to the backend default.
+        presence_penalty:
+            Penalty for token presence (OpenAI-compatible).  ``None``
+            defers to the backend default.
+        stop:
+            Stop sequence(s).  ``None`` defers to the backend default.
 
         Yields
         ------
