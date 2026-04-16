@@ -120,6 +120,7 @@ ignore = [
     "RUF003", # EN DASH / unicode in comments — intentional range notation
     "A002",   # LangChain interface requires `input` parameter name
     "PT012",  # async generators must be iterated to trigger ImportError — no single-statement alternative
+    "A005",   # formatshield.types is intentional — shadows stdlib types module by design
 ]
 
 [tool.ruff.lint.per-file-ignores]
