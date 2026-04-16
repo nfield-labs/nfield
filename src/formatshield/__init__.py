@@ -33,9 +33,13 @@ except ImportError:
 from typing import Any
 
 from formatshield import types as types
+from formatshield._version import __version__
+from formatshield.caching import cache, clear_cache, disable_cache, make_cache_key
 from formatshield.core import FormatShield, GenerationResult, generate
+from formatshield.dsl import IterableModel, Maybe, MaybeResult, Partial
 from formatshield.generator import AsyncFormatShieldGenerator, FormatShieldGenerator
 from formatshield.oracle.routing_decision import RoutingDecision
+from formatshield.prompting import Chat, Template, few_shot
 from formatshield.scorer.features import BenchmarkResult, ComplexityFeatures, StreamEvent
 from formatshield.types import (
     cfg as cfg,
@@ -46,8 +50,6 @@ from formatshield.types import (
 from formatshield.types import (
     regex as regex,
 )
-
-__version__ = "0.1.0"
 
 
 def from_provider(model: str, **kwargs: Any) -> FormatShield:
@@ -73,17 +75,28 @@ def from_provider(model: str, **kwargs: Any) -> FormatShield:
 __all__ = [
     "AsyncFormatShieldGenerator",
     "BenchmarkResult",
+    "Chat",
     "ComplexityFeatures",
     "FormatShield",
     "FormatShieldGenerator",
     "GenerationResult",
+    "IterableModel",
+    "Maybe",
+    "MaybeResult",
+    "Partial",
     "RoutingDecision",
     "StreamEvent",
+    "Template",
     "__version__",
+    "cache",
     "cfg",
+    "clear_cache",
+    "disable_cache",
+    "few_shot",
     "from_provider",
     "generate",
     "json_schema",
+    "make_cache_key",
     "regex",
     "types",
 ]

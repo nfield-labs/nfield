@@ -54,6 +54,7 @@ dependencies = [
     "numpy>=1.26.0",
     "rich>=13.0.0",
     "python-dotenv>=1.0.0",
+    "diskcache>=5.6.3",
 ]
 
 [project.optional-dependencies]
@@ -66,6 +67,9 @@ together = ["openai>=1.0.0"]  # TogetherBackend uses openai SDK with custom base
 vllm = ["vllm>=0.4.0"]
 outlines = ["outlines>=0.0.46"]
 guidance = ["guidance>=0.1.0"]
+cache = ["diskcache>=5.6.0", "cloudpickle>=3.0.0"]
+prompting = ["jinja2>=3.1.0"]
+dsl = []  # DSL types use stdlib only — no extra deps required
 benchmark = [
     "matplotlib>=3.8.0",
     "seaborn>=0.13.0",
@@ -87,7 +91,7 @@ dev = [
     "pre-commit>=3.7.0",
     "bandit>=1.9.4",
 ]
-all = ["formatshield[openai,anthropic,cohere,mistral,fireworks,together,vllm,outlines,guidance,benchmark,docs,dev]"]
+all = ["formatshield[openai,anthropic,cohere,mistral,fireworks,together,vllm,outlines,guidance,cache,prompting,benchmark,docs,dev]"]
 
 [project.scripts]
 formatshield = "formatshield.cli:app"
@@ -121,6 +125,7 @@ ignore = [
     "A002",   # LangChain interface requires `input` parameter name
     "PT012",  # async generators must be iterated to trigger ImportError — no single-statement alternative
     "A005",   # formatshield.types is intentional — shadows stdlib types module by design
+    "S701",   # Jinja2 autoescape=False intentional — prompts are plain text, not HTML/XML
 ]
 
 [tool.ruff.lint.per-file-ignores]
