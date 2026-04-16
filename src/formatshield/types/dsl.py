@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 import re
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import EnumMeta
 from typing import Any, Union, get_args, get_origin
@@ -14,12 +13,12 @@ _logger = logging.getLogger(__name__)
 # ── Base Term ─────────────────────────────────────────────────────────────────
 
 
-class Term(ABC):
+class Term:
     """Base class for all output type constraints."""
 
-    @abstractmethod
     def __repr__(self) -> str:
         """Return a developer-friendly string representation."""
+        return f"{type(self).__name__}()"
 
     def __or__(self, other: Term | str) -> Alternatives:
         """Create an Alternatives constraint from self and other."""
@@ -553,7 +552,7 @@ def python_types_to_terms(ptype: Any, recursion_depth: int = 0) -> Term:
 
     # Enum → Choice of values
     if isinstance(ptype, EnumMeta):
-        return Choice([e.value for e in ptype])
+        return Choice([member.value for member in ptype])  # type: ignore[attr-defined]
 
     # Pydantic BaseModel
     try:

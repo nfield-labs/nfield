@@ -1,0 +1,37 @@
+{
+  "total_results": 15,
+  "backends": [
+    "groq"
+  ],
+  "tasks": [
+    "gsm_symbolic",
+    "medical_ner",
+    "template_fill"
+  ],
+  "groups": [
+    {
+      "backend": "groq",
+      "task": "gsm_symbolic",
+      "n": 5,
+      "mean_accuracy_delta": 0.0,
+      "mean_overhead_pct": 204.88,
+      "mean_complexity_score": 0.82
+    },
+    {
+      "backend": "groq",
+      "task": "medical_ner",
+      "n": 5,
+      "mean_accuracy_delta": -0.025,
+      "mean_overhead_pct": 755.83,
+      "mean_complexity_score": 0.68
+    },
+    {
+      "backend": "groq",
+      "task": "template_fill",
+      "n": 5,
+      "mean_accuracy_delta": 0.0,
+      "mean_overhead_pct": 1238.06,
+      "mean_complexity_score": 0.15
+    }
+  ]
+}

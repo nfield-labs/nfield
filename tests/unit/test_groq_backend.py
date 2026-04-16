@@ -153,8 +153,13 @@ async def test_groq_generate_with_schema_embeds_system_prompt() -> None:
 
 
 @pytest.mark.asyncio
-async def test_groq_generate_schema_with_json_constraint_no_system_prompt() -> None:
-    """generate(schema=..., constraints='json') skips schema system prompt."""
+async def test_groq_generate_schema_with_json_constraint_has_system_prompt() -> None:
+    """generate(schema=..., constraints='json') includes a system message with JSON instructions.
+
+    Groq API requires the word 'json' in the messages when response_format=json_object
+    is set.  The backend always prepends a system message containing the schema
+    (or a generic JSON instruction) to satisfy this requirement.
+    """
     with patch.dict("os.environ", {"GROQ_API_KEY": "gsk-test"}):
         backend = GroqBackend()
 
@@ -168,9 +173,12 @@ async def test_groq_generate_schema_with_json_constraint_no_system_prompt() -> N
     await backend.generate("Extract name", schema=schema, constraints="json")
 
     messages = create_mock.call_args.kwargs["messages"]
-    # With constraints="json", schema is NOT embedded in a system message
+    # With constraints="json", a system message is prepended so Groq's
+    # response_format=json_object requirement is satisfied.
     roles = [m["role"] for m in messages]
-    assert roles == ["user"]
+    assert roles == ["system", "user"]
+    # The system message must contain "json" (Groq API requirement)
+    assert "json" in messages[0]["content"].lower()
 
 
 @pytest.mark.asyncio

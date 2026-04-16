@@ -133,12 +133,57 @@ def benchmark(
     }
     models = {b: default_models.get(b, f"{b}/default") for b in backend_list}
 
+    # Build real backend instances from available API keys
+    import os
+
+    def _strip_prefix(model_str: str) -> str:
+        return model_str.split("/", 1)[1] if "/" in model_str else model_str
+
+    backend_objects: dict[str, object] = {}
+    for backend_name in backend_list:
+        if backend_name == "groq":
+            api_key = os.environ.get("GROQ_API_KEY", "")
+            if api_key:
+                from formatshield.backends.groq_backend import GroqBackend
+
+                backend_objects["groq"] = GroqBackend(
+                    api_key=api_key, model=_strip_prefix(models[backend_name])
+                )
+                console.print(
+                    f"[green]Using real Groq backend: {models[backend_name]}[/green]"
+                )
+            else:
+                console.print(
+                    "[yellow]GROQ_API_KEY not set — using DryRunBackend for groq[/yellow]"
+                )
+        elif backend_name == "openai":
+            api_key = os.environ.get("OPENAI_API_KEY", "")
+            if api_key:
+                from formatshield.backends.openai_backend import OpenAIBackend
+
+                backend_objects["openai"] = OpenAIBackend(
+                    api_key=api_key, model=_strip_prefix(models[backend_name])
+                )
+        elif backend_name == "anthropic":
+            api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+            if api_key:
+                from formatshield.backends.anthropic_backend import AnthropicBackend
+
+                backend_objects["anthropic"] = AnthropicBackend(
+                    api_key=api_key, model=_strip_prefix(models[backend_name])
+                )
+        elif backend_name == "dryrun":
+            from formatshield.backends.dryrun_backend import DryRunBackend
+
+            backend_objects["dryrun"] = DryRunBackend()
+
     async def _run() -> None:
         results = await harness.run(
             tasks=task_list,
             backends=backend_list,
             models=models,
             quick=quick,
+            backend_objects=backend_objects if backend_objects else None,
         )
         artifacts = harness.generate_artifacts(results)
 

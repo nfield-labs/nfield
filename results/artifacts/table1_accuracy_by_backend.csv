@@ -1,0 +1,4 @@
+backend,task,n_problems,mean_direct_accuracy,mean_ttf_accuracy,mean_accuracy_delta,mean_direct_latency_ms,mean_ttf_latency_ms,mean_overhead_pct,mean_complexity_score
+groq,gsm_symbolic,5,1.0,1.0,0.0,512.6,1525.0,204.88,0.82
+groq,medical_ner,5,0.2,0.175,-0.025,375.0,3221.8,755.83,0.68
+groq,template_fill,5,0.0667,0.0667,0.0,231.0,3037.6,1238.06,0.15

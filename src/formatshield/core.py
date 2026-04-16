@@ -21,12 +21,13 @@ Usage::
 from __future__ import annotations
 
 import asyncio
+import enum
 import json
 import logging
 import time
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any, Literal, get_args, get_origin
 
 from pydantic import BaseModel, ValidationError
 
@@ -38,6 +39,9 @@ from formatshield.oracle.threshold_oracle import ThresholdOracle
 from formatshield.scorer.complexity_scorer import ComplexityScorer
 from formatshield.scorer.features import ComplexityFeatures, StreamEvent
 from formatshield.ttf.failure_detector import FailureModeDetector
+
+if TYPE_CHECKING:
+    from formatshield.generator import AsyncFormatShieldGenerator, FormatShieldGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +58,7 @@ class GenerationResult:
     output: str
     """Raw JSON string returned by the backend."""
 
-    parsed: BaseModel | dict[str, Any] | None
+    parsed: BaseModel | dict[str, Any] | Any | None
     """Parsed Pydantic model instance (or plain dict) if schema was provided."""
 
     thinking: str | None
@@ -104,6 +108,89 @@ class GenerationResult:
             "schema_valid": self.schema_valid,
             "fallback_triggered": self.fallback_triggered,
         }
+
+
+# ---------------------------------------------------------------------------
+# output_type helpers
+# ---------------------------------------------------------------------------
+
+
+def _build_schema_from_output_type(output_type: type[Any]) -> dict[str, Any]:
+    """Derive a JSON Schema dict from a Python output type annotation.
+
+    Supports: int, float, bool, str, Enum subclasses, Literal[...], list[T].
+
+    Args:
+        output_type: A Python type or type annotation.
+
+    Returns:
+        JSON Schema dict suitable for constrained generation.
+    """
+    # bool must come before int — issubclass(bool, int) is True
+    if output_type is bool:
+        return {"type": "boolean"}
+    if output_type is int:
+        return {"type": "integer"}
+    if output_type is float:
+        return {"type": "number"}
+    if output_type is str:
+        return {"type": "string"}
+    if isinstance(output_type, type) and issubclass(output_type, enum.Enum):
+        values = [e.value for e in output_type]
+        type_name = type(values[0]).__name__ if values else "string"
+        return {"type": type_name, "enum": values}
+    origin = get_origin(output_type)
+    if origin is Literal:
+        return {"enum": list(get_args(output_type))}
+    if origin is list:
+        args = get_args(output_type)
+        item_schema = _build_schema_from_output_type(args[0]) if args else {}
+        return {"type": "array", "items": item_schema}
+    return {}
+
+
+def _cast_parsed(raw_output: str, output_type: type[Any]) -> Any:
+    """Cast raw JSON string to the requested Python output type.
+
+    Args:
+        raw_output: Raw JSON string from the backend.
+        output_type: Target Python type.
+
+    Returns:
+        Value cast to output_type, or raw_output string on parse failure.
+
+    Raises:
+        ValueError: If output is a Literal type but value not in allowed set.
+    """
+    try:
+        value = json.loads(raw_output)
+    except (json.JSONDecodeError, ValueError):
+        return raw_output
+    # bool before int — issubclass(bool, int) is True
+    if output_type is bool:
+        return bool(value)
+    if output_type is int:
+        return int(value)
+    if output_type is float:
+        return float(value)
+    if output_type is str:
+        return str(value)
+    if isinstance(output_type, type) and issubclass(output_type, enum.Enum):
+        return output_type(value)
+    origin = get_origin(output_type)
+    if origin is Literal:
+        allowed = get_args(output_type)
+        if value in allowed:
+            return value
+        raise ValueError(
+            f"Output {value!r} is not in the allowed Literal values: {list(allowed)}"
+        )
+    if origin is list:
+        args = get_args(output_type)
+        if args:
+            return [_cast_parsed(json.dumps(item), args[0]) for item in value]
+        return value
+    return value
 
 
 # ---------------------------------------------------------------------------
@@ -256,9 +343,36 @@ class FormatShield:
         self,
         prompt: str,
         schema: type[BaseModel] | dict[str, Any] | None = None,
+        output_type: type[Any] | None = None,
         debug: bool | None = None,
+        *,
+        temperature: float | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> GenerationResult:
-        """Generate structured output, routing between TTF and direct."""
+        """Generate structured output, routing between TTF and direct.
+
+        Args:
+            prompt: The user prompt.
+            schema: Pydantic model class or JSON Schema dict for output structure.
+            output_type: Python type to cast the output to (int, float, bool, str,
+                Enum subclass, Literal[...], or list[T]). When provided and schema
+                is None, a JSON Schema is auto-derived from the type.
+            debug: Override instance-level debug flag for this call.
+            temperature: Sampling temperature passed to the backend.
+            max_tokens: Maximum tokens to generate.
+            seed: RNG seed for reproducible sampling.
+            top_p: Nucleus sampling probability.
+            top_k: Top-k sampling cutoff.
+            frequency_penalty: Frequency penalty (OpenAI-compatible).
+            presence_penalty: Presence penalty (OpenAI-compatible).
+            stop: Stop sequence(s).
+        """
         t_start = time.monotonic()
         use_debug = self._debug if debug is None else debug
 
@@ -272,6 +386,10 @@ class FormatShield:
                 schema_dict = schema.model_json_schema()
             elif isinstance(schema, dict):
                 schema_dict = schema
+
+        # output_type: derive schema if not already provided
+        if output_type is not None and schema_dict is None:
+            schema_dict = _build_schema_from_output_type(output_type) or None
 
         # Complexity scoring
         features: ComplexityFeatures = self._scorer.score(
@@ -334,7 +452,17 @@ class FormatShield:
             except Exception as exc:
                 logger.warning("FormatShield: TTF failed (%s), falling back to direct", exc)
                 output = await self._backend.generate(
-                    prompt, schema=schema_dict, constraints="json" if schema_dict else None
+                    prompt,
+                    schema=schema_dict,
+                    constraints="json" if schema_dict else None,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    seed=seed,
+                    top_p=top_p,
+                    top_k=top_k,
+                    frequency_penalty=frequency_penalty,
+                    presence_penalty=presence_penalty,
+                    stop=stop,
                 )
                 fallback_triggered = True
         else:
@@ -342,10 +470,18 @@ class FormatShield:
                 prompt,
                 schema=schema_dict,
                 constraints="json" if schema_dict else None,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                seed=seed,
+                top_p=top_p,
+                top_k=top_k,
+                frequency_penalty=frequency_penalty,
+                presence_penalty=presence_penalty,
+                stop=stop,
             )
 
         # Parse + validate
-        parsed: BaseModel | dict[str, Any] | None = None
+        parsed: BaseModel | dict[str, Any] | Any | None = None
         schema_valid = False
 
         if output:
@@ -354,6 +490,15 @@ class FormatShield:
                     parsed = schema_model.model_validate_json(output)
                     schema_valid = True
                 except (ValidationError, ValueError):
+                    try:
+                        parsed = json.loads(output)
+                    except (json.JSONDecodeError, ValueError):
+                        parsed = None
+            elif output_type is not None:
+                try:
+                    parsed = _cast_parsed(output, output_type)
+                    schema_valid = True
+                except (ValueError, TypeError):
                     try:
                         parsed = json.loads(output)
                     except (json.JSONDecodeError, ValueError):
@@ -404,12 +549,36 @@ class FormatShield:
         self,
         prompt: str,
         schema: type[BaseModel] | dict[str, Any] | None = None,
+        output_type: type[Any] | None = None,
         debug: bool | None = None,
+        *,
+        temperature: float | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> GenerationResult:
         """Synchronous wrapper around :meth:`generate`.
 
         Safe to call from both sync code and from within an already-running
         event loop (e.g. pytest-asyncio, Jupyter) by running in a new thread.
+
+        Args:
+            prompt: The user prompt.
+            schema: Pydantic model class or JSON Schema dict.
+            output_type: Python type to cast output to (int, Enum, Literal, list[T]).
+            debug: Override instance-level debug flag.
+            temperature: Sampling temperature.
+            max_tokens: Maximum tokens to generate.
+            seed: RNG seed for reproducible sampling.
+            top_p: Nucleus sampling probability.
+            top_k: Top-k sampling cutoff.
+            frequency_penalty: Frequency penalty.
+            presence_penalty: Presence penalty.
+            stop: Stop sequence(s).
         """
         import threading
 
@@ -428,7 +597,22 @@ class FormatShield:
                 asyncio.set_event_loop(new_loop)
                 try:
                     result_holder.append(
-                        new_loop.run_until_complete(self.generate(prompt, schema, debug))
+                        new_loop.run_until_complete(
+                            self.generate(
+                                prompt,
+                                schema,
+                                output_type,
+                                debug,
+                                temperature=temperature,
+                                max_tokens=max_tokens,
+                                seed=seed,
+                                top_p=top_p,
+                                top_k=top_k,
+                                frequency_penalty=frequency_penalty,
+                                presence_penalty=presence_penalty,
+                                stop=stop,
+                            )
+                        )
                     )
                 except Exception as exc:
                     error_holder.append(exc)
@@ -445,7 +629,22 @@ class FormatShield:
                 return result_holder[0]
             raise TimeoutError("generate_sync timed out after 120 seconds")
         else:
-            return asyncio.run(self.generate(prompt, schema, debug))
+            return asyncio.run(
+                self.generate(
+                    prompt,
+                    schema,
+                    output_type,
+                    debug,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    seed=seed,
+                    top_p=top_p,
+                    top_k=top_k,
+                    frequency_penalty=frequency_penalty,
+                    presence_penalty=presence_penalty,
+                    stop=stop,
+                )
+            )
 
     # ------------------------------------------------------------------
     # Streaming
@@ -490,6 +689,60 @@ class FormatShield:
                 prompt, schema=schema_dict, constraints="json" if schema_dict else None
             ):
                 yield event
+
+    # ------------------------------------------------------------------
+    # Generator factories
+    # ------------------------------------------------------------------
+
+    def generator(
+        self,
+        schema: type[BaseModel] | dict[str, Any] | None = None,
+        output_type: type[Any] | None = None,
+    ) -> FormatShieldGenerator:
+        """Create a reusable synchronous generator with cached schema state.
+
+        Schema features (depth, constraint count) are scored once at construction.
+        Only prompt features recompute on each call.
+
+        Args:
+            schema: JSON Schema dict or Pydantic model class.
+            output_type: Python type to cast output to (int, Enum, Literal, list[T]).
+
+        Returns:
+            :class:`~formatshield.generator.FormatShieldGenerator` bound to this shield.
+
+        Example::
+
+            gen = shield.generator(output_type=int)
+            result = gen("What is 2+2?")
+        """
+        from formatshield.generator import FormatShieldGenerator
+
+        return FormatShieldGenerator(self, schema=schema, output_type=output_type)
+
+    def async_generator(
+        self,
+        schema: type[BaseModel] | dict[str, Any] | None = None,
+        output_type: type[Any] | None = None,
+    ) -> AsyncFormatShieldGenerator:
+        """Create a reusable async generator with cached schema state.
+
+        Args:
+            schema: JSON Schema dict or Pydantic model class.
+            output_type: Python type to cast output to (int, Enum, Literal, list[T]).
+
+        Returns:
+            :class:`~formatshield.generator.AsyncFormatShieldGenerator` bound to this shield.
+
+        Example::
+
+            gen = shield.async_generator(output_type=int)
+            result = await gen("What is 2+2?")
+            results = await gen.batch(["Q1", "Q2"], max_concurrency=5)
+        """
+        from formatshield.generator import AsyncFormatShieldGenerator
+
+        return AsyncFormatShieldGenerator(self, schema=schema, output_type=output_type)
 
     # ------------------------------------------------------------------
     # Config loading
@@ -550,6 +803,16 @@ async def generate(
     prompt: str,
     schema: type[BaseModel] | dict[str, Any] | None = None,
     model: str = "groq/llama-3.3-70b-versatile",
+    output_type: type[Any] | None = None,
+    *,
+    temperature: float | None = None,
+    max_tokens: int | None = None,
+    seed: int | None = None,
+    top_p: float | None = None,
+    top_k: int | None = None,
+    frequency_penalty: float | None = None,
+    presence_penalty: float | None = None,
+    stop: list[str] | str | None = None,
     **kwargs: Any,
 ) -> GenerationResult:
     """One-liner API: ``result = await fs.generate(prompt, MySchema, model='groq/llama3')``.
@@ -562,8 +825,38 @@ async def generate(
         Pydantic model class or JSON Schema dict.
     model:
         Model identifier in ``"provider/model"`` format.
+    output_type:
+        Python type to cast the output to (int, Enum, Literal, list[T]).
+    temperature:
+        Sampling temperature passed to the backend.
+    max_tokens:
+        Maximum tokens to generate.
+    seed:
+        RNG seed for reproducible sampling.
+    top_p:
+        Nucleus sampling probability.
+    top_k:
+        Top-k sampling cutoff.
+    frequency_penalty:
+        Frequency penalty (OpenAI-compatible).
+    presence_penalty:
+        Presence penalty (OpenAI-compatible).
+    stop:
+        Stop sequence(s).
     **kwargs:
         Additional keyword arguments forwarded to :class:`FormatShield`.
     """
     shield = FormatShield(model=model, **kwargs)
-    return await shield.generate(prompt, schema)
+    return await shield.generate(
+        prompt,
+        schema,
+        output_type=output_type,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        seed=seed,
+        top_p=top_p,
+        top_k=top_k,
+        frequency_penalty=frequency_penalty,
+        presence_penalty=presence_penalty,
+        stop=stop,
+    )

@@ -81,12 +81,31 @@ class GroqBackend:
         schema: dict | None,
         constraints: str | None,
     ) -> list[dict]:
-        """Assemble the OpenAI-compatible messages list."""
+        """Assemble the OpenAI-compatible messages list.
+
+        When JSON mode is requested (constraints == "json"), a system message
+        is always prepended so that the messages contain the word "json" —
+        a hard Groq API requirement for response_format=json_object.
+        """
         messages: list[dict] = []
 
-        if schema and constraints != "json":
-            # Embed the schema description into a system message so the model
-            # is aware of the expected output structure even without JSON mode.
+        if constraints == "json":
+            # Groq requires the word "json" in the messages when using JSON mode.
+            if schema:
+                schema_text = json.dumps(schema, indent=2)
+                system_content = (
+                    "Respond with valid JSON that conforms to the following "
+                    f"JSON schema:\n\n{schema_text}\n\n"
+                    "Return only the JSON object with no surrounding text."
+                )
+            else:
+                system_content = (
+                    "Respond with valid JSON only. "
+                    "Return only the JSON object with no surrounding text."
+                )
+            messages.append({"role": "system", "content": system_content})
+        elif schema:
+            # No JSON mode — embed schema description so model understands structure.
             schema_text = json.dumps(schema, indent=2)
             messages.append(
                 {

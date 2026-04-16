@@ -8,6 +8,17 @@ and [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.0] — Stage 1 complete
+
+### Added
+- `py.typed` marker — FormatShield is now PEP 561 compliant (typed package)
+- `output_type` parameter on `FormatShield.generate()` and `generate_sync()`: pass `int`, `float`, `bool`, `str`, `Enum`, `Literal[...]`, or `list[T]` to get auto-typed results without writing a schema
+- Sampling parameter pass-through on all generate calls: `temperature`, `max_tokens`, `seed`, `top_p`, `top_k`, `frequency_penalty`, `presence_penalty`, `stop`
+- `FormatShieldGenerator` — reusable synchronous generator object (schema cached at construction, reused across calls)
+- `AsyncFormatShieldGenerator` — async generator with `batch()` supporting `max_concurrency` for rate-limit-safe parallel calls
+- `FormatShield.generator()` and `FormatShield.async_generator()` factory methods
+- `from_provider(model, **kwargs)` unified factory — auto-detects provider from model string prefix
+
 ### Added
 
 - **CohereBackend** — optional `cohere>=5.0.0` backend with JSON-mode and streaming support
