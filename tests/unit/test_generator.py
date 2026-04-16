@@ -1,4 +1,5 @@
 """Unit tests for FormatShieldGenerator and AsyncFormatShieldGenerator — no API keys."""
+
 from __future__ import annotations
 
 import pytest

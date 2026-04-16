@@ -1,4 +1,5 @@
 """Unit tests for output_type casting in core.py — no API keys required."""
+
 from __future__ import annotations
 
 import enum

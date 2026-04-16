@@ -182,9 +182,7 @@ def _cast_parsed(raw_output: str, output_type: type[Any]) -> Any:
         allowed = get_args(output_type)
         if value in allowed:
             return value
-        raise ValueError(
-            f"Output {value!r} is not in the allowed Literal values: {list(allowed)}"
-        )
+        raise ValueError(f"Output {value!r} is not in the allowed Literal values: {list(allowed)}")
     if origin is list:
         args = get_args(output_type)
         if args:

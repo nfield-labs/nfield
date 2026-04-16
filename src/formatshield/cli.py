@@ -149,9 +149,7 @@ def benchmark(
                 backend_objects["groq"] = GroqBackend(
                     api_key=api_key, model=_strip_prefix(models[backend_name])
                 )
-                console.print(
-                    f"[green]Using real Groq backend: {models[backend_name]}[/green]"
-                )
+                console.print(f"[green]Using real Groq backend: {models[backend_name]}[/green]")
             else:
                 console.print(
                     "[yellow]GROQ_API_KEY not set — using DryRunBackend for groq[/yellow]"
