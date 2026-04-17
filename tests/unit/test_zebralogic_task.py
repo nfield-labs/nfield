@@ -161,3 +161,45 @@ def test_zebralogic_score_list_field(predicted_ranking: list[str], expected_scor
     ground_truth = {"ranking": ["A", "B", "C", "D", "E"]}
     payload = json.dumps({"ranking": predicted_ranking, "reasoning": "tournament"})
     assert score_response(payload, ground_truth) == expected_score
+
+
+# ---------------------------------------------------------------------------
+# score_response — additional edge cases (uncovered lines)
+# ---------------------------------------------------------------------------
+
+
+def test_zebralogic_score_json_list_not_dict() -> None:
+    """JSON that parses to a list (not dict) must score 0.0 — covers line 300."""
+    ground_truth = {"min_crossings": 7}
+    payload = json.dumps([1, 2, 3])
+    assert score_response(payload, ground_truth) == 0.0
+
+
+def test_zebralogic_score_all_reasoning_fields() -> None:
+    """ground_truth with only 'reasoning' key yields 0.0 — covers line 305."""
+    ground_truth = {"reasoning": "some explanation"}
+    payload = json.dumps({"reasoning": "some explanation"})
+    assert score_response(payload, ground_truth) == 0.0
+
+
+def test_zebralogic_score_numeric_conversion_error() -> None:
+    """predicted_val that can't be int-converted scores 0 — covers lines 320-321."""
+    ground_truth = {"min_crossings": 7}
+    payload = json.dumps({"min_crossings": "not-a-number", "reasoning": "bad"})
+    assert score_response(payload, ground_truth) == 0.0
+
+
+def test_zebralogic_score_nested_dict_partial_credit() -> None:
+    """Nested dict ground truth gives 0.5 partial credit — covers lines 325-328."""
+    ground_truth = {"wins": {"A": 4, "B": 3}}
+    payload = json.dumps({"wins": {"A": 4, "B": 3}, "reasoning": "correct"})
+    result = score_response(payload, ground_truth)
+    assert result == 0.5
+
+
+def test_zebralogic_score_nested_dict_not_predicted_as_dict() -> None:
+    """Nested dict ground truth with non-dict predicted gives 0.0."""
+    ground_truth = {"wins": {"A": 4}}
+    payload = json.dumps({"wins": "A wins everything", "reasoning": "wrong"})
+    result = score_response(payload, ground_truth)
+    assert result == 0.0

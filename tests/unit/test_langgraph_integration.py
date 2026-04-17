@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import inspect
 from typing import Any
 
@@ -118,3 +119,39 @@ def test_langgraph_node_default_model_string() -> None:
     """Default model string is the expected Groq model."""
     sig = inspect.signature(FormatShieldNode.__init__)
     assert sig.parameters["model"].default == "groq/llama-3.3-70b-versatile"
+
+
+def test_langgraph_node_init_direct() -> None:
+    """Calling __init__ directly covers lines 65-71."""
+    backend = DryRunBackend()
+    node = FormatShieldNode(model="dryrun/test", backend=backend)
+    assert node.model == "dryrun/test"
+    assert node._prompt_key == "prompt"
+    assert node._output_key == "response"
+    assert node._schema is None
+
+
+def test_langgraph_node_init_custom_keys() -> None:
+    """__init__ stores custom prompt_key and output_key."""
+    backend = DryRunBackend()
+    node = FormatShieldNode(
+        model="dryrun/test",
+        backend=backend,
+        prompt_key="question",
+        output_key="answer",
+    )
+    assert node._prompt_key == "question"
+    assert node._output_key == "answer"
+
+
+def test_langgraph_node_ainvoke_async() -> None:
+    """ainvoke() returns a dict with the output key — covers lines 97-99."""
+    node = _make_node()
+
+    async def _run() -> dict[str, Any]:
+        return await node.ainvoke({"prompt": "What is 2+2?"})
+
+    result = asyncio.run(_run())
+    assert isinstance(result, dict)
+    assert "response" in result
+    assert isinstance(result["response"], str)

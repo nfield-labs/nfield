@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import inspect
 from typing import Any
 
@@ -122,4 +123,52 @@ def test_autogen_generate_sync_with_schema_override() -> None:
     client = _make_client()
     schema: dict[str, Any] = {"type": "object", "properties": {"answer": {"type": "string"}}}
     output = client.generate_sync("What is 2+2?", schema=schema)
+    assert isinstance(output, str)
+
+
+def test_autogen_init_direct() -> None:
+    """Calling __init__ directly with dryrun/test covers lines 58-62."""
+    backend = DryRunBackend()
+    client = FormatShieldAutoGen(model="dryrun/test", backend=backend)
+    assert client.model == "dryrun/test"
+    assert client._schema is None
+
+
+def test_autogen_init_with_schema() -> None:
+    """__init__ stores the schema kwarg correctly."""
+    backend = DryRunBackend()
+    schema: dict[str, Any] = {"type": "string"}
+    client = FormatShieldAutoGen(model="dryrun/test", backend=backend, schema=schema)
+    assert client._schema is schema
+
+
+def test_autogen_generate_async() -> None:
+    """generate() (async) returns a string — covers lines 100-102."""
+    client = _make_client()
+
+    async def _run() -> str:
+        return await client.generate("What is 2+2?")
+
+    result = asyncio.run(_run())
+    assert isinstance(result, str)
+
+
+def test_autogen_create_no_user_role_fallback() -> None:
+    """create() falls back to last message when no user-role exists — covers line 127."""
+    client = _make_client()
+    messages = [
+        {"role": "system", "content": "You are an assistant."},
+        {"role": "assistant", "content": "I am ready."},
+    ]
+    result = client.create(messages)
+    assert "choices" in result
+    assert isinstance(result["choices"][0]["message"]["content"], str)
+
+
+def test_autogen_create_uses_instance_schema() -> None:
+    """generate_sync() uses _schema when no schema kwarg is passed."""
+    backend = DryRunBackend()
+    schema: dict[str, Any] = {"type": "object", "properties": {"x": {"type": "string"}}}
+    client = FormatShieldAutoGen(model="dryrun/test", backend=backend, schema=schema)
+    output = client.generate_sync("test prompt")
     assert isinstance(output, str)
