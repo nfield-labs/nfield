@@ -45,8 +45,6 @@ class TestGetBackendNameFromModel:
         [
             "unknown_provider/some-model",
             "azure/gpt-4",
-            "huggingface/llama-2",
-            "bedrock/claude",
         ],
     )
     def test_unknown_prefix_returns_openrouter(self, model_id: str) -> None:

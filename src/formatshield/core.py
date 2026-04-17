@@ -270,9 +270,45 @@ def _build_backend(
         return TogetherBackend(api_key=api_key, model=model_name)
 
     if backend_name == "fireworks":
-        from formatshield.backends.openrouter_backend import OpenRouterBackend
+        from formatshield.backends.fireworks_backend import FireworksBackend
 
-        return OpenRouterBackend(api_key=api_key, model=f"fireworks/{model_name}")
+        return FireworksBackend(api_key=api_key, model=model_name)
+
+    if backend_name == "gemini":
+        from formatshield.backends.gemini_backend import GeminiBackend
+
+        return GeminiBackend(api_key=api_key, model=model_name)
+
+    if backend_name == "sglang":
+        from formatshield.backends.sglang_backend import SGLangBackend
+
+        url = base_url or "http://localhost:30000/v1"
+        return SGLangBackend(base_url=url, model=model_name)
+
+    if backend_name == "transformers":
+        from formatshield.backends.transformers_backend import TransformersBackend
+
+        return TransformersBackend(model=model_name)
+
+    if backend_name == "llamacpp":
+        from formatshield.backends.llamacpp_backend import LlamaCppBackend
+
+        return LlamaCppBackend(model=model_name)
+
+    if backend_name == "bedrock":
+        from formatshield.backends.bedrock_backend import BedrockBackend
+
+        return BedrockBackend(model=model_name)
+
+    if backend_name == "vertexai":
+        from formatshield.backends.vertexai_backend import VertexAIBackend
+
+        return VertexAIBackend(model=model_name)
+
+    if backend_name == "cerebras":
+        from formatshield.backends.cerebras_backend import CerebrasBackend
+
+        return CerebrasBackend(api_key=api_key, model=model_name)
 
     # Fallback: OpenRouter handles most OpenAI-compatible APIs
     from formatshield.backends.openrouter_backend import OpenRouterBackend

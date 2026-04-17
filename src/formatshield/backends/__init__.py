@@ -5,11 +5,19 @@ Core backends (always available):
     AnthropicBackend, VLLMBackend, DryRunBackend
 
 Optional backends (require extras):
-    CohereBackend   — pip install 'formatshield[cohere]'
-    MistralBackend  — pip install 'formatshield[mistral]'
-    TogetherBackend — pip install 'formatshield[together]'
-    OutlinesBackend — pip install 'formatshield[outlines]'
-    GuidanceBackend — pip install 'formatshield[guidance]'
+    CohereBackend        — pip install 'formatshield[cohere]'
+    MistralBackend       — pip install 'formatshield[mistral]'
+    TogetherBackend      — pip install 'formatshield[together]'
+    OutlinesBackend      — pip install 'formatshield[outlines]'
+    GuidanceBackend      — pip install 'formatshield[guidance]'
+    GeminiBackend        — pip install 'formatshield[gemini]'
+    SGLangBackend        — pip install 'formatshield[sglang]'
+    TransformersBackend  — pip install 'formatshield[transformers]'
+    LlamaCppBackend      — pip install 'formatshield[llamacpp]'
+    BedrockBackend       — pip install 'formatshield[bedrock]'
+    VertexAIBackend      — pip install 'formatshield[vertexai]'
+    CerebrasBackend      — pip install 'formatshield[cerebras]'
+    FireworksBackend     — pip install 'formatshield[fireworks]'
 """
 
 from formatshield.backends.anthropic_backend import AnthropicBackend

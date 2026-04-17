@@ -26,6 +26,13 @@ BackendName = Literal[
     "openai",
     "anthropic",
     "fireworks",
+    "gemini",
+    "sglang",
+    "transformers",
+    "llamacpp",
+    "bedrock",
+    "vertexai",
+    "cerebras",
 ]
 """Union of all recognised backend identifiers."""
 
@@ -228,6 +235,14 @@ _PREFIX_TO_BACKEND: dict[str, BackendName] = {
     "openai": "openai",
     "anthropic": "anthropic",
     "fireworks": "fireworks",
+    "gemini": "gemini",
+    "sglang": "sglang",
+    "transformers": "transformers",
+    "hf": "transformers",
+    "llamacpp": "llamacpp",
+    "bedrock": "bedrock",
+    "vertexai": "vertexai",
+    "cerebras": "cerebras",
 }
 
 # Mapping of model id sub-strings to ModelFamily
