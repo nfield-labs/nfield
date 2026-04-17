@@ -35,6 +35,12 @@ from formatshield.scorer.features import BenchmarkResult
 
 logger = logging.getLogger(__name__)
 
+# Tasks where an LLM judge produces more accurate scores than rule-based
+# heuristics (mathematical equivalence, semantic SQL, legal paraphrase, …).
+_JUDGE_TASKS: frozenset[str] = frozenset(
+    {"gsm_symbolic", "gsm", "math500", "legal_extract", "sql_extraction", "zebralogic"}
+)
+
 
 # ---------------------------------------------------------------------------
 # Deterministic helpers (real logic — not simulation)
@@ -163,12 +169,14 @@ class BenchmarkHarness:
         self,
         output_dir: Path = Path("benchmark_results"),
         seed: int = 42,
+        judge: Any | None = None,
     ) -> None:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         (self.output_dir / "raw").mkdir(exist_ok=True)
         (self.output_dir / "artifacts").mkdir(exist_ok=True)
         self._seed = seed
+        self._judge = judge
         # Keep _rng for backwards compatibility with callers that inspect it
         self._rng = random.Random(seed)  # noqa: S311 — seeded for reproducibility, not cryptography
         logger.info("BenchmarkHarness initialised, output_dir=%s", self.output_dir)
@@ -248,6 +256,7 @@ class BenchmarkHarness:
             )
 
             # --- TTF run ---
+            ttf_raw = ""
             t0_ttf = time.monotonic()
             try:
                 _, ttf_raw = await engine.generate(prompt, schema=schema_dict)
@@ -260,6 +269,7 @@ class BenchmarkHarness:
             ttf_latency = (time.monotonic() - t0_ttf) * 1000.0
 
             # --- Direct run ---
+            direct_raw = ""
             t0_direct = time.monotonic()
             try:
                 direct_raw = await effective_backend.generate(
@@ -278,8 +288,20 @@ class BenchmarkHarness:
             direct_latency = max(direct_latency, 0.001)
 
             # --- Score both responses ---
-            ttf_score = task.score_response(ttf_response, ground_truth)
-            direct_score = task.score_response(direct_response, ground_truth)
+            # For tasks where rule-based scoring is insufficient (math, SQL,
+            # legal), use the LLM judge when one is configured.
+            if self._judge is not None and task_name in _JUDGE_TASKS:
+                ttf_correct = await self._judge.ajudge(
+                    task_name, prompt, str(ground_truth), ttf_raw
+                )
+                direct_correct = await self._judge.ajudge(
+                    task_name, prompt, str(ground_truth), direct_raw
+                )
+                ttf_score = 1.0 if ttf_correct else 0.0
+                direct_score = 1.0 if direct_correct else 0.0
+            else:
+                ttf_score = task.score_response(ttf_response, ground_truth)
+                direct_score = task.score_response(direct_response, ground_truth)
 
             # --- Compute derived metrics ---
             accuracy_delta = ttf_score - direct_score
