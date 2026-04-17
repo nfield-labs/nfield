@@ -247,7 +247,7 @@ def make_cache_key(*args: Any, **kwargs: Any) -> str:
     def _serialize(obj: Any) -> Any:
         if isinstance(obj, dict):
             return {k: _serialize(v) for k, v in sorted(obj.items())}
-        if isinstance(obj, (list, tuple)):
+        if isinstance(obj, list | tuple):
             return [_serialize(v) for v in obj]
         try:
             json.dumps(obj)
