@@ -54,6 +54,7 @@ build/
 
 # llms/
 .claude/
+claude.md
 
 #data
 examples-repo/
