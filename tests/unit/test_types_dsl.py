@@ -1,5 +1,7 @@
 """Tests for the FormatShield type DSL."""
 
+import dataclasses
+
 import pytest
 
 from formatshield.types.dsl import (
@@ -477,3 +479,189 @@ def test_radd_operator():
     a = Regex(r"\d+")
     result = "prefix" + a  # type: ignore[operator]
     assert isinstance(result, Sequence)
+
+
+# --- Uncovered lines: matches/validate/from_file/to_regex edge cases ---
+
+
+def test_term_validate_success_returns_value() -> None:
+    """validate() returns the value when it matches — covers line 100."""
+    r = Regex(r"\d+")
+    result = r.validate("123")
+    assert result == "123"
+
+
+def test_term_matches_exception_returns_false() -> None:
+    """matches() catches exceptions from to_regex — covers lines 83-84.
+
+    JsonSchema raises TypeError in to_regex, so matches() must return False.
+    """
+    js = JsonSchema({"type": "object"})
+    # to_regex(js) raises TypeError; matches() must catch it and return False
+    assert js.matches("anything") is False
+
+
+def test_cfg_from_file(tmp_path) -> None:
+    """CFG.from_file() reads grammar from a file — covers lines 142-143."""
+    grammar_file = tmp_path / "test.lark"
+    grammar_file.write_text("start: 'hello'")
+    result = CFG.from_file(str(grammar_file))
+    assert isinstance(result, CFG)
+    assert "hello" in result.definition
+
+
+def test_json_schema_from_file(tmp_path) -> None:
+    """JsonSchema.from_file() reads schema from a file — covers lines 185-186."""
+    import json
+
+    schema_file = tmp_path / "schema.json"
+    schema_file.write_text(json.dumps({"type": "string"}))
+    result = JsonSchema.from_file(str(schema_file))
+    assert isinstance(result, JsonSchema)
+
+
+def test_json_schema_init_with_type() -> None:
+    """JsonSchema.__init__ with a Pydantic model class — covers line 168."""
+    from pydantic import BaseModel
+
+    class MyModel(BaseModel):
+        name: str
+        age: int
+
+    js = JsonSchema(MyModel)
+    assert isinstance(js, JsonSchema)
+    assert "name" in js.schema
+
+
+def test_to_regex_quantify_minimum() -> None:
+    """to_regex handles QuantifyMinimum — covers line 459."""
+    term = at_least(2, Regex(r"\d"))
+    pattern = to_regex(term)
+    assert "{2,}" in pattern
+
+
+def test_to_regex_quantify_maximum() -> None:
+    """to_regex handles QuantifyMaximum — covers line 461."""
+    term = at_most(5, Regex(r"\d"))
+    pattern = to_regex(term)
+    assert "{0,5}" in pattern
+
+
+def test_to_regex_unknown_type_raises() -> None:
+    """to_regex raises TypeError for unknown Term — covers line 471."""
+
+    class FakeTerm:
+        pass
+
+    with pytest.raises(TypeError, match="Unknown Term type"):
+        to_regex(FakeTerm())  # type: ignore[arg-type]
+
+
+def test_python_types_to_terms_dict_type() -> None:
+    """dict type → JsonSchema({type: object}) — covers line 595."""
+    result = python_types_to_terms(dict)
+    assert isinstance(result, JsonSchema)
+    assert "object" in result.schema
+
+
+def test_python_types_to_terms_list_with_inner() -> None:
+    """list[int] → JsonSchema array — covers lines 599-607."""
+    result = python_types_to_terms(list[int])
+    assert isinstance(result, JsonSchema)
+    assert "array" in result.schema
+
+
+def test_python_types_to_terms_list_no_args() -> None:
+    """list without type args hits the array branch with no inner — covers line 607.
+
+    list[str] where inner is not JsonSchema falls through; bare list raises TypeError.
+    """
+    # list[str] → str is a Regex, not JsonSchema → returns plain array JsonSchema
+    result = python_types_to_terms(list[str])
+    assert isinstance(result, JsonSchema)
+
+
+def test_python_types_to_terms_unknown_type_raises() -> None:
+    """Unknown type raises TypeError — covers line 613."""
+
+    class MyWeirdThing:
+        pass
+
+    with pytest.raises(TypeError, match="Cannot convert"):
+        python_types_to_terms(MyWeirdThing)  # type: ignore[arg-type]
+
+
+def test_python_types_to_terms_dataclass() -> None:
+    """Dataclass type → JsonSchema — covers lines 569-579."""
+
+    @dataclasses.dataclass
+    class Point:
+        x: float
+        y: float
+
+    result = python_types_to_terms(Point)
+    assert isinstance(result, JsonSchema)
+    assert "object" in result.schema
+
+
+def test_json_schema_init_with_dataclass_covers_schema_from_type() -> None:
+    """JsonSchema(DataclassType) triggers _schema_from_type's dataclass branch — covers 639-650."""
+
+    @dataclasses.dataclass
+    class Coord:
+        x: float
+        y: float
+
+    js = JsonSchema(Coord)
+    assert isinstance(js, JsonSchema)
+    assert "object" in js.schema
+
+
+def test_json_schema_init_non_type_triggers_type_error_branch() -> None:
+    """JsonSchema with a non-type non-str non-dict falls into _schema_from_type.
+
+    issubclass(42, BaseModel) raises TypeError → except branch covers lines 639-640.
+    """
+    js = JsonSchema(42)  # type: ignore[arg-type]
+    assert isinstance(js, JsonSchema)
+    assert "object" in js.schema
+
+
+def test_python_types_to_terms_plain_dict_instance() -> None:
+    """A plain dict instance → JsonSchema — covers line 610-611."""
+    result = python_types_to_terms({"type": "string"})  # type: ignore[arg-type]
+    assert isinstance(result, JsonSchema)
+
+
+def test_python_types_to_terms_typed_dict() -> None:
+    """TypedDict → JsonSchema — covers lines 583-591."""
+    from typing import TypedDict
+
+    class Point(TypedDict):
+        x: int
+        y: int
+
+    result = python_types_to_terms(Point)
+    assert isinstance(result, JsonSchema)
+    assert "object" in result.schema
+
+
+def test_python_types_to_terms_list_of_dict() -> None:
+    """list[dict] → JsonSchema array with items — covers lines 602-606."""
+    result = python_types_to_terms(list[dict])
+    assert isinstance(result, JsonSchema)
+    import json
+
+    schema = json.loads(result.schema)
+    assert schema.get("type") == "array"
+    assert "items" in schema
+
+
+def test_python_types_to_terms_list_of_str() -> None:
+    """list[str] where inner is Regex → plain array schema — covers line 607."""
+    result = python_types_to_terms(list[str])
+    assert isinstance(result, JsonSchema)
+    import json
+
+    schema = json.loads(result.schema)
+    assert schema.get("type") == "array"

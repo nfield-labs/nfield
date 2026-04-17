@@ -298,3 +298,25 @@ def test_few_shot_custom_keys() -> None:
 def test_few_shot_empty_list() -> None:
     result = few_shot([])
     assert result == ""
+
+
+def test_template_filter_schema_with_non_basemodel_type() -> None:
+    """schema filter with a type that is NOT a BaseModel covers lines 92-97."""
+    import dataclasses
+
+    @dataclasses.dataclass
+    class Coord:
+        x: float
+        y: float
+
+    tmpl = Template.from_string("{{ t | schema }}")
+    result = tmpl(t=Coord)
+    # Should produce some JSON-like output
+    assert "{" in result
+
+
+def test_template_filter_schema_fallback_for_plain_object() -> None:
+    """schema filter fallback when obj has no schema method — covers lines 98-105."""
+    tmpl = Template.from_string("{{ val | schema }}")
+    result = tmpl(val=42)
+    assert "object" in result
