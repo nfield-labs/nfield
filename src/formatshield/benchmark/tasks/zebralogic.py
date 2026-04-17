@@ -311,7 +311,7 @@ def score_response(predicted: str, ground_truth: Any) -> float:
             # Lists: check if they match exactly (order matters for rankings).
             if [str(x).lower() for x in predicted_val] == [str(x).lower() for x in expected]:
                 correct += 1
-        elif isinstance(expected, (int, float)):
+        elif isinstance(expected, int | float):
             # Numbers: allow for string representation.
             if predicted_val is not None:
                 try:
