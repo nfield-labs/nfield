@@ -8,6 +8,28 @@ and [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] — Stage 4: Production Hardening
+
+### Added
+- **TokenUsage dataclass** (`scorer/features.py`) — tracks `input_tokens`, `output_tokens`, `cached_tokens`, `total_tokens` (auto-computed), `ttft_ms`, `forward_passes`; `to_dict()` for serialisation
+- **GenerationResult** extended with `token_usage: TokenUsage | None` and `cost_usd: float | None` fields; both included in `model_dump()`
+- **Hook system** (`formatshield.hooks`) — `Hooks` class with `on()`, `off()`, `clear()`, `emit()`, `handler_count()`, `events()`; four lifecycle constants: `HOOK_COMPLETION_KWARGS`, `HOOK_COMPLETION_RESPONSE`, `HOOK_COMPLETION_ERROR`, `HOOK_PARSE_ERROR`; sync and async handler support; exceptions in handlers are logged and never propagated
+- **FormatShield.hooks** parameter — pass a `Hooks` instance at construction; `completion:kwargs`, `completion:response`, and `completion:error` events are fired automatically on every `generate()` call
+- **Reask / retry** (`_retry.py`) — `FailedAttempt` NamedTuple records each failed generation attempt; `FormatShieldRetryException` carries full attempt history; `build_reask_prompt()` constructs corrective prompts that feed back the invalid output and validation error
+- **TTFEngine reask** — `max_reasks` parameter (default 2); on validation failure the engine retries up to `max_reasks` times with corrective prompts before falling back to direct generation
+- **LLM Judge** (`benchmark/judge.py`) — `build_judge_prompt()` with 8 task-specific rubrics (gsm, medical_ner, legal_extract, financial, classification, gpqa, zebralogic, math500); `parse_verdict()` with reversal detection; `LLMJudge` class with SHA256 cache, optional disk persistence, sync `judge()` and async `ajudge()`
+- **PrometheusMetrics** (`observability/metrics.py`) — real `prometheus_client` Counters and Histograms with graceful fallback to `MetricsCollector`; `serve_metrics(port)` and `generate_metrics_text()` module helpers; metric names: `formatshield_routing_decisions_total`, `formatshield_generation_latency_ms`, `formatshield_schema_validation_failures_total`, `formatshield_fallback_activations_total`, `formatshield_accuracy_delta`
+- **OpenTelemetry tracing** (`observability/otel.py`) — `FormatShieldTracer` with `generation_span()` context manager and `set_result_attributes()`; `_NoOpSpan` fallback when `opentelemetry-api` is not installed; `get_tracer()` module-level singleton
+- **Batch API** (`formatshield.batch`) — `BatchProcessor` with `submit()`, `status()`, `results()`, `cancel()`; `BatchJobInfo`, `BatchSuccess`, `BatchError`, `BatchStatus` types; `asyncio.Semaphore` concurrency control; SHA256 job IDs
+- **CLI batch commands** — `formatshield batch submit`, `formatshield batch status`, `formatshield batch results`
+- **CLI score command** — `formatshield score` outputs complexity score without generating
+- Optional dependency groups: `prometheus = ["prometheus-client>=0.17.0"]`, `otel = ["opentelemetry-api>=1.20.0", "opentelemetry-sdk>=1.20.0"]`, `batch = []`
+
+### Tests
+- 151 new unit tests covering all Stage 4 components (Groups F, G, K, M, N)
+- Total unit test count: 1730 passing, 3 skipped
+- Coverage: 84.07% (above 80% threshold)
+
 ## [0.1.0] — Stage 1 complete
 
 ### Added

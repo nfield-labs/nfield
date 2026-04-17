@@ -38,9 +38,21 @@ from formatshield.caching import cache, clear_cache, disable_cache, make_cache_k
 from formatshield.core import FormatShield, GenerationResult, generate
 from formatshield.dsl import IterableModel, Maybe, MaybeResult, Partial
 from formatshield.generator import AsyncFormatShieldGenerator, FormatShieldGenerator
+from formatshield.hooks import (
+    HOOK_COMPLETION_ERROR,
+    HOOK_COMPLETION_KWARGS,
+    HOOK_COMPLETION_RESPONSE,
+    HOOK_PARSE_ERROR,
+    Hooks,
+)
 from formatshield.oracle.routing_decision import RoutingDecision
 from formatshield.prompting import Chat, Template, few_shot
-from formatshield.scorer.features import BenchmarkResult, ComplexityFeatures, StreamEvent
+from formatshield.scorer.features import (
+    BenchmarkResult,
+    ComplexityFeatures,
+    StreamEvent,
+    TokenUsage,
+)
 from formatshield.types import (
     cfg as cfg,
 )
@@ -73,6 +85,10 @@ def from_provider(model: str, **kwargs: Any) -> FormatShield:
 
 
 __all__ = [
+    "HOOK_COMPLETION_ERROR",
+    "HOOK_COMPLETION_KWARGS",
+    "HOOK_COMPLETION_RESPONSE",
+    "HOOK_PARSE_ERROR",
     "AsyncFormatShieldGenerator",
     "BenchmarkResult",
     "Chat",
@@ -80,6 +96,7 @@ __all__ = [
     "FormatShield",
     "FormatShieldGenerator",
     "GenerationResult",
+    "Hooks",
     "IterableModel",
     "Maybe",
     "MaybeResult",
@@ -87,6 +104,7 @@ __all__ = [
     "RoutingDecision",
     "StreamEvent",
     "Template",
+    "TokenUsage",
     "__version__",
     "cache",
     "cfg",

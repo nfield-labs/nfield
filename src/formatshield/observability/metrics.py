@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import statistics
 import threading
 from collections import defaultdict
@@ -198,76 +199,244 @@ class MetricsCollector:
 
 
 # ---------------------------------------------------------------------------
-# Prometheus integration stub
+# Prometheus integration
 # ---------------------------------------------------------------------------
+
+_LATENCY_BUCKETS = (50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0)
+_ACCURACY_DELTA_BUCKETS = (-0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3)
 
 
 class PrometheusMetrics:
-    """
-    Thin wrapper around :class:`MetricsCollector` that mirrors its interface
-    and is designed to be swapped in for Prometheus integration in the future.
+    """Prometheus-backed metrics for FormatShield, with fallback to :class:`MetricsCollector`.
 
-    When ``prometheus_client`` is available in the environment, subclass this
-    class and override the ``record_*`` methods to push observations to real
-    Prometheus counters and histograms.  Until then, this class delegates
-    everything to the underlying :class:`MetricsCollector` so that callers
-    do not need to change their code.
+    When ``prometheus_client`` is installed, real ``Counter``, ``Histogram``,
+    and ``Gauge`` objects are created and all ``record_*`` methods push
+    observations to Prometheus.  When the package is absent the class
+    transparently delegates every call to the underlying
+    :class:`MetricsCollector` so callers never need to branch.
 
-    Parameters
-    ----------
-    collector:
-        Optional existing :class:`MetricsCollector` to delegate to.  When
-        ``None``, a new collector is created.
+    Prometheus metric names follow the ``formatshield_*`` namespace:
 
-    Examples
-    --------
-    >>> prom = PrometheusMetrics()
-    >>> prom.record_routing(strategy="ttf", backend="groq")
-    >>> prom.get_summary()["routing"]["by_strategy"]
-    {'ttf': 1}
+    - ``formatshield_routing_decisions_total`` — Counter, labels: strategy, backend
+    - ``formatshield_generation_latency_ms`` — Histogram, labels: backend
+    - ``formatshield_schema_validation_failures_total`` — Counter
+    - ``formatshield_fallback_activations_total`` — Counter
+    - ``formatshield_accuracy_delta`` — Histogram
+
+    Args:
+        collector: Optional existing :class:`MetricsCollector` to delegate to
+            when ``prometheus_client`` is unavailable. A new collector is
+            created when ``None``.
+
+    Examples:
+        >>> prom = PrometheusMetrics()
+        >>> prom.record_routing(strategy="ttf", backend="groq")
+        >>> prom.get_summary()["routing"]["by_strategy"]
+        {'ttf': 1}
     """
 
     def __init__(self, collector: MetricsCollector | None = None) -> None:
         self._collector = collector if collector is not None else MetricsCollector()
+        self._prometheus_available: bool = False
+
+        try:
+            import prometheus_client  # pyright: ignore[reportMissingImports]
+
+            self._prometheus_available = True
+
+            self._routing_counter = prometheus_client.Counter(
+                "formatshield_routing_decisions_total",
+                "Total number of routing decisions made by FormatShield",
+                ["strategy", "backend"],
+            )
+            self._latency_histogram = prometheus_client.Histogram(
+                "formatshield_generation_latency_ms",
+                "End-to-end generation latency in milliseconds",
+                ["backend"],
+                buckets=_LATENCY_BUCKETS,
+            )
+            self._schema_failure_counter = prometheus_client.Counter(
+                "formatshield_schema_validation_failures_total",
+                "Total number of JSON schema validation failures",
+            )
+            self._fallback_counter = prometheus_client.Counter(
+                "formatshield_fallback_activations_total",
+                "Total number of TTF fallback activations",
+            )
+            self._accuracy_delta_histogram = prometheus_client.Histogram(
+                "formatshield_accuracy_delta",
+                "Signed accuracy delta: ttf_accuracy minus direct_accuracy",
+                buckets=_ACCURACY_DELTA_BUCKETS,
+            )
+        except ImportError:
+            self._prometheus_available = False
 
     # ------------------------------------------------------------------
-    # Delegating methods
+    # Recording methods
     # ------------------------------------------------------------------
 
     def record_routing(self, strategy: str, backend: str) -> None:
-        """Delegate to :meth:`MetricsCollector.record_routing`."""
-        # Future: push to prometheus_client Counter
+        """Record a routing decision.
+
+        Increments ``formatshield_routing_decisions_total`` when
+        ``prometheus_client`` is available; otherwise delegates to the
+        underlying :class:`MetricsCollector`.
+
+        Args:
+            strategy: The routing strategy chosen, e.g. ``"ttf"`` or
+                ``"direct"``.
+            backend: The backend selected for this request, e.g. ``"groq"``
+                or ``"vllm"``.
+        """
         self._collector.record_routing(strategy=strategy, backend=backend)
+        if self._prometheus_available:
+            self._routing_counter.labels(strategy=strategy, backend=backend).inc()
 
     def record_latency(self, ms: float, backend: str) -> None:
-        """Delegate to :meth:`MetricsCollector.record_latency`."""
-        # Future: push to prometheus_client Histogram
+        """Record an end-to-end generation latency observation.
+
+        Observes into ``formatshield_generation_latency_ms`` when
+        ``prometheus_client`` is available; otherwise delegates to the
+        underlying :class:`MetricsCollector`.
+
+        Args:
+            ms: Latency in milliseconds.
+            backend: The backend that served this request.
+        """
         self._collector.record_latency(ms=ms, backend=backend)
+        if self._prometheus_available:
+            self._latency_histogram.labels(backend=backend).observe(ms)
 
     def record_schema_validation_failure(self) -> None:
-        """Delegate to :meth:`MetricsCollector.record_schema_validation_failure`."""
-        # Future: increment prometheus_client Counter
+        """Increment the schema-validation failure counter.
+
+        Increments ``formatshield_schema_validation_failures_total`` when
+        ``prometheus_client`` is available; otherwise delegates to the
+        underlying :class:`MetricsCollector`.
+        """
         self._collector.record_schema_validation_failure()
+        if self._prometheus_available:
+            self._schema_failure_counter.inc()
 
     def record_fallback(self) -> None:
-        """Delegate to :meth:`MetricsCollector.record_fallback`."""
-        # Future: increment prometheus_client Counter
+        """Increment the fallback-activation counter.
+
+        Increments ``formatshield_fallback_activations_total`` when
+        ``prometheus_client`` is available; otherwise delegates to the
+        underlying :class:`MetricsCollector`.
+        """
         self._collector.record_fallback()
+        if self._prometheus_available:
+            self._fallback_counter.inc()
 
     def record_accuracy_delta(self, delta: float) -> None:
-        """Delegate to :meth:`MetricsCollector.record_accuracy_delta`."""
-        # Future: push to prometheus_client Histogram
+        """Record an accuracy delta observation.
+
+        Observes into ``formatshield_accuracy_delta`` when
+        ``prometheus_client`` is available; otherwise delegates to the
+        underlying :class:`MetricsCollector`.
+
+        Args:
+            delta: Signed accuracy difference ``ttf_accuracy - direct_accuracy``.
+                Positive values indicate TTF improved accuracy.
+        """
         self._collector.record_accuracy_delta(delta=delta)
+        if self._prometheus_available:
+            self._accuracy_delta_histogram.observe(delta)
+
+    # ------------------------------------------------------------------
+    # Query / utility methods
+    # ------------------------------------------------------------------
 
     def get_summary(self) -> dict[str, Any]:
-        """Delegate to :meth:`MetricsCollector.get_summary`."""
+        """Return a snapshot of all current metrics as a plain dictionary.
+
+        Always delegates to the underlying :class:`MetricsCollector`, regardless
+        of ``prometheus_client`` availability, so callers always receive a
+        consistent JSON-serialisable structure.
+
+        Returns:
+            Nested dictionary with keys ``routing``, ``latency``,
+            ``schema_validation_failures``, ``fallback_count``, and
+            ``accuracy_deltas``.
+        """
         return self._collector.get_summary()
 
     def reset(self) -> None:
-        """Delegate to :meth:`MetricsCollector.reset`."""
+        """Clear all recorded metrics in the underlying :class:`MetricsCollector`.
+
+        Note: Prometheus counters and histograms are process-lifetime objects
+        and cannot be reset at runtime.  This method resets only the in-memory
+        collector used for ``get_summary()``.
+        """
         self._collector.reset()
 
     @property
     def collector(self) -> MetricsCollector:
         """The underlying :class:`MetricsCollector` instance."""
         return self._collector
+
+
+# ---------------------------------------------------------------------------
+# Module-level helpers
+# ---------------------------------------------------------------------------
+
+
+def serve_metrics(port: int = 9090) -> None:
+    """Start a Prometheus HTTP metrics server on the given port.
+
+    Starts ``prometheus_client``'s built-in HTTP server so that a Prometheus
+    scraper can collect FormatShield metrics at ``http://localhost:<port>/metrics``.
+
+    This function is a no-op when ``prometheus_client`` is not installed; a
+    warning is printed to stdout so that operators know the server was not
+    started.
+
+    Args:
+        port: TCP port to listen on. Defaults to ``9090``.
+
+    Raises:
+        OSError: If the port is already in use and the server cannot bind.
+
+    Example:
+        >>> # In production: expose metrics for Prometheus to scrape
+        >>> serve_metrics(port=9090)  # doctest: +SKIP
+    """
+    try:
+        import prometheus_client  # pyright: ignore[reportMissingImports]
+
+        prometheus_client.start_http_server(port)
+    except ImportError:
+        print(
+            f"[FormatShield] prometheus_client is not installed; "
+            f"metrics server not started on port {port}. "
+            "Install it with: pip install 'formatshield[prometheus]'"
+        )
+
+
+def generate_metrics_text() -> str:
+    """Return current metrics in Prometheus text exposition format.
+
+    When ``prometheus_client`` is available this function calls
+    ``prometheus_client.generate_latest()`` and returns the UTF-8 decoded
+    text.  When the package is absent it falls back to serialising the global
+    :class:`MetricsCollector` summary as a JSON string so callers always
+    receive a non-empty string.
+
+    Returns:
+        A string containing either the Prometheus text exposition format or a
+        JSON-encoded summary of the in-memory collector.
+
+    Example:
+        >>> text = generate_metrics_text()
+        >>> isinstance(text, str)
+        True
+    """
+    try:
+        import prometheus_client  # pyright: ignore[reportMissingImports]
+
+        raw: bytes = prometheus_client.generate_latest()
+        return raw.decode("utf-8")
+    except ImportError:
+        collector = MetricsCollector()
+        return json.dumps(collector.get_summary(), indent=2)

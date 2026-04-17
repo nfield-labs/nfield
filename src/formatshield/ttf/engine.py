@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, ValidationError
 
+from formatshield._retry import FailedAttempt, FormatShieldRetryException, build_reask_prompt
 from formatshield.scorer.features import StreamEvent
 from formatshield.ttf.prompts import build_format_prompt, build_think_prompt, extract_thinking
 
@@ -63,15 +64,21 @@ class TTFEngine:
         )
     """
 
+    # Maximum reask attempts before giving up: 2 means up to 3 total generations
+    # (1 original + 2 reasks) to avoid runaway token costs.
+    DEFAULT_MAX_REASKS: int = 2
+
     def __init__(
         self,
         backend: Backend,
         ttf_fallback: bool = True,
         expose_thinking: bool = False,
+        max_reasks: int = DEFAULT_MAX_REASKS,
     ) -> None:
         self._backend = backend
         self._ttf_fallback = ttf_fallback
         self._expose_thinking = expose_thinking
+        self._max_reasks = max_reasks
 
     # ------------------------------------------------------------------
     # Primary generation method
@@ -345,46 +352,107 @@ class TTFEngine:
         prompt: str,
         schema: dict[str, Any] | None,
     ) -> tuple[str, bool]:
-        """Validate *json_output* against *schema_model*.
+        """Validate *json_output* against *schema_model*, with reask on failure.
 
-        If validation succeeds, returns ``(json_output, False)``.
-        If validation fails and ``self._ttf_fallback`` is ``True``:
-            * Retries with :meth:`generate_direct`.
-            * Returns ``(direct_output, True)``.
-        If validation fails and fallback is disabled:
-            * Returns ``(json_output, False)`` and logs a warning.
+        On validation failure:
+
+        1. If ``self._max_reasks > 0``: constructs a reask prompt that feeds
+           the failed output + error back to the model and retries up to
+           ``self._max_reasks`` times.  Each failed attempt is recorded as a
+           :class:`~formatshield._retry.FailedAttempt`.
+        2. If all reasks fail and ``self._ttf_fallback`` is ``True``: falls
+           back to :meth:`generate_direct` (single-pass constrained generation).
+        3. If ``self._ttf_fallback`` is ``False``: returns the last invalid
+           output as-is.
 
         Returns
         -------
         tuple[str, bool]
-            ``(output_text, fallback_triggered)``.
+            ``(output_text, fallback_triggered)`` where ``fallback_triggered``
+            is ``True`` only when the single-pass fallback path was used.
+
+        Raises
+        ------
+        FormatShieldRetryException
+            When all reasks fail AND ``ttf_fallback=False`` and you want to
+            surface the full attempt history to the caller.  Currently this
+            exception is only raised internally; callers receive the last raw
+            output instead.
         """
-        try:
-            schema_model.model_validate_json(json_output)
-            return json_output, False
-        except (ValidationError, json.JSONDecodeError) as exc:
-            logger.warning(
-                "TTFEngine: Pass 2 output failed schema validation — %s",
-                exc,
-            )
+        failed_attempts: list[FailedAttempt] = []
+        current_output = json_output
+        current_prompt = prompt
+
+        for attempt_number in range(1, self._max_reasks + 2):
+            # Attempt validation
+            try:
+                schema_model.model_validate_json(current_output)
+                return current_output, False  # ← success
+            except (ValidationError, json.JSONDecodeError) as exc:
+                logger.warning(
+                    "TTFEngine: attempt %d/%d — Pass 2 output failed validation — %s",
+                    attempt_number,
+                    self._max_reasks + 1,
+                    exc,
+                )
+                failed_attempts.append(
+                    FailedAttempt(
+                        attempt_number=attempt_number,
+                        exception=exc,
+                        raw_output=current_output,
+                        reask_prompt=current_prompt,
+                    )
+                )
+
+            # Can we reask?
+            reasks_used = attempt_number - 1
+            if reasks_used < self._max_reasks:
+                # Build a reask prompt: original + failed output + error
+                current_prompt = build_reask_prompt(
+                    original_prompt=prompt,
+                    failed_output=current_output,
+                    error=failed_attempts[-1].exception,
+                    schema=schema,
+                )
+                logger.info(
+                    "TTFEngine: reask %d/%d — sending corrective prompt",
+                    reasks_used + 1,
+                    self._max_reasks,
+                )
+                try:
+                    current_output = await self._backend.generate(
+                        current_prompt,
+                        schema=schema,
+                        constraints="json",
+                    )
+                except Exception as exc:
+                    logger.error(
+                        "TTFEngine: reask backend call failed — %s", exc
+                    )
+                    break  # give up on reasks, try direct fallback
+
+        # All reasks exhausted — record as FormatShieldRetryException internally
+        retry_exc = FormatShieldRetryException(
+            f"All {len(failed_attempts)} attempt(s) failed schema validation",
+            failed_attempts=failed_attempts,
+        )
+        logger.warning("TTFEngine: %s", retry_exc)
 
         if not self._ttf_fallback:
-            logger.warning("TTFEngine: ttf_fallback=False — returning invalid output as-is")
-            return json_output, False
+            logger.warning("TTFEngine: ttf_fallback=False — returning last invalid output")
+            return current_output, False
 
-        # Retry as direct generation
-        logger.info("TTFEngine: falling back to direct generation")
+        # Final fallback: single-pass direct generation
+        logger.info("TTFEngine: falling back to direct generation after reask exhaustion")
         try:
             direct_output = await self.generate_direct(prompt, schema=schema)
-            # Attempt to validate the fallback output too
             try:
                 schema_model.model_validate_json(direct_output)
             except (ValidationError, json.JSONDecodeError) as exc:
                 logger.warning(
-                    "TTFEngine: fallback direct output also failed validation — %s",
-                    exc,
+                    "TTFEngine: fallback direct output also failed validation — %s", exc
                 )
             return direct_output, True
         except Exception as exc:
             logger.error("TTFEngine: fallback direct generation failed — %s", exc)
-            return json_output, True
+            return current_output, True

@@ -77,6 +77,9 @@ guidance = ["guidance>=0.1.0"]
 cache = ["diskcache>=5.6.0", "cloudpickle>=3.0.0"]
 prompting = ["jinja2>=3.1.0"]
 dsl = []  # DSL types use stdlib only — no extra deps required
+prometheus = ["prometheus-client>=0.17.0"]
+otel = ["opentelemetry-api>=1.20.0", "opentelemetry-sdk>=1.20.0"]
+batch = []  # Batch processor uses stdlib + core deps only
 benchmark = [
     "matplotlib>=3.8.0",
     "seaborn>=0.13.0",

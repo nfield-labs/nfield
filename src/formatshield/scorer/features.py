@@ -93,6 +93,62 @@ class StreamEvent:
 
 
 @dataclass
+class TokenUsage:
+    """
+    Token consumption for a single generation call.
+
+    Tracks input, output, and cached token counts, plus an optional
+    cost estimate in USD.  Backends that do not report token counts
+    leave the fields as ``None``.
+
+    Attributes
+    ----------
+    input_tokens:
+        Number of prompt tokens consumed.
+    output_tokens:
+        Number of completion tokens generated.
+    cached_tokens:
+        Number of tokens served from the KV-cache (reduces cost on some
+        backends such as OpenAI prompt-caching and vLLM prefix caching).
+    total_tokens:
+        ``input_tokens + output_tokens`` when both are known; ``None`` otherwise.
+    ttft_ms:
+        Time-to-first-token in milliseconds (``None`` when not measured).
+    forward_passes:
+        Number of forward passes executed.  For TTF this is always ``2``
+        (Pass 1 + Pass 2).  For direct generation it is ``1``.
+
+    Example::
+
+        usage = TokenUsage(input_tokens=150, output_tokens=42, forward_passes=2)
+        assert usage.total_tokens == 192
+    """
+
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+    cached_tokens: int | None = None
+    total_tokens: int | None = None
+    ttft_ms: float | None = None
+    forward_passes: int = 1
+
+    def __post_init__(self) -> None:
+        """Compute total_tokens if both input and output are known."""
+        if self.total_tokens is None and self.input_tokens is not None and self.output_tokens is not None:  # noqa: E501
+            self.total_tokens = self.input_tokens + self.output_tokens
+
+    def to_dict(self) -> dict[str, int | float | None]:
+        """Return a JSON-serialisable dict of all token usage fields."""
+        return {
+            "input_tokens": self.input_tokens,
+            "output_tokens": self.output_tokens,
+            "cached_tokens": self.cached_tokens,
+            "total_tokens": self.total_tokens,
+            "ttft_ms": self.ttft_ms,
+            "forward_passes": self.forward_passes,
+        }
+
+
+@dataclass
 class BenchmarkResult:
     """
     Aggregated result for a single benchmark task / backend / model combination.

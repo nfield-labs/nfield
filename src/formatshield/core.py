@@ -32,12 +32,19 @@ from typing import TYPE_CHECKING, Any, Literal, get_args, get_origin
 from pydantic import BaseModel, ValidationError
 
 from formatshield.backends.protocol import BackendName, get_backend_name_from_model
+from formatshield.hooks import (
+    HOOK_COMPLETION_ERROR,
+    HOOK_COMPLETION_KWARGS,
+    HOOK_COMPLETION_RESPONSE,
+    HOOK_PARSE_ERROR,
+    Hooks,
+)
 from formatshield.observability.logger import StructuredLogger
 from formatshield.observability.metrics import MetricsCollector
 from formatshield.oracle.routing_decision import RoutingDecision
 from formatshield.oracle.threshold_oracle import ThresholdOracle
 from formatshield.scorer.complexity_scorer import ComplexityScorer
-from formatshield.scorer.features import ComplexityFeatures, StreamEvent
+from formatshield.scorer.features import ComplexityFeatures, StreamEvent, TokenUsage
 from formatshield.ttf.failure_detector import FailureModeDetector
 
 if TYPE_CHECKING:
@@ -88,6 +95,14 @@ class GenerationResult:
     fallback_triggered: bool
     """Whether TTF failed and fell back to direct generation."""
 
+    token_usage: TokenUsage | None = None
+    """Token consumption for this call.  ``None`` when the backend does not
+    report token counts (e.g. DryRunBackend)."""
+
+    cost_usd: float | None = None
+    """Estimated cost in USD for this call.  ``None`` when pricing data is
+    not available for the backend/model combination."""
+
     def model_dump(self) -> dict[str, Any]:
         """Return a JSON-serialisable dictionary representation."""
         return {
@@ -107,6 +122,8 @@ class GenerationResult:
             "model": self.model,
             "schema_valid": self.schema_valid,
             "fallback_triggered": self.fallback_triggered,
+            "token_usage": self.token_usage.to_dict() if self.token_usage is not None else None,
+            "cost_usd": self.cost_usd,
         }
 
 
@@ -350,6 +367,7 @@ class FormatShield:
         metrics: MetricsCollector | None = None,
         log_level: str = "WARNING",
         backend: Any | None = None,
+        hooks: Hooks | None = None,
     ) -> None:
         self.model = model
         self._latency_budget_ms = latency_budget_ms
@@ -371,6 +389,7 @@ class FormatShield:
 
         self._metrics = metrics or MetricsCollector()
         self._logger = StructuredLogger(level=log_level)
+        self._hooks: Hooks = hooks if hooks is not None else Hooks()
 
         logger.debug("FormatShield initialised: model=%s backend=%s", model, self.backend_name)
 
@@ -472,6 +491,21 @@ class FormatShield:
         output: str = ""
         fallback_triggered = False
 
+        # Build the kwargs dict and fire completion:kwargs before the API call
+        _backend_kwargs: dict[str, Any] = {
+            "schema": schema_dict,
+            "constraints": "json" if schema_dict else None,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "seed": seed,
+            "top_p": top_p,
+            "top_k": top_k,
+            "frequency_penalty": frequency_penalty,
+            "presence_penalty": presence_penalty,
+            "stop": stop,
+        }
+        self._hooks.emit(HOOK_COMPLETION_KWARGS, _backend_kwargs)
+
         if decision.use_ttf:
             from formatshield.ttf.engine import TTFEngine
 
@@ -486,12 +520,14 @@ class FormatShield:
                     schema=schema_dict,
                     schema_model=schema_model,
                 )
+                self._hooks.emit(HOOK_COMPLETION_RESPONSE, output)
             except Exception as exc:
+                self._hooks.emit(HOOK_COMPLETION_ERROR, exc)
                 logger.warning("FormatShield: TTF failed (%s), falling back to direct", exc)
                 output = await self._backend.generate(
                     prompt,
-                    schema=schema_dict,
-                    constraints="json" if schema_dict else None,
+                    schema=_backend_kwargs["schema"],
+                    constraints=_backend_kwargs["constraints"],
                     temperature=temperature,
                     max_tokens=max_tokens,
                     seed=seed,
@@ -501,21 +537,27 @@ class FormatShield:
                     presence_penalty=presence_penalty,
                     stop=stop,
                 )
+                self._hooks.emit(HOOK_COMPLETION_RESPONSE, output)
                 fallback_triggered = True
         else:
-            output = await self._backend.generate(
-                prompt,
-                schema=schema_dict,
-                constraints="json" if schema_dict else None,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                seed=seed,
-                top_p=top_p,
-                top_k=top_k,
-                frequency_penalty=frequency_penalty,
-                presence_penalty=presence_penalty,
-                stop=stop,
-            )
+            try:
+                output = await self._backend.generate(
+                    prompt,
+                    schema=_backend_kwargs["schema"],
+                    constraints=_backend_kwargs["constraints"],
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    seed=seed,
+                    top_p=top_p,
+                    top_k=top_k,
+                    frequency_penalty=frequency_penalty,
+                    presence_penalty=presence_penalty,
+                    stop=stop,
+                )
+                self._hooks.emit(HOOK_COMPLETION_RESPONSE, output)
+            except Exception as exc:
+                self._hooks.emit(HOOK_COMPLETION_ERROR, exc)
+                raise
 
         # Parse + validate
         parsed: BaseModel | dict[str, Any] | Any | None = None
@@ -526,7 +568,8 @@ class FormatShield:
                 try:
                     parsed = schema_model.model_validate_json(output)
                     schema_valid = True
-                except (ValidationError, ValueError):
+                except (ValidationError, ValueError) as _parse_exc:
+                    self._hooks.emit(HOOK_PARSE_ERROR, _parse_exc, output)
                     try:
                         parsed = json.loads(output)
                     except (json.JSONDecodeError, ValueError):
@@ -535,7 +578,8 @@ class FormatShield:
                 try:
                     parsed = _cast_parsed(output, output_type)
                     schema_valid = True
-                except (ValueError, TypeError):
+                except (ValueError, TypeError) as _parse_exc:
+                    self._hooks.emit(HOOK_PARSE_ERROR, _parse_exc, output)
                     try:
                         parsed = json.loads(output)
                     except (json.JSONDecodeError, ValueError):
@@ -576,6 +620,8 @@ class FormatShield:
             model=self.model,
             schema_valid=schema_valid,
             fallback_triggered=fallback_triggered,
+            token_usage=None,  # Populated by backends that report token counts
+            cost_usd=None,
         )
 
     # ------------------------------------------------------------------

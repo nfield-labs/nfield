@@ -70,8 +70,10 @@ class VertexAIBackend:
         """
         if self._client is None:
             try:
-                import vertexai
-                from vertexai.generative_models import GenerativeModel
+                import vertexai  # pyright: ignore[reportMissingImports]
+                from vertexai.generative_models import (  # pyright: ignore[reportMissingImports]
+                    GenerativeModel,
+                )
             except ImportError as exc:
                 raise ImportError(
                     "google-cloud-aiplatform is required for VertexAIBackend. "
@@ -142,7 +144,9 @@ class VertexAIBackend:
 
         def _run() -> str:
             try:
-                from vertexai.generative_models import GenerationConfig
+                from vertexai.generative_models import (  # pyright: ignore[reportMissingImports]
+                    GenerationConfig,
+                )
             except ImportError as exc:
                 raise ImportError("google-cloud-aiplatform required") from exc
             model = self._get_model()
