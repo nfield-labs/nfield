@@ -71,10 +71,12 @@ class TestScoreSQLExtraction:
             "query": "SELECT name FROM employees WHERE dept = 'HR'",
             "tables": ["employees"],
         }
-        payload = json.dumps({
-            "query": "SELECT name FROM employees WHERE dept = 'HR'",
-            "tables": ["employees"],
-        })
+        payload = json.dumps(
+            {
+                "query": "SELECT name FROM employees WHERE dept = 'HR'",
+                "tables": ["employees"],
+            }
+        )
         assert _score_sql_extraction(payload, gt) == 1.0
 
     def test_invalid_json_returns_zero(self) -> None:
@@ -99,10 +101,12 @@ class TestScoreSQLExtraction:
             "query": "SELECT name FROM employees",
             "tables": ["employees"],
         }
-        payload = json.dumps({
-            "query": "SELECT * FROM products",
-            "tables": ["employees"],
-        })
+        payload = json.dumps(
+            {
+                "query": "SELECT * FROM products",
+                "tables": ["employees"],
+            }
+        )
         result = _score_sql_extraction(payload, gt)
         # tables match but query doesn't mention table → partial
         assert 0.0 < result < 1.0

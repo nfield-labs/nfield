@@ -57,10 +57,12 @@ class TestScoreCodeExtraction:
             "function_name": "calculate",
             "arguments": [{"name": "x"}, {"name": "y"}],
         }
-        payload = json.dumps({
-            "function_name": "calculate",
-            "arguments": [{"name": "x"}, {"name": "y"}],
-        })
+        payload = json.dumps(
+            {
+                "function_name": "calculate",
+                "arguments": [{"name": "x"}, {"name": "y"}],
+            }
+        )
         result = _score_code_extraction(payload, gt)
         assert result == 1.0
 
@@ -81,10 +83,12 @@ class TestScoreCodeExtraction:
             "function_name": "fn",
             "arguments": [{"name": "a"}, {"name": "b"}],
         }
-        payload = json.dumps({
-            "function_name": "fn",
-            "arguments": [{"name": "a"}, {"name": "c"}],
-        })
+        payload = json.dumps(
+            {
+                "function_name": "fn",
+                "arguments": [{"name": "a"}, {"name": "c"}],
+            }
+        )
         result = _score_code_extraction(payload, gt)
         assert 0.5 < result < 1.0
 
