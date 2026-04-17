@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 # Tasks where an LLM judge produces more accurate scores than rule-based
 # heuristics (mathematical equivalence, semantic SQL, legal paraphrase, …).
 _JUDGE_TASKS: frozenset[str] = frozenset(
-    {"gsm_symbolic", "gsm", "math500", "legal_extract", "sql_extraction", "zebralogic"}
+    {"gsm_symbolic", "gsm", "math500", "legal_extract", "sql_extraction"}
 )
 
 

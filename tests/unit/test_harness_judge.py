@@ -45,8 +45,9 @@ def test_judge_tasks_contains_sql_extraction() -> None:
     assert "sql_extraction" in _JUDGE_TASKS
 
 
-def test_judge_tasks_contains_zebralogic() -> None:
-    assert "zebralogic" in _JUDGE_TASKS
+def test_judge_tasks_does_not_contain_zebralogic() -> None:
+    """zebralogic has no registered task class in the harness registry."""
+    assert "zebralogic" not in _JUDGE_TASKS
 
 
 def test_judge_tasks_does_not_contain_template_fill() -> None:
