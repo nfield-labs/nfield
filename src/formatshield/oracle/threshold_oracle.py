@@ -80,6 +80,10 @@ _DIRECT_ACCURACY_DELTA: float = 0.0
 #: Heuristic confidence when no sklearn model is available.
 _HEURISTIC_CONFIDENCE: float = 0.70
 
+#: Assumed base latency (ms) used to convert TTF overhead percentage to milliseconds
+#: when comparing against a caller-supplied latency_budget_ms.
+_DEFAULT_BASE_LATENCY_MS: float = 500.0
+
 #: Default path for the persisted oracle model (relative to package root).
 _DEFAULT_MODEL_PATH: Path = Path(__file__).parent / "oracle_data" / "threshold_oracle_v1.pkl"
 
@@ -385,14 +389,16 @@ class ThresholdOracle:
         # Rule 2: Latency budget exceeded – force direct
         # ------------------------------------------------------------------
         if latency_budget_ms is not None and latency_budget_ms > 0:
-            if estimated_overhead > latency_budget_ms:
+            # estimated_overhead is a percentage; convert to ms using a base estimate
+            estimated_overhead_ms = (estimated_overhead / 100.0) * _DEFAULT_BASE_LATENCY_MS
+            if estimated_overhead_ms > latency_budget_ms:
                 return RoutingDecision(
                     strategy="direct",
                     expected_accuracy_delta=_DIRECT_ACCURACY_DELTA,
                     expected_overhead_pct=0.0,
                     confidence=0.85,
                     explanation=(
-                        f"Estimated TTF overhead ({estimated_overhead:.0f} ms) "
+                        f"Estimated TTF overhead ({estimated_overhead_ms:.0f} ms) "
                         f"exceeds latency budget ({latency_budget_ms:.0f} ms)."
                     ),
                 )

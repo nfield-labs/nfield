@@ -54,12 +54,13 @@ _COT_KEYWORDS: frozenset[str] = frozenset(
 # ---------------------------------------------------------------------------
 
 _INSTRUCTION_TUNE_PREFIXES: list[tuple[str, float]] = [
-    # Native thinkers / heavy RLHF
+    # Native thinkers / heavy RLHF — longer prefixes MUST come before shorter ones
+    # so that startswith() matches the most-specific entry first.
     ("o1-mini", 1.0),
     ("o1-preview", 1.0),
     ("o3-mini", 1.0),
-    ("o1", 1.0),
     ("o3", 1.0),
+    ("o1", 1.0),
     # DeepSeek R1
     ("deepseek-r1", 0.9),
     # GPT-4 family

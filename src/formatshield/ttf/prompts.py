@@ -156,13 +156,10 @@ def build_format_prompt(
     else:
         format_suffix = _FORMAT_PREFIX
 
-    return (
-        FORMAT_PROMPT_TEMPLATE.format(
-            think_prompt=think_prompt,
-            thinking=effective_thinking,
-        )
-        + format_suffix
-    )
+    # Build context block + single formatting instruction.
+    # Not using FORMAT_PROMPT_TEMPLATE here — it already contains an instruction suffix
+    # that would duplicate format_suffix below.
+    return f"{think_prompt}\n\n{effective_thinking}" + format_suffix
 
 
 def build_extraction_think_prompt(original_prompt: str) -> str:

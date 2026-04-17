@@ -118,7 +118,7 @@ async def test_stream_public_api_yields_events(mock_backend) -> None:
     """Calling stream() (not _stream_impl) must yield StreamEvent instances (line 199)."""
     engine = TTFEngine(backend=mock_backend)
     events: list[StreamEvent] = []
-    async for event in await engine.stream("Test prompt via public stream()"):
+    async for event in engine.stream("Test prompt via public stream()"):
         events.append(event)
     assert len(events) > 0
     assert all(isinstance(e, StreamEvent) for e in events)
@@ -128,7 +128,7 @@ async def test_stream_public_api_yields_events(mock_backend) -> None:
 async def test_stream_public_api_yields_complete_event(mock_backend) -> None:
     """stream() must emit a 'complete' event (exercises line 199 and _stream_impl)."""
     engine = TTFEngine(backend=mock_backend)
-    types_seen = [e.type async for e in await engine.stream("Question?")]
+    types_seen = [e.type async for e in engine.stream("Question?")]
     assert "complete" in types_seen
 
 

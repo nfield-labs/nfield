@@ -103,6 +103,11 @@ class RoutingDecision:
         """``True`` when the oracle recommends direct generation."""
         return self.strategy == "direct"
 
+    @property
+    def use_hybrid(self) -> bool:
+        """``True`` when the oracle recommends the hybrid strategy (TTF with direct fallback)."""
+        return self.strategy == "hybrid"
+
     # ------------------------------------------------------------------
     # String representation
     # ------------------------------------------------------------------

@@ -23,6 +23,7 @@ Reference: CRANE arXiv 2502.09061 § 4.2, "Format Tax" arXiv 2604.03616 § 3.
 from __future__ import annotations
 
 import logging
+from dataclasses import replace
 from typing import Any
 
 from formatshield.oracle.routing_decision import RoutingDecision
@@ -222,9 +223,10 @@ class FailureModeDetector:
             logger.info(explanation)
             return overridden, modes
 
-        # Attach detected modes to the decision even if we don't override
+        # Attach detected modes to the decision even if we don't override.
+        # Use replace() to avoid mutating the caller's object.
         if modes:
-            decision.failure_modes = modes
+            decision = replace(decision, failure_modes=modes)
         return decision, modes
 
     # ------------------------------------------------------------------

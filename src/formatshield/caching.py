@@ -48,6 +48,9 @@ _F = TypeVar("_F", bound=Callable[..., Any])
 _cache_instance: Any | None = None
 _caching_enabled: bool = True
 
+# Sentinel for cache misses — distinguishes a cached None from a cache miss
+_SENTINEL: object = object()
+
 # ---------------------------------------------------------------------------
 # Availability check
 # ---------------------------------------------------------------------------
@@ -313,8 +316,8 @@ def cache(
             # Use make_cache_key for a stable SHA-256 key
             key = make_cache_key(fn.__module__, fn.__qualname__, *args, **filtered_kwargs)
 
-            result = disk_cache.get(key)
-            if result is None:
+            result = disk_cache.get(key, default=_SENTINEL)
+            if result is _SENTINEL:
                 result = fn(*args, **kwargs)
                 disk_cache.set(key, result, expire=expire)
 
@@ -325,7 +328,7 @@ def cache(
             if not _DISKCACHE_AVAILABLE:
                 return
             disk_cache = get_cache()
-            prefix = make_cache_key(fn.__module__, fn.__qualname__)[:16]
+            prefix = make_cache_key(fn.__module__, fn.__qualname__)[:32]
             # Evict keys whose prefix matches this function
             for disk_key in list(disk_cache.iterkeys()):
                 try:

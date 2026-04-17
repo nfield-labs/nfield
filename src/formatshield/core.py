@@ -146,6 +146,11 @@ def _build_schema_from_output_type(output_type: type[Any]) -> dict[str, Any]:
         args = get_args(output_type)
         item_schema = _build_schema_from_output_type(args[0]) if args else {}
         return {"type": "array", "items": item_schema}
+    logger.warning(
+        "_build_schema_from_output_type: unrecognised output_type %r — "
+        "schema constraint will not be applied",
+        output_type,
+    )
     return {}
 
 
@@ -445,8 +450,6 @@ class FormatShield:
                     schema=schema_dict,
                     schema_model=schema_model,
                 )
-                if not thinking and self._ttf_fallback:
-                    fallback_triggered = True
             except Exception as exc:
                 logger.warning("FormatShield: TTF failed (%s), falling back to direct", exc)
                 output = await self._backend.generate(
@@ -679,7 +682,7 @@ class FormatShield:
             from formatshield.ttf.engine import TTFEngine
 
             engine = TTFEngine(self._backend, ttf_fallback=self._ttf_fallback)
-            async for event in engine._stream_impl(prompt, schema_dict):
+            async for event in engine.stream(prompt, schema_dict):
                 if self._expose_thinking or event.type != "thinking":
                     yield event
         else:

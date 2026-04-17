@@ -171,12 +171,12 @@ class TTFEngine:
     # Streaming generation
     # ------------------------------------------------------------------
 
-    async def stream(
+    def stream(
         self,
         prompt: str,
         schema: dict[str, Any] | None = None,
     ) -> AsyncIterator[StreamEvent]:
-        """Stream two-pass TTF generation as an async iterator of StreamEvent.
+        """Return an async iterator of StreamEvent for two-pass TTF generation.
 
         Yields events in three phases:
 
