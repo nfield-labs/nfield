@@ -47,7 +47,7 @@ import formatshield.oracle.schema_graph as _graph
 # ---------------------------------------------------------------------------
 
 #: λ̃₂² weight — half-point at λ̃₂ = 0.5 alone
-_A: float = math.log(2) / (0.25 ** 2)
+_A: float = math.log(2) / (0.25**2)
 
 #: τ·λ̃₂ interaction weight — half-point at product = 0.5
 _B: float = math.log(2) / 0.50
@@ -119,11 +119,9 @@ def compute_routing_score(prompt: str, schema: object) -> RoutingScore:
     tau = _entropy.constraint_tightness(schema)
     dk = _ncd.prompt_schema_ncd(prompt, schema)
 
-    exponent = _A * l2 ** 2 + _B * tau * l2 + _C * dk
+    exponent = _A * l2**2 + _B * tau * l2 + _C * dk
     phi = 1.0 - math.exp(-exponent)
     phi = max(0.0, min(1.0, phi))
 
-    explanation = (
-        f"Φ={phi:.3f} λ̃₂={l2:.3f} τ={tau:.3f} ΔK={dk:.3f}"
-    )
+    explanation = f"Φ={phi:.3f} λ̃₂={l2:.3f} τ={tau:.3f} ΔK={dk:.3f}"
     return RoutingScore(phi=phi, lambda2=l2, tau=tau, delta_k=dk, explanation=explanation)

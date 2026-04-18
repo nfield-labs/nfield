@@ -182,9 +182,7 @@ class ThresholdOracle:
             DeprecationWarning,
             stacklevel=2,
         )
-        raise NotImplementedError(
-            "from_benchmark_data() removed. No training data required."
-        )
+        raise NotImplementedError("from_benchmark_data() removed. No training data required.")
 
     def save(self, *args: object, **kwargs: object) -> None:
         """Deprecated — raises ``NotImplementedError`` in v0.3."""
@@ -331,5 +329,3 @@ def _is_native_thinker(model_id: str) -> bool:
         if lower.startswith(native):
             return True
     return False
-
-

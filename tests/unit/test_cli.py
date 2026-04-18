@@ -36,7 +36,6 @@ def test_app_help_exits_zero() -> None:
     assert result.exit_code == 0
 
 
-
 def test_generate_help_exits_zero() -> None:
     result = runner.invoke(app, ["generate", "--help"])
     assert result.exit_code == 0
@@ -159,7 +158,6 @@ def test_generate_with_valid_json_schema() -> None:
         ]
     )
     assert result.exit_code == 0
-
 
 
 def test_main_function_importable() -> None:

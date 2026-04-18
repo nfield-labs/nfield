@@ -158,9 +158,7 @@ class OracleX:
             DeprecationWarning,
             stacklevel=2,
         )
-        raise NotImplementedError(
-            "from_benchmark_data() removed. No training data required."
-        )
+        raise NotImplementedError("from_benchmark_data() removed. No training data required.")
 
     def save(self, *args: object, **kwargs: object) -> None:
         """Deprecated — raises ``NotImplementedError`` in v0.3."""
@@ -250,8 +248,7 @@ class OracleX:
         if context is not None and context.phi_score > 0:
             phi = context.phi_score
             components = (
-                f"λ̃₂={context.phi_lambda2:.3f} τ={context.phi_tau:.3f} "
-                f"ΔK={context.phi_delta_k:.3f}"
+                f"λ̃₂={context.phi_lambda2:.3f} τ={context.phi_tau:.3f} ΔK={context.phi_delta_k:.3f}"
             )
             if phi > threshold:
                 return RoutingDecision(
@@ -260,8 +257,7 @@ class OracleX:
                     expected_overhead_pct=overhead_pct,
                     confidence=min(abs(phi - threshold) * 2.0, 1.0),
                     explanation=(
-                        f"OracleX Φ={phi:.3f} > threshold={threshold:.3f} → TTF "
-                        f"({components})."
+                        f"OracleX Φ={phi:.3f} > threshold={threshold:.3f} → TTF ({components})."
                     ),
                 )
             return RoutingDecision(
@@ -270,8 +266,7 @@ class OracleX:
                 expected_overhead_pct=0.0,
                 confidence=min(abs(phi - threshold) * 2.0, 1.0),
                 explanation=(
-                    f"OracleX Φ={phi:.3f} ≤ threshold={threshold:.3f} → direct "
-                    f"({components})."
+                    f"OracleX Φ={phi:.3f} ≤ threshold={threshold:.3f} → direct ({components})."
                 ),
             )
 

@@ -29,9 +29,7 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 #: Default registry path shipped with the package.
-_DEFAULT_REGISTRY_PATH: Path = (
-    Path(__file__).parent / "oracle_data" / "backend_registry.json"
-)
+_DEFAULT_REGISTRY_PATH: Path = Path(__file__).parent / "oracle_data" / "backend_registry.json"
 
 
 @dataclass

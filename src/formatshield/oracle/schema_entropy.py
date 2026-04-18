@@ -131,9 +131,7 @@ def _walk_schema(schema: dict[str, Any]) -> list[float]:
     for kw in ("allOf", "anyOf", "oneOf"):
         clauses = schema.get(kw, [])
         if clauses:
-            clause_entropies = [
-                _walk_schema(c) for c in clauses if isinstance(c, dict)
-            ]
+            clause_entropies = [_walk_schema(c) for c in clauses if isinstance(c, dict)]
             if clause_entropies:
                 # allOf: all must hold → use min entropy (most constrained)
                 # anyOf/oneOf: at least one holds → use max entropy (least constrained)

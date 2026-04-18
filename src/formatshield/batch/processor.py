@@ -230,8 +230,7 @@ class BatchProcessor:
         """
         if custom_ids is not None and len(custom_ids) != len(prompts):
             raise ValueError(
-                f"custom_ids length ({len(custom_ids)}) must match prompts length "
-                f"({len(prompts)})."
+                f"custom_ids length ({len(custom_ids)}) must match prompts length ({len(prompts)})."
             )
 
         ids = custom_ids if custom_ids is not None else [f"req_{i}" for i in range(len(prompts))]
@@ -258,9 +257,7 @@ class BatchProcessor:
             for prompt, cid in zip(prompts, ids, strict=False)
         ]
 
-        raw_results: list[BatchSuccess[Any] | BatchError] = list(
-            await asyncio.gather(*tasks)
-        )
+        raw_results: list[BatchSuccess[Any] | BatchError] = list(await asyncio.gather(*tasks))
 
         completed = sum(1 for r in raw_results if isinstance(r, BatchSuccess))
         failed = sum(1 for r in raw_results if isinstance(r, BatchError))

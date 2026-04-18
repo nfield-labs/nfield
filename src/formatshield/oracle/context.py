@@ -43,10 +43,10 @@ class RoutingContext:
     task_id: str
     schema_family: str
     prompt_id: str
-    phi_score: float = 0.0     # Φ(prompt, schema) ∈ [0,1] — >0.5 suggests TTF
-    phi_lambda2: float = 0.0   # Fiedler value of schema dependency graph (normalized)
-    phi_tau: float = 0.0       # schema constraint tightness (entropy proxy)
-    phi_delta_k: float = 0.0   # NCD prompt-schema alignment gap
+    phi_score: float = 0.0  # Φ(prompt, schema) ∈ [0,1] — >0.5 suggests TTF
+    phi_lambda2: float = 0.0  # Fiedler value of schema dependency graph (normalized)
+    phi_tau: float = 0.0  # schema constraint tightness (entropy proxy)
+    phi_delta_k: float = 0.0  # NCD prompt-schema alignment gap
 
     @classmethod
     def from_prompt(

@@ -426,9 +426,7 @@ class TTFEngine:
                         constraints="json",
                     )
                 except Exception as exc:
-                    logger.error(
-                        "TTFEngine: reask backend call failed — %s", exc
-                    )
+                    logger.error("TTFEngine: reask backend call failed — %s", exc)
                     break  # give up on reasks, try direct fallback
 
         # All reasks exhausted — record as FormatShieldRetryException internally
@@ -449,9 +447,7 @@ class TTFEngine:
             try:
                 schema_model.model_validate_json(direct_output)
             except (ValidationError, json.JSONDecodeError) as exc:
-                logger.warning(
-                    "TTFEngine: fallback direct output also failed validation — %s", exc
-                )
+                logger.warning("TTFEngine: fallback direct output also failed validation — %s", exc)
             return direct_output, True
         except Exception as exc:
             logger.error("TTFEngine: fallback direct generation failed — %s", exc)

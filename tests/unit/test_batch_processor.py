@@ -46,9 +46,7 @@ class TestBatchJobInfo:
 
 class TestBatchSuccessAndError:
     def test_batch_success_fields(self) -> None:
-        s: BatchSuccess[str] = BatchSuccess(
-            custom_id="req_0", result="hello", usage_tokens=42
-        )
+        s: BatchSuccess[str] = BatchSuccess(custom_id="req_0", result="hello", usage_tokens=42)
         assert s.custom_id == "req_0"
         assert s.result == "hello"
         assert s.usage_tokens == 42
@@ -129,9 +127,7 @@ class TestBatchProcessorSubmit:
     @pytest.mark.asyncio
     async def test_submit_custom_ids(self) -> None:
         proc = BatchProcessor(model="dryrun/test")
-        job = await proc.submit(
-            ["p1", "p2"], custom_ids=["my_id_1", "my_id_2"]
-        )
+        job = await proc.submit(["p1", "p2"], custom_ids=["my_id_1", "my_id_2"])
         results = await proc.results(job.job_id)
         ids = {r.custom_id for r in results}
         assert "my_id_1" in ids

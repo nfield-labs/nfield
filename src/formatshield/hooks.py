@@ -141,8 +141,7 @@ class Hooks:
         """
         if event not in _KNOWN_EVENTS:
             logger.debug(
-                "FormatShield hooks: registering handler for unknown event %r — "
-                "known events: %s",
+                "FormatShield hooks: registering handler for unknown event %r — known events: %s",
                 event,
                 sorted(_KNOWN_EVENTS),
             )

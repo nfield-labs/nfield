@@ -133,7 +133,11 @@ class TokenUsage:
 
     def __post_init__(self) -> None:
         """Compute total_tokens if both input and output are known."""
-        if self.total_tokens is None and self.input_tokens is not None and self.output_tokens is not None:  # noqa: E501
+        if (
+            self.total_tokens is None
+            and self.input_tokens is not None
+            and self.output_tokens is not None
+        ):
             self.total_tokens = self.input_tokens + self.output_tokens
 
     def to_dict(self) -> dict[str, int | float | None]:
@@ -146,5 +150,3 @@ class TokenUsage:
             "ttft_ms": self.ttft_ms,
             "forward_passes": self.forward_passes,
         }
-
-

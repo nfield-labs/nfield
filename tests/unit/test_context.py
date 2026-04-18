@@ -56,8 +56,15 @@ class TestRoutingContext:
         )
         d = ctx.to_dict()
         assert set(d.keys()) == {
-            "backend_id", "model_id", "task_id", "schema_family", "prompt_id",
-            "phi_score", "phi_lambda2", "phi_tau", "phi_delta_k",
+            "backend_id",
+            "model_id",
+            "task_id",
+            "schema_family",
+            "prompt_id",
+            "phi_score",
+            "phi_lambda2",
+            "phi_tau",
+            "phi_delta_k",
         }
         assert d["backend_id"] == "ollama"
 

@@ -217,9 +217,7 @@ class ReplayBackend:
         from formatshield.backends.dryrun_backend import DryRunBackend
 
         fallback = DryRunBackend(seed=42)
-        return await fallback.generate(
-            prompt, schema=schema, constraints=constraints, **kwargs
-        )
+        return await fallback.generate(prompt, schema=schema, constraints=constraints, **kwargs)
 
     async def stream(
         self,
@@ -232,6 +230,4 @@ class ReplayBackend:
         from formatshield.backends.dryrun_backend import DryRunBackend
 
         fallback = DryRunBackend(seed=42)
-        return await fallback.stream(
-            prompt, schema=schema, constraints=constraints, **kwargs
-        )
+        return await fallback.stream(prompt, schema=schema, constraints=constraints, **kwargs)

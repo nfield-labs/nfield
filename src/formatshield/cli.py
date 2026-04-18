@@ -92,8 +92,6 @@ def generate(
     asyncio.run(_run())
 
 
-
-
 @app.command()
 def score(
     prompt: str = typer.Argument(..., help="Prompt to score"),

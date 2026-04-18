@@ -65,6 +65,7 @@ def _name_stem(field: str) -> str:
             return base[: -len(suffix)]
     # Strip trailing underscore+digit
     import re
+
     return re.sub(r"_\d+$", "", base)
 
 
@@ -213,17 +214,13 @@ def _fiedler_power_iter(
 
     # Rayleigh quotient approximation via repeated lap·v
     for _ in range(max_iter):
-        lap_v = [
-            degrees[i] * v[i] - sum(wmat[i][j] * v[j] for j in range(n)) for i in range(n)
-        ]
+        lap_v = [degrees[i] * v[i] - sum(wmat[i][j] * v[j] for j in range(n)) for i in range(n)]
         # Re-orthogonalize against constant vector
         mean_lap_v = sum(lap_v) / n
         lap_v = [x - mean_lap_v for x in lap_v]
         norm = math.sqrt(sum(x * x for x in lap_v)) or 1.0
         v = [x / norm for x in lap_v]
 
-    lap_v = [
-        degrees[i] * v[i] - sum(wmat[i][j] * v[j] for j in range(n)) for i in range(n)
-    ]
+    lap_v = [degrees[i] * v[i] - sum(wmat[i][j] * v[j] for j in range(n)) for i in range(n)]
     rayleigh = sum(v[i] * lap_v[i] for i in range(n))
     return max(0.0, rayleigh)

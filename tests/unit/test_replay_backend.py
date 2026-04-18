@@ -106,8 +106,15 @@ def test_replay_backend_loads_fixture_len() -> None:
         key = _hash_request("hello", None, None)
         _write_fixture(
             fixture,
-            [{"key": key, "prompt": "hello", "schema": None,
-              "constraints": None, "response": "hi"}],
+            [
+                {
+                    "key": key,
+                    "prompt": "hello",
+                    "schema": None,
+                    "constraints": None,
+                    "response": "hi",
+                }
+            ],
         )
         backend = ReplayBackend(fixture)
         assert len(backend) == 1
@@ -120,8 +127,15 @@ async def test_replay_backend_returns_stored_response() -> None:
         key = _hash_request("What is 2+2?", None, "json")
         _write_fixture(
             fixture,
-            [{"key": key, "prompt": "What is 2+2?", "schema": None,
-              "constraints": "json", "response": '{"answer": 4}'}],
+            [
+                {
+                    "key": key,
+                    "prompt": "What is 2+2?",
+                    "schema": None,
+                    "constraints": "json",
+                    "response": '{"answer": 4}',
+                }
+            ],
         )
         backend = ReplayBackend(fixture)
         result = await backend.generate("What is 2+2?", constraints="json")

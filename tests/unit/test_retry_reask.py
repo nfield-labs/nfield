@@ -63,8 +63,8 @@ class TestFormatShieldRetryException:
         assert exc.last_attempt is fa2
 
     def test_total_token_usage_sums_lengths(self) -> None:
-        fa1 = FailedAttempt(1, ValueError(), "hello")        # 5
-        fa2 = FailedAttempt(2, ValueError(), "world!")       # 6
+        fa1 = FailedAttempt(1, ValueError(), "hello")  # 5
+        fa2 = FailedAttempt(2, ValueError(), "world!")  # 6
         exc = FormatShieldRetryException("x", failed_attempts=[fa1, fa2])
         assert exc.total_token_usage == 11
 

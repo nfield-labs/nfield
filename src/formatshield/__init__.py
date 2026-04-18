@@ -89,7 +89,6 @@ __all__ = [
     "HOOK_COMPLETION_RESPONSE",
     "HOOK_PARSE_ERROR",
     "AsyncFormatShieldGenerator",
-
     "Chat",
     "ComplexityFeatures",
     "FormatShield",
