@@ -37,9 +37,46 @@ def generate(
     ),
     debug: bool = typer.Option(False, "--debug", "-d", help="Show routing trace"),
     expose_thinking: bool = typer.Option(False, "--expose-thinking", help="Show thinking text"),
+    policy_default: bool = typer.Option(
+        False,
+        "--policy-default",
+        help="Enable built-in default policy engine",
+    ),
+    policy_max_prompt_chars: int | None = typer.Option(
+        None,
+        "--policy-max-prompt-chars",
+        help="Block prompts longer than this length when policy-default is enabled",
+    ),
+    policy_deny: list[str] | None = typer.Option(  # noqa: B008
+        None,
+        "--policy-deny",
+        help="Deny prompt containing keyword (repeatable, policy-default only)",
+    ),
+    policy_profile: str = typer.Option(
+        "balanced",
+        "--policy-profile",
+        help="Policy profile: strict, balanced, permissive",
+    ),
+    adaptive_confidence: bool = typer.Option(
+        False,
+        "--adaptive-confidence",
+        help="Escalate low-confidence direct routes to TTF",
+    ),
+    adaptive_confidence_threshold: float = typer.Option(
+        0.55,
+        "--adaptive-confidence-threshold",
+        help="Threshold below which direct routes escalate when adaptive confidence is enabled",
+    ),
+    audit_file: str | None = typer.Option(
+        None,
+        "--audit-file",
+        help="Write tamper-evident audit events to this NDJSON file",
+    ),
 ) -> None:
     """Generate structured output with automatic TTF routing."""
     from formatshield.core import FormatShield
+    from formatshield.governance.policy import DefaultPolicyEngine
+    from formatshield.observability.audit_log import FileAuditLogger
 
     schema_dict = None
     if schema:
@@ -49,10 +86,24 @@ def generate(
             console.print(f"[red]Error: invalid JSON schema: {schema}[/red]")
             raise typer.Exit(1) from exc
 
+    audit_logger = FileAuditLogger(audit_file) if audit_file else None
+
     shield = FormatShield(
         model=model,
         debug=debug,
         expose_thinking=expose_thinking,
+        policy_engine=(
+            None
+            if not policy_default
+            else DefaultPolicyEngine.from_profile(
+                policy_profile,
+                max_prompt_chars=policy_max_prompt_chars,
+                deny_keywords=tuple(policy_deny or ()),
+            )
+        ),
+        adaptive_confidence=adaptive_confidence,
+        adaptive_confidence_threshold=adaptive_confidence_threshold,
+        audit_logger=audit_logger,
     )
 
     async def _run() -> None:
@@ -140,6 +191,13 @@ batch_app = typer.Typer(
     add_completion=False,
 )
 app.add_typer(batch_app, name="batch")
+
+audit_app = typer.Typer(
+    name="audit",
+    help="Inspect and verify tamper-evident audit logs.",
+    add_completion=False,
+)
+app.add_typer(audit_app, name="audit")
 
 
 @batch_app.command("submit")
@@ -248,6 +306,143 @@ def batch_results(
         table.add_row(str(item.get("custom_id", "")), status_str, str(content))
 
     console.print(table)
+
+
+@audit_app.command("verify")
+def audit_verify(
+    audit_file: str = typer.Argument(..., help="Path to audit NDJSON file"),
+) -> None:
+    """Verify the hash-chain integrity of an audit file."""
+    from formatshield.observability.audit_log import FileAuditLogger
+
+    logger = FileAuditLogger(audit_file)
+    events = logger.events()
+    chain_valid = logger.verify_chain()
+
+    event_type_counts: dict[str, int] = {}
+    for event in events:
+        event_type_counts[event.event_type] = event_type_counts.get(event.event_type, 0) + 1
+
+    type_rows = "\n".join(
+        f"  - {event_type}: {count}"
+        for event_type, count in sorted(event_type_counts.items(), key=lambda item: item[0])
+    )
+    if not type_rows:
+        type_rows = "  - (no events)"
+
+    summary = (
+        f"[bold]Audit file:[/bold] {audit_file}\n"
+        f"[bold]Event count:[/bold] {len(events)}\n"
+        f"[bold]Chain valid:[/bold] {'yes' if chain_valid else 'no'}\n"
+        f"[bold]Last hash:[/bold] {events[-1].event_hash if events else 'GENESIS'}\n"
+        f"[bold]Event types:[/bold]\n{type_rows}"
+    )
+
+    border_style = "green" if chain_valid else "red"
+    title = "[green]Audit Verification[/green]" if chain_valid else "[red]Audit Verification[/red]"
+    console.print(Panel(summary, title=title, border_style=border_style))
+    if not chain_valid:
+        raise typer.Exit(1)
+
+
+@audit_app.command("manifest")
+def audit_manifest(
+    audit_file: str = typer.Argument(..., help="Path to audit NDJSON file"),
+    output: str = typer.Option(
+        "audit-manifest.json",
+        "--output",
+        "-o",
+        help="Path to write manifest JSON",
+    ),
+    signing_key: str | None = typer.Option(
+        None,
+        "--signing-key",
+        help="Optional HMAC signing key for manifest integrity",
+        envvar="FORMATSHIELD_AUDIT_SIGNING_KEY",
+    ),
+    signing_key_id: str | None = typer.Option(
+        None,
+        "--signing-key-id",
+        help="Optional identifier for the signing key used in the manifest",
+        envvar="FORMATSHIELD_AUDIT_SIGNING_KEY_ID",
+    ),
+) -> None:
+    """Create a portable integrity manifest for an audit file."""
+    from formatshield.observability.audit_log import write_audit_manifest
+
+    manifest = write_audit_manifest(
+        audit_path=audit_file,
+        manifest_path=output,
+        signing_key=signing_key,
+        signing_key_id=signing_key_id,
+    )
+
+    console.print(
+        Panel(
+            f"[bold]Manifest written:[/bold] {output}\n"
+            f"[bold]Event count:[/bold] {manifest.event_count}\n"
+            f"[bold]Chain valid:[/bold] {'yes' if manifest.chain_valid else 'no'}\n"
+            f"[bold]Audit checksum:[/bold] {manifest.audit_sha256}\n"
+            f"[bold]Signing key id:[/bold] {manifest.signature_key_id or 'n/a'}\n"
+            f"[bold]Signed:[/bold] {'yes' if manifest.signature else 'no'}",
+            title="[cyan]Audit Manifest[/cyan]",
+            border_style="cyan",
+        )
+    )
+
+
+@audit_app.command("verify-manifest")
+def audit_verify_manifest(
+    audit_file: str = typer.Argument(..., help="Path to audit NDJSON file"),
+    manifest_file: str = typer.Argument(..., help="Path to audit manifest JSON"),
+    signing_key: str | None = typer.Option(
+        None,
+        "--signing-key",
+        help="HMAC signing key when verifying signed manifests",
+        envvar="FORMATSHIELD_AUDIT_SIGNING_KEY",
+    ),
+    expected_signing_key_id: str | None = typer.Option(
+        None,
+        "--expected-signing-key-id",
+        help="Expected signing key id recorded in the manifest",
+        envvar="FORMATSHIELD_AUDIT_SIGNING_KEY_ID",
+    ),
+) -> None:
+    """Verify an audit file against a previously exported manifest."""
+    from formatshield.observability.audit_log import verify_audit_manifest
+
+    valid, issues, manifest = verify_audit_manifest(
+        audit_path=audit_file,
+        manifest_path=manifest_file,
+        signing_key=signing_key,
+        expected_signing_key_id=expected_signing_key_id,
+    )
+
+    if valid and manifest is not None:
+        console.print(
+            Panel(
+                f"[bold]Manifest:[/bold] {manifest_file}\n"
+                f"[bold]Audit file:[/bold] {audit_file}\n"
+                f"[bold]Event count:[/bold] {manifest.event_count}\n"
+                f"[bold]Signing key id:[/bold] {manifest.signature_key_id or 'n/a'}\n"
+                f"[bold]Result:[/bold] valid",
+                title="[green]Manifest Verification[/green]",
+                border_style="green",
+            )
+        )
+        return
+
+    issue_rows = "\n".join(f"  - {issue}" for issue in issues) if issues else "  - unknown failure"
+    console.print(
+        Panel(
+            f"[bold]Manifest:[/bold] {manifest_file}\n"
+            f"[bold]Audit file:[/bold] {audit_file}\n"
+            f"[bold]Issues:[/bold]\n{issue_rows}",
+            title="[red]Manifest Verification Failed[/red]",
+            border_style="red",
+        )
+    )
+    raise typer.Exit(1)
 
 
 @app.command()

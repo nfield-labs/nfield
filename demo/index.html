@@ -704,6 +704,16 @@
       max-width: 520px;
     }
 
+    .score-semantic {
+      margin-top: 2px;
+      font-size: 11.5px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .score-semantic.fs-win { color: #86efac; }
+    .score-semantic.raw-win { color: #fca5a5; }
+    .score-semantic.tie { color: #fcd34d; }
+
     /* Breakdown */
     .score-breakdown {
       display: grid;
@@ -1348,6 +1358,7 @@
         <div class="score-meta">
           <div class="score-winner-badge" id="score-winner-badge">—</div>
           <div class="score-summary" id="score-summary"></div>
+          <div class="score-semantic" id="score-semantic"></div>
         </div>
       </div>
 
@@ -1734,6 +1745,8 @@
         document.getElementById('score-grade').textContent        = '—';
         document.getElementById('score-winner-badge').textContent = '—';
         document.getElementById('score-summary').textContent      = '';
+        document.getElementById('score-semantic').textContent     = '';
+        document.getElementById('score-semantic').className       = 'score-semantic';
         document.getElementById('score-reason-list').innerHTML    = '';
         ['schema','routing','reliability','advantage'].forEach(k => {
           document.getElementById(`sm-${k}`).style.width      = '0%';
@@ -1792,7 +1805,12 @@
         renderRaw(data.without_formatshield);
         renderFS(data.with_formatshield);
         renderVerdict(data.verdict, data.demo_score);
-        renderScoreCard(data.demo_score, data.with_formatshield, data.without_formatshield);
+        renderScoreCard(
+          data.demo_score,
+          data.with_formatshield,
+          data.without_formatshield,
+          data.semantic_evaluation
+        );
       } catch (e) {
         document.getElementById('raw-body').innerHTML =
           `<div class="error-box">Error: ${escHtml(e.message)}</div>`;
@@ -1901,7 +1919,7 @@
       _renderFSFormatted(data);
     }
 
-    function renderScoreCard(verdict, fsData, rawData) {
+    function renderScoreCard(verdict, fsData, rawData, semanticEval) {
       if (!verdict) return;
 
       const card = document.getElementById('score-card');
@@ -1973,6 +1991,20 @@
       winnerBadge.className   = `score-winner-badge verdict-${tier}`;
 
       document.getElementById('score-summary').textContent = verdict.summary || '';
+
+      const semanticLine = document.getElementById('score-semantic');
+      if (semanticEval && semanticEval.summary) {
+        const fsSem = semanticEval.formatshield && semanticEval.formatshield.normalized;
+        const rawSem = semanticEval.raw && semanticEval.raw.normalized;
+        const deltaSem = semanticEval.delta;
+        const winnerSem = semanticEval.winner || 'tie';
+        semanticLine.className = `score-semantic ${winnerSem === 'formatshield' ? 'fs-win' : winnerSem === 'raw' ? 'raw-win' : 'tie'}`;
+        semanticLine.textContent =
+          `Semantic signal: FS ${fsSem ?? '—'} vs Raw ${rawSem ?? '—'} (Δ ${deltaSem >= 0 ? '+' : ''}${deltaSem ?? '—'})`;
+      } else {
+        semanticLine.className = 'score-semantic';
+        semanticLine.textContent = '';
+      }
 
       // Breakdown bars
       const setMetric = (key, val, max) => {

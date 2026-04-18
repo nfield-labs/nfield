@@ -38,8 +38,12 @@ from formatshield.hooks import (
     HOOK_COMPLETION_KWARGS,
     HOOK_COMPLETION_RESPONSE,
     HOOK_PARSE_ERROR,
+    HOOK_REQUEST_BEFORE_ROUTE,
+    HOOK_REQUEST_POLICY_CHECK,
+    HOOK_ROUTING_DECISION,
     Hooks,
 )
+from formatshield.observability.audit_log import InMemoryAuditLogger
 from formatshield.observability.logger import StructuredLogger
 from formatshield.observability.metrics import MetricsCollector
 from formatshield.oracle.context import RoutingContext, TelemetryRecord
@@ -332,9 +336,9 @@ def _build_backend(
         return CerebrasBackend(api_key=api_key, model=model_name)
 
     # Fallback: OpenRouter handles most OpenAI-compatible APIs
-    from formatshield.backends.openrouter_backend import OpenRouterBackend
+    from formatshield.backends import openrouter_backend as _openrouter_backend
 
-    return OpenRouterBackend(api_key=api_key, model=model)
+    return _openrouter_backend.OpenRouterBackend(api_key=api_key, model=model)
 
 
 # ---------------------------------------------------------------------------
@@ -367,6 +371,154 @@ def _infer_schema_family(schema: dict[str, Any] | None) -> str:
     if any(kw in props for kw in ("label", "category", "class")):
         return "classification"
     return "unknown"
+
+
+def _normalize_value_against_schema(value: Any, schema: dict[str, Any]) -> Any:
+    """Normalize generated JSON against schema constraints when safe to do so.
+
+    This helper removes optional null fields and strips unknown object keys when
+    ``additionalProperties`` is false. It does not invent missing required data.
+    """
+    schema_type = schema.get("type")
+
+    if schema_type == "object" and isinstance(value, dict):
+        properties_obj = schema.get("properties")
+        properties: dict[str, Any] = properties_obj if isinstance(properties_obj, dict) else {}
+        req_raw = schema.get("required")
+        required = set(req_raw) if isinstance(req_raw, list) else set()
+        additional = schema.get("additionalProperties", True)
+
+        normalized: dict[str, Any] = {}
+        for key, raw_child in value.items():
+            if key in properties:
+                child_schema = properties[key]
+                if isinstance(child_schema, dict):
+                    child = _normalize_value_against_schema(raw_child, child_schema)
+                else:
+                    child = raw_child
+
+                if child is None and key not in required:
+                    continue
+                normalized[key] = child
+                continue
+
+            if additional is True:
+                normalized[key] = raw_child
+            elif isinstance(additional, dict):
+                normalized[key] = _normalize_value_against_schema(raw_child, additional)
+            # additionalProperties=False: unknown keys are intentionally dropped
+
+        return normalized
+
+    if schema_type == "array" and isinstance(value, list):
+        item_schema = schema.get("items")
+        if isinstance(item_schema, dict):
+            return [_normalize_value_against_schema(item, item_schema) for item in value]
+
+    return value
+
+
+def _normalize_output_against_schema(output: str, schema: dict[str, Any]) -> str:
+    """Best-effort output normalization for JSON-object schemas."""
+    try:
+        parsed = json.loads(output)
+    except (json.JSONDecodeError, ValueError):
+        return output
+
+    normalized = _normalize_value_against_schema(parsed, schema)
+    if normalized == parsed:
+        return output
+    return json.dumps(normalized)
+
+
+def _type_matches_json_schema(instance: Any, expected_type: str) -> bool:
+    if expected_type == "object":
+        return isinstance(instance, dict)
+    if expected_type == "array":
+        return isinstance(instance, list)
+    if expected_type == "string":
+        return isinstance(instance, str)
+    if expected_type == "boolean":
+        return isinstance(instance, bool)
+    if expected_type == "integer":
+        return isinstance(instance, int) and not isinstance(instance, bool)
+    if expected_type == "number":
+        return (isinstance(instance, int | float) and not isinstance(instance, bool))
+    if expected_type == "null":
+        return instance is None
+    return True
+
+
+def _basic_validate_against_json_schema(
+    instance: Any,
+    schema: dict[str, Any],
+    path: str = "$",
+) -> str | None:
+    """Minimal validator used only when jsonschema is unavailable."""
+    expected_type = schema.get("type")
+    if isinstance(expected_type, str) and not _type_matches_json_schema(instance, expected_type):
+        return f"{path}: expected type '{expected_type}'"
+
+    enum_values = schema.get("enum")
+    if isinstance(enum_values, list) and instance not in enum_values:
+        return f"{path}: value {instance!r} not in enum"
+
+    if isinstance(instance, dict):
+        required = schema.get("required", [])
+        if isinstance(required, list):
+            for key in required:
+                if key not in instance:
+                    return f"{path}: missing required property '{key}'"
+
+        properties = schema.get("properties")
+        if isinstance(properties, dict):
+            for key, child_schema in properties.items():
+                if key in instance and isinstance(child_schema, dict):
+                    err = _basic_validate_against_json_schema(
+                        instance[key],
+                        child_schema,
+                        f"{path}.{key}",
+                    )
+                    if err is not None:
+                        return err
+
+            additional = schema.get("additionalProperties", True)
+            if additional is False:
+                unknown = [k for k in instance if k not in properties]
+                if unknown:
+                    return f"{path}: unknown properties {unknown}"
+
+    if isinstance(instance, list):
+        item_schema = schema.get("items")
+        if isinstance(item_schema, dict):
+            for idx, item in enumerate(instance):
+                err = _basic_validate_against_json_schema(item, item_schema, f"{path}[{idx}]")
+                if err is not None:
+                    return err
+
+    return None
+
+
+def _validate_against_json_schema(instance: Any, schema: dict[str, Any]) -> tuple[bool, str | None]:
+    """Validate parsed output against a JSON schema.
+
+    Uses jsonschema when installed; otherwise falls back to a minimal validator
+    covering required/type/enum/additionalProperties and nested arrays/objects.
+    """
+    try:
+        import jsonschema
+        from jsonschema.exceptions import ValidationError as _JsonSchemaValidationError
+    except ImportError:
+        err = _basic_validate_against_json_schema(instance, schema)
+        return err is None, err
+
+    try:
+        jsonschema.validate(instance=instance, schema=schema)
+        return True, None
+    except _JsonSchemaValidationError as exc:
+        return False, exc.message
+    except Exception as exc:
+        return False, str(exc)
 
 
 # ---------------------------------------------------------------------------
@@ -404,6 +556,10 @@ class FormatShield:
         log_level: str = "WARNING",
         backend: Any | None = None,
         hooks: Hooks | None = None,
+        policy_engine: Any | None = None,
+        adaptive_confidence: bool = False,
+        adaptive_confidence_threshold: float = 0.55,
+        audit_logger: Any | None = None,
     ) -> None:
         self.model = model
         self._latency_budget_ms = latency_budget_ms
@@ -411,6 +567,8 @@ class FormatShield:
         self._ttf_fallback = ttf_fallback
         self._expose_thinking = expose_thinking
         self._debug = debug
+        self._adaptive_confidence = adaptive_confidence
+        self._adaptive_confidence_threshold = adaptive_confidence_threshold
 
         self.backend_name: BackendName = get_backend_name_from_model(model)
         self._backend = (
@@ -427,8 +585,19 @@ class FormatShield:
         self._metrics = metrics or MetricsCollector()
         self._logger = StructuredLogger(level=log_level)
         self._hooks: Hooks = hooks if hooks is not None else Hooks()
+        self._policy_engine = policy_engine
+        self._audit_logger = audit_logger if audit_logger is not None else InMemoryAuditLogger()
+        if self._policy_engine is not None and hasattr(self._policy_engine, "attach_to_hooks"):
+            self._policy_engine.attach_to_hooks(self._hooks)
 
         logger.debug("FormatShield initialised: model=%s backend=%s", model, self.backend_name)
+
+    def _record_audit_event(self, event_type: str, payload: dict[str, Any]) -> None:
+        """Record audit events without interrupting inference on logger failures."""
+        try:
+            self._audit_logger.record(event_type, payload)
+        except Exception:
+            logger.debug("FormatShield: audit logging failed", exc_info=True)
 
     # ------------------------------------------------------------------
     # Async generate
@@ -486,6 +655,65 @@ class FormatShield:
         if output_type is not None and schema_dict is None:
             schema_dict = _build_schema_from_output_type(output_type) or None
 
+        policy_pre_route: dict[str, Any] = {
+            "phase": "pre_route",
+            "prompt": prompt,
+            "schema": schema_dict,
+            "model": self.model,
+            "backend": self.backend_name,
+            "latency_budget_ms": self._latency_budget_ms,
+            "cost_aware": self._cost_aware,
+            "forced_strategy": None,
+            "blocked": False,
+            "reason": None,
+        }
+        self._hooks.emit(HOOK_REQUEST_BEFORE_ROUTE, policy_pre_route)
+        if policy_pre_route.get("blocked"):
+            block_reason = str(
+                policy_pre_route.get("reason")
+                or "Request blocked by policy hook before routing"
+            )
+            self._hooks.emit(
+                HOOK_REQUEST_POLICY_CHECK,
+                {
+                    "phase": "pre_route",
+                    "allowed": False,
+                    "reason": block_reason,
+                    "model": self.model,
+                    "backend": self.backend_name,
+                },
+            )
+            self._record_audit_event(
+                "policy.pre_route.blocked",
+                {
+                    "model": self.model,
+                    "backend": self.backend_name,
+                    "reason": block_reason,
+                    "policy_flags": policy_pre_route.get("policy_flags", []),
+                },
+            )
+            raise PermissionError(block_reason)
+
+        self._hooks.emit(
+            HOOK_REQUEST_POLICY_CHECK,
+            {
+                "phase": "pre_route",
+                "allowed": True,
+                "reason": None,
+                "model": self.model,
+                "backend": self.backend_name,
+            },
+        )
+        self._record_audit_event(
+            "policy.pre_route.allowed",
+            {
+                "model": self.model,
+                "backend": self.backend_name,
+                "policy_flags": policy_pre_route.get("policy_flags", []),
+                "forced_strategy": policy_pre_route.get("forced_strategy"),
+            },
+        )
+
         # Complexity scoring
         features: ComplexityFeatures = self._scorer.score(
             prompt=prompt,
@@ -533,6 +761,130 @@ class FormatShield:
                 explanation=f"FailureModeDetector override: {failure_modes}",
                 failure_modes=failure_modes,
             )
+
+        forced_strategy = policy_pre_route.get("forced_strategy")
+        if isinstance(forced_strategy, str) and forced_strategy in {"direct", "ttf"}:
+            forced_strategy_literal: Literal["direct", "ttf"]
+            if forced_strategy == "direct":
+                forced_strategy_literal = "direct"
+            else:
+                forced_strategy_literal = "ttf"
+
+            forced_failure_modes = list(failure_modes)
+            if "policy_forced_route" not in forced_failure_modes:
+                forced_failure_modes.append("policy_forced_route")
+
+            forced_reason = str(policy_pre_route.get("reason") or "policy hook override")
+            forced_expected_overhead = decision.expected_overhead_pct
+            if forced_strategy_literal == "direct":
+                forced_expected_overhead = 0.0
+            elif forced_expected_overhead <= 0.0:
+                forced_expected_overhead = 30.0
+
+            decision = RoutingDecision(
+                strategy=forced_strategy_literal,
+                expected_accuracy_delta=(
+                    decision.expected_accuracy_delta if forced_strategy_literal == "ttf" else 0.0
+                ),
+                expected_overhead_pct=forced_expected_overhead,
+                confidence=1.0,
+                explanation=f"Policy forced route: {forced_strategy_literal} ({forced_reason})",
+                failure_modes=forced_failure_modes,
+            )
+
+            self._hooks.emit(
+                HOOK_REQUEST_POLICY_CHECK,
+                {
+                    "phase": "route_override",
+                    "allowed": True,
+                    "model": self.model,
+                    "backend": self.backend_name,
+                    "forced_strategy": forced_strategy_literal,
+                    "reason": forced_reason,
+                },
+            )
+            self._record_audit_event(
+                "policy.route_override",
+                {
+                    "model": self.model,
+                    "backend": self.backend_name,
+                    "forced_strategy": forced_strategy_literal,
+                    "reason": forced_reason,
+                },
+            )
+
+        if (
+            self._adaptive_confidence
+            and decision.strategy == "direct"
+            and schema_dict is not None
+            and decision.confidence < self._adaptive_confidence_threshold
+            and forced_strategy not in {"direct", "ttf"}
+        ):
+            escalated_failure_modes = list(decision.failure_modes)
+            if "low_confidence_escalation" not in escalated_failure_modes:
+                escalated_failure_modes.append("low_confidence_escalation")
+            decision = RoutingDecision(
+                strategy="ttf",
+                expected_accuracy_delta=max(decision.expected_accuracy_delta, 0.02),
+                expected_overhead_pct=max(decision.expected_overhead_pct, 30.0),
+                confidence=min(0.95, max(decision.confidence, self._adaptive_confidence_threshold)),
+                explanation=(
+                    "Adaptive confidence escalation: low-confidence direct route "
+                    f"({decision.confidence:.2f}) switched to TTF"
+                ),
+                failure_modes=escalated_failure_modes,
+            )
+            self._hooks.emit(
+                HOOK_REQUEST_POLICY_CHECK,
+                {
+                    "phase": "confidence_escalation",
+                    "allowed": True,
+                    "model": self.model,
+                    "backend": self.backend_name,
+                    "strategy": decision.strategy,
+                    "threshold": self._adaptive_confidence_threshold,
+                },
+            )
+            self._record_audit_event(
+                "routing.confidence_escalation",
+                {
+                    "model": self.model,
+                    "backend": self.backend_name,
+                    "strategy": decision.strategy,
+                    "threshold": self._adaptive_confidence_threshold,
+                },
+            )
+
+        self._hooks.emit(
+            HOOK_ROUTING_DECISION,
+            {
+                "strategy": decision.strategy,
+                "confidence": decision.confidence,
+                "expected_accuracy_delta": decision.expected_accuracy_delta,
+                "expected_overhead_pct": decision.expected_overhead_pct,
+                "complexity_score": complexity_score,
+                "failure_modes": list(failure_modes),
+                "model": self.model,
+                "backend": self.backend_name,
+                "phi": {
+                    "score": phi_result.phi,
+                    "lambda2": phi_result.lambda2,
+                    "tau": phi_result.tau,
+                    "delta_k": phi_result.delta_k,
+                },
+            },
+        )
+        self._record_audit_event(
+            "routing.decision",
+            {
+                "model": self.model,
+                "backend": self.backend_name,
+                "strategy": decision.strategy,
+                "confidence": decision.confidence,
+                "complexity_score": complexity_score,
+                "failure_modes": list(decision.failure_modes),
+            },
+        )
 
         if use_debug:
             self._print_routing_trace(features, complexity_score, decision)
@@ -614,6 +966,9 @@ class FormatShield:
         parsed: BaseModel | dict[str, Any] | Any | None = None
         schema_valid = False
 
+        if output and schema_dict is not None:
+            output = _normalize_output_against_schema(output, schema_dict)
+
         if output:
             if schema_model is not None:
                 try:
@@ -625,6 +980,15 @@ class FormatShield:
                         parsed = json.loads(output)
                     except (json.JSONDecodeError, ValueError):
                         parsed = None
+                if schema_valid and schema_dict is not None:
+                    instance = parsed.model_dump() if isinstance(parsed, BaseModel) else parsed
+                    schema_valid, schema_err = _validate_against_json_schema(instance, schema_dict)
+                    if not schema_valid:
+                        self._hooks.emit(
+                            HOOK_PARSE_ERROR,
+                            ValueError(f"Schema validation failed: {schema_err}"),
+                            output,
+                        )
             elif output_type is not None:
                 try:
                     parsed = _cast_parsed(output, output_type)
@@ -635,12 +999,65 @@ class FormatShield:
                         parsed = json.loads(output)
                     except (json.JSONDecodeError, ValueError):
                         parsed = None
+            elif schema_dict is not None:
+                try:
+                    parsed = json.loads(output)
+                    schema_valid, schema_err = _validate_against_json_schema(parsed, schema_dict)
+                    if not schema_valid:
+                        self._hooks.emit(
+                            HOOK_PARSE_ERROR,
+                            ValueError(f"Schema validation failed: {schema_err}"),
+                            output,
+                        )
+                except (json.JSONDecodeError, ValueError) as _parse_exc:
+                    self._hooks.emit(HOOK_PARSE_ERROR, _parse_exc, output)
+                    parsed = None
             else:
                 try:
                     parsed = json.loads(output)
                     schema_valid = True
                 except (json.JSONDecodeError, ValueError):
                     parsed = None
+
+        policy_post_output: dict[str, Any] = {
+            "phase": "post_output",
+            "allowed": True,
+            "blocked": False,
+            "reason": None,
+            "model": self.model,
+            "backend": self.backend_name,
+            "routing_strategy": decision.strategy,
+            "fallback_triggered": fallback_triggered,
+            "schema_valid": schema_valid,
+            "failure_modes": list(failure_modes),
+            "output": output,
+            "parsed": parsed,
+        }
+        self._hooks.emit(HOOK_REQUEST_POLICY_CHECK, policy_post_output)
+        if policy_post_output.get("blocked"):
+            post_reason = str(
+                policy_post_output.get("reason")
+                or "Output blocked by policy hook after generation"
+            )
+            self._record_audit_event(
+                "policy.post_output.blocked",
+                {
+                    "model": self.model,
+                    "backend": self.backend_name,
+                    "reason": post_reason,
+                    "routing_strategy": decision.strategy,
+                },
+            )
+            raise PermissionError(post_reason)
+        self._record_audit_event(
+            "policy.post_output.allowed",
+            {
+                "model": self.model,
+                "backend": self.backend_name,
+                "routing_strategy": decision.strategy,
+                "schema_valid": schema_valid,
+            },
+        )
 
         latency_ms = (time.monotonic() - t_start) * 1000
 
@@ -673,6 +1090,17 @@ class FormatShield:
             latency_ms=latency_ms,
             schema_valid=schema_valid,
             fallback=fallback_triggered,
+        )
+        self._record_audit_event(
+            "generation.complete",
+            {
+                "model": self.model,
+                "backend": self.backend_name,
+                "route": decision.strategy,
+                "latency_ms": latency_ms,
+                "schema_valid": schema_valid,
+                "fallback_triggered": fallback_triggered,
+            },
         )
 
         return GenerationResult(

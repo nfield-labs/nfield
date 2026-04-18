@@ -14,7 +14,7 @@ import json
 import os
 import time
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -25,7 +25,14 @@ from pydantic import BaseModel
 load_dotenv()
 
 import formatshield as fs  # noqa: E402
+from formatshield.observability.audit_log import (  # noqa: E402
+    FileAuditLogger,
+    InMemoryAuditLogger,
+    build_audit_manifest,
+    verify_audit_manifest,
+)
 from formatshield.oracle.routing_score import compute_routing_score  # noqa: E402
+from formatshield.semantic.evaluator import evaluate_semantic_pair  # noqa: E402
 
 app = FastAPI(title="FormatShield Demo")
 
@@ -41,7 +48,57 @@ GROQ_MODELS: list[str] = [
 _ALLOWED_MODELS: frozenset[str] = frozenset(GROQ_MODELS)
 
 # Preset loader — load demo/presets.json at startup
-PRESETS: list[dict] = json.loads((Path(__file__).parent / "presets.json").read_text(encoding="utf-8"))
+PRESETS: list[dict] = json.loads(  # noqa: E501
+    (Path(__file__).parent / "presets.json").read_text(encoding="utf-8")
+)
+
+_DEMO_AUDIT_INFO: dict[str, str | None] = {
+    "mode": "in_memory",
+    "path": None,
+    "error": None,
+}
+_DEMO_AUDIT_SIGNING_KEY = os.environ.get("FORMATSHIELD_DEMO_AUDIT_SIGNING_KEY")
+_DEMO_AUDIT_SIGNING_KEY_ID = os.environ.get("FORMATSHIELD_DEMO_AUDIT_SIGNING_KEY_ID")
+_demo_audit_env_path = os.environ.get("FORMATSHIELD_DEMO_AUDIT_PATH", "").strip()
+try:
+    if _demo_audit_env_path:
+        _DEMO_AUDIT_LOGGER = FileAuditLogger(_demo_audit_env_path)
+        _DEMO_AUDIT_INFO["mode"] = "file"
+        _DEMO_AUDIT_INFO["path"] = str(_DEMO_AUDIT_LOGGER.file_path)
+    else:
+        _DEMO_AUDIT_LOGGER = InMemoryAuditLogger()
+except Exception as exc:
+    _DEMO_AUDIT_LOGGER = InMemoryAuditLogger()
+    _DEMO_AUDIT_INFO["error"] = str(exc)
+
+
+def _audit_chain_valid() -> bool:
+    verifier = getattr(_DEMO_AUDIT_LOGGER, "verify_chain", None)
+    if callable(verifier):
+        try:
+            return bool(verifier())
+        except Exception:
+            return False
+    return True
+
+
+def _audit_events_payload(limit: int, event_type: str | None = None) -> dict[str, Any]:
+    all_events = _DEMO_AUDIT_LOGGER.events()
+    if event_type:
+        filtered = [event for event in all_events if event.event_type == event_type]
+    else:
+        filtered = all_events
+
+    bounded_limit = max(1, min(limit, 500))
+    selected = filtered[-bounded_limit:]
+    return {
+        "count": len(selected),
+        "total": len(filtered),
+        "limit": bounded_limit,
+        "event_type": event_type,
+        "chain_valid": _audit_chain_valid(),
+        "events": [event.model_dump() for event in selected],
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -526,6 +583,11 @@ def _compute_demo_score(
             "indicates schema complexity at the boundary."
         )
 
+    reliability_signal = schema_validity + reliability
+    semantic_proxy_signal = constraint_edge + constraint_protection
+    reliability_score = round((reliability_signal / 50.0) * 100.0, 1)
+    semantic_proxy_score = round((semantic_proxy_signal / 50.0) * 100.0, 1)
+
     return {
         "score": score,
         "grade": grade,
@@ -552,6 +614,14 @@ def _compute_demo_score(
             "reliability": reliability,
             "schema_advantage": constraint_protection,
         },
+        "score_channels": {
+            "reliability_score": reliability_score,
+            "semantic_proxy_score": semantic_proxy_score,
+            "notes": (
+                "reliability_score reflects schema-validity and fallback stability; "
+                "semantic_proxy_score reflects routing quality plus constraint advantage"
+            ),
+        },
     }
 
 
@@ -560,7 +630,7 @@ def _compute_demo_score(
 # ---------------------------------------------------------------------------
 
 
-def _compute_verdict(fs: dict, raw: dict) -> dict:
+def _compute_verdict(fs: dict, raw: dict, semantic_eval: dict | None = None) -> dict:
     """Compare both sides and produce a human-readable winner summary."""
     points: dict[str, list[str]] = {"formatshield": [], "raw": [], "tie": []}
 
@@ -613,6 +683,18 @@ def _compute_verdict(fs: dict, raw: dict) -> dict:
             f"FormatShield output violated schema: {fs['schema_violation'][:120]}"
         )
 
+    if semantic_eval is not None:
+        sem_winner = semantic_eval.get("winner")
+        sem_delta = float(semantic_eval.get("delta", 0.0) or 0.0)
+        sem_summary = str(semantic_eval.get("summary") or "")
+        if sem_summary:
+            if sem_winner == "formatshield":
+                points["formatshield"].append(f"Semantic signal: {sem_summary}")
+            elif sem_winner == "raw":
+                points["raw"].append(f"Semantic signal: {sem_summary}")
+            else:
+                points["tie"].append(f"Semantic signal: {sem_summary}")
+
     # Overall winner
     fs_score = len(points["formatshield"])
     raw_score = len(points["raw"])
@@ -634,6 +716,22 @@ def _compute_verdict(fs: dict, raw: dict) -> dict:
     else:
         winner = "tie"
         summary = "Comparable result — FormatShield adds routing intelligence at no cost."
+
+    if semantic_eval is not None:
+        sem_winner = semantic_eval.get("winner")
+        sem_delta = float(semantic_eval.get("delta", 0.0) or 0.0)
+        sem_summary = str(semantic_eval.get("summary") or "")
+        if winner == "tie" and sem_winner in {"formatshield", "raw"} and abs(sem_delta) >= 2.0:
+            winner = sem_winner
+            summary = f"{summary} Tie broken by semantic signal: {sem_summary}"
+        elif winner == "formatshield" and sem_winner == "raw" and abs(sem_delta) >= 8.0:
+            winner = "tie"
+            summary = f"{summary} Reliability favors FormatShield but semantic signal favors raw."
+        elif winner == "raw" and sem_winner == "formatshield" and abs(sem_delta) >= 8.0:
+            winner = "tie"
+            summary = (
+                f"{summary} Reliability favors raw but semantic signal favors FormatShield."
+            )
 
     return {
         "winner": winner,
@@ -672,6 +770,76 @@ async def get_preset(preset_id: str) -> dict:
     raise HTTPException(status_code=404, detail=f"Preset '{preset_id}' not found.")
 
 
+@app.get("/audit/verify")
+async def verify_audit_chain() -> dict[str, Any]:
+    events = _DEMO_AUDIT_LOGGER.events()
+    return {
+        "mode": _DEMO_AUDIT_INFO["mode"],
+        "path": _DEMO_AUDIT_INFO["path"],
+        "event_count": len(events),
+        "chain_valid": _audit_chain_valid(),
+        "error": _DEMO_AUDIT_INFO["error"],
+    }
+
+
+@app.get("/audit/events")
+async def list_audit_events(limit: int = 50, event_type: str | None = None) -> dict[str, Any]:
+    return _audit_events_payload(limit=limit, event_type=event_type)
+
+
+@app.get("/audit/manifest")
+async def export_audit_manifest() -> dict[str, Any]:
+    audit_path = _DEMO_AUDIT_INFO.get("path")
+    if not audit_path:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Demo audit logger is in-memory. Set FORMATSHIELD_DEMO_AUDIT_PATH "
+                "to enable manifest export."
+            ),
+        )
+
+    try:
+        manifest = build_audit_manifest(
+            audit_path,
+            signing_key=_DEMO_AUDIT_SIGNING_KEY,
+            signing_key_id=_DEMO_AUDIT_SIGNING_KEY_ID,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to build manifest: {exc}") from exc
+
+    return {
+        "ok": True,
+        "manifest": manifest.model_dump(),
+        "signed": bool(manifest.signature),
+    }
+
+
+@app.get("/audit/verify-manifest")
+async def verify_manifest(manifest_path: str) -> dict[str, Any]:
+    audit_path = _DEMO_AUDIT_INFO.get("path")
+    if not audit_path:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Demo audit logger is in-memory. Set FORMATSHIELD_DEMO_AUDIT_PATH "
+                "to enable manifest verification."
+            ),
+        )
+
+    valid, issues, manifest = verify_audit_manifest(
+        audit_path=audit_path,
+        manifest_path=manifest_path,
+        signing_key=_DEMO_AUDIT_SIGNING_KEY,
+        expected_signing_key_id=_DEMO_AUDIT_SIGNING_KEY_ID,
+    )
+    return {
+        "ok": valid,
+        "issues": issues,
+        "manifest": manifest.model_dump() if manifest is not None else None,
+    }
+
+
 @app.post("/compare")
 async def compare(req: CompareRequest) -> dict:
     # Fix 2: enforce Groq-only server-side
@@ -708,8 +876,15 @@ async def compare(req: CompareRequest) -> dict:
         req.prompt, req.schema_text, schema_dict, req.model, req.system_prompt
     )
 
+    semantic_evaluation = evaluate_semantic_pair(
+        fs_result,
+        raw_result,
+        schema_dict,
+        phi=phi_info.get("phi"),
+    )
+
     # Fix 4: compute verdict
-    verdict = _compute_verdict(fs_result, raw_result)
+    verdict = _compute_verdict(fs_result, raw_result, semantic_evaluation)
 
     # Demo score
     demo_score = _compute_demo_score(fs_result, raw_result, phi_info, schema_dict)
@@ -720,6 +895,7 @@ async def compare(req: CompareRequest) -> dict:
         "without_formatshield": raw_result,
         "verdict": verdict,
         "demo_score": demo_score,
+        "semantic_evaluation": semantic_evaluation,
     }
 
 
@@ -732,7 +908,7 @@ async def _call_with_formatshield(
     prompt: str, schema: dict, model: str, system_prompt: str = ""
 ) -> dict:
     try:
-        shield = fs.FormatShield(model=model)
+        shield = fs.FormatShield(model=model, audit_logger=_DEMO_AUDIT_LOGGER)
         t0 = time.perf_counter()
         full_prompt = f"{system_prompt}\n\n{prompt}".strip() if system_prompt else prompt
         result: fs.GenerationResult = await shield.generate(prompt=full_prompt, schema=schema)

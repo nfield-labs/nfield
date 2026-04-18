@@ -9,6 +9,9 @@ from formatshield.hooks import (
     HOOK_COMPLETION_KWARGS,
     HOOK_COMPLETION_RESPONSE,
     HOOK_PARSE_ERROR,
+    HOOK_REQUEST_BEFORE_ROUTE,
+    HOOK_REQUEST_POLICY_CHECK,
+    HOOK_ROUTING_DECISION,
     Hooks,
 )
 
@@ -58,6 +61,11 @@ class TestHooksRegistration:
         events = hooks.events()
         assert HOOK_COMPLETION_RESPONSE in events
         assert HOOK_COMPLETION_KWARGS not in events
+
+    def test_on_registers_policy_hook_event(self) -> None:
+        hooks = Hooks()
+        hooks.on(HOOK_REQUEST_POLICY_CHECK, _noop)
+        assert hooks.handler_count(HOOK_REQUEST_POLICY_CHECK) == 1
 
 
 class TestHooksEmit:
@@ -180,3 +188,62 @@ class TestHooksWithFormatShield:
         shield.generate_sync("Hello")
         assert len(kwargs_seen) >= 1
         assert "schema" in kwargs_seen[0]
+
+    def test_request_before_route_and_routing_decision_hooks_fire(self) -> None:
+        from formatshield.backends.dryrun_backend import DryRunBackend
+        from formatshield.core import FormatShield
+
+        pre_route: list[dict[str, Any]] = []
+        route_events: list[dict[str, Any]] = []
+
+        hooks = Hooks()
+        hooks.on(HOOK_REQUEST_BEFORE_ROUTE, lambda c: pre_route.append(dict(c)))
+        hooks.on(HOOK_ROUTING_DECISION, lambda c: route_events.append(dict(c)))
+
+        shield = FormatShield(model="dryrun/test", backend=DryRunBackend(), hooks=hooks)
+        shield.generate_sync("Hello world")
+
+        assert len(pre_route) >= 1
+        assert len(route_events) >= 1
+        assert "model" in pre_route[0]
+        assert "strategy" in route_events[0]
+
+    def test_policy_hook_can_block_request_before_route(self) -> None:
+        from formatshield.backends.dryrun_backend import DryRunBackend
+        from formatshield.core import FormatShield
+
+        policy_events: list[dict[str, Any]] = []
+
+        def block_request(context: dict[str, Any]) -> None:
+            context["blocked"] = True
+            context["reason"] = "blocked-by-test-policy"
+
+        hooks = Hooks()
+        hooks.on(HOOK_REQUEST_BEFORE_ROUTE, block_request)
+        hooks.on(HOOK_REQUEST_POLICY_CHECK, lambda c: policy_events.append(dict(c)))
+
+        shield = FormatShield(model="dryrun/test", backend=DryRunBackend(), hooks=hooks)
+
+        import pytest
+
+        with pytest.raises(PermissionError, match="blocked-by-test-policy"):
+            shield.generate_sync("Hello world")
+
+        assert any(event.get("allowed") is False for event in policy_events)
+
+    def test_policy_hook_can_force_ttf_strategy_before_route(self) -> None:
+        from formatshield.backends.dryrun_backend import DryRunBackend
+        from formatshield.core import FormatShield
+
+        def force_ttf(context: dict[str, Any]) -> None:
+            context["forced_strategy"] = "ttf"
+            context["reason"] = "force-ttf-for-test"
+
+        hooks = Hooks()
+        hooks.on(HOOK_REQUEST_BEFORE_ROUTE, force_ttf)
+
+        shield = FormatShield(model="dryrun/test", backend=DryRunBackend(), hooks=hooks)
+        result = shield.generate_sync("Hi")
+
+        assert result.routing.strategy == "ttf"
+        assert "Policy forced route" in result.routing.explanation

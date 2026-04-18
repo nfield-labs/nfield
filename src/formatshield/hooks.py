@@ -66,6 +66,32 @@ The handler receives the validation/parse error and the raw output string
 that failed validation.
 """
 
+HOOK_REQUEST_BEFORE_ROUTE: Final[str] = "request:before_route"
+"""Fired before complexity scoring and route selection.
+
+Handler signature: ``(context: dict[str, Any]) -> None``
+
+The context includes at least: ``prompt``, ``schema``, ``model``, and ``backend``.
+Handlers may add policy metadata (e.g. ``blocked=True`` with ``reason``).
+"""
+
+HOOK_REQUEST_POLICY_CHECK: Final[str] = "request:policy_check"
+"""Fired for policy enforcement checkpoints.
+
+Handler signature: ``(context: dict[str, Any]) -> None``
+
+The context includes ``phase`` (e.g. ``"pre_route"`` or ``"post_output"``)
+plus request/result metadata for policy logging or enforcement.
+"""
+
+HOOK_ROUTING_DECISION: Final[str] = "routing:decision"
+"""Fired immediately after the final routing decision is made.
+
+Handler signature: ``(context: dict[str, Any]) -> None``
+
+The context includes route strategy, confidence, feature score, and failure modes.
+"""
+
 # ---------------------------------------------------------------------------
 # Type alias
 # ---------------------------------------------------------------------------
@@ -83,6 +109,9 @@ _KNOWN_EVENTS: frozenset[str] = frozenset(
         HOOK_COMPLETION_RESPONSE,
         HOOK_COMPLETION_ERROR,
         HOOK_PARSE_ERROR,
+        HOOK_REQUEST_BEFORE_ROUTE,
+        HOOK_REQUEST_POLICY_CHECK,
+        HOOK_ROUTING_DECISION,
     ]
 )
 

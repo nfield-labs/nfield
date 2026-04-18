@@ -38,12 +38,22 @@ from formatshield.caching import cache, clear_cache, disable_cache, make_cache_k
 from formatshield.core import FormatShield, GenerationResult, generate
 from formatshield.dsl import IterableModel, Maybe, MaybeResult, Partial
 from formatshield.generator import AsyncFormatShieldGenerator, FormatShieldGenerator
+from formatshield.governance.policy import DefaultPolicyEngine
 from formatshield.hooks import (
     HOOK_COMPLETION_ERROR,
     HOOK_COMPLETION_KWARGS,
     HOOK_COMPLETION_RESPONSE,
     HOOK_PARSE_ERROR,
+    HOOK_REQUEST_BEFORE_ROUTE,
+    HOOK_REQUEST_POLICY_CHECK,
+    HOOK_ROUTING_DECISION,
     Hooks,
+)
+from formatshield.observability.audit_log import (
+    FileAuditLogger,
+    build_audit_manifest,
+    verify_audit_manifest,
+    write_audit_manifest,
 )
 from formatshield.oracle.routing_decision import RoutingDecision
 from formatshield.prompting import Chat, Template, few_shot
@@ -88,9 +98,14 @@ __all__ = [
     "HOOK_COMPLETION_KWARGS",
     "HOOK_COMPLETION_RESPONSE",
     "HOOK_PARSE_ERROR",
+    "HOOK_REQUEST_BEFORE_ROUTE",
+    "HOOK_REQUEST_POLICY_CHECK",
+    "HOOK_ROUTING_DECISION",
     "AsyncFormatShieldGenerator",
     "Chat",
     "ComplexityFeatures",
+    "DefaultPolicyEngine",
+    "FileAuditLogger",
     "FormatShield",
     "FormatShieldGenerator",
     "GenerationResult",
@@ -104,6 +119,7 @@ __all__ = [
     "Template",
     "TokenUsage",
     "__version__",
+    "build_audit_manifest",
     "cache",
     "cfg",
     "clear_cache",
@@ -115,4 +131,6 @@ __all__ = [
     "make_cache_key",
     "regex",
     "types",
+    "verify_audit_manifest",
+    "write_audit_manifest",
 ]

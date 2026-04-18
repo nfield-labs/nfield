@@ -7,6 +7,7 @@ any API keys, network access, or GPU resources.
 
 from __future__ import annotations
 
+import json
 from typing import Any
 from unittest.mock import patch
 
@@ -62,6 +63,63 @@ def _make_shield(
         )
     shield._backend = DryRunBackend(base_latency_ms=0.0)
     return shield
+
+
+class _FixedOutputBackend:
+    """Backend test double that always returns a fixed payload."""
+
+    name: str = "dryrun"
+
+    def __init__(self, payload: str) -> None:
+        self._payload = payload
+
+    @property
+    def supports_kv_cache_reuse(self) -> bool:
+        return False
+
+    @property
+    def accuracy_loss_baseline(self) -> float | None:
+        return None
+
+    async def generate(
+        self,
+        prompt: str,
+        schema: dict | None = None,
+        constraints: str | None = None,
+        kv_cache_prefix: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
+    ) -> str:
+        return self._payload
+
+    async def stream(
+        self,
+        prompt: str,
+        schema: dict | None = None,
+        constraints: str | None = None,
+        *,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
+    ):
+        yield StreamEvent(
+            type="complete",
+            content=self._payload,
+            backend=self.name,
+            latency_ms=0.0,
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -281,8 +339,6 @@ async def test_generate_with_pydantic_schema_schema_valid_true() -> None:
 @pytest.mark.asyncio
 async def test_generate_with_pydantic_schema_output_is_json_string() -> None:
     """output must be a JSON string when a schema is provided."""
-    import json
-
     shield = _make_shield()
     result = await shield.generate(_LOW_COMPLEXITY_PROMPT, schema=SimpleSchema)
     # Should be parseable as JSON
@@ -322,6 +378,48 @@ async def test_generate_with_dict_schema_parsed_is_dict() -> None:
     shield = _make_shield()
     result = await shield.generate(_LOW_COMPLEXITY_PROMPT, schema=schema_dict)
     assert isinstance(result.parsed, dict)
+
+
+@pytest.mark.asyncio
+async def test_generate_with_dict_schema_marks_invalid_when_required_missing() -> None:
+    """Dict-schema validation should fail when required properties are missing."""
+    schema_dict = {
+        "type": "object",
+        "properties": {
+            "answer": {"type": "string"},
+        },
+        "required": ["answer"],
+    }
+    shield = _make_shield()
+    shield._backend = _FixedOutputBackend('{"wrong": "value"}')
+
+    result = await shield.generate("Hi.", schema=schema_dict)
+
+    assert isinstance(result.parsed, dict)
+    assert result.schema_valid is False
+
+
+@pytest.mark.asyncio
+async def test_generate_normalizes_optional_nulls_and_unknown_fields() -> None:
+    """Output normalization should drop optional null fields and unknown keys."""
+    schema_dict = {
+        "type": "object",
+        "properties": {
+            "answer": {"type": "string"},
+            "note": {"type": "string"},
+        },
+        "required": ["answer"],
+        "additionalProperties": False,
+    }
+    shield = _make_shield()
+    shield._backend = _FixedOutputBackend('{"answer":"ok","note":null,"extra":"x"}')
+
+    result = await shield.generate("Hi.", schema=schema_dict)
+
+    assert result.schema_valid is True
+    assert json.loads(result.output) == {"answer": "ok"}
+    assert isinstance(result.parsed, dict)
+    assert result.parsed == {"answer": "ok"}
 
 
 @pytest.mark.asyncio
@@ -648,6 +746,39 @@ async def test_low_complexity_prompt_routes_direct() -> None:
     # Very short, no schema, no reasoning keywords: heuristic score will be low
     result = await shield.generate("Hi.")
     assert result.routing.strategy == "direct"
+
+
+@pytest.mark.asyncio
+async def test_adaptive_confidence_escalates_low_confidence_direct_to_ttf() -> None:
+    """Adaptive confidence should escalate low-confidence direct routes to TTF."""
+    shield = _make_shield()
+    shield._adaptive_confidence = True
+    shield._adaptive_confidence_threshold = 0.55
+
+    low_confidence_direct = RoutingDecision(
+        strategy="direct",
+        expected_accuracy_delta=0.0,
+        expected_overhead_pct=0.0,
+        confidence=0.1,
+        explanation="forced low confidence for test",
+        failure_modes=[],
+    )
+
+    with (
+        patch.object(shield._oracle_x, "predict", return_value=low_confidence_direct),
+        patch.object(shield._detector, "should_override_to_direct", return_value=False),
+    ):
+        result = await shield.generate(
+            "Summarize the quarterly report in one field.",
+            schema={
+                "type": "object",
+                "properties": {"answer": {"type": "string"}},
+                "required": ["answer"],
+            },
+        )
+
+    assert result.routing.strategy == "ttf"
+    assert "Adaptive confidence escalation" in result.routing.explanation
 
 
 @pytest.mark.asyncio
