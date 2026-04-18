@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from formatshield.oracle.schema_graph import fiedler_value
 
 

@@ -11,7 +11,6 @@ from formatshield.oracle.context import RoutingContext, TelemetryRecord
 from formatshield.oracle.oracle_x import OracleX
 from formatshield.scorer.features import ComplexityFeatures
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

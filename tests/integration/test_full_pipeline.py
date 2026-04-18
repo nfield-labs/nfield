@@ -48,13 +48,13 @@ def shield_with_mock(mock_backend, monkeypatch) -> FormatShield:
     shield._expose_thinking = False
     shield._debug = False
 
+    from formatshield.hooks import Hooks
     from formatshield.observability.logger import StructuredLogger
     from formatshield.observability.metrics import MetricsCollector
     from formatshield.oracle.oracle_x import OracleX
     from formatshield.oracle.threshold_oracle import ThresholdOracle
     from formatshield.scorer.complexity_scorer import ComplexityScorer
     from formatshield.ttf.failure_detector import FailureModeDetector
-    from formatshield.hooks import Hooks
 
     shield._scorer = ComplexityScorer()
     shield._oracle = ThresholdOracle()
