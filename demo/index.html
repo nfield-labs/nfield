@@ -3,26 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FormatShield Demo</title>
+  <title>FormatShield Demo — Live AI Routing</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --bg: #0f1117;
+      --nav-bg: #0a0c14;
       --surface: #1a1d27;
+      --surface2: #1e2130;
       --border: #2a2d3e;
       --text: #e2e4f0;
       --muted: #6b7280;
       --accent: #6366f1;
+      --accent2: #8b5cf6;
       --green: #22c55e;
       --red: #ef4444;
       --yellow: #eab308;
       --blue: #3b82f6;
       --ttf: #a855f7;
       --direct: #22d3ee;
+      --orange: #f97316;
       --radius: 8px;
       --mono: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.25);
     }
+
+    html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
@@ -32,41 +39,421 @@
       min-height: 100vh;
     }
 
-    header {
-      padding: 20px 32px;
+    /* =====================================================================
+       SCROLLBAR
+    ===================================================================== */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    * { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+
+    /* =====================================================================
+       NAVBAR
+    ===================================================================== */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 52px;
+      background: var(--nav-bg);
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
-      gap: 12px;
+      padding: 0 28px;
+      gap: 0;
     }
-    header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
-    header .tag {
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+      color: var(--text);
+      flex-shrink: 0;
+    }
+    .nav-brand-name {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      background: linear-gradient(135deg, #a5b4fc 0%, #818cf8 50%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav-demo-badge {
       background: #1e1b4b;
       color: var(--accent);
       border: 1px solid var(--accent);
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      -webkit-text-fill-color: var(--accent);
     }
 
-    main { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin: 0 auto;
+    }
+    .nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-link:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.05);
+    }
+    .nav-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-    /* ---- Input section ---- */
-    .input-section {
+    .nav-github {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      transition: border-color 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .nav-github:hover { border-color: var(--accent); color: var(--text); }
+    .nav-github:focus-visible { outline: 2px solid var(--accent); }
+
+    @media (max-width: 700px) {
+      .nav-links { display: none; }
+    }
+
+    /* =====================================================================
+       HERO
+    ===================================================================== */
+    #hero {
+      position: relative;
+      overflow: hidden;
+      padding: 72px 32px 64px;
+      text-align: center;
+    }
+
+    /* Animated grid background */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(99,102,241,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,102,241,0.07) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+      animation: grid-pulse 8s ease-in-out infinite;
+    }
+
+    /* Radial glow */
+    #hero::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 300px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    @keyframes grid-pulse {
+      0%, 100% { opacity: 0.6; }
+      50%       { opacity: 1; }
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .hero-headline {
+      font-size: clamp(28px, 5vw, 46px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, #e2e4f0 0%, #a5b4fc 60%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: clamp(14px, 2vw, 17px);
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 7px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.1px;
+    }
+    .hero-pill-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: dot-pulse 2s ease-in-out infinite;
+    }
+    .hero-pill-dot.accent { background: var(--accent); box-shadow: 0 0 6px var(--accent); animation-delay: 0.4s; }
+    .hero-pill-dot.yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); animation-delay: 0.8s; }
+
+    @keyframes dot-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(0.8); }
+    }
+
+    /* =====================================================================
+       MAIN LAYOUT
+    ===================================================================== */
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 32px 64px;
+    }
+
+    @media (max-width: 700px) { main { padding: 16px; } }
+
+    /* =====================================================================
+       INPUT SECTION
+    ===================================================================== */
+    #section-input {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px;
+      padding: 22px;
       margin-bottom: 24px;
+      box-shadow: var(--shadow);
     }
+
+    /* ---- Preset Browser ---- */
+    .preset-browser {
+      margin-bottom: 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .preset-accordion-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      user-select: none;
+      background: var(--bg);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .preset-accordion-header:hover { background: #13151f; }
+    .preset-accordion-header.open { border-bottom-color: var(--border); }
+    .preset-accordion-header:focus-visible { outline: 2px solid var(--accent); }
+
+    .preset-accordion-arrow {
+      font-size: 10px;
+      color: var(--muted);
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+    .preset-accordion-header.open .preset-accordion-arrow { transform: rotate(90deg); }
+
+    .preset-accordion-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .preset-selected-label {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 500;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .preset-browser-body {
+      display: none;
+      padding: 14px;
+      background: var(--bg);
+    }
+    .preset-browser-body.open { display: block; }
+
+    .preset-filters { margin-bottom: 10px; }
+
+    .preset-tabs {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .filter-tab {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 3px 11px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.12s;
+      letter-spacing: 0.3px;
+    }
+    .filter-tab:hover { border-color: var(--accent); color: var(--text); }
+    .filter-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .filter-tab:focus-visible { outline: 2px solid var(--accent); }
+
+    .preset-domain-pills {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .domain-pill {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 2px 9px;
+      font-size: 10px;
+      font-weight: 600;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.12s;
+      letter-spacing: 0.3px;
+    }
+    .domain-pill:hover { border-color: var(--accent); color: var(--text); }
+    .domain-pill.active { background: #1e1b4b; border-color: var(--accent); color: var(--accent); }
+    .domain-pill:focus-visible { outline: 2px solid var(--accent); }
+
+    .preset-grid-wrap {
+      max-height: 220px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    @media (max-width: 700px) { .preset-grid { grid-template-columns: 1fr; } }
+
+    .preset-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 9px 11px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    }
+    .preset-card:hover { border-color: var(--accent); background: #1e1b3a; transform: translateY(-1px); }
+    .preset-card.selected { border-color: var(--accent); background: #1e1b3a; }
+    .preset-card:focus-visible { outline: 2px solid var(--accent); }
+
+    .preset-card-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 5px;
+      line-height: 1.3;
+    }
+    .preset-card-badges {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .preset-badge {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 3px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .preset-badge.domain     { background: var(--border); color: var(--muted); }
+    .preset-badge.diff-simple     { background: #14532d; color: var(--green); }
+    .preset-badge.diff-medium     { background: #422006; color: var(--yellow); }
+    .preset-badge.diff-hard       { background: #431407; color: var(--orange); }
+    .preset-badge.diff-enterprise { background: #450a0a; color: var(--red); }
+    .preset-badge.route-ttf    { background: #3b1f5e; color: var(--ttf); }
+    .preset-badge.route-direct { background: #0e3040; color: var(--direct); }
+
+    .preset-loading { font-size: 12px; color: var(--muted); padding: 20px; text-align: center; }
+    .preset-empty   { font-size: 12px; color: var(--muted); padding: 16px; text-align: center; }
+
+    /* ---- Why FS Wins ---- */
+    #why-fs-hint {
+      display: none;
+      background: #0a1a0a;
+      border: 1px solid #1a4a1a;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+    }
+    .why-fs-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: #4ade80;
+      margin-bottom: 6px;
+    }
+    .why-fs-bullets { list-style: none; padding: 0; }
+    .why-fs-bullets li {
+      font-size: 11.5px;
+      color: var(--muted);
+      padding: 2px 0;
+      line-height: 1.5;
+    }
+    .why-fs-bullets li::before { content: '↳ '; color: var(--green); }
+
+    /* ---- Input Grid ---- */
     .input-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
+    @media (max-width: 700px) { .input-grid { grid-template-columns: 1fr; } }
+
     .input-group label {
       display: block;
       font-size: 11px;
@@ -76,6 +463,7 @@
       color: var(--muted);
       margin-bottom: 6px;
     }
+
     textarea, select {
       width: 100%;
       background: var(--bg);
@@ -87,12 +475,44 @@
       padding: 10px 12px;
       resize: vertical;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    textarea:focus, select:focus { border-color: var(--accent); }
-    #prompt-input { height: 100px; }
-    #schema-input { height: 100px; }
+    textarea:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+    }
+    textarea:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    #prompt-input { height: 108px; }
+    #schema-input { height: 108px; }
 
+    /* ---- System Prompt ---- */
+    .sysprompt-section { margin-bottom: 16px; }
+    .sysprompt-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 20px;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: all 0.15s;
+    }
+    .sysprompt-toggle:hover { border-color: var(--accent); color: var(--text); }
+    .sysprompt-toggle.open  { border-color: var(--accent); color: var(--accent); }
+    .sysprompt-toggle:focus-visible { outline: 2px solid var(--accent); }
+    .sysprompt-arrow { font-size: 9px; transition: transform 0.2s; }
+    .sysprompt-toggle.open .sysprompt-arrow { transform: rotate(90deg); }
+    .sysprompt-body { display: none; margin-top: 8px; }
+    .sysprompt-body.open { display: block; }
+    #sysprompt-input { height: 72px; }
+    .sysprompt-hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+    /* ---- Controls ---- */
     .controls {
       display: flex;
       align-items: center;
@@ -100,71 +520,320 @@
       flex-wrap: wrap;
     }
     .controls .input-group { margin: 0; }
-    select { width: auto; min-width: 280px; }
+    select { width: auto; min-width: 260px; }
 
     button {
       background: var(--accent);
       color: #fff;
       border: none;
       border-radius: var(--radius);
-      padding: 9px 20px;
+      padding: 9px 22px;
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
-      transition: opacity 0.15s;
+      transition: opacity 0.15s, transform 0.1s;
       white-space: nowrap;
     }
-    button:hover { opacity: 0.88; }
-    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    button:hover { opacity: 0.88; transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+    button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-    .preset-row {
+    .compare-btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 2px 12px rgba(99,102,241,0.35);
+    }
+    .compare-btn:hover { opacity: 0.9; box-shadow: 0 4px 20px rgba(99,102,241,0.45); }
+
+    .ctrl-hint {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 600px) {
+      .compare-btn { width: 100%; justify-content: center; }
+      .controls { flex-direction: column; align-items: stretch; }
+      select { min-width: unset; width: 100%; }
+    }
+
+    /* =====================================================================
+       EMPTY STATE SVG
+    ===================================================================== */
+    .empty-state {
       display: flex;
-      gap: 8px;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 20px;
+      gap: 14px;
+    }
+    .empty-state-svg { opacity: 0.35; }
+    .empty-state-text { font-size: 13px; }
+
+    /* =====================================================================
+       SCORE CARD
+    ===================================================================== */
+    #score-card {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    #score-card.score-green  { border-color: var(--green);  background: #070f07; box-shadow: 0 0 0 1px rgba(34,197,94,0.2), var(--shadow); }
+    #score-card.score-blue   { border-color: var(--accent); background: #0a0d22; box-shadow: 0 0 0 1px rgba(99,102,241,0.2), var(--shadow); }
+    #score-card.score-yellow { border-color: var(--yellow); background: #100e00; box-shadow: 0 0 0 1px rgba(234,179,8,0.2), var(--shadow); }
+    #score-card.score-red    { border-color: var(--red);    background: #100505; box-shadow: 0 0 0 1px rgba(239,68,68,0.2), var(--shadow); }
+
+    .score-top {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
+    }
+
+    /* Ring */
+    .score-ring-wrap {
+      position: relative;
+      width: 84px;
+      height: 84px;
+      flex-shrink: 0;
+    }
+    .score-ring-svg {
+      transform: rotate(-90deg);
+      width: 84px;
+      height: 84px;
+    }
+    .score-ring-track {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 7;
+    }
+    .score-ring-fill {
+      fill: none;
+      stroke-width: 7;
+      stroke-linecap: round;
+      stroke-dasharray: 220;
+      stroke-dashoffset: 220;
+      transition: stroke-dashoffset 1s cubic-bezier(0.34, 1.56, 0.64, 1), stroke 0.3s;
+    }
+    #score-card.score-green  .score-ring-fill { stroke: var(--green);  }
+    #score-card.score-blue   .score-ring-fill { stroke: var(--accent); }
+    #score-card.score-yellow .score-ring-fill { stroke: var(--yellow); }
+    #score-card.score-red    .score-ring-fill { stroke: var(--red);    }
+
+    .score-ring-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .score-number {
+      font-size: 24px;
+      font-weight: 800;
+      font-family: var(--mono);
+      line-height: 1;
+    }
+    #score-card.score-green  .score-number { color: var(--green);  }
+    #score-card.score-blue   .score-number { color: var(--accent); }
+    #score-card.score-yellow .score-number { color: var(--yellow); }
+    #score-card.score-red    .score-number { color: var(--red);    }
+
+    .score-grade {
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--mono);
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .score-meta { display: flex; flex-direction: column; gap: 8px; }
+
+    .score-winner-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      width: fit-content;
+    }
+    /* 4-tier verdict badges */
+    .score-winner-badge.verdict-decisive_win {
+      background: #0a1f0a; color: #4ade80;
+      border: 1px solid #4ade80; box-shadow: 0 0 14px rgba(74,222,128,0.3);
+      font-size: 1rem;
+    }
+    .score-winner-badge.verdict-marginal_win {
+      background: #0d1628; color: var(--blue);
+      border: 1px solid var(--blue); box-shadow: 0 0 10px rgba(96,165,250,0.2);
+    }
+    .score-winner-badge.verdict-tie {
+      background: #1c1a10; color: var(--yellow);
+      border: 1px solid var(--yellow); box-shadow: 0 0 8px rgba(234,179,8,0.15);
+    }
+    .score-winner-badge.verdict-loss {
+      background: #1c1917; color: var(--muted);
+      border: 1px solid var(--muted);
+    }
+    /* Legacy compat */
+    .score-winner-badge.formatshield {
+      background: #1e1b4b;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 12px rgba(99,102,241,0.25);
+    }
+    .score-winner-badge.raw  { background: #1c1917; color: var(--muted);  border: 1px solid var(--muted); }
+    .score-winner-badge.tie  { background: #1c1a10; color: var(--yellow); border: 1px solid var(--yellow); box-shadow: 0 0 10px rgba(234,179,8,0.2); }
+    .score-winner-badge.none { background: #1c0a0a; color: var(--red);    border: 1px solid var(--red); }
+
+    .score-summary {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 520px;
+    }
+
+    /* Breakdown */
+    .score-breakdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
       margin-bottom: 16px;
     }
-    .preset-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 4px 12px;
-      font-size: 12px;
-      font-weight: 500;
-      border-radius: 20px;
-    }
-    .preset-btn:hover { border-color: var(--accent); color: var(--text); opacity: 1; }
+    @media (max-width: 700px) { .score-breakdown { grid-template-columns: 1fr 1fr; } }
 
-    /* ---- Phi badge ---- */
+    .score-metric {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 9px 11px;
+    }
+    .score-metric-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+    .score-metric-bar-track {
+      height: 5px;
+      background: var(--border);
+      border-radius: 3px;
+      margin-bottom: 5px;
+      overflow: hidden;
+    }
+    .score-metric-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      width: 0%;
+      transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .score-metric-val {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--text);
+    }
+
+    /* Reasons */
+    .score-reasons {
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+    .score-reasons-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .score-reason-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .score-reason-list li {
+      font-size: 11.5px;
+      color: var(--text);
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3px 9px;
+      animation: reason-fadein 0.3s ease forwards;
+      opacity: 0;
+    }
+    .score-reason-list li::before { content: '• '; color: var(--muted); }
+
+    @keyframes reason-fadein {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =====================================================================
+       PHI GAUGE (horizontal, compact)
+    ===================================================================== */
     #phi-bar {
       display: none;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 16px 20px;
-      margin-bottom: 24px;
+      padding: 14px 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
     }
-    .phi-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-    .phi-main { font-size: 28px; font-weight: 700; font-family: var(--mono); }
-    .phi-main.ttf { color: var(--ttf); }
+
+    .phi-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .phi-score-group { display: flex; align-items: baseline; gap: 8px; }
+    .phi-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .phi-main { font-size: 26px; font-weight: 700; font-family: var(--mono); line-height: 1; }
+    .phi-main.ttf    { color: var(--ttf); }
     .phi-main.direct { color: var(--direct); }
-    .phi-component { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-    .phi-component span { color: var(--text); }
+
     .routing-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
       padding: 4px 12px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.5px;
+      white-space: nowrap;
     }
-    .routing-badge.ttf { background: #3b1f5e; color: var(--ttf); border: 1px solid var(--ttf); }
+    .routing-badge.ttf    { background: #3b1f5e; color: var(--ttf);   border: 1px solid var(--ttf); }
     .routing-badge.direct { background: #0e3040; color: var(--direct); border: 1px solid var(--direct); }
-    .phi-explanation { font-size: 12px; color: var(--muted); margin-top: 8px; font-family: var(--mono); }
 
-    /* ---- Gauge bar ---- */
-    .gauge-wrap { flex: 1; min-width: 200px; }
-    .gauge-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .gauge-wrap { flex: 1; min-width: 160px; }
+    .gauge-label { font-size: 10px; color: var(--muted); margin-bottom: 4px; display: flex; justify-content: space-between; }
     .gauge-track {
-      height: 8px;
+      height: 7px;
       background: var(--border);
       border-radius: 4px;
       overflow: visible;
@@ -173,15 +842,15 @@
     .gauge-fill {
       height: 100%;
       border-radius: 4px;
-      transition: width 0.4s ease;
+      transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
     }
-    .gauge-fill.ttf { background: var(--ttf); }
-    .gauge-fill.direct { background: var(--direct); }
+    .gauge-fill.ttf    { background: linear-gradient(90deg, #7c3aed, var(--ttf)); }
+    .gauge-fill.direct { background: linear-gradient(90deg, #0891b2, var(--direct)); }
     .gauge-threshold {
       position: absolute;
       top: -4px;
       width: 2px;
-      height: 16px;
+      height: 15px;
       background: var(--yellow);
       border-radius: 1px;
     }
@@ -191,12 +860,37 @@
       top: -16px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 10px;
+      font-size: 9px;
       color: var(--yellow);
       white-space: nowrap;
+      font-family: var(--mono);
     }
 
-    /* ---- Comparison panels ---- */
+    .phi-components {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .phi-component {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .phi-component span { color: var(--text); }
+
+    .phi-explanation {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 8px;
+      font-style: italic;
+      line-height: 1.5;
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+    }
+
+    /* =====================================================================
+       COMPARISON PANELS
+    ===================================================================== */
     .panels {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -209,18 +903,50 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
+      box-shadow: var(--shadow);
+      border-left-width: 3px;
     }
+    .panel.panel-raw { border-left-color: var(--muted); }
+    .panel.panel-fs  { border-left-color: var(--accent); }
+
     .panel-header {
       padding: 12px 16px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: rgba(0,0,0,0.12);
     }
-    .panel-title { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+
+    .panel-header-left { display: flex; align-items: center; gap: 8px; }
+
+    .panel-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
     .panel-title.raw { color: var(--muted); }
-    .panel-title.fs { color: var(--accent); }
-    .panel-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .panel-title.fs  { color: var(--accent); }
+
+    /* Schema valid icon in panel header */
+    .panel-valid-icon {
+      font-size: 14px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+    }
+    .panel-valid-icon.valid   { color: var(--green);  background: rgba(34,197,94,0.12);  }
+    .panel-valid-icon.invalid { color: var(--red);    background: rgba(239,68,68,0.12);   }
+
+    .panel-header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .panel-badges { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
 
     .badge {
       font-size: 10px;
@@ -229,23 +955,76 @@
       border-radius: 3px;
       letter-spacing: 0.3px;
     }
-    .badge.valid { background: #14532d; color: var(--green); }
+    .badge.valid   { background: #14532d; color: var(--green); }
     .badge.invalid { background: #450a0a; color: var(--red); }
-    .badge.ttf-badge { background: #3b1f5e; color: var(--ttf); }
+    .badge.violation-badge {
+      max-width: 340px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      font-size: 0.7rem; cursor: help; border: 1px solid var(--red);
+    }
+    .badge.ttf-badge    { background: #3b1f5e; color: var(--ttf);    }
     .badge.direct-badge { background: #0e3040; color: var(--direct); }
-    .badge.latency { background: #1c1917; color: var(--muted); }
+    .badge.latency { background: rgba(0,0,0,0.3); color: var(--muted); border: 1px solid var(--border); }
+
+    /* View toggle — segmented control */
+    .view-toggle {
+      display: none;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .view-toggle.visible { display: flex; }
+    .view-btn {
+      background: transparent;
+      border: none;
+      border-radius: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: background 0.12s, color 0.12s;
+    }
+    .view-btn:hover { color: var(--text); }
+    .view-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+    .view-btn:focus-visible { outline: 2px solid var(--accent); }
 
     .panel-body { padding: 16px; }
 
+    /* JSON output with syntax highlight */
     pre.json-output {
       font-family: var(--mono);
       font-size: 12.5px;
-      line-height: 1.6;
+      line-height: 1.65;
       white-space: pre-wrap;
       word-break: break-all;
       max-height: 380px;
       overflow-y: auto;
-      color: #a5f3fc;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      color: var(--text);
+    }
+
+    /* Syntax highlight classes */
+    .jh-key     { color: #e2e4f0; }
+    .jh-string  { color: #67e8f9; }
+    .jh-number  { color: #fb923c; }
+    .jh-boolean { color: #c084fc; }
+    .jh-null    { color: var(--muted); }
+
+    pre.raw-payload {
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 520px;
+      overflow-y: auto;
+      color: #d1d5db;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -266,7 +1045,7 @@
 
     .thinking-block {
       margin-top: 12px;
-      background: #1a1025;
+      background: #100a1a;
       border: 1px solid #3b1f5e;
       border-radius: var(--radius);
       padding: 10px 12px;
@@ -300,7 +1079,72 @@
       color: #fca5a5;
     }
 
-    /* ---- Loading spinner ---- */
+    /* =====================================================================
+       VERDICT STRIP
+    ===================================================================== */
+    #verdict-bar {
+      display: none;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      opacity: 0.9;
+      box-shadow: var(--shadow);
+    }
+    #verdict-bar.winner-formatshield, #verdict-bar.verdict-tier-decisive_win  { border-color: #2a6a2a; background: #050e05; }
+    #verdict-bar.verdict-tier-marginal_win  { border-color: #2a3d60; background: #070a18; }
+    #verdict-bar.winner-raw, #verdict-bar.verdict-tier-loss  { border-color: var(--border);  background: var(--surface); }
+    #verdict-bar.winner-tie, #verdict-bar.verdict-tier-tie   { border-color: #4a4010; background: #0e0c06; }
+    #verdict-bar.winner-none         { border-color: #4a1515; background: #0f0505; }
+
+    .verdict-secondary-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .verdict-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .verdict-crown { font-size: 16px; }
+    .verdict-title { font-size: 13px; font-weight: 700; }
+    .verdict-summary { font-size: 11.5px; color: var(--muted); margin-bottom: 12px; }
+
+    .verdict-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 700px) { .verdict-cols { grid-template-columns: 1fr; } }
+
+    .verdict-col h4 {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .verdict-col ul { list-style: none; padding: 0; }
+    .verdict-col ul li {
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--text);
+      padding: 1px 0;
+    }
+    .verdict-col ul li::before { content: '• '; color: var(--muted); }
+    .verdict-col.fs-col  h4 { color: var(--accent); }
+    .verdict-col.raw-col h4 { color: var(--muted); }
+    .verdict-col.tie-col h4 { color: var(--yellow); }
+
+    /* =====================================================================
+       SPINNER / LOADING
+    ===================================================================== */
     .spinner {
       display: inline-block;
       width: 14px; height: 14px;
@@ -313,78 +1157,139 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .empty-state {
-      text-align: center;
-      color: var(--muted);
-      padding: 40px 20px;
-      font-size: 13px;
-    }
-
-    /* ---- View toggle ---- */
-    .view-toggle {
-      display: none;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 2px;
-      gap: 2px;
-    }
-    .view-toggle.visible { display: flex; }
-    .view-btn {
-      background: transparent;
-      border: none;
-      border-radius: 3px;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 10px;
-      cursor: pointer;
-      letter-spacing: 0.3px;
-      transition: background 0.12s, color 0.12s;
-    }
-    .view-btn:hover { color: var(--text); opacity: 1; }
-    .view-btn.active { background: var(--surface); color: var(--text); }
-
-    pre.raw-payload {
-      font-family: var(--mono);
-      font-size: 12px;
-      line-height: 1.55;
-      white-space: pre-wrap;
-      word-break: break-all;
-      max-height: 520px;
-      overflow-y: auto;
-      color: #d1d5db;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 12px;
+    /* =====================================================================
+       SECTION ANCHORS
+    ===================================================================== */
+    .section-anchor {
+      display: block;
+      height: 1px;
+      margin-top: -52px;
+      padding-top: 52px;
+      visibility: hidden;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>FormatShield</h1>
-    <span class="tag">DEMO</span>
-  </header>
 
+  <!-- ===================================================================
+       NAVBAR
+  =================================================================== -->
+  <nav id="navbar">
+    <a class="nav-brand" href="#">
+      <span class="nav-brand-name">FormatShield</span>
+      <span class="nav-demo-badge">DEMO</span>
+    </a>
+
+    <div class="nav-links">
+      <a class="nav-link" href="#section-how-it-works">How It Works</a>
+      <a class="nav-link" href="#section-benchmarks">Benchmarks</a>
+      <a class="nav-link" href="#section-presets">Presets</a>
+    </div>
+
+    <a class="nav-github" href="#" rel="noopener">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+      </svg>
+      View on GitHub
+    </a>
+  </nav>
+
+  <!-- ===================================================================
+       HERO (hidden after first Compare)
+  =================================================================== -->
+  <section id="hero">
+    <div class="hero-inner">
+      <h1 class="hero-headline">Prove structured AI accuracy,&nbsp;live.</h1>
+      <p class="hero-sub">
+        FormatShield routes every inference through the Φ score — Think-Then-Format for complex tasks,
+        direct for simple ones. Watch it beat raw Groq in real time.
+      </p>
+      <div class="hero-pills">
+        <span class="hero-pill">
+          <span class="hero-pill-dot"></span>
+          27% accuracy gain on complex tasks
+        </span>
+        <span class="hero-pill">
+          <span class="hero-pill-dot accent"></span>
+          Φ routing in &lt;1ms
+        </span>
+        <span class="hero-pill">
+          <span class="hero-pill-dot yellow"></span>
+          Zero training data
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       MAIN
+  =================================================================== -->
   <main>
-    <div class="input-section">
-      <!-- Presets -->
-      <div class="preset-row">
-        <span style="font-size:11px;color:var(--muted);line-height:24px;margin-right:4px;">PRESETS:</span>
-        <button class="preset-btn" onclick="loadPreset('simple')">Simple extraction</button>
-        <button class="preset-btn" onclick="loadPreset('reasoning')">Reasoning / analysis</button>
-        <button class="preset-btn" onclick="loadPreset('contract')">Contract clause</button>
-        <button class="preset-btn" onclick="loadPreset('itinerary')">Trip itinerary</button>
+
+    <!-- Anchors for nav -->
+    <span id="section-how-it-works" class="section-anchor"></span>
+    <span id="section-benchmarks"   class="section-anchor"></span>
+    <span id="section-presets"      class="section-anchor"></span>
+
+    <!-- ================================================================
+         INPUT SECTION
+    ================================================================ -->
+    <div id="section-input">
+
+      <!-- Preset Browser -->
+      <div class="preset-browser" id="preset-browser">
+        <div class="preset-accordion-header" id="preset-accordion-header"
+             onclick="togglePresetBrowser()" tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' ')togglePresetBrowser()">
+          <span class="preset-accordion-arrow" id="preset-accordion-arrow">&#9658;</span>
+          <span class="preset-accordion-label">Browse Presets</span>
+          <span class="preset-selected-label" id="preset-selected-label"></span>
+        </div>
+        <div class="preset-browser-body" id="preset-browser-body">
+          <div class="preset-filters">
+            <div class="preset-tabs" id="preset-tabs">
+              <button class="filter-tab active" data-diff="all"        onclick="setDiffFilter('all', this)">All</button>
+              <button class="filter-tab"        data-diff="simple"     onclick="setDiffFilter('simple', this)">Simple</button>
+              <button class="filter-tab"        data-diff="medium"     onclick="setDiffFilter('medium', this)">Medium</button>
+              <button class="filter-tab"        data-diff="hard"       onclick="setDiffFilter('hard', this)">Hard</button>
+              <button class="filter-tab"        data-diff="enterprise" onclick="setDiffFilter('enterprise', this)">Enterprise</button>
+            </div>
+            <div class="preset-domain-pills" id="preset-domain-pills">
+              <button class="domain-pill active" data-domain="all"       onclick="setDomainFilter('all', this)">All</button>
+              <button class="domain-pill"        data-domain="legal"     onclick="setDomainFilter('legal', this)">Legal</button>
+              <button class="domain-pill"        data-domain="medical"   onclick="setDomainFilter('medical', this)">Medical</button>
+              <button class="domain-pill"        data-domain="finance"   onclick="setDomainFilter('finance', this)">Finance</button>
+              <button class="domain-pill"        data-domain="support"   onclick="setDomainFilter('support', this)">Support</button>
+              <button class="domain-pill"        data-domain="document"  onclick="setDomainFilter('document', this)">Document</button>
+              <button class="domain-pill"        data-domain="reasoning" onclick="setDomainFilter('reasoning', this)">Reasoning</button>
+              <button class="domain-pill"        data-domain="hr"        onclick="setDomainFilter('hr', this)">HR</button>
+              <button class="domain-pill"        data-domain="code"      onclick="setDomainFilter('code', this)">Code</button>
+            </div>
+          </div>
+          <div class="preset-grid-wrap">
+            <div class="preset-grid" id="preset-grid">
+              <div class="preset-loading" style="grid-column:1/-1">
+                <span class="spinner"></span>Loading presets…
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
+      <!-- Why FS wins -->
+      <div id="why-fs-hint">
+        <div class="why-fs-label">Expected FormatShield advantage:</div>
+        <ul class="why-fs-bullets" id="why-fs-bullets"></ul>
+      </div>
+
+      <!-- Prompt + Schema -->
       <div class="input-grid">
         <div class="input-group">
-          <label>Prompt</label>
+          <label for="prompt-input">Prompt</label>
           <textarea id="prompt-input" placeholder="Enter your prompt here…">Extract the person's name and age from: John Smith is 34 years old and works as a software engineer.</textarea>
         </div>
         <div class="input-group">
-          <label>JSON Schema</label>
+          <label for="schema-input">JSON Schema</label>
           <textarea id="schema-input" placeholder='{"type":"object","properties":{…}}'>{
   "type": "object",
   "properties": {
@@ -396,36 +1301,108 @@
         </div>
       </div>
 
+      <!-- System Prompt collapsible -->
+      <div class="sysprompt-section">
+        <button class="sysprompt-toggle" id="sysprompt-toggle" onclick="toggleSysPrompt()">
+          <span class="sysprompt-arrow">&#9658;</span>
+          System Prompt <span style="font-weight:400;opacity:0.6">(optional)</span>
+        </button>
+        <div class="sysprompt-body" id="sysprompt-body">
+          <textarea id="sysprompt-input" placeholder="Enterprise context, role, or constraints for the model"></textarea>
+          <div class="sysprompt-hint">Enterprise context, role, or constraints for the model</div>
+        </div>
+      </div>
+
+      <!-- Controls row -->
       <div class="controls">
         <div class="input-group">
-          <label>Model</label>
+          <label for="model-select">Model</label>
           <select id="model-select">
-            <option value="groq/llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
-            <option value="groq/llama-3.1-8b-instant">llama-3.1-8b-instant</option>
-            <option value="groq/meta-llama/llama-4-scout-17b-16e-instruct">llama-4-scout-17b (Meta)</option>
-            <option value="groq/qwen/qwen3-32b">qwen3-32b</option>
+            <option value="">Loading models…</option>
           </select>
         </div>
-        <button id="run-btn" onclick="runCompare()">Compare</button>
+        <button class="compare-btn" id="run-btn" onclick="runCompare()">
+          Compare
+        </button>
+        <span class="ctrl-hint">or Ctrl+Enter</span>
       </div>
     </div>
 
-    <!-- Phi score bar -->
+    <!-- ================================================================
+         SCORE CARD
+    ================================================================ -->
+    <div id="score-card">
+      <div class="score-top">
+        <!-- Animated ring -->
+        <div class="score-ring-wrap">
+          <svg class="score-ring-svg" viewBox="0 0 84 84">
+            <circle class="score-ring-track" cx="42" cy="42" r="35" />
+            <circle class="score-ring-fill" id="score-ring-fill" cx="42" cy="42" r="35" />
+          </svg>
+          <div class="score-ring-text">
+            <div class="score-number" id="score-number">—</div>
+            <div class="score-grade"  id="score-grade">—</div>
+          </div>
+        </div>
+
+        <div class="score-meta">
+          <div class="score-winner-badge" id="score-winner-badge">—</div>
+          <div class="score-summary" id="score-summary"></div>
+        </div>
+      </div>
+
+      <div class="score-breakdown" id="score-breakdown">
+        <div class="score-metric">
+          <div class="score-metric-label">Schema Validity</div>
+          <div class="score-metric-bar-track"><div class="score-metric-bar-fill" id="sm-schema"      style="width:0%"></div></div>
+          <div class="score-metric-val" id="sm-schema-val">0 / 30</div>
+        </div>
+        <div class="score-metric">
+          <div class="score-metric-label">Routing Correctness</div>
+          <div class="score-metric-bar-track"><div class="score-metric-bar-fill" id="sm-routing"     style="width:0%"></div></div>
+          <div class="score-metric-val" id="sm-routing-val">0 / 25</div>
+        </div>
+        <div class="score-metric">
+          <div class="score-metric-label">Reliability</div>
+          <div class="score-metric-bar-track"><div class="score-metric-bar-fill" id="sm-reliability" style="width:0%"></div></div>
+          <div class="score-metric-val" id="sm-reliability-val">0 / 20</div>
+        </div>
+        <div class="score-metric">
+          <div class="score-metric-label">Constraint Protection</div>
+          <div class="score-metric-bar-track"><div class="score-metric-bar-fill" id="sm-advantage"   style="width:0%"></div></div>
+          <div class="score-metric-val" id="sm-advantage-val">0 / 25</div>
+        </div>
+      </div>
+
+      <div class="score-reasons">
+        <div class="score-reasons-label">Key factors</div>
+        <ul class="score-reason-list" id="score-reason-list"></ul>
+      </div>
+    </div>
+
+    <!-- ================================================================
+         PHI BAR
+    ================================================================ -->
     <div id="phi-bar">
       <div class="phi-row">
-        <div>
-          <div style="font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Φ Routing Score</div>
+        <div class="phi-score-group">
+          <div class="phi-label">Φ Score</div>
           <div class="phi-main" id="phi-value">0.000</div>
         </div>
+
         <div class="gauge-wrap">
-          <div class="gauge-label">0.0 ←————————————————→ 1.0</div>
+          <div class="gauge-label">
+            <span>0.0</span><span>1.0</span>
+          </div>
           <div class="gauge-track">
             <div class="gauge-fill" id="gauge-fill" style="width:0%"></div>
             <div class="gauge-threshold" style="left:65%"></div>
           </div>
         </div>
+
         <div id="routing-rec" class="routing-badge">—</div>
-        <div>
+
+        <div class="phi-components">
           <div class="phi-component">λ̃₂ = <span id="phi-l2">—</span></div>
           <div class="phi-component">τ  = <span id="phi-tau">—</span></div>
           <div class="phi-component">ΔK = <span id="phi-dk">—</span></div>
@@ -434,145 +1411,349 @@
       <div class="phi-explanation" id="phi-exp"></div>
     </div>
 
-    <!-- Side-by-side panels -->
+    <!-- ================================================================
+         COMPARISON PANELS
+    ================================================================ -->
     <div class="panels">
+
       <!-- Raw Groq -->
-      <div class="panel">
+      <div class="panel panel-raw">
         <div class="panel-header">
-          <span class="panel-title raw">Raw Groq (no FormatShield)</span>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div class="panel-header-left">
+            <span class="panel-valid-icon" id="raw-valid-icon"></span>
+            <span class="panel-title raw">Raw Groq</span>
+          </div>
+          <div class="panel-header-right">
             <div class="view-toggle" id="raw-toggle">
               <button class="view-btn active" onclick="switchView('raw','formatted')">Formatted</button>
-              <button class="view-btn" onclick="switchView('raw','payload')">Raw JSON</button>
+              <button class="view-btn"        onclick="switchView('raw','payload')">Raw JSON</button>
             </div>
             <div class="panel-badges" id="raw-badges"></div>
           </div>
         </div>
         <div class="panel-body" id="raw-body">
-          <div class="empty-state">Results will appear here after you click Compare.</div>
+          <div class="empty-state">
+            <svg class="empty-state-svg" width="72" height="40" viewBox="0 0 72 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="0" y="4" width="26" height="32" rx="4" stroke="#6b7280" stroke-width="1.5"/>
+              <rect x="3" y="10" width="20" height="2" rx="1" fill="#6b7280" opacity="0.5"/>
+              <rect x="3" y="15" width="14" height="2" rx="1" fill="#6b7280" opacity="0.5"/>
+              <rect x="3" y="20" width="17" height="2" rx="1" fill="#6b7280" opacity="0.5"/>
+              <path d="M29 20 L43 20" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="2 2" marker-end="url(#arr)"/>
+              <defs>
+                <marker id="arr" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto">
+                  <path d="M0 0 L4 2 L0 4 Z" fill="#6b7280"/>
+                </marker>
+              </defs>
+              <rect x="46" y="4" width="26" height="32" rx="4" stroke="#6b7280" stroke-width="1.5"/>
+              <rect x="49" y="10" width="20" height="2" rx="1" fill="#6b7280" opacity="0.5"/>
+              <rect x="49" y="15" width="14" height="2" rx="1" fill="#6b7280" opacity="0.5"/>
+              <rect x="49" y="20" width="17" height="2" rx="1" fill="#6b7280" opacity="0.5"/>
+            </svg>
+            <span class="empty-state-text">Results will appear here after you click Compare.</span>
+          </div>
         </div>
       </div>
 
       <!-- FormatShield -->
-      <div class="panel">
+      <div class="panel panel-fs">
         <div class="panel-header">
-          <span class="panel-title fs">With FormatShield</span>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div class="panel-header-left">
+            <span class="panel-valid-icon" id="fs-valid-icon"></span>
+            <span class="panel-title fs">With FormatShield</span>
+          </div>
+          <div class="panel-header-right">
             <div class="view-toggle" id="fs-toggle">
               <button class="view-btn active" onclick="switchView('fs','formatted')">Formatted</button>
-              <button class="view-btn" onclick="switchView('fs','payload')">Raw JSON</button>
+              <button class="view-btn"        onclick="switchView('fs','payload')">Raw JSON</button>
             </div>
             <div class="panel-badges" id="fs-badges"></div>
           </div>
         </div>
         <div class="panel-body" id="fs-body">
-          <div class="empty-state">Results will appear here after you click Compare.</div>
+          <div class="empty-state">
+            <svg class="empty-state-svg" width="72" height="40" viewBox="0 0 72 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="0" y="4" width="26" height="32" rx="4" stroke="#6b7280" stroke-width="1.5"/>
+              <rect x="3" y="10" width="20" height="2" rx="1" fill="#6b7280" opacity="0.5"/>
+              <rect x="3" y="15" width="14" height="2" rx="1" fill="#6b7280" opacity="0.5"/>
+              <rect x="3" y="20" width="17" height="2" rx="1" fill="#6b7280" opacity="0.5"/>
+              <path d="M29 20 L43 20" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="2 2" marker-end="url(#arr2)"/>
+              <defs>
+                <marker id="arr2" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto">
+                  <path d="M0 0 L4 2 L0 4 Z" fill="#6366f1"/>
+                </marker>
+              </defs>
+              <rect x="46" y="4" width="26" height="32" rx="4" stroke="#6366f1" stroke-width="1.5"/>
+              <rect x="49" y="10" width="20" height="2" rx="1" fill="#6366f1" opacity="0.4"/>
+              <rect x="49" y="15" width="14" height="2" rx="1" fill="#6366f1" opacity="0.4"/>
+              <rect x="49" y="20" width="17" height="2" rx="1" fill="#6366f1" opacity="0.4"/>
+            </svg>
+            <span class="empty-state-text">Results will appear here after you click Compare.</span>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- ================================================================
+         VERDICT STRIP (secondary)
+    ================================================================ -->
+    <div id="verdict-bar" style="margin-top:20px">
+      <div class="verdict-secondary-label">Detailed verdict breakdown</div>
+      <div class="verdict-header">
+        <span class="verdict-crown" id="verdict-crown">—</span>
+        <span class="verdict-title" id="verdict-title">—</span>
+      </div>
+      <div class="verdict-summary" id="verdict-summary"></div>
+      <div class="verdict-cols">
+        <div class="verdict-col fs-col">
+          <h4>FormatShield</h4>
+          <ul id="verdict-fs-points"></ul>
+        </div>
+        <div class="verdict-col raw-col">
+          <h4>Raw Groq</h4>
+          <ul id="verdict-raw-points"></ul>
+        </div>
+        <div class="verdict-col tie-col">
+          <h4>Both</h4>
+          <ul id="verdict-tie-points"></ul>
+        </div>
+      </div>
+    </div>
+
   </main>
 
+  <!-- ===================================================================
+       JAVASCRIPT
+  =================================================================== -->
   <script>
-    // Last API response data per panel — enables view toggling without re-fetching
+    // =====================================================================
+    // State
+    // =====================================================================
     let _lastRaw = null;
     let _lastFS  = null;
 
-    const PRESETS = {
-      simple: {
-        prompt: "Extract the person's name and age from: John Smith is 34 years old and works as a software engineer.",
-        schema: JSON.stringify({
-          type: "object",
-          properties: {
-            name: { type: "string" },
-            age: { type: "integer" }
-          },
-          required: ["name", "age"]
-        }, null, 2)
-      },
-      reasoning: {
-        prompt: "Analyze the following contract clause step by step. Identify all obligations, the parties involved, and any conditions that must be met before the obligation is triggered. Consider edge cases and potential ambiguities.\n\nClause: 'The Licensee shall pay a royalty of 5% of net revenue to the Licensor within 30 days of each calendar quarter, provided that net revenue exceeds $10,000 USD in that quarter. In the event of non-payment, the Licensor reserves the right to terminate this agreement with 14 days written notice.'",
-        schema: JSON.stringify({
-          type: "object",
-          properties: {
-            conclusion: { type: "string" },
-            supporting_points: { type: "array", items: { type: "string" } },
-            confidence: { type: "number", minimum: 0, maximum: 1 },
-            reasoning_steps: { type: "array", items: { type: "string" } },
-            uncertainty_factors: { type: "array", items: { type: "string" } }
-          },
-          required: ["conclusion", "supporting_points", "confidence", "reasoning_steps"]
-        }, null, 2)
-      },
-      contract: {
-        prompt: "Parse this contract clause and extract all structured information:\n\n'The Tenant agrees to pay monthly rent of $2,500 USD on the first day of each month. Late payments beyond 5 days will incur a penalty of $50 per day. The Landlord, residing at 123 Main Street, reserves the right to inspect the property with 24-hour written notice. This agreement is effective from January 1, 2025 until December 31, 2025.'",
-        schema: JSON.stringify({
-          type: "object",
-          properties: {
-            clause_type: { type: "string" },
-            obligation: { type: "string" },
-            parties: { type: "array", items: { type: "string" } },
-            conditions: { type: "array", items: { type: "string" } },
-            effective_date: { type: "string" }
-          },
-          required: ["clause_type", "obligation", "parties", "conditions"]
-        }, null, 2)
-      },
-      itinerary: {
-        prompt: "Plan a detailed 5-day trip to Paris for 2 people with a total budget of $3000. Include hotel recommendations with star ratings and daily cost estimates for activities and meals. Show how the budget is tracked day by day.",
-        schema: JSON.stringify({
-          type: "object",
-          properties: {
-            itinerary: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  day: { type: "integer" },
-                  hotel: {
-                    type: "object",
-                    properties: {
-                      name: { type: "string" },
-                      stars: { type: "integer", minimum: 1, maximum: 5 }
-                    }
-                  },
-                  total_cost: { type: "number" },
-                  budget_remaining: { type: "number" }
-                }
-              }
-            }
-          }
-        }, null, 2)
-      }
-    };
+    let _allPresets       = [];
+    let _diffFilter       = 'all';
+    let _domainFilter     = 'all';
+    let _selectedPresetId = null;
+    let _presetBrowserOpen = false;
 
-    function loadPreset(key) {
-      const p = PRESETS[key];
-      document.getElementById('prompt-input').value = p.prompt;
-      document.getElementById('schema-input').value = p.schema;
+    let _activePresetData = null;
+    let _promptDirty      = false;
+    let _schemaDirty      = false;
+
+    let _hasCompared = false;
+
+    // =====================================================================
+    // Init
+    // =====================================================================
+    (async () => {
+      // Load models
+      try {
+        const models = await (await fetch('/models')).json();
+        const sel = document.getElementById('model-select');
+        sel.innerHTML = models.map(m => {
+          const label = m.replace('groq/', '');
+          return `<option value="${m}">${label}</option>`;
+        }).join('');
+      } catch {
+        document.getElementById('model-select').innerHTML =
+          '<option value="groq/llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>';
+      }
+
+      loadPresets();
+
+      document.getElementById('prompt-input').addEventListener('input', () => {
+        if (_activePresetData) { _promptDirty = true; updateWhyFsHint(); }
+      });
+      document.getElementById('schema-input').addEventListener('input', () => {
+        if (_activePresetData) { _schemaDirty = true; updateWhyFsHint(); }
+      });
+    })();
+
+    // =====================================================================
+    // Preset Browser
+    // =====================================================================
+    async function loadPresets() {
+      try {
+        const data = await (await fetch('/presets')).json();
+        _allPresets = Array.isArray(data) ? data : (data.presets || []);
+        renderPresetGrid();
+      } catch (e) {
+        document.getElementById('preset-grid').innerHTML =
+          `<div class="preset-empty" style="grid-column:1/-1">Failed to load presets. <span style="color:var(--muted)">(${escHtml(e.message)})</span></div>`;
+      }
     }
 
+    function togglePresetBrowser() {
+      _presetBrowserOpen = !_presetBrowserOpen;
+      const header = document.getElementById('preset-accordion-header');
+      const body   = document.getElementById('preset-browser-body');
+      header.classList.toggle('open', _presetBrowserOpen);
+      body.classList.toggle('open', _presetBrowserOpen);
+    }
+
+    function setDiffFilter(val, el) {
+      _diffFilter = val;
+      document.querySelectorAll('#preset-tabs .filter-tab').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      renderPresetGrid();
+    }
+
+    function setDomainFilter(val, el) {
+      _domainFilter = val;
+      document.querySelectorAll('#preset-domain-pills .domain-pill').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      renderPresetGrid();
+    }
+
+    function renderPresetGrid() {
+      const grid = document.getElementById('preset-grid');
+      if (!_allPresets.length) {
+        grid.innerHTML = '<div class="preset-empty" style="grid-column:1/-1">No presets available.</div>';
+        return;
+      }
+
+      const filtered = _allPresets.filter(p => {
+        const diff   = (p.difficulty || '').toLowerCase();
+        const domain = (p.domain || '').toLowerCase();
+        return (_diffFilter   === 'all' || diff   === _diffFilter) &&
+               (_domainFilter === 'all' || domain === _domainFilter);
+      });
+
+      if (!filtered.length) {
+        grid.innerHTML = '<div class="preset-empty" style="grid-column:1/-1">No presets match these filters.</div>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(p => {
+        const id       = p.id || p.name || p.title;
+        const title    = p.title || p.name || id;
+        const domain   = (p.domain || '').toLowerCase();
+        const diff     = (p.difficulty || '').toLowerCase();
+        const route    = (p.expected_route || '').toLowerCase();
+        const selected = id === _selectedPresetId ? ' selected' : '';
+
+        const diffClass  = diff  ? `diff-${diff}`   : '';
+        const routeClass = route.includes('ttf') ? 'route-ttf' : (route.includes('direct') ? 'route-direct' : '');
+        const routeLabel = route.includes('ttf') ? 'TTF'       : (route.includes('direct') ? 'Direct'       : route.toUpperCase());
+
+        return `<div class="preset-card${selected}" data-id="${escAttr(id)}" onclick="selectPreset(${escAttr(JSON.stringify(p))})" tabindex="0" onkeydown="if(event.key==='Enter')selectPreset(${escAttr(JSON.stringify(p))})">
+          <div class="preset-card-title">${escHtml(title)}</div>
+          <div class="preset-card-badges">
+            ${domain     ? `<span class="preset-badge domain">${escHtml(domain)}</span>`       : ''}
+            ${diffClass  ? `<span class="preset-badge ${diffClass}">${escHtml(diff)}</span>`   : ''}
+            ${routeClass ? `<span class="preset-badge ${routeClass}">${escHtml(routeLabel)}</span>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function selectPreset(p) {
+      _selectedPresetId = p.id || p.name || p.title;
+      _activePresetData = p;
+      _promptDirty  = false;
+      _schemaDirty  = false;
+
+      if (p.prompt)        document.getElementById('prompt-input').value = p.prompt;
+      if (p.schema)        document.getElementById('schema-input').value =
+        typeof p.schema === 'string' ? p.schema : JSON.stringify(p.schema, null, 2);
+      if (p.schema_text)   document.getElementById('schema-input').value = p.schema_text;
+      if (p.system_prompt) { document.getElementById('sysprompt-input').value = p.system_prompt; openSysPrompt(); }
+
+      document.getElementById('preset-selected-label').textContent = p.title || p.name || _selectedPresetId;
+
+      document.querySelectorAll('.preset-card').forEach(c =>
+        c.classList.toggle('selected', c.dataset.id === _selectedPresetId)
+      );
+
+      updateWhyFsHint();
+      if (_presetBrowserOpen) togglePresetBrowser();
+    }
+
+    function updateWhyFsHint() {
+      const hint   = document.getElementById('why-fs-hint');
+      const bullets = document.getElementById('why-fs-bullets');
+      const wins   = _activePresetData && _activePresetData.why_fs_wins;
+
+      if (!wins || !wins.length || _promptDirty || _schemaDirty) {
+        hint.style.display = 'none';
+        return;
+      }
+      bullets.innerHTML = wins.map(b => `<li>${escHtml(b)}</li>`).join('');
+      hint.style.display = 'block';
+    }
+
+    // =====================================================================
+    // System Prompt
+    // =====================================================================
+    function toggleSysPrompt() {
+      const body = document.getElementById('sysprompt-body');
+      const tog  = document.getElementById('sysprompt-toggle');
+      const open = body.classList.toggle('open');
+      tog.classList.toggle('open', open);
+    }
+
+    function openSysPrompt() {
+      document.getElementById('sysprompt-body').classList.add('open');
+      document.getElementById('sysprompt-toggle').classList.add('open');
+    }
+
+    // =====================================================================
+    // Loading state
+    // =====================================================================
     function setLoading(on) {
       const btn = document.getElementById('run-btn');
       btn.disabled = on;
       btn.innerHTML = on
         ? '<span class="spinner"></span>Running…'
         : 'Compare';
+
       if (on) {
         _lastRaw = null;
         _lastFS  = null;
-        document.getElementById('raw-body').innerHTML = '<div class="empty-state"><span class="spinner"></span>Calling Groq API…</div>';
-        document.getElementById('fs-body').innerHTML = '<div class="empty-state"><span class="spinner"></span>Running FormatShield…</div>';
+
+        document.getElementById('raw-body').innerHTML  =
+          '<div class="empty-state"><span class="spinner"></span><span class="empty-state-text">Calling Groq API…</span></div>';
+        document.getElementById('fs-body').innerHTML   =
+          '<div class="empty-state"><span class="spinner"></span><span class="empty-state-text">Running FormatShield…</span></div>';
         document.getElementById('raw-badges').innerHTML = '';
-        document.getElementById('fs-badges').innerHTML = '';
+        document.getElementById('fs-badges').innerHTML  = '';
+        document.getElementById('raw-valid-icon').className = 'panel-valid-icon';
+        document.getElementById('raw-valid-icon').textContent = '';
+        document.getElementById('fs-valid-icon').className  = 'panel-valid-icon';
+        document.getElementById('fs-valid-icon').textContent  = '';
         document.getElementById('raw-toggle').classList.remove('visible');
         document.getElementById('fs-toggle').classList.remove('visible');
+
+        document.getElementById('score-card').style.display  = 'none';
+        document.getElementById('verdict-bar').style.display = 'none';
+        document.getElementById('verdict-bar').className     = '';
+        document.getElementById('phi-bar').style.display     = 'none';
+
+        document.getElementById('score-number').textContent       = '—';
+        document.getElementById('score-grade').textContent        = '—';
+        document.getElementById('score-winner-badge').textContent = '—';
+        document.getElementById('score-summary').textContent      = '';
+        document.getElementById('score-reason-list').innerHTML    = '';
+        ['schema','routing','reliability','advantage'].forEach(k => {
+          document.getElementById(`sm-${k}`).style.width      = '0%';
+          document.getElementById(`sm-${k}-val`).textContent  = '0';
+        });
+
+        const fill = document.getElementById('score-ring-fill');
+        fill.style.strokeDashoffset = '220';
+        document.getElementById('score-card').className = '';
       }
     }
 
+    // =====================================================================
+    // Main compare call
+    // =====================================================================
     async function runCompare() {
-      const prompt = document.getElementById('prompt-input').value.trim();
-      const schema = document.getElementById('schema-input').value.trim();
-      const model = document.getElementById('model-select').value;
+      const prompt        = document.getElementById('prompt-input').value.trim();
+      const schema        = document.getElementById('schema-input').value.trim();
+      const model         = document.getElementById('model-select').value;
+      const system_prompt = document.getElementById('sysprompt-input').value.trim();
 
       if (!prompt || !schema) {
         alert('Please enter both a prompt and a JSON schema.');
@@ -581,11 +1762,24 @@
 
       setLoading(true);
 
+      // Hide hero on first compare
+      if (!_hasCompared) {
+        const hero = document.getElementById('hero');
+        hero.style.transition = 'opacity 0.4s ease, max-height 0.5s ease';
+        hero.style.overflow   = 'hidden';
+        hero.style.opacity    = '0';
+        setTimeout(() => { hero.style.maxHeight = '0'; hero.style.padding = '0'; }, 400);
+        _hasCompared = true;
+      }
+
       try {
+        const body = { prompt, schema_text: schema, model };
+        if (system_prompt) body.system_prompt = system_prompt;
+
         const res = await fetch('/compare', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt, schema_text: schema, model })
+          body: JSON.stringify(body)
         });
 
         if (!res.ok) {
@@ -597,50 +1791,74 @@
         renderPhi(data.phi);
         renderRaw(data.without_formatshield);
         renderFS(data.with_formatshield);
+        renderVerdict(data.verdict, data.demo_score);
+        renderScoreCard(data.demo_score, data.with_formatshield, data.without_formatshield);
       } catch (e) {
-        document.getElementById('raw-body').innerHTML = `<div class="error-box">Error: ${e.message}</div>`;
-        document.getElementById('fs-body').innerHTML = `<div class="error-box">Error: ${e.message}</div>`;
+        document.getElementById('raw-body').innerHTML =
+          `<div class="error-box">Error: ${escHtml(e.message)}</div>`;
+        document.getElementById('fs-body').innerHTML  =
+          `<div class="error-box">Error: ${escHtml(e.message)}</div>`;
       } finally {
         setLoading(false);
       }
     }
 
+    // =====================================================================
+    // Renderers
+    // =====================================================================
     function renderPhi(phi) {
+      if (!phi) return;
       const bar = document.getElementById('phi-bar');
       bar.style.display = 'block';
 
-      const val = phi.phi;
+      const val   = phi.phi;
       const isttf = val > 0.65;
 
       document.getElementById('phi-value').textContent = val.toFixed(4);
-      document.getElementById('phi-value').className = `phi-main ${isttf ? 'ttf' : 'direct'}`;
+      document.getElementById('phi-value').className   = `phi-main ${isttf ? 'ttf' : 'direct'}`;
 
       const fill = document.getElementById('gauge-fill');
       fill.style.width = (val * 100).toFixed(1) + '%';
-      fill.className = `gauge-fill ${isttf ? 'ttf' : 'direct'}`;
+      fill.className   = `gauge-fill ${isttf ? 'ttf' : 'direct'}`;
 
       const rec = document.getElementById('routing-rec');
-      rec.textContent = isttf ? 'TTF' : 'Direct';
-      rec.className = `routing-badge ${isttf ? 'ttf' : 'direct'}`;
+      rec.textContent = isttf ? 'TTF Recommended' : 'Direct Recommended';
+      rec.className   = `routing-badge ${isttf ? 'ttf' : 'direct'}`;
 
-      document.getElementById('phi-l2').textContent = phi.lambda2.toFixed(4);
-      document.getElementById('phi-tau').textContent = phi.tau.toFixed(4);
-      document.getElementById('phi-dk').textContent = phi.delta_k.toFixed(4);
-      document.getElementById('phi-exp').textContent = phi.explanation;
+      document.getElementById('phi-l2').textContent  = phi.lambda2  !== undefined ? phi.lambda2.toFixed(4)  : '—';
+      document.getElementById('phi-tau').textContent  = phi.tau      !== undefined ? phi.tau.toFixed(4)      : '—';
+      document.getElementById('phi-dk').textContent   = phi.delta_k  !== undefined ? phi.delta_k.toFixed(4)  : '—';
+      document.getElementById('phi-exp').textContent  = phi.explanation || '';
+
+      if (!phi.explanation) document.getElementById('phi-exp').style.display = 'none';
+      else                  document.getElementById('phi-exp').style.display = '';
     }
 
     function renderRaw(data) {
       _lastRaw = data;
-      const badges = document.getElementById('raw-badges');
+      const badges   = document.getElementById('raw-badges');
+      const icon     = document.getElementById('raw-valid-icon');
 
-      if (!data.ok) {
+      if (!data || !data.ok) {
         badges.innerHTML = '';
-        document.getElementById('raw-body').innerHTML = `<div class="error-box">Error: ${escHtml(data.error)}</div>`;
+        icon.className   = '';
+        icon.textContent = '';
+        document.getElementById('raw-body').innerHTML =
+          `<div class="error-box">Error: ${escHtml((data && data.error) || 'Unknown error')}</div>`;
         return;
       }
 
+      icon.className   = `panel-valid-icon ${data.schema_valid ? 'valid' : 'invalid'}`;
+      icon.textContent = data.schema_valid ? '✓' : '✗';
+
+      const rawValidLabel = data.schema_valid ? 'VALID' : 'INVALID';
+      const rawViolationBadge = data.schema_violation
+        ? `<span class="badge invalid violation-badge" title="${escHtml(data.schema_violation)}">⚠ ${escHtml(data.schema_violation.slice(0,60))}${data.schema_violation.length > 60 ? '…' : ''}</span>`
+        : '';
+
       badges.innerHTML = [
-        `<span class="badge ${data.schema_valid ? 'valid' : 'invalid'}">${data.schema_valid ? 'VALID JSON' : 'INVALID'}</span>`,
+        `<span class="badge ${data.schema_valid ? 'valid' : 'invalid'}">${rawValidLabel}</span>`,
+        rawViolationBadge,
         `<span class="badge latency">${data.latency_ms} ms</span>`,
         data.tokens ? `<span class="badge latency">${data.tokens.total} tok</span>` : ''
       ].join('');
@@ -652,16 +1870,29 @@
     function renderFS(data) {
       _lastFS = data;
       const badges = document.getElementById('fs-badges');
+      const icon   = document.getElementById('fs-valid-icon');
 
-      if (!data.ok) {
+      if (!data || !data.ok) {
         badges.innerHTML = '';
-        document.getElementById('fs-body').innerHTML = `<div class="error-box">Error: ${escHtml(data.error)}</div>`;
+        icon.className   = '';
+        icon.textContent = '';
+        document.getElementById('fs-body').innerHTML =
+          `<div class="error-box">Error: ${escHtml((data && data.error) || 'Unknown error')}</div>`;
         return;
       }
 
       const isttf = data.routing_strategy === 'ttf';
+
+      icon.className   = `panel-valid-icon ${data.schema_valid ? 'valid' : 'invalid'}`;
+      icon.textContent = data.schema_valid ? '✓' : '✗';
+
+      const fsViolationBadge = data.schema_violation
+        ? `<span class="badge invalid violation-badge" title="${escHtml(data.schema_violation)}">⚠ ${escHtml(data.schema_violation.slice(0,60))}${data.schema_violation.length > 60 ? '…' : ''}</span>`
+        : '';
+
       badges.innerHTML = [
-        `<span class="badge ${data.schema_valid ? 'valid' : 'invalid'}">${data.schema_valid ? 'VALID JSON' : 'INVALID'}</span>`,
+        `<span class="badge ${data.schema_valid ? 'valid' : 'invalid'}">${data.schema_valid ? 'VALID' : 'INVALID'}</span>`,
+        fsViolationBadge,
         `<span class="badge ${isttf ? 'ttf-badge' : 'direct-badge'}">${data.routing_strategy.toUpperCase()}</span>`,
         `<span class="badge latency">${Math.round(data.latency_ms)} ms</span>`
       ].join('');
@@ -670,8 +1901,142 @@
       _renderFSFormatted(data);
     }
 
-    // ---- toggle helpers ----
+    function renderScoreCard(verdict, fsData, rawData) {
+      if (!verdict) return;
 
+      const card = document.getElementById('score-card');
+      card.style.display = 'block';
+
+      let score = 0, schemaScore = 0, routingScore = 0, reliabilityScore = 0, advantageScore = 0;
+
+      if (verdict.score !== undefined && verdict.score !== null) {
+        score = Math.round(verdict.score);
+        const bd = verdict.breakdown || {};
+        schemaScore      = bd.schema_validity  !== undefined ? Math.round(bd.schema_validity)  : 0;
+        routingScore     = bd.routing_quality  !== undefined ? Math.round(bd.routing_quality)  : 0;
+        reliabilityScore = bd.reliability      !== undefined ? Math.round(bd.reliability)      : 0;
+        advantageScore   = bd.schema_advantage !== undefined ? Math.round(bd.schema_advantage) : 0;
+      } else {
+        const fsValid  = fsData  && fsData.ok  && fsData.schema_valid;
+        const rawValid = rawData && rawData.ok  && rawData.schema_valid;
+        schemaScore      = fsValid ? 30 : (rawValid ? 10 : 0);
+        routingScore     = (fsData && fsData.routing_confidence)
+          ? Math.round(parseFloat(fsData.routing_confidence) * 25) : 15;
+        reliabilityScore = (fsData && fsData.ok && !fsData.fallback_triggered) ? 22
+          : (fsData && fsData.ok ? 17 : 5);
+        advantageScore   = (fsValid && !rawValid) ? 20 : (fsValid && rawValid) ? 12
+          : (rawValid && !fsValid) ? 5 : 0;
+        score = schemaScore + routingScore + reliabilityScore + advantageScore;
+      }
+
+      score = Math.max(0, Math.min(100, score));
+
+      const grade = score >= 90 ? 'A+' : score >= 85 ? 'A' : score >= 80 ? 'A−' :
+                    score >= 75 ? 'B+' : score >= 70 ? 'B' : score >= 65 ? 'B−' :
+                    score >= 55 ? 'C'  : score >= 40 ? 'D' : 'F';
+
+      const colorClass = score >= 85 ? 'score-green' : score >= 70 ? 'score-blue' :
+                         score >= 55 ? 'score-yellow' : 'score-red';
+      card.className = colorClass;
+
+      // Animated count-up for score number
+      animateCount(document.getElementById('score-number'), score, 900);
+
+      document.getElementById('score-grade').textContent = grade;
+
+      // Animate ring: circumference = 2πr ≈ 219.9 for r=35
+      const circumference = 2 * Math.PI * 35;
+      const offset = circumference * (1 - score / 100);
+      const ringFill = document.getElementById('score-ring-fill');
+      // Reset first, then animate
+      ringFill.style.strokeDasharray  = circumference.toFixed(1);
+      ringFill.style.strokeDashoffset = circumference.toFixed(1);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          ringFill.style.strokeDashoffset = offset.toFixed(1);
+        });
+      });
+
+      const winnerBadge = document.getElementById('score-winner-badge');
+      // 4-tier verdict labels — honest about magnitude, not just binary win/lose
+      const tierLabels = {
+        decisive_win: '★ Decisive Win',
+        marginal_win: '▲ Marginal Win',
+        tie:          '— Tie',
+        loss:         '▼ Raw Groq Wins'
+      };
+      const tier = verdict.verdict_tier || (
+        verdict.winner === 'formatshield' ? 'marginal_win' :
+        verdict.winner === 'raw'          ? 'loss' : 'tie'
+      );
+      winnerBadge.textContent = tierLabels[tier] || verdict.tier_label || '—';
+      winnerBadge.className   = `score-winner-badge verdict-${tier}`;
+
+      document.getElementById('score-summary').textContent = verdict.summary || '';
+
+      // Breakdown bars
+      const setMetric = (key, val, max) => {
+        const pct = Math.min(100, (val / max) * 100).toFixed(1);
+        document.getElementById(`sm-${key}`).style.width     = pct + '%';
+        document.getElementById(`sm-${key}-val`).textContent = `${val} / ${max}`;
+      };
+      setMetric('schema',      schemaScore,      30);
+      setMetric('routing',     routingScore,     25);
+      setMetric('reliability', reliabilityScore, 20);
+      setMetric('advantage',   advantageScore,   25);
+
+      // Reason bullets with staggered entrance — from demo_score.reasons
+      const reasons = (verdict.reasons || []).slice(0, 6);
+      const reasonList = document.getElementById('score-reason-list');
+      reasonList.innerHTML = reasons.map((r, i) =>
+        `<li style="animation-delay:${i * 80}ms">${escHtml(r)}</li>`
+      ).join('') || '<li style="color:var(--muted)">—</li>';
+    }
+
+    function renderVerdict(v, demoScore) {
+      if (!v) return;
+      const bar = document.getElementById('verdict-bar');
+      bar.style.display = 'block';
+
+      // Use 4-tier system from demo_score when available
+      const tier = demoScore && demoScore.verdict_tier;
+      bar.className = tier ? `verdict-tier-${tier}` : `winner-${v.winner}`;
+
+      const crowns = {
+        decisive_win: '★', marginal_win: '▲', tie: '—', loss: '▼',
+        // legacy
+        formatshield: '★', raw: '▼', none: '✗'
+      };
+      const titles = {
+        decisive_win: 'FormatShield — Decisive Win',
+        marginal_win: 'FormatShield — Marginal Win',
+        tie:          'Tie — Comparable result',
+        loss:         'Raw Groq wins this run',
+        // legacy
+        formatshield: 'FormatShield wins',
+        raw:          'Raw Groq wins this run',
+        none:         'Both calls failed'
+      };
+      const key = tier || v.winner;
+      document.getElementById('verdict-crown').textContent  = crowns[key] || '—';
+      document.getElementById('verdict-title').textContent  = titles[key] || key;
+      // Use demo_score summary (more specific) when available
+      document.getElementById('verdict-summary').textContent =
+        (demoScore && demoScore.summary) || v.summary || '';
+
+      const render = (id, items) => {
+        document.getElementById(id).innerHTML =
+          (items || []).map(p => `<li>${escHtml(p)}</li>`).join('') ||
+          '<li style="color:var(--muted)">—</li>';
+      };
+      render('verdict-fs-points',  v.formatshield_points);
+      render('verdict-raw-points', v.raw_points);
+      render('verdict-tie-points', v.tie_points);
+    }
+
+    // =====================================================================
+    // Toggle helpers
+    // =====================================================================
     function _activateToggle(panelId) {
       const tog = document.getElementById(panelId + '-toggle');
       tog.classList.add('visible');
@@ -682,7 +2047,6 @@
       const data = panelId === 'raw' ? _lastRaw : _lastFS;
       if (!data || !data.ok) return;
 
-      // Update button states
       const tog = document.getElementById(panelId + '-toggle');
       tog.querySelectorAll('.view-btn').forEach(btn => {
         const isActive = (mode === 'formatted' && btn.textContent === 'Formatted') ||
@@ -702,9 +2066,10 @@
 
     function _renderRawFormatted(data) {
       document.getElementById('raw-body').innerHTML = `
-        <pre class="json-output">${escHtml(data.output)}</pre>
+        <pre class="json-output">${syntaxHighlight(data.output)}</pre>
         <div class="detail-rows">
           <div class="detail-row"><span class="detail-key">Schema valid</span><span class="detail-val">${data.schema_valid ? '✓ yes' : '✗ no'}</span></div>
+          ${data.schema_violation ? `<div class="detail-row violation-row"><span class="detail-key">Constraint violation</span><span class="detail-val" style="color:var(--red)">${escHtml(data.schema_violation)}</span></div>` : ''}
           <div class="detail-row"><span class="detail-key">Latency</span><span class="detail-val">${data.latency_ms} ms</span></div>
           ${data.tokens ? `<div class="detail-row"><span class="detail-key">Tokens (prompt / completion)</span><span class="detail-val">${data.tokens.prompt} / ${data.tokens.completion}</span></div>` : ''}
         </div>`;
@@ -712,9 +2077,9 @@
 
     function _renderFSFormatted(data) {
       const failureModes = (data.failure_modes || []).join(', ') || 'none';
-      const thinking = data.thinking || '';
+      const thinking     = data.thinking || '';
       document.getElementById('fs-body').innerHTML = `
-        <pre class="json-output">${escHtml(data.output)}</pre>
+        <pre class="json-output">${syntaxHighlight(data.output)}</pre>
         ${thinking ? `
         <details class="thinking-block">
           <summary>Thinking (TTF Pass 1) — ${thinking.length} chars</summary>
@@ -722,8 +2087,9 @@
         </details>` : ''}
         <div class="detail-rows">
           <div class="detail-row"><span class="detail-key">Schema valid</span><span class="detail-val">${data.schema_valid ? '✓ yes' : '✗ no'}</span></div>
-          <div class="detail-row"><span class="detail-key">Routing strategy</span><span class="detail-val">${data.routing_strategy}</span></div>
-          <div class="detail-row"><span class="detail-key">Confidence</span><span class="detail-val">${data.routing_confidence}</span></div>
+          ${data.schema_violation ? `<div class="detail-row violation-row"><span class="detail-key">Constraint violation</span><span class="detail-val" style="color:var(--red)">${escHtml(data.schema_violation)}</span></div>` : ''}
+          <div class="detail-row"><span class="detail-key">Routing strategy</span><span class="detail-val">${escHtml(data.routing_strategy)}</span></div>
+          <div class="detail-row"><span class="detail-key">Confidence</span><span class="detail-val">${escHtml(String(data.routing_confidence))}</span></div>
           <div class="detail-row"><span class="detail-key">Failure modes</span><span class="detail-val">${escHtml(failureModes)}</span></div>
           <div class="detail-row"><span class="detail-key">Fallback triggered</span><span class="detail-val">${data.fallback_triggered ? 'yes' : 'no'}</span></div>
           <div class="detail-row"><span class="detail-key">Latency</span><span class="detail-val">${Math.round(data.latency_ms)} ms</span></div>
@@ -731,6 +2097,46 @@
         </div>`;
     }
 
+    // =====================================================================
+    // JSON syntax highlight (simple regex, safe — applied to escaped HTML)
+    // =====================================================================
+    function syntaxHighlight(rawStr) {
+      // First escape HTML so we don't XSS, then apply spans
+      const escaped = escHtml(String(rawStr));
+
+      return escaped.replace(
+        /(&quot;(?:[^&]|&(?!quot;))*?&quot;)\s*(:)|(&quot;(?:[^&]|&(?!quot;))*?&quot;)|(-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)|(true|false)|(null)/g,
+        (match, key, colon, str, num, bool, nil) => {
+          if (key && colon) return `<span class="jh-key">${key}</span>${colon}`;
+          if (str)  return `<span class="jh-string">${str}</span>`;
+          if (num)  return `<span class="jh-number">${num}</span>`;
+          if (bool) return `<span class="jh-boolean">${bool}</span>`;
+          if (nil)  return `<span class="jh-null">${nil}</span>`;
+          return match;
+        }
+      );
+    }
+
+    // =====================================================================
+    // Count-up animation
+    // =====================================================================
+    function animateCount(el, target, durationMs) {
+      const start = performance.now();
+      function frame(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / durationMs, 1);
+        // Ease out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target);
+        if (progress < 1) requestAnimationFrame(frame);
+        else              el.textContent = target;
+      }
+      requestAnimationFrame(frame);
+    }
+
+    // =====================================================================
+    // Utilities
+    // =====================================================================
     function escHtml(s) {
       return String(s)
         .replace(/&/g, '&amp;')
@@ -739,7 +2145,14 @@
         .replace(/"/g, '&quot;');
     }
 
-    // Allow Ctrl+Enter to submit
+    function escAttr(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Ctrl+Enter shortcut
     document.addEventListener('keydown', e => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') runCompare();
     });
