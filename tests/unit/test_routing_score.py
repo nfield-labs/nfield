@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import pytest
-
 from formatshield.oracle.routing_score import RoutingScore, compute_routing_score
-
 
 SIMPLE_SCHEMA = {
     "type": "object",
@@ -40,7 +37,7 @@ COMPLEX_SCHEMA = {
 }
 
 SIMPLE_PROMPT = "Extract name and age from: John Smith is 34 years old."
-COMPLEX_PROMPT = "Plan a detailed 10-day European trip with a budget of $8000 including hotels and activities."
+COMPLEX_PROMPT = "Plan a detailed 10-day European trip with a budget of $8000 including hotels."
 
 
 class TestComputeRoutingScore:

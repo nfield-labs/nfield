@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from formatshield.oracle.ncd import prompt_schema_ncd
 
 
@@ -19,10 +17,11 @@ class TestPromptSchemaNcd:
 
     def test_short_inputs_return_neutral(self) -> None:
         # Inputs shorter than 32 bytes → guard activates → 0.5
-        assert prompt_schema_ncd("hi", {"type": "object", "properties": {"x": {"type": "string"}}}) == 0.5
+        short_schema = {"type": "object", "properties": {"x": {"type": "string"}}}
+        assert prompt_schema_ncd("hi", short_schema) == 0.5
 
     def test_result_in_unit_interval(self) -> None:
-        prompt = "Extract the person's name and age from the following text: John Smith is 34 years old."
+        prompt = "Extract the person's name and age: John Smith is 34 years old."
         schema = {
             "type": "object",
             "properties": {
@@ -57,7 +56,7 @@ class TestPromptSchemaNcd:
         assert ncd_aligned <= ncd_unrelated
 
     def test_nested_schema_produces_valid_result(self) -> None:
-        prompt = "Plan a 10-day European trip with a daily budget of 800 dollars including hotels and activities."
+        prompt = "Plan a 10-day European trip with a budget of 800 dollars including hotels."
         schema = {
             "type": "object",
             "properties": {

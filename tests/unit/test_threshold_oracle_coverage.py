@@ -21,7 +21,6 @@ from formatshield.oracle.threshold_oracle import (
 )
 from formatshield.scorer.features import ComplexityFeatures
 
-
 # ---------------------------------------------------------------------------
 # Shared helpers
 # ---------------------------------------------------------------------------
@@ -95,7 +94,7 @@ def test_predict_exception_fallback_returns_routing_decision() -> None:
 
 def test_from_benchmark_data_raises_not_implemented() -> None:
     """from_benchmark_data() must raise NotImplementedError in v0.3."""
-    with pytest.warns(DeprecationWarning):
+    with pytest.warns(DeprecationWarning, match="removed in v0.3"):
         with pytest.raises(NotImplementedError):
             ThresholdOracle.from_benchmark_data()  # type: ignore[call-arg]
 
@@ -103,7 +102,7 @@ def test_from_benchmark_data_raises_not_implemented() -> None:
 def test_save_raises_not_implemented() -> None:
     """save() must raise NotImplementedError in v0.3."""
     oracle = ThresholdOracle()
-    with pytest.warns(DeprecationWarning):
+    with pytest.warns(DeprecationWarning, match="removed in v0.3"):
         with pytest.raises(NotImplementedError):
             oracle.save()  # type: ignore[call-arg]
 
@@ -111,7 +110,7 @@ def test_save_raises_not_implemented() -> None:
 def test_load_raises_not_implemented() -> None:
     """load() must raise NotImplementedError in v0.3."""
     oracle = ThresholdOracle()
-    with pytest.warns(DeprecationWarning):
+    with pytest.warns(DeprecationWarning, match="removed in v0.3"):
         with pytest.raises(NotImplementedError):
             oracle.load()  # type: ignore[call-arg]
 
