@@ -443,7 +443,7 @@ def _type_matches_json_schema(instance: Any, expected_type: str) -> bool:
     if expected_type == "integer":
         return isinstance(instance, int) and not isinstance(instance, bool)
     if expected_type == "number":
-        return (isinstance(instance, int | float) and not isinstance(instance, bool))
+        return isinstance(instance, int | float) and not isinstance(instance, bool)
     if expected_type == "null":
         return instance is None
     return True
@@ -670,8 +670,7 @@ class FormatShield:
         self._hooks.emit(HOOK_REQUEST_BEFORE_ROUTE, policy_pre_route)
         if policy_pre_route.get("blocked"):
             block_reason = str(
-                policy_pre_route.get("reason")
-                or "Request blocked by policy hook before routing"
+                policy_pre_route.get("reason") or "Request blocked by policy hook before routing"
             )
             self._hooks.emit(
                 HOOK_REQUEST_POLICY_CHECK,
@@ -1036,8 +1035,7 @@ class FormatShield:
         self._hooks.emit(HOOK_REQUEST_POLICY_CHECK, policy_post_output)
         if policy_post_output.get("blocked"):
             post_reason = str(
-                policy_post_output.get("reason")
-                or "Output blocked by policy hook after generation"
+                policy_post_output.get("reason") or "Output blocked by policy hook after generation"
             )
             self._record_audit_event(
                 "policy.post_output.blocked",

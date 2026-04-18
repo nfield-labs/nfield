@@ -142,8 +142,7 @@ class DefaultPolicyEngine:
         if self.force_ttf_on_schema_depth is not None and depth >= self.force_ttf_on_schema_depth:
             context["forced_strategy"] = "ttf"
             context["reason"] = (
-                f"Policy forced TTF for schema depth {depth} "
-                f">= {self.force_ttf_on_schema_depth}"
+                f"Policy forced TTF for schema depth {depth} >= {self.force_ttf_on_schema_depth}"
             )
             flags.append("forced_strategy:ttf")
             return

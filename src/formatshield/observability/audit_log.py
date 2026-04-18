@@ -337,11 +337,9 @@ def verify_audit_manifest(
 class AuditLoggerProtocol(Protocol):
     """Protocol for append-only audit loggers."""
 
-    def record(self, event_type: str, payload: dict[str, Any]) -> AuditEvent:
-        ...
+    def record(self, event_type: str, payload: dict[str, Any]) -> AuditEvent: ...
 
-    def events(self) -> list[AuditEvent]:
-        ...
+    def events(self) -> list[AuditEvent]: ...
 
 
 class InMemoryAuditLogger:
