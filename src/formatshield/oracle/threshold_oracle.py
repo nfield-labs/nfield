@@ -90,9 +90,20 @@ _DEFAULT_MODEL_PATH: Path = Path(__file__).parent / "oracle_data" / "threshold_o
 # ---------------------------------------------------------------------------
 # Feature weights used for the heuristic weighted-score fallback
 # ---------------------------------------------------------------------------
+#
+# v0.2 recalibration (live-test evidence):
+#   - required_reasoning_ops cap: 20 → 5  (3 CoT keywords now = 0.6 signal,
+#     vs 0.15 before; this is the strongest TTF predictor per CRANE §4.2)
+#   - schema_depth weight: 0.25 → 0.10  (flat schemas dominate; depth rarely
+#     exceeds 1 for real Pydantic models)
+#   - required_reasoning_ops weight: 0.20 → 0.40  (CoT keywords are the
+#     primary TTF signal; validated by SEAR and CRANE research)
+#   - token_entropy weight: 0.20 → 0.15  (minor adjustment to keep sum=1.0)
+# Result: TTF prompts (3+ CoT keywords, medium prompt) score ~0.53–0.60,
+#         borderline prompts (0–1 keywords) score ~0.30–0.40  (below 0.50)
 
-_FEATURE_WEIGHTS: list[float] = [0.20, 0.25, 0.20, 0.15, 0.10, 0.10]
-_FEATURE_CAPS: list[float] = [1.0, 10.0, 20.0, 1.0, 3.0, 30.0]
+_FEATURE_WEIGHTS: list[float] = [0.15, 0.10, 0.40, 0.15, 0.10, 0.10]
+_FEATURE_CAPS: list[float] = [1.0, 10.0, 5.0, 1.0, 3.0, 30.0]
 
 
 class ThresholdOracle:

@@ -22,7 +22,17 @@ decision boundary Φ = 0.5 at a semantically meaningful value:
 
     A = ln2 / 0.25²  (λ̃₂ = 0.5  →  Φ = 0.5 when τ=ΔK=0)
     B = ln2 / 0.50   (τ·λ̃₂ = 0.5  →  Φ = 0.5 when A-term≈0)
-    C = ln2 / 0.70   (ΔK = 0.70  →  Φ = 0.5 when A+B terms≈0)
+    C = ln2 / 0.50   (ΔK = 0.50  →  Φ = 0.5 when A+B terms≈0)
+
+Calibration note (v0.2 — live-test evidence)
+--------------------------------------------
+C was raised from ln2/0.70 to ln2/0.50.  Empirical data from 56 live Groq
+calls showed that flat Pydantic schemas (no nesting → λ̃₂=0, τ=0) produce
+ΔK in [0.82, 0.91] for TTF-grade prompts and ΔK≈0.50 for direct prompts.
+The old C placed the decision boundary at ΔK=0.70, leaving TTF prompts
+unreachable (phi_max ≈ 0.628 < 0.650 threshold).  The new C places it at
+ΔK=0.50, so TTF prompts (ΔK 0.82–0.91) score Φ=0.68–0.72 and direct
+prompts (ΔK≈0.50) score Φ=0.50, correctly separated by the 0.65 threshold.
 
 Φ > 0.5  →  prefer TTF (schema is complex / prompt is semantically distant)
 Φ ≤ 0.5  →  prefer direct (schema is simple / prompt is well-aligned)
@@ -52,8 +62,8 @@ _A: float = math.log(2) / (0.25**2)
 #: τ·λ̃₂ interaction weight — half-point at product = 0.5
 _B: float = math.log(2) / 0.50
 
-#: ΔK weight — half-point at ΔK = 0.70 alone
-_C: float = math.log(2) / 0.70
+#: ΔK weight — half-point at ΔK = 0.50 alone (raised from 0.70 in v0.2)
+_C: float = math.log(2) / 0.50
 
 
 # ---------------------------------------------------------------------------

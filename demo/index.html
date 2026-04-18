@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FormatShield Demo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --border: #2a2d3e;
+      --text: #e2e4f0;
+      --muted: #6b7280;
+      --accent: #6366f1;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #eab308;
+      --blue: #3b82f6;
+      --ttf: #a855f7;
+      --direct: #22d3ee;
+      --radius: 8px;
+      --mono: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+    header .tag {
+      background: #1e1b4b;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    main { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+
+    /* ---- Input section ---- */
+    .input-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .input-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    textarea, select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      padding: 10px 12px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    textarea:focus, select:focus { border-color: var(--accent); }
+    #prompt-input { height: 100px; }
+    #schema-input { height: 100px; }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .controls .input-group { margin: 0; }
+    select { width: auto; min-width: 280px; }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 9px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    button:hover { opacity: 0.88; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .preset-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .preset-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 20px;
+    }
+    .preset-btn:hover { border-color: var(--accent); color: var(--text); opacity: 1; }
+
+    /* ---- Phi badge ---- */
+    #phi-bar {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+    .phi-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .phi-main { font-size: 28px; font-weight: 700; font-family: var(--mono); }
+    .phi-main.ttf { color: var(--ttf); }
+    .phi-main.direct { color: var(--direct); }
+    .phi-component { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+    .phi-component span { color: var(--text); }
+    .routing-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .routing-badge.ttf { background: #3b1f5e; color: var(--ttf); border: 1px solid var(--ttf); }
+    .routing-badge.direct { background: #0e3040; color: var(--direct); border: 1px solid var(--direct); }
+    .phi-explanation { font-size: 12px; color: var(--muted); margin-top: 8px; font-family: var(--mono); }
+
+    /* ---- Gauge bar ---- */
+    .gauge-wrap { flex: 1; min-width: 200px; }
+    .gauge-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .gauge-track {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: visible;
+      position: relative;
+    }
+    .gauge-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+    .gauge-fill.ttf { background: var(--ttf); }
+    .gauge-fill.direct { background: var(--direct); }
+    .gauge-threshold {
+      position: absolute;
+      top: -4px;
+      width: 2px;
+      height: 16px;
+      background: var(--yellow);
+      border-radius: 1px;
+    }
+    .gauge-threshold::after {
+      content: '0.65';
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: var(--yellow);
+      white-space: nowrap;
+    }
+
+    /* ---- Comparison panels ---- */
+    .panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 900px) { .panels { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .panel-title { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+    .panel-title.raw { color: var(--muted); }
+    .panel-title.fs { color: var(--accent); }
+    .panel-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+    .badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 3px;
+      letter-spacing: 0.3px;
+    }
+    .badge.valid { background: #14532d; color: var(--green); }
+    .badge.invalid { background: #450a0a; color: var(--red); }
+    .badge.ttf-badge { background: #3b1f5e; color: var(--ttf); }
+    .badge.direct-badge { background: #0e3040; color: var(--direct); }
+    .badge.latency { background: #1c1917; color: var(--muted); }
+
+    .panel-body { padding: 16px; }
+
+    pre.json-output {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 380px;
+      overflow-y: auto;
+      color: #a5f3fc;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+
+    .detail-rows { margin-top: 12px; }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-key { color: var(--muted); }
+    .detail-val { font-family: var(--mono); color: var(--text); text-align: right; max-width: 65%; word-break: break-word; }
+
+    .thinking-block {
+      margin-top: 12px;
+      background: #1a1025;
+      border: 1px solid #3b1f5e;
+      border-radius: var(--radius);
+      padding: 10px 12px;
+    }
+    .thinking-block summary {
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ttf);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .thinking-block pre {
+      margin-top: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #c4b5fd;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .error-box {
+      background: #450a0a;
+      border: 1px solid var(--red);
+      border-radius: var(--radius);
+      padding: 12px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #fca5a5;
+    }
+
+    /* ---- Loading spinner ---- */
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-state {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 20px;
+      font-size: 13px;
+    }
+
+    /* ---- View toggle ---- */
+    .view-toggle {
+      display: none;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .view-toggle.visible { display: flex; }
+    .view-btn {
+      background: transparent;
+      border: none;
+      border-radius: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: background 0.12s, color 0.12s;
+    }
+    .view-btn:hover { color: var(--text); opacity: 1; }
+    .view-btn.active { background: var(--surface); color: var(--text); }
+
+    pre.raw-payload {
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 520px;
+      overflow-y: auto;
+      color: #d1d5db;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FormatShield</h1>
+    <span class="tag">DEMO</span>
+  </header>
+
+  <main>
+    <div class="input-section">
+      <!-- Presets -->
+      <div class="preset-row">
+        <span style="font-size:11px;color:var(--muted);line-height:24px;margin-right:4px;">PRESETS:</span>
+        <button class="preset-btn" onclick="loadPreset('simple')">Simple extraction</button>
+        <button class="preset-btn" onclick="loadPreset('reasoning')">Reasoning / analysis</button>
+        <button class="preset-btn" onclick="loadPreset('contract')">Contract clause</button>
+        <button class="preset-btn" onclick="loadPreset('itinerary')">Trip itinerary</button>
+      </div>
+
+      <div class="input-grid">
+        <div class="input-group">
+          <label>Prompt</label>
+          <textarea id="prompt-input" placeholder="Enter your prompt here…">Extract the person's name and age from: John Smith is 34 years old and works as a software engineer.</textarea>
+        </div>
+        <div class="input-group">
+          <label>JSON Schema</label>
+          <textarea id="schema-input" placeholder='{"type":"object","properties":{…}}'>{
+  "type": "object",
+  "properties": {
+    "name": {"type": "string"},
+    "age": {"type": "integer"}
+  },
+  "required": ["name", "age"]
+}</textarea>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="input-group">
+          <label>Model</label>
+          <select id="model-select">
+            <option value="groq/llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
+            <option value="groq/llama-3.1-8b-instant">llama-3.1-8b-instant</option>
+            <option value="groq/meta-llama/llama-4-scout-17b-16e-instruct">llama-4-scout-17b (Meta)</option>
+            <option value="groq/qwen/qwen3-32b">qwen3-32b</option>
+          </select>
+        </div>
+        <button id="run-btn" onclick="runCompare()">Compare</button>
+      </div>
+    </div>
+
+    <!-- Phi score bar -->
+    <div id="phi-bar">
+      <div class="phi-row">
+        <div>
+          <div style="font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Φ Routing Score</div>
+          <div class="phi-main" id="phi-value">0.000</div>
+        </div>
+        <div class="gauge-wrap">
+          <div class="gauge-label">0.0 ←————————————————→ 1.0</div>
+          <div class="gauge-track">
+            <div class="gauge-fill" id="gauge-fill" style="width:0%"></div>
+            <div class="gauge-threshold" style="left:65%"></div>
+          </div>
+        </div>
+        <div id="routing-rec" class="routing-badge">—</div>
+        <div>
+          <div class="phi-component">λ̃₂ = <span id="phi-l2">—</span></div>
+          <div class="phi-component">τ  = <span id="phi-tau">—</span></div>
+          <div class="phi-component">ΔK = <span id="phi-dk">—</span></div>
+        </div>
+      </div>
+      <div class="phi-explanation" id="phi-exp"></div>
+    </div>
+
+    <!-- Side-by-side panels -->
+    <div class="panels">
+      <!-- Raw Groq -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title raw">Raw Groq (no FormatShield)</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <div class="view-toggle" id="raw-toggle">
+              <button class="view-btn active" onclick="switchView('raw','formatted')">Formatted</button>
+              <button class="view-btn" onclick="switchView('raw','payload')">Raw JSON</button>
+            </div>
+            <div class="panel-badges" id="raw-badges"></div>
+          </div>
+        </div>
+        <div class="panel-body" id="raw-body">
+          <div class="empty-state">Results will appear here after you click Compare.</div>
+        </div>
+      </div>
+
+      <!-- FormatShield -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title fs">With FormatShield</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <div class="view-toggle" id="fs-toggle">
+              <button class="view-btn active" onclick="switchView('fs','formatted')">Formatted</button>
+              <button class="view-btn" onclick="switchView('fs','payload')">Raw JSON</button>
+            </div>
+            <div class="panel-badges" id="fs-badges"></div>
+          </div>
+        </div>
+        <div class="panel-body" id="fs-body">
+          <div class="empty-state">Results will appear here after you click Compare.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Last API response data per panel — enables view toggling without re-fetching
+    let _lastRaw = null;
+    let _lastFS  = null;
+
+    const PRESETS = {
+      simple: {
+        prompt: "Extract the person's name and age from: John Smith is 34 years old and works as a software engineer.",
+        schema: JSON.stringify({
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            age: { type: "integer" }
+          },
+          required: ["name", "age"]
+        }, null, 2)
+      },
+      reasoning: {
+        prompt: "Analyze the following contract clause step by step. Identify all obligations, the parties involved, and any conditions that must be met before the obligation is triggered. Consider edge cases and potential ambiguities.\n\nClause: 'The Licensee shall pay a royalty of 5% of net revenue to the Licensor within 30 days of each calendar quarter, provided that net revenue exceeds $10,000 USD in that quarter. In the event of non-payment, the Licensor reserves the right to terminate this agreement with 14 days written notice.'",
+        schema: JSON.stringify({
+          type: "object",
+          properties: {
+            conclusion: { type: "string" },
+            supporting_points: { type: "array", items: { type: "string" } },
+            confidence: { type: "number", minimum: 0, maximum: 1 },
+            reasoning_steps: { type: "array", items: { type: "string" } },
+            uncertainty_factors: { type: "array", items: { type: "string" } }
+          },
+          required: ["conclusion", "supporting_points", "confidence", "reasoning_steps"]
+        }, null, 2)
+      },
+      contract: {
+        prompt: "Parse this contract clause and extract all structured information:\n\n'The Tenant agrees to pay monthly rent of $2,500 USD on the first day of each month. Late payments beyond 5 days will incur a penalty of $50 per day. The Landlord, residing at 123 Main Street, reserves the right to inspect the property with 24-hour written notice. This agreement is effective from January 1, 2025 until December 31, 2025.'",
+        schema: JSON.stringify({
+          type: "object",
+          properties: {
+            clause_type: { type: "string" },
+            obligation: { type: "string" },
+            parties: { type: "array", items: { type: "string" } },
+            conditions: { type: "array", items: { type: "string" } },
+            effective_date: { type: "string" }
+          },
+          required: ["clause_type", "obligation", "parties", "conditions"]
+        }, null, 2)
+      },
+      itinerary: {
+        prompt: "Plan a detailed 5-day trip to Paris for 2 people with a total budget of $3000. Include hotel recommendations with star ratings and daily cost estimates for activities and meals. Show how the budget is tracked day by day.",
+        schema: JSON.stringify({
+          type: "object",
+          properties: {
+            itinerary: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  day: { type: "integer" },
+                  hotel: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string" },
+                      stars: { type: "integer", minimum: 1, maximum: 5 }
+                    }
+                  },
+                  total_cost: { type: "number" },
+                  budget_remaining: { type: "number" }
+                }
+              }
+            }
+          }
+        }, null, 2)
+      }
+    };
+
+    function loadPreset(key) {
+      const p = PRESETS[key];
+      document.getElementById('prompt-input').value = p.prompt;
+      document.getElementById('schema-input').value = p.schema;
+    }
+
+    function setLoading(on) {
+      const btn = document.getElementById('run-btn');
+      btn.disabled = on;
+      btn.innerHTML = on
+        ? '<span class="spinner"></span>Running…'
+        : 'Compare';
+      if (on) {
+        _lastRaw = null;
+        _lastFS  = null;
+        document.getElementById('raw-body').innerHTML = '<div class="empty-state"><span class="spinner"></span>Calling Groq API…</div>';
+        document.getElementById('fs-body').innerHTML = '<div class="empty-state"><span class="spinner"></span>Running FormatShield…</div>';
+        document.getElementById('raw-badges').innerHTML = '';
+        document.getElementById('fs-badges').innerHTML = '';
+        document.getElementById('raw-toggle').classList.remove('visible');
+        document.getElementById('fs-toggle').classList.remove('visible');
+      }
+    }
+
+    async function runCompare() {
+      const prompt = document.getElementById('prompt-input').value.trim();
+      const schema = document.getElementById('schema-input').value.trim();
+      const model = document.getElementById('model-select').value;
+
+      if (!prompt || !schema) {
+        alert('Please enter both a prompt and a JSON schema.');
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const res = await fetch('/compare', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, schema_text: schema, model })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        renderPhi(data.phi);
+        renderRaw(data.without_formatshield);
+        renderFS(data.with_formatshield);
+      } catch (e) {
+        document.getElementById('raw-body').innerHTML = `<div class="error-box">Error: ${e.message}</div>`;
+        document.getElementById('fs-body').innerHTML = `<div class="error-box">Error: ${e.message}</div>`;
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function renderPhi(phi) {
+      const bar = document.getElementById('phi-bar');
+      bar.style.display = 'block';
+
+      const val = phi.phi;
+      const isttf = val > 0.65;
+
+      document.getElementById('phi-value').textContent = val.toFixed(4);
+      document.getElementById('phi-value').className = `phi-main ${isttf ? 'ttf' : 'direct'}`;
+
+      const fill = document.getElementById('gauge-fill');
+      fill.style.width = (val * 100).toFixed(1) + '%';
+      fill.className = `gauge-fill ${isttf ? 'ttf' : 'direct'}`;
+
+      const rec = document.getElementById('routing-rec');
+      rec.textContent = isttf ? 'TTF' : 'Direct';
+      rec.className = `routing-badge ${isttf ? 'ttf' : 'direct'}`;
+
+      document.getElementById('phi-l2').textContent = phi.lambda2.toFixed(4);
+      document.getElementById('phi-tau').textContent = phi.tau.toFixed(4);
+      document.getElementById('phi-dk').textContent = phi.delta_k.toFixed(4);
+      document.getElementById('phi-exp').textContent = phi.explanation;
+    }
+
+    function renderRaw(data) {
+      _lastRaw = data;
+      const badges = document.getElementById('raw-badges');
+
+      if (!data.ok) {
+        badges.innerHTML = '';
+        document.getElementById('raw-body').innerHTML = `<div class="error-box">Error: ${escHtml(data.error)}</div>`;
+        return;
+      }
+
+      badges.innerHTML = [
+        `<span class="badge ${data.schema_valid ? 'valid' : 'invalid'}">${data.schema_valid ? 'VALID JSON' : 'INVALID'}</span>`,
+        `<span class="badge latency">${data.latency_ms} ms</span>`,
+        data.tokens ? `<span class="badge latency">${data.tokens.total} tok</span>` : ''
+      ].join('');
+
+      _activateToggle('raw');
+      _renderRawFormatted(data);
+    }
+
+    function renderFS(data) {
+      _lastFS = data;
+      const badges = document.getElementById('fs-badges');
+
+      if (!data.ok) {
+        badges.innerHTML = '';
+        document.getElementById('fs-body').innerHTML = `<div class="error-box">Error: ${escHtml(data.error)}</div>`;
+        return;
+      }
+
+      const isttf = data.routing_strategy === 'ttf';
+      badges.innerHTML = [
+        `<span class="badge ${data.schema_valid ? 'valid' : 'invalid'}">${data.schema_valid ? 'VALID JSON' : 'INVALID'}</span>`,
+        `<span class="badge ${isttf ? 'ttf-badge' : 'direct-badge'}">${data.routing_strategy.toUpperCase()}</span>`,
+        `<span class="badge latency">${Math.round(data.latency_ms)} ms</span>`
+      ].join('');
+
+      _activateToggle('fs');
+      _renderFSFormatted(data);
+    }
+
+    // ---- toggle helpers ----
+
+    function _activateToggle(panelId) {
+      const tog = document.getElementById(panelId + '-toggle');
+      tog.classList.add('visible');
+      tog.querySelectorAll('.view-btn').forEach((btn, i) => btn.classList.toggle('active', i === 0));
+    }
+
+    function switchView(panelId, mode) {
+      const data = panelId === 'raw' ? _lastRaw : _lastFS;
+      if (!data || !data.ok) return;
+
+      // Update button states
+      const tog = document.getElementById(panelId + '-toggle');
+      tog.querySelectorAll('.view-btn').forEach(btn => {
+        const isActive = (mode === 'formatted' && btn.textContent === 'Formatted') ||
+                         (mode === 'payload'   && btn.textContent === 'Raw JSON');
+        btn.classList.toggle('active', isActive);
+      });
+
+      if (mode === 'payload') {
+        const payload = data.raw_payload || data;
+        document.getElementById(panelId + '-body').innerHTML =
+          `<pre class="raw-payload">${escHtml(JSON.stringify(payload, null, 2))}</pre>`;
+      } else {
+        if (panelId === 'raw') _renderRawFormatted(data);
+        else                   _renderFSFormatted(data);
+      }
+    }
+
+    function _renderRawFormatted(data) {
+      document.getElementById('raw-body').innerHTML = `
+        <pre class="json-output">${escHtml(data.output)}</pre>
+        <div class="detail-rows">
+          <div class="detail-row"><span class="detail-key">Schema valid</span><span class="detail-val">${data.schema_valid ? '✓ yes' : '✗ no'}</span></div>
+          <div class="detail-row"><span class="detail-key">Latency</span><span class="detail-val">${data.latency_ms} ms</span></div>
+          ${data.tokens ? `<div class="detail-row"><span class="detail-key">Tokens (prompt / completion)</span><span class="detail-val">${data.tokens.prompt} / ${data.tokens.completion}</span></div>` : ''}
+        </div>`;
+    }
+
+    function _renderFSFormatted(data) {
+      const failureModes = (data.failure_modes || []).join(', ') || 'none';
+      const thinking = data.thinking || '';
+      document.getElementById('fs-body').innerHTML = `
+        <pre class="json-output">${escHtml(data.output)}</pre>
+        ${thinking ? `
+        <details class="thinking-block">
+          <summary>Thinking (TTF Pass 1) — ${thinking.length} chars</summary>
+          <pre>${escHtml(thinking)}</pre>
+        </details>` : ''}
+        <div class="detail-rows">
+          <div class="detail-row"><span class="detail-key">Schema valid</span><span class="detail-val">${data.schema_valid ? '✓ yes' : '✗ no'}</span></div>
+          <div class="detail-row"><span class="detail-key">Routing strategy</span><span class="detail-val">${data.routing_strategy}</span></div>
+          <div class="detail-row"><span class="detail-key">Confidence</span><span class="detail-val">${data.routing_confidence}</span></div>
+          <div class="detail-row"><span class="detail-key">Failure modes</span><span class="detail-val">${escHtml(failureModes)}</span></div>
+          <div class="detail-row"><span class="detail-key">Fallback triggered</span><span class="detail-val">${data.fallback_triggered ? 'yes' : 'no'}</span></div>
+          <div class="detail-row"><span class="detail-key">Latency</span><span class="detail-val">${Math.round(data.latency_ms)} ms</span></div>
+          <div class="detail-row"><span class="detail-key">Explanation</span><span class="detail-val">${escHtml(data.routing_explanation || '—')}</span></div>
+        </div>`;
+    }
+
+    function escHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Allow Ctrl+Enter to submit
+    document.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') runCompare();
+    });
+  </script>
+</body>
+</html>

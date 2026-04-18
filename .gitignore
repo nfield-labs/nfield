@@ -41,6 +41,13 @@ benchmark_results/
 paper/figures/*.png
 paper/figures/*.pdf
 
+# Live API testing — all outputs ignored (raw payloads, CSV logs, reports)
+testing/
+
+# Demo app — runtime artifacts only; source (app.py, index.html) is tracked
+demo/__pycache__/
+demo/*.log
+
 # IDE
 .idea/
 .vscode/
