@@ -48,7 +48,6 @@ from formatshield.hooks import (
 from formatshield.oracle.routing_decision import RoutingDecision
 from formatshield.prompting import Chat, Template, few_shot
 from formatshield.scorer.features import (
-    BenchmarkResult,
     ComplexityFeatures,
     StreamEvent,
     TokenUsage,
@@ -90,7 +89,7 @@ __all__ = [
     "HOOK_COMPLETION_RESPONSE",
     "HOOK_PARSE_ERROR",
     "AsyncFormatShieldGenerator",
-    "BenchmarkResult",
+
     "Chat",
     "ComplexityFeatures",
     "FormatShield",

@@ -8,6 +8,30 @@ and [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-04-18
+
+### Changed
+- **Oracle:** Replaced sklearn `CalibratedClassifierCV` with closed-form Φ(prompt, schema) routing score — zero training data, zero benchmark runs required
+- **ThresholdOracle:** `from_benchmark_data()`, `save()`, `load()` removed; now raise `DeprecationWarning` + `NotImplementedError`
+
+### Added
+- `oracle/schema_graph.py` — Fiedler value λ̃₂ of JSON schema dependency graph (spectral graph theory)
+- `oracle/schema_entropy.py` — Schema constraint tightness τ (information entropy of type tree)
+- `oracle/ncd.py` — Normalized Compression Distance ΔK between prompt and schema (via zlib)
+- `oracle/routing_score.py` — Φ = 1 − exp(−(A·λ̃₂² + B·τ·λ̃₂ + C·ΔK)) closed-form routing score
+- `RoutingContext`: 4 new fields `phi_score`, `phi_lambda2`, `phi_tau`, `phi_delta_k`
+- `docs/migration/oracle-v3.md` — migration guide for v0.2 → v0.3
+
+### Removed
+- `src/formatshield/benchmark/` — entire benchmark package (harness, tasks, exporters, judge)
+- `src/formatshield/oracle/uncertainty.py`, `utility.py`, `adaptive.py`
+- `formatshield benchmark` CLI command
+- `.github/workflows/benchmarks.yml`
+- `scikit-learn` and `joblib` dependencies
+- `BenchmarkResult` from public API
+
+---
+
 ## [0.2.0] — Stage 4: Production Hardening
 
 ### Added

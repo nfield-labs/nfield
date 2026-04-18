@@ -43,7 +43,7 @@ These models often produce poor-quality `<think>` outputs that don't help Pass 2
 
 **Condition:** `overhead_pct > 80%` and `accuracy_delta < 0.05`
 
-Detected post-run in `BenchmarkHarness`. Logged in `failure_modes_detected`.
+Detectable via `FailureModeDetector` post-generation.
 
 ---
 
@@ -66,34 +66,12 @@ The detector returns `None` when no failure mode is found (TTF is safe to procee
 
 ---
 
-## Benchmark-Level Detection
-
-`BenchmarkHarness` records failure modes per result:
-
-```python
-results = await harness.run(tasks=["template_fill"], backends=["groq"], ...)
-for r in results:
-    print(r.failure_modes_detected)
-    # ["unnecessary_ttf_overhead"]  — TTF was applied but added no value
-```
-
-Failure modes detected:
-
-| Mode | Meaning |
-|---|---|
-| `ttf_accuracy_regression` | TTF was expected to help but accuracy dropped |
-| `unnecessary_ttf_overhead` | TTF not expected to help, but overhead > 30% |
-| `high_overhead_low_gain` | Overhead > 80%, accuracy delta < 5% |
-| `ttf_routing_error` | Oracle routed to TTF but it hurt accuracy |
-
----
-
 ## Recommendations
 
-1. **Benchmark your own workload** — run `BenchmarkHarness` with your actual tasks and check `failure_modes_detected`
-2. **Raise the threshold** for low-reasoning tasks: `ThresholdOracle(threshold=0.65)`
-3. **Force direct** for known-simple schemas: `FormatShield(strategy="direct")`
-4. **Use DryRunBackend** to test routing logic without API costs
+1. **Raise the threshold** for low-reasoning tasks: `ThresholdOracle(threshold=0.65)`
+2. **Force direct** for known-simple schemas: `FormatShield(strategy="direct")`
+3. **Use DryRunBackend** to test routing logic without API costs
+4. **Check the Φ score** — log `decision.explanation` to see λ̃₂, τ, and ΔK components driving each routing decision
 
 ---
 
@@ -101,5 +79,5 @@ Failure modes detected:
 
 - [Routing Algorithm](routing-algorithm.md) — how the router works
 - [TTF Algorithm](ttf-algorithm.md) — the two-pass approach
+- [Reference: Oracle](../reference/oracle.md) — Φ formula and thresholds
 - [`FailureModeDetector` API](../reference/ttf.md)
-- [`BenchmarkHarness` API](../reference/benchmark.md)

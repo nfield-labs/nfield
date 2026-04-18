@@ -89,12 +89,12 @@ These are tagged [`good-first-issue`](https://github.com/formatshield/formatshie
 | Add Mistral AI backend | `src/formatshield/backends/mistral_backend.py` | ~50 lines | Implement using `mistralai` SDK. Mistral supports JSON mode via `response_format`. Follow the GroqBackend pattern. |
 | Add Together AI backend | `src/formatshield/backends/together_backend.py` | ~45 lines | Together AI has an OpenAI-compatible API. Reuse the OpenAIBackend with a custom `base_url`. |
 
-### Benchmark Tasks (~ 30–40 lines each)
+### Oracle Improvements (~ 20–40 lines each)
 
-| Issue | File to create | Effort | What to do |
-|-------|---------------|--------|------------|
-| Add SQL extraction task | `src/formatshield/benchmark/tasks/sql_extraction.py` | ~30 lines | Extract SQL from natural language. Schema: `{"query": str, "tables": list[str]}`. Embed 10+ test problems inline. |
-| Add code entity extraction task | `src/formatshield/benchmark/tasks/code_extraction.py` | ~35 lines | Extract function names, arguments, return types from code snippets. Follow the `medical_ner.py` pattern. |
+| Issue | File | Effort | What to do |
+|-------|------|--------|------------|
+| Tune Φ formula coefficients | `src/formatshield/oracle/routing_score.py` | ~20 lines | Adjust the A, B, C constants in the Φ = 1 − exp(−(A·λ̃₂² + B·τ·λ̃₂ + C·ΔK)) formula for better routing calibration on your workload. |
+| Add routing score unit tests | `tests/unit/test_routing_score.py` | ~35 lines | Verify Φ returns values in [0.0, 1.0], increases with deeper schemas, and that edge cases (empty schema, trivial prompt) return sensible scores. |
 
 ### Scorer Improvements (~ 20–25 lines)
 
@@ -106,14 +106,14 @@ These are tagged [`good-first-issue`](https://github.com/formatshield/formatshie
 
 | Issue | File | Effort | What to do |
 |-------|------|--------|------------|
-| Add `--format table` flag | `src/formatshield/cli.py` | ~30 lines | Add `--format` option to `formatshield benchmark` that prints results as a `rich` table to stdout. `rich` is already a dependency. |
+| Add `--format table` flag | `src/formatshield/cli.py` | ~30 lines | Add `--format` option to `formatshield generate` that prints the routing trace as a `rich` table to stdout. `rich` is already a dependency. |
 
 ### Tests (~ 25–30 lines each)
 
 | Issue | File | Effort | What to do |
 |-------|------|--------|------------|
 | Streaming integration test | `tests/unit/test_streaming.py` | ~30 lines | Verify `StreamingEngine` yields at least one `output` event and exactly one `complete` event using `DryRunBackend`. |
-| Threshold oracle calibration tests | `tests/unit/test_oracle_calibration.py` | ~25 lines | Test that `ThresholdOracle` routes differently at different complexity thresholds. Verify conservative mode, learned mode. |
+| Threshold oracle calibration tests | `tests/unit/test_oracle_calibration.py` | ~25 lines | Test that `ThresholdOracle.route()` routes differently at different complexity thresholds. Verify conservative mode and Φ-score-based routing. |
 
 ---
 
@@ -147,7 +147,11 @@ class MyBackend:
     accuracy_loss_baseline: float | None = None
 
     async def generate(self, prompt: str, schema: dict | None = None,
-                       constraints: str | None = None, kv_cache_prefix: str | None = None) -> str:
+                       constraints: str | None = None, kv_cache_prefix: str | None = None,
+                       temperature: float | None = None, max_tokens: int | None = None,
+                       seed: int | None = None, top_p: float | None = None,
+                       top_k: int | None = None, frequency_penalty: float | None = None,
+                       presence_penalty: float | None = None, stop: list[str] | None = None) -> str:
         ...  # call your API here
 
     async def stream(self, prompt: str, schema: dict | None = None, constraints: str | None = None):
@@ -156,11 +160,7 @@ class MyBackend:
 
 ### Adding a Benchmark Task
 
-1. Create `src/formatshield/benchmark/tasks/<name>.py`
-2. Implement `get_problems(quick: bool = False) -> list[dict]` — embed all test data inline, no external API calls
-3. Implement `score_response(predicted: str, ground_truth: Any) -> float` — returns 0.0–1.0
-4. Add to `benchmark/tasks/__init__.py`
-5. Write tests in `tests/unit/test_benchmark_<name>.py`
+> **Removed in v0.3.** Benchmark tasks have been removed in v0.3. The oracle now uses the Φ routing score — see `src/formatshield/oracle/routing_score.py`.
 
 ---
 

@@ -1,6 +1,45 @@
 # Reference — Oracle
 
-This page documents `ThresholdOracle`, `RoutingDecision`, and related constants from `formatshield.oracle`.
+This page documents `ThresholdOracle`, `OracleX`, `RoutingDecision`, and the Φ routing score
+from `formatshield.oracle`.
+
+---
+
+## Routing Score Φ(prompt, schema)
+
+FormatShield uses a closed-form, training-free routing score to decide between TTF and direct
+generation. No benchmark data or ML model artifacts are required.
+
+```
+Φ = 1 − exp(−(A·λ̃₂² + B·τ·λ̃₂ + C·ΔK))
+```
+
+| Component | Symbol | Description |
+|---|---|---|
+| Schema algebraic connectivity | λ̃₂ | Normalized Fiedler value of the schema dependency graph. High value → dense field coupling → prefer TTF |
+| Schema constraint tightness | τ | Entropy proxy: 1 − mean(h(v)) / H₀. High value → highly constrained schema |
+| NCD alignment gap | ΔK | Normalized Compression Distance between prompt and schema. High value → semantically distant |
+
+**Coefficients** (half-point at each component acting alone):
+
+| Constant | Value | Half-point condition |
+|---|---|---|
+| A = ln2 / 0.25² | 11.09 | Φ = 0.5 when λ̃₂ = 0.25 and τ = ΔK = 0 |
+| B = ln2 / 0.50 | 1.386 | τ·λ̃₂ interaction term |
+| C = ln2 / 0.70 | 0.990 | Φ = 0.5 when ΔK = 0.70 and λ̃₂ = τ = 0 |
+
+**Interpretation:** Φ > backend threshold → TTF; Φ ≤ threshold → direct.
+
+```python
+from formatshield.oracle.routing_score import compute_routing_score
+
+rs = compute_routing_score(prompt, schema)
+print(rs.phi)         # float in [0, 1]
+print(rs.lambda2)     # Fiedler value
+print(rs.tau)         # constraint tightness
+print(rs.delta_k)     # NCD gap
+print(rs.explanation) # "Φ=0.712 λ̃₂=0.231 τ=0.161 ΔK=0.847"
+```
 
 ---
 
@@ -11,15 +50,11 @@ class ThresholdOracle:
     def __init__(self, model_path: Path | str | None = None) -> None: ...
 ```
 
-Routes each inference request to either TTF or direct generation.
+Routes each inference request to either TTF or direct generation using the Φ score passed via
+`RoutingContext`, falling back to a heuristic weighted score when context is unavailable.
 
-### Constructor Parameters
-
-| Parameter | Type | Default | Description |
-|---|---|---|---|
-| `model_path` | `Path \| str \| None` | `None` | Path to a pre-trained sklearn `LogisticRegression` pickle. When `None`, the default location `oracle_data/threshold_oracle_v1.pkl` (relative to the module) is tried. If the file is missing, the oracle falls back to heuristics |
-
-At construction, the oracle attempts to load a pre-trained model from `model_path`. If no model is found, it uses the heuristic threshold fallback transparently.
+The `model_path` parameter is accepted for API compatibility but ignored — no pkl artifact is
+loaded or required.
 
 ---
 
@@ -33,6 +68,7 @@ def predict(
     model_id: str,
     latency_budget_ms: float | None = None,
     cost_aware: bool = False,
+    context: RoutingContext | None = None,
 ) -> RoutingDecision: ...
 ```
 
@@ -43,8 +79,9 @@ Return a `RoutingDecision` for the given request.
 | `features` | `ComplexityFeatures` | Feature vector computed by `ComplexityScorer` |
 | `backend` | `str` | Inference backend identifier (e.g. `"vllm"`, `"groq"`) |
 | `model_id` | `str` | Model identifier string (e.g. `"gpt-4o"`) |
-| `latency_budget_ms` | `float \| None` | Optional hard latency cap. When set, TTF is suppressed if estimated overhead exceeds this value |
-| `cost_aware` | `bool` | When `True`, applies a +0.03 upward bias to the routing threshold to prefer cheaper direct generation |
+| `latency_budget_ms` | `float \| None` | Optional hard latency cap. TTF is suppressed if estimated overhead exceeds this value |
+| `cost_aware` | `bool` | When `True`, applies a +0.03 upward bias to the routing threshold |
+| `context` | `RoutingContext \| None` | Carries pre-computed Φ score and components from `core.py` |
 
 Returns `RoutingDecision`. Falls back to `RoutingDecision(strategy="direct", confidence=0.3)` on any error.
 
@@ -54,87 +91,15 @@ Returns `RoutingDecision`. Falls back to `RoutingDecision(strategy="direct", con
 
 1. **Native thinker** — If `model_id` matches a native-thinker prefix (o1, o3, deepseek-r1, ...), always return `"direct"` with confidence 0.95.
 
-2. **Latency budget exceeded** — If `latency_budget_ms` is set and the backend's estimated TTF overhead exceeds it, return `"direct"` with confidence 0.85.
+2. **Latency budget exceeded** — If `latency_budget_ms` is set and estimated TTF overhead exceeds it, return `"direct"` with confidence 0.85.
 
-3. **sklearn model available** — If a pre-trained `LogisticRegression` bundle is loaded, use it for prediction. Confidence is derived from `predict_proba`. Falls back to heuristic if sklearn prediction fails.
+3. **Φ score available** — If `context.phi_score > 0`, use it to compare against the per-backend threshold.
 
-4. **Heuristic threshold** — Compute a weighted score from the feature vector and compare against the per-backend threshold. Confidence is fixed at 0.70.
-
----
-
-### `ThresholdOracle.from_benchmark_data()`
-
-```python
-@classmethod
-def from_benchmark_data(
-    cls,
-    csv_path: str | Path,
-    model_path: Path | str | None = None,
-    *,
-    save: bool = True,
-) -> ThresholdOracle: ...
-```
-
-Train a `LogisticRegression` oracle from benchmark CSV data.
-
-The CSV must be the output of `BenchmarkHarness.run()` (i.e., `summary.csv`). The target label is `1` (use TTF) when `accuracy_delta > 0`, and `0` (use direct) otherwise.
-
-| Parameter | Type | Description |
-|---|---|---|
-| `csv_path` | `str \| Path` | Path to the benchmark results CSV file |
-| `model_path` | `Path \| str \| None` | Where to save the trained model. Defaults to `oracle_data/threshold_oracle_v1.pkl` |
-| `save` | `bool` | If `True` (default), the trained model is persisted to `model_path` |
-
-**Raises:**
-- `ImportError` — if `scikit-learn`, `joblib`, or `numpy` are not installed
-- `FileNotFoundError` — if `csv_path` does not exist
-- `ValueError` — if the CSV contains fewer than 10 valid rows
-
-**Example:**
-
-```python
-from formatshield.oracle.threshold_oracle import ThresholdOracle
-
-oracle = ThresholdOracle.from_benchmark_data(
-    csv_path="benchmark_results/summary.csv",
-    save=True,
-)
-# oracle._clf is now a dict {"clf": LogisticRegression, "scaler": StandardScaler}
-```
-
----
-
-### `ThresholdOracle.save()`
-
-```python
-def save(self, path: Path | str) -> None: ...
-```
-
-Persist the current sklearn model bundle to `path`. Parent directories are created automatically.
-
-**Raises:**
-- `RuntimeError` — if no trained model is loaded
-- `ImportError` — if `joblib` is not installed
-
----
-
-### `ThresholdOracle.load()`
-
-```python
-def load(self, path: Path | str) -> None: ...
-```
-
-Load a persisted sklearn model bundle from `path`.
-
-**Raises:**
-- `FileNotFoundError` — if `path` does not exist
-- `ImportError` — if `joblib` is not installed
+4. **Heuristic fallback** — Compute a weighted score from the feature vector. Confidence is fixed at 0.70.
 
 ---
 
 ## Per-Backend Thresholds
-
-Default heuristic thresholds (used when no sklearn model is available):
 
 | Backend | Threshold | Rationale |
 |---|---|---|
@@ -163,21 +128,18 @@ Default heuristic thresholds (used when no sklearn model is available):
 
 ## Native Thinker Models
 
-These models have built-in chain-of-thought reasoning. FormatShield always routes them to direct generation to avoid double-thinking:
+These models have built-in chain-of-thought reasoning. FormatShield always routes them to direct generation:
 
 ```python
 NATIVE_THINKERS = frozenset({
-    "o1",
-    "o3",
-    "o1-mini",
-    "o3-mini",
+    "o1", "o3", "o1-mini", "o3-mini",
     "deepseek-r1",
     "deepseek-r1-distill-llama-70b",
     "deepseek-r1-distill-qwen-32b",
 })
 ```
 
-Matching is case-insensitive prefix match — any model string starting with one of these entries (e.g. `"openrouter/openai/o1-mini"`) is treated as a native thinker.
+Matching is case-insensitive prefix match.
 
 ---
 
@@ -198,20 +160,26 @@ See [Reference: Core](core.md#routingdecision) for the full field documentation.
 
 ---
 
-## Feature Weights (Heuristic Path)
+## Φ Math Modules
 
-When the sklearn model is not available, the heuristic path uses these weights to compute the routing score from `ComplexityFeatures.to_feature_vector()`:
+### `schema_graph.fiedler_value(schema)`
 
-| Feature | Weight | Cap |
-|---|---|---|
-| `token_entropy` | 0.20 | 1.0 |
-| `schema_depth` | 0.25 | 10.0 |
-| `required_reasoning_ops` | 0.20 | 20.0 |
-| `instruction_tune_score` | 0.15 | 1.0 |
-| `prompt_length_bucket` | 0.10 | 3.0 |
-| `schema_constraint_count` | 0.10 | 30.0 |
+Builds an undirected weighted dependency graph G_σ from the JSON Schema dict and returns the
+normalized second Laplacian eigenvalue λ̃₂ = λ₂(L) / (d_max + 1) ∈ [0, 1].
 
-The `cost_aware=True` flag adds `+0.03` to the effective threshold, requiring a slightly higher score before TTF is triggered.
+Edge weights: structural nesting = 1.0, `$ref` = 1.5, `allOf`/`anyOf`/`oneOf`/`if` = 2.0,
+shared name stems = 0.5.
+
+### `schema_entropy.constraint_tightness(schema)`
+
+Walks the schema type tree and returns τ = 1 − mean(h(v)) / H₀ ∈ [0, 1], where h(v) is
+per-leaf Shannon entropy: boolean → 1 bit, enum[k] → log₂(k), int[a,b] → log₂(b−a+1),
+string+format → 0.5·H₀, unconstrained → H₀ ≈ 16.97 bits.
+
+### `ncd.prompt_schema_ncd(prompt, schema)`
+
+Returns the Normalized Compression Distance between the prompt string and the schema's flattened
+field list (`"field: type\n"` lines) via zlib. Returns 0.5 for inputs shorter than 32 bytes.
 
 ---
 
@@ -237,7 +205,15 @@ decision = oracle.predict(
     latency_budget_ms=5000,
 )
 
-print(f"Strategy:    {decision.strategy}")       # "ttf"
-print(f"Confidence:  {decision.confidence:.2f}") # 0.70
+print(f"Strategy:    {decision.strategy}")
+print(f"Confidence:  {decision.confidence:.2f}")
 print(f"Explanation: {decision.explanation}")
 ```
+
+---
+
+## Migration from v0.2
+
+`from_benchmark_data()`, `save()`, and `load()` raise `DeprecationWarning` + `NotImplementedError`
+in v0.3. No model artifacts or benchmark CSV files are needed. See
+[Oracle v3 Migration](../migration/oracle-v3.md).

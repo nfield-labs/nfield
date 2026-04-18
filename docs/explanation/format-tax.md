@@ -101,37 +101,7 @@ For simple tasks — extracting a city name, classifying a sentiment label, fill
 
 FormatShield's `ComplexityScorer` and `ThresholdOracle` exist to answer: **"Is this request complex enough that TTF is worth it?"**
 
-The threshold is calibrated per backend (lower for vLLM with its KV cache reuse, higher for slow API backends). The oracle can also be trained on your own benchmark data to capture domain-specific patterns.
-
----
-
-## Measuring the Format Tax on Your Own Data
-
-FormatShield's `BenchmarkHarness` lets you reproduce this measurement on your own prompts:
-
-```python
-import asyncio
-from pathlib import Path
-from formatshield.benchmark.harness import BenchmarkHarness
-from formatshield.backends.groq_backend import GroqBackend
-
-async def measure():
-    harness = BenchmarkHarness(output_dir=Path("my_results"))
-    results = await harness.run(
-        tasks=["gsm_symbolic", "medical_ner", "template_fill"],
-        backends=["groq"],
-        models={"groq": "groq/llama-3.1-70b-versatile"},
-        backend_objects={"groq": GroqBackend(model="llama-3.1-70b-versatile")},
-    )
-
-    for r in results:
-        print(f"{r.task}: Format Tax = {-r.accuracy_delta * 100:.1f}pp "
-              f"(direct={r.direct_accuracy:.2f}, ttf={r.ttf_accuracy:.2f})")
-
-asyncio.run(measure())
-```
-
-See [Tutorial 03: Benchmarking](../tutorials/03-benchmarking.md) for the full walkthrough.
+The threshold is calibrated per backend (lower for vLLM with its KV cache reuse, higher for slow API backends) using the Φ routing score — a training-free information-theoretic measure derived from schema algebraic connectivity, constraint tightness, and prompt-schema compression distance. See [Reference: Oracle](../reference/oracle.md) for the Φ formula.
 
 ---
 

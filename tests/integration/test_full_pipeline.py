@@ -50,15 +50,19 @@ def shield_with_mock(mock_backend, monkeypatch) -> FormatShield:
 
     from formatshield.observability.logger import StructuredLogger
     from formatshield.observability.metrics import MetricsCollector
+    from formatshield.oracle.oracle_x import OracleX
     from formatshield.oracle.threshold_oracle import ThresholdOracle
     from formatshield.scorer.complexity_scorer import ComplexityScorer
     from formatshield.ttf.failure_detector import FailureModeDetector
+    from formatshield.hooks import Hooks
 
     shield._scorer = ComplexityScorer()
     shield._oracle = ThresholdOracle()
+    shield._oracle_x = OracleX()
     shield._detector = FailureModeDetector()
     shield._metrics = MetricsCollector()
     shield._logger = StructuredLogger(level="WARNING")
+    shield._hooks = Hooks()
     return shield
 
 
@@ -109,17 +113,21 @@ async def test_native_thinker_always_direct(mock_backend) -> None:
     shield._expose_thinking = False
     shield._debug = False
 
+    from formatshield.hooks import Hooks
     from formatshield.observability.logger import StructuredLogger
     from formatshield.observability.metrics import MetricsCollector
+    from formatshield.oracle.oracle_x import OracleX
     from formatshield.oracle.threshold_oracle import ThresholdOracle
     from formatshield.scorer.complexity_scorer import ComplexityScorer
     from formatshield.ttf.failure_detector import FailureModeDetector
 
     shield._scorer = ComplexityScorer()
     shield._oracle = ThresholdOracle()
+    shield._oracle_x = OracleX()
     shield._detector = FailureModeDetector()
     shield._metrics = MetricsCollector()
     shield._logger = StructuredLogger()
+    shield._hooks = Hooks()
 
     result = await shield.generate(COMPLEX_PROMPT)
     assert result.routing.strategy == "direct"

@@ -42,18 +42,18 @@ result = await fs.generate(
 | Fixes reasoning accuracy loss | ❌ | ❌ | ❌ | ❌ | ✅ |
 | Routes direct vs. TTF automatically | ❌ | ❌ | ❌ | ✅ (cost) | ✅ |
 | Works across all backends | partial | ✅ | partial | ✅ | ✅ |
-| Generates benchmark tables for your pipeline | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Training-free routing score | ❌ | ❌ | ❌ | ❌ | ✅ |
 | Failure mode taxonomy | ❌ | ❌ | ❌ | ❌ | ✅ |
 
 ---
 
 ## News
 
-- **2026/04** — FormatShield v0.0.1 released: 7 backends, 9 benchmark tasks, TTF engine, 567 tests, 81% coverage
+- **2026/04** — FormatShield v0.3 released: closed-form Φ routing score (no training, no pkl files), 7 backends, TTF engine, 567 tests, 81% coverage
 - **2026/04** — "The Format Tax" (arXiv 2604.03616) confirms accuracy loss across 6 open-weight models and 4 output formats — the definitive empirical study
 - **2025/06** — CRANE (arXiv 2502.09061) accepted at **ICML 2025** — the research basis for TTF. FormatShield productionizes the algorithm across all backends
 - **2024/12** — "Let Me Speak Freely?" (arXiv 2408.02442) published at **EMNLP 2024** — quantifies 27.3pp accuracy loss from constrained decoding. The reason FormatShield exists
-- **(Upcoming v0.1.0)** — Together AI, Fireworks AI, Mistral AI backends · 12-task benchmark harness · LangChain `FormatShieldLLM` · `formatshield benchmark --reproduce-paper`
+- **(Upcoming v0.4.0)** — Together AI, Fireworks AI, Mistral AI backends · LangChain `FormatShieldLLM`
 
 ---
 
@@ -67,10 +67,9 @@ result = await fs.generate(
 - [Quick Start](#quick-start)
 - [Supported Backends](#supported-backends)
 - [Real-World Use Cases](#real-world-use-cases)
-- [Benchmark Your Pipeline](#benchmark-your-pipeline)
 - [Ecosystem Integrations](#ecosystem-integrations)
 - [Agent Framework Integration](#agent-framework-integration)
-- [Architecture](#architecture-9-components)
+- [Architecture](#architecture-7-components)
 - [The 5 Objections](#why-not-just----the-5-objections)
 - [Research Background](#research-background)
 - [Contributing](#contributing)
@@ -167,9 +166,6 @@ pip install formatshield[vllm]
 # With Outlines (local constrained decoding)
 pip install formatshield[outlines]
 
-# With benchmark tools
-pip install formatshield[benchmark]
-
 # Everything
 pip install formatshield[all]
 ```
@@ -180,7 +176,7 @@ pip install formatshield[all]
 
 **ML Engineers** running structured extraction pipelines who need accuracy, not just valid JSON. If your pipeline does RAG, NER, contract parsing, or any multi-step reasoning task — the format tax is silently costing you. FormatShield measures it and routes around it automatically.
 
-**AI Researchers** who want to measure format tax on their models empirically. The benchmark harness generates publication-ready CSV and LaTeX tables. Run `formatshield benchmark --reproduce-paper` to see your numbers.
+**AI Researchers** who want to understand format tax on their models empirically. The Φ routing score (Fiedler value + constraint entropy + NCD alignment) gives a closed-form, training-free measure of when structured generation hurts — no benchmark runs required.
 
 **AI Agent Developers** who need structured tool call outputs from fast, cheap models (Groq, Ollama). TTF lets models reason through which tool to call before committing to the structured format. This matters when tools have complex parameters.
 
@@ -351,41 +347,6 @@ More examples in [`examples/`](examples/):
 
 ---
 
-## Benchmark Your Pipeline
-
-```bash
-# Quick smoke test (2 minutes, no GPU needed):
-export GROQ_API_KEY=your_key_here
-formatshield benchmark --tasks gsm --backends groq --quick
-
-# Full cross-backend comparison (generates paper Table 1):
-formatshield benchmark --tasks all --backends groq,ollama --output benchmark_results/
-
-# Reproduce paper results:
-formatshield benchmark --reproduce-paper
-```
-
-Output:
-```
-benchmark_results/
-├── tables/
-│   ├── table1_accuracy_by_backend.csv   ← copy into your paper
-│   └── table2_failure_modes.csv
-└── summary.json
-```
-
-Sample output (your numbers will differ by model and task):
-```
-Backend     | Task         | Direct Acc | TTF Acc | Delta  | Overhead
-------------|--------------|------------|---------|--------|----------
-groq        | gsm_symbolic | 0.61       | 0.74    | +0.13  | 28%
-groq        | medical_ner  | 0.71       | 0.79    | +0.08  | 31%
-groq        | template_fill| 0.95       | 0.93    | -0.02  | 29%  ← TTF hurts here
-ollama      | gsm_symbolic | 0.58       | 0.72    | +0.14  | 24%
-```
-
----
-
 ## Ecosystem Integrations
 
 > FormatShield works with every major inference provider and framework. The list grows as the community adds backends.
@@ -458,25 +419,19 @@ chain = prompt_template | llm | output_parser
 
 ---
 
-## Architecture (9 Components)
+## Architecture (7 Components)
 
 ```
-ComplexityScorer → ThresholdOracle → FailureModeDetector → TTFEngine → Backend Adapter
-                         ↑
-                CrossBackendBenchmark (measures format tax, trains oracle)
-                         ↓
-                BenchmarkHarness (generates paper artifacts)
+ComplexityScorer → ThresholdOracle (Φ score) → FailureModeDetector → TTFEngine → Backend Adapter
 ```
 
 1. **ComplexityScorer** — 6-feature scoring: token entropy, schema depth, reasoning ops, instruction tuning, prompt length, constraint count
-2. **ThresholdOracle** — backend-aware routing classifier (logistic regression trained on benchmark data)
-3. **CrossBackendBenchmark** — measures format tax per backend, generates paper Table 1
-4. **TTF Engine** — two-pass generation (CRANE pattern, arXiv 2502.09061)
-5. **FailureModeDetector** — 6 checks for when TTF would hurt (simple extraction, schema_too_constrained, native_thinker, short_prompt, template_fill, ambiguous_schema)
-6. **Backend Adapters** — Groq, OpenAI, Anthropic, OpenRouter, Ollama, vLLM, Outlines (same interface, swappable)
-7. **StreamingEngine** — SSE-compatible async generator
-8. **BenchmarkHarness** — runs tasks, generates paper artifacts (CSV, LaTeX, PNG)
-9. **CLI** — `formatshield generate` + `formatshield benchmark`
+2. **ThresholdOracle** — training-free Φ routing score (Fiedler + entropy + NCD); `Φ = 1 − exp(−(A·λ̃₂² + B·τ·λ̃₂ + C·ΔK))` where λ̃₂ = Fiedler value (schema graph), τ = constraint tightness (entropy), ΔK = NCD prompt-schema alignment gap
+3. **TTF Engine** — two-pass generation (CRANE pattern, arXiv 2502.09061)
+4. **FailureModeDetector** — 6 checks for when TTF would hurt (simple extraction, schema_too_constrained, native_thinker, short_prompt, template_fill, ambiguous_schema)
+5. **Backend Adapters** — Groq, OpenAI, Anthropic, OpenRouter, Ollama, vLLM, Outlines (same interface, swappable)
+6. **StreamingEngine** — SSE-compatible async generator
+7. **CLI** — `formatshield generate`
 
 ---
 
@@ -507,10 +462,10 @@ FormatShield is the production implementation of findings from:
 | arXiv 2408.02442 (EMNLP 2024) | Constrained decoding → 27.3pp GSM8K drop | Why we built this |
 | arXiv 2502.09061 (ICML 2025, CRANE) | TTF recovers +10pp on reasoning | TTF Engine design |
 | arXiv 2405.21047 (NeurIPS 2024, GAD) | FSM masking distorts output distribution | Why direct path exists |
-| arXiv 2604.03616 (April 2026, Format Tax) | Confirmed across 6 models, 4 formats | Benchmark design |
+| arXiv 2604.03616 (April 2026, Format Tax) | Confirmed across 6 models, 4 formats | Routing threshold motivation |
 | arXiv 2309.06180 (vLLM) | PagedAttention prefix caching | vLLM KV cache reuse |
 
-**The routing gap no paper addresses:** At what complexity score does TTF become beneficial? Does this vary by backend? FormatShield measures this empirically and makes the data public. That's the paper: *"When Does Think-Then-Format Help?"*
+**The routing gap no paper addresses:** At what complexity score does TTF become beneficial? Does this vary by backend? FormatShield answers this with the closed-form Φ score — a training-free, information-theoretic signal derived from the schema's Fiedler value, constraint entropy, and prompt-schema NCD alignment.
 
 ---
 

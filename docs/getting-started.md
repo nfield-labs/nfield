@@ -218,7 +218,6 @@ formatshield generate "Analyze the sentiment: I love this product!" \
 
 - [Tutorial 01: Basic Generation](tutorials/01-basic-generation.md) — deeper dive into schemas and models
 - [Tutorial 02: Routing](tutorials/02-routing.md) — understand and control the routing decision
-- [Tutorial 03: Benchmarking](tutorials/03-benchmarking.md) — measure the format tax on your workloads
 - [Tutorial 04: Backends](tutorials/04-backends.md) — configure vLLM, Outlines, Guidance, and more
 - [Explanation: The Format Tax](explanation/format-tax.md) — the research behind FormatShield
 

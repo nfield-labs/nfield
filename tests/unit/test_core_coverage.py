@@ -125,7 +125,7 @@ async def test_generate_ttf_path_returns_generation_result() -> None:
     """Force the TTF route and verify generate() returns a GenerationResult."""
     shield = _make_shield()
     with (
-        patch.object(shield._oracle, "predict", return_value=_ttf_decision()),
+        patch.object(shield._oracle_x, "predict", return_value=_ttf_decision()),
         patch.object(shield._detector, "should_override_to_direct", return_value=False),
     ):
         result = await shield.generate("Analyze compound interest step by step")
@@ -137,7 +137,7 @@ async def test_generate_ttf_path_returns_generation_result() -> None:
 async def test_generate_ttf_path_output_is_string() -> None:
     """TTF route must produce a non-empty string output."""
     shield = _make_shield()
-    with patch.object(shield._oracle, "predict", return_value=_ttf_decision()):
+    with patch.object(shield._oracle_x, "predict", return_value=_ttf_decision()):
         result = await shield.generate("Reason through this problem carefully")
     assert isinstance(result.output, str)
     assert len(result.output) > 0
@@ -148,7 +148,7 @@ async def test_generate_ttf_path_with_schema() -> None:
     """TTF route with a dict schema must produce valid output."""
     shield = _make_shield()
     schema = {"type": "object", "properties": {"answer": {"type": "string"}}}
-    with patch.object(shield._oracle, "predict", return_value=_ttf_decision()):
+    with patch.object(shield._oracle_x, "predict", return_value=_ttf_decision()):
         result = await shield.generate("Step by step reasoning task", schema=schema)
     assert isinstance(result, GenerationResult)
 
@@ -164,7 +164,7 @@ async def test_generate_ttf_exception_fallback_triggered() -> None:
     shield = _make_shield()
 
     with (
-        patch.object(shield._oracle, "predict", return_value=_ttf_decision()),
+        patch.object(shield._oracle_x, "predict", return_value=_ttf_decision()),
         patch.object(shield._detector, "should_override_to_direct", return_value=False),
         patch(
             "formatshield.ttf.engine.TTFEngine.generate",
@@ -214,7 +214,7 @@ async def test_stream_ttf_path_yields_events() -> None:
     """stream() TTF path must yield StreamEvent instances (lines 436-441)."""
     shield = _make_shield()
     events: list[StreamEvent] = []
-    with patch.object(shield._oracle, "predict", return_value=_ttf_decision()):
+    with patch.object(shield._oracle_x, "predict", return_value=_ttf_decision()):
         async for event in shield.stream("Reason through this step by step"):
             events.append(event)
     assert len(events) > 0
@@ -225,7 +225,7 @@ async def test_stream_ttf_path_yields_events() -> None:
 async def test_stream_ttf_path_expose_thinking_false_filters_thinking() -> None:
     """With expose_thinking=False, 'thinking' events should be filtered out."""
     shield = _make_shield(expose_thinking=False)
-    with patch.object(shield._oracle, "predict", return_value=_ttf_decision()):
+    with patch.object(shield._oracle_x, "predict", return_value=_ttf_decision()):
         events = [e async for e in shield.stream("Step by step calculation")]
     # thinking events are suppressed
     thinking_events = [e for e in events if e.type == "thinking"]
@@ -236,7 +236,7 @@ async def test_stream_ttf_path_expose_thinking_false_filters_thinking() -> None:
 async def test_stream_ttf_path_expose_thinking_true_passes_all_events() -> None:
     """With expose_thinking=True, all event types (including thinking) are forwarded."""
     shield = _make_shield(expose_thinking=True)
-    with patch.object(shield._oracle, "predict", return_value=_ttf_decision()):
+    with patch.object(shield._oracle_x, "predict", return_value=_ttf_decision()):
         events = [e async for e in shield.stream("Analyze this problem carefully")]
     # expose_thinking=True means thinking events are NOT filtered; at minimum output/complete appear
     assert len(events) > 0

@@ -1,0 +1,166 @@
+{
+  "_schema_version": 1,
+  "_description": "FormatShield backend capability registry. Edit to add providers; no code changes needed.",
+  "backends": {
+    "groq": {
+      "supports_ttf": true,
+      "ttf_overhead_pct": 35.0,
+      "cost_per_1k_input_tokens": 0.05,
+      "cost_per_1k_output_tokens": 0.08,
+      "max_context_tokens": 131072,
+      "calibration_date": "2025-04-17",
+      "notes": "Groq LPU; very low latency; native thinkers listed separately",
+      "models": {
+        "llama-3.1-8b-instant": {
+          "native_thinker": false,
+          "ttf_overhead_pct": 30.0,
+          "cost_per_1k_input_tokens": 0.05,
+          "cost_per_1k_output_tokens": 0.08,
+          "max_context_tokens": 131072
+        },
+        "llama-3.3-70b-versatile": {
+          "native_thinker": false,
+          "ttf_overhead_pct": 40.0,
+          "cost_per_1k_input_tokens": 0.59,
+          "cost_per_1k_output_tokens": 0.79,
+          "max_context_tokens": 131072
+        },
+        "llama-3.1-70b-versatile": {
+          "native_thinker": false,
+          "ttf_overhead_pct": 40.0,
+          "cost_per_1k_input_tokens": 0.59,
+          "cost_per_1k_output_tokens": 0.79,
+          "max_context_tokens": 131072
+        },
+        "deepseek-r1-distill-llama-70b": {
+          "native_thinker": true,
+          "ttf_overhead_pct": 0.0,
+          "cost_per_1k_input_tokens": 0.75,
+          "cost_per_1k_output_tokens": 0.99,
+          "max_context_tokens": 131072,
+          "notes": "Native chain-of-thought; always route direct"
+        },
+        "qwen-qwq-32b": {
+          "native_thinker": true,
+          "ttf_overhead_pct": 0.0,
+          "cost_per_1k_input_tokens": 0.29,
+          "cost_per_1k_output_tokens": 0.39,
+          "max_context_tokens": 131072,
+          "notes": "Native chain-of-thought; always route direct"
+        }
+      }
+    },
+    "openai": {
+      "supports_ttf": true,
+      "ttf_overhead_pct": 40.0,
+      "cost_per_1k_input_tokens": 2.50,
+      "cost_per_1k_output_tokens": 10.00,
+      "max_context_tokens": 128000,
+      "calibration_date": "2025-04-17",
+      "models": {
+        "o1": {
+          "native_thinker": true,
+          "ttf_overhead_pct": 0.0,
+          "cost_per_1k_input_tokens": 15.0,
+          "cost_per_1k_output_tokens": 60.0,
+          "max_context_tokens": 200000,
+          "notes": "Native reasoning model; always route direct"
+        },
+        "o3-mini": {
+          "native_thinker": true,
+          "ttf_overhead_pct": 0.0,
+          "cost_per_1k_input_tokens": 1.10,
+          "cost_per_1k_output_tokens": 4.40,
+          "max_context_tokens": 200000,
+          "notes": "Native reasoning model; always route direct"
+        },
+        "gpt-4o": {
+          "native_thinker": false,
+          "ttf_overhead_pct": 40.0,
+          "cost_per_1k_input_tokens": 2.50,
+          "cost_per_1k_output_tokens": 10.00,
+          "max_context_tokens": 128000
+        },
+        "gpt-4o-mini": {
+          "native_thinker": false,
+          "ttf_overhead_pct": 35.0,
+          "cost_per_1k_input_tokens": 0.15,
+          "cost_per_1k_output_tokens": 0.60,
+          "max_context_tokens": 128000
+        }
+      }
+    },
+    "anthropic": {
+      "supports_ttf": true,
+      "ttf_overhead_pct": 45.0,
+      "cost_per_1k_input_tokens": 3.00,
+      "cost_per_1k_output_tokens": 15.00,
+      "max_context_tokens": 200000,
+      "calibration_date": "2025-04-17",
+      "models": {
+        "claude-3-7-sonnet-20250219": {
+          "native_thinker": true,
+          "ttf_overhead_pct": 0.0,
+          "cost_per_1k_input_tokens": 3.00,
+          "cost_per_1k_output_tokens": 15.00,
+          "max_context_tokens": 200000,
+          "notes": "Extended thinking mode; always route direct"
+        },
+        "claude-3-5-sonnet-20241022": {
+          "native_thinker": false,
+          "ttf_overhead_pct": 45.0,
+          "cost_per_1k_input_tokens": 3.00,
+          "cost_per_1k_output_tokens": 15.00,
+          "max_context_tokens": 200000
+        },
+        "claude-3-5-haiku-20241022": {
+          "native_thinker": false,
+          "ttf_overhead_pct": 40.0,
+          "cost_per_1k_input_tokens": 0.80,
+          "cost_per_1k_output_tokens": 4.00,
+          "max_context_tokens": 200000
+        }
+      }
+    },
+    "ollama": {
+      "supports_ttf": true,
+      "ttf_overhead_pct": 50.0,
+      "cost_per_1k_input_tokens": 0.0,
+      "cost_per_1k_output_tokens": 0.0,
+      "max_context_tokens": 32768,
+      "calibration_date": "2025-04-17",
+      "notes": "Local inference; cost is 0 but latency varies by hardware",
+      "models": {}
+    },
+    "vllm": {
+      "supports_ttf": true,
+      "ttf_overhead_pct": 35.0,
+      "cost_per_1k_input_tokens": 0.0,
+      "cost_per_1k_output_tokens": 0.0,
+      "max_context_tokens": 32768,
+      "calibration_date": "2025-04-17",
+      "notes": "Self-hosted vLLM; cost is infra cost only",
+      "models": {}
+    },
+    "dryrun": {
+      "supports_ttf": false,
+      "ttf_overhead_pct": 0.0,
+      "cost_per_1k_input_tokens": 0.0,
+      "cost_per_1k_output_tokens": 0.0,
+      "max_context_tokens": 999999,
+      "calibration_date": "2025-04-17",
+      "notes": "Test/CI backend — no real inference",
+      "models": {}
+    },
+    "default": {
+      "supports_ttf": true,
+      "ttf_overhead_pct": 40.0,
+      "cost_per_1k_input_tokens": 1.00,
+      "cost_per_1k_output_tokens": 3.00,
+      "max_context_tokens": 32768,
+      "calibration_date": "2025-04-17",
+      "notes": "Fallback entry used when backend is not in registry",
+      "models": {}
+    }
+  }
+}

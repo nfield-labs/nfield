@@ -61,7 +61,6 @@ nav:
     - Overview: tutorials/index.md
     - 01 · Basic Generation: tutorials/01-basic-generation.md
     - 02 · Smart Routing: tutorials/02-routing.md
-    - 03 · Benchmarking: tutorials/03-benchmarking.md
     - 04 · Backends: tutorials/04-backends.md
     - 05 · Streaming: tutorials/05-streaming.md
     - 06 · LangChain: tutorials/06-langchain.md
@@ -78,9 +77,10 @@ nav:
     - ComplexityScorer: reference/scorer.md
     - ThresholdOracle: reference/oracle.md
     - TTF Engine: reference/ttf.md
-    - BenchmarkHarness: reference/benchmark.md
     - StreamingEngine: reference/streaming.md
     - CLI: reference/cli.md
+  - Migration:
+    - Oracle v3: migration/oracle-v3.md
   - Changelog: changelog.md
 
 markdown_extensions:

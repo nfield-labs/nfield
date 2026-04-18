@@ -241,7 +241,6 @@ class TestFormatShieldInit:
         assert "FormatShield" in fs.__all__
         assert "RoutingDecision" in fs.__all__
         assert "ComplexityFeatures" in fs.__all__
-        assert "BenchmarkResult" in fs.__all__
 
     def test_fs_routing_decision_importable(self) -> None:
         from formatshield import RoutingDecision

@@ -44,6 +44,14 @@ class MockBackend:
         schema: dict | None = None,
         constraints: str | None = None,
         kv_cache_prefix: str | None = None,
+        temperature: float | None = None,
+        max_tokens: int | None = None,
+        seed: int | None = None,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
+        stop: list[str] | str | None = None,
     ) -> str:
         """
         Return a deterministic response string based on the supplied arguments.

@@ -217,29 +217,27 @@ When `ttf_fallback=False` and TTF validation fails:
 
 ---
 
-## 8. Training the Oracle on Your Own Data
+## 8. Understanding the Φ Routing Score
 
-After running benchmarks, you can train a scikit-learn `LogisticRegression` oracle on your own accuracy data for a domain-specific threshold:
+FormatShield v0.3 uses a closed-form routing score Φ(prompt, schema) — no training required.
+You can inspect the score directly to understand any routing decision:
 
 ```python
-from formatshield.oracle.threshold_oracle import ThresholdOracle
+from formatshield.oracle.routing_score import compute_routing_score
 
-oracle = ThresholdOracle.from_benchmark_data(
-    csv_path="benchmark_results/summary.csv",
-    save=True,  # saves to oracle_data/threshold_oracle_v1.pkl
-)
-
-# Use the trained oracle in a FormatShield instance
-shield = fs.FormatShield(model="groq/llama-3.1-70b-versatile")
-shield._oracle = oracle  # inject your trained oracle
+rs = compute_routing_score(prompt, schema)
+print(rs.explanation)
+# "Φ=0.712 λ̃₂=0.231 τ=0.161 ΔK=0.847"
+#  λ̃₂ = schema algebraic connectivity (Fiedler value)
+#  τ   = schema constraint tightness
+#  ΔK  = NCD prompt-schema alignment gap
 ```
 
-See [Tutorial 03: Benchmarking](03-benchmarking.md) for how to generate the CSV input.
+The Φ score is also available in `RoutingDecision.explanation` for every generation call.
 
 ---
 
 ## Next Steps
 
-- [Tutorial 03: Benchmarking](03-benchmarking.md) — measure the format tax on your data
 - [Explanation: Routing Algorithm](../explanation/routing-algorithm.md) — deep dive into the routing math
-- [Reference: Oracle](../reference/oracle.md) — full `ThresholdOracle` API
+- [Reference: Oracle](../reference/oracle.md) — full `ThresholdOracle` API and Φ formula

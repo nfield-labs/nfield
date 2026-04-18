@@ -1,6 +1,6 @@
 # Tutorials
 
-These tutorials take you from your first generation request to running cross-backend benchmarks and publishing paper artifacts.
+These tutorials take you from your first generation request to advanced backend configuration and observability.
 
 ## Learning Path
 
@@ -8,7 +8,6 @@ These tutorials take you from your first generation request to running cross-bac
 |----------|-------------------|------|
 | [01 · Basic Generation](01-basic-generation.md) | The `generate()` API, Pydantic schemas, sync vs async | 10 min |
 | [02 · Smart Routing](02-routing.md) | How ComplexityScorer and ThresholdOracle decide between TTF and direct | 15 min |
-| [03 · Benchmarking](03-benchmarking.md) | Run the benchmark harness, generate CSV and LaTeX tables | 15 min |
 | [04 · Backends](04-backends.md) | Configure Groq, OpenAI, Anthropic, Ollama, vLLM, Outlines | 20 min |
 | [05 · Streaming](05-streaming.md) | Stream generation tokens with SSE-compatible events | 10 min |
 | [06 · LangChain](06-langchain.md) | Drop-in FormatShieldLLM for LangChain pipelines | 10 min |
@@ -27,6 +26,5 @@ If you already know what you're looking for:
 
 - **Just want structured output?** → [01 · Basic Generation](01-basic-generation.md)
 - **Understanding when TTF kicks in?** → [02 · Smart Routing](02-routing.md) and [Routing Algorithm](../explanation/routing-algorithm.md)
-- **Running benchmarks for a paper?** → [03 · Benchmarking](03-benchmarking.md)
 - **Adding a new LLM provider?** → [08 · Contributing a Backend](08-contributing.md)
 - **Already using LangChain?** → [06 · LangChain](06-langchain.md)

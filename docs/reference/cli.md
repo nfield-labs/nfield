@@ -1,6 +1,6 @@
 # Reference — CLI
 
-FormatShield ships a command-line interface for quick testing, schema-driven generation, and benchmarking without writing Python code.
+FormatShield ships a command-line interface for quick testing and schema-driven generation without writing Python code.
 
 ---
 
@@ -110,64 +110,6 @@ formatshield generate "Plan a trip to Paris" \
     ```
     {"label": "positive", "score": 0.94}
     ```
-
----
-
-## `formatshield benchmark`
-
-```bash
-formatshield benchmark [OPTIONS]
-```
-
-Run the built-in benchmark suite.
-
-### Options
-
-| Option | Default | Description |
-|---|---|---|
-| `--tasks` | `gsm_symbolic,medical_ner,template_fill` | Comma-separated list of task names |
-| `--backends` | `dryrun` | Comma-separated list of backends |
-| `--models` | `groq=groq/llama-3.1-70b-versatile` | Backend→model mapping as `key=value,...` |
-| `--output-dir` | `benchmark_results` | Output directory |
-| `--quick` | False | Use reduced problem sets for fast testing |
-| `--artifacts` | False | Generate paper-ready artifacts after the run |
-
-### Examples
-
-```bash
-# Quick dry-run benchmark (no API key needed)
-formatshield benchmark --quick
-
-# Full benchmark on Groq
-formatshield benchmark \
-  --tasks gsm_symbolic,medical_ner \
-  --backends groq \
-  --models groq=groq/llama-3.1-70b-versatile \
-  --output-dir my_results \
-  --artifacts
-
-# Multi-backend benchmark
-formatshield benchmark \
-  --backends groq,ollama \
-  --models groq=groq/llama-3.1-70b-versatile,ollama=ollama/llama3.1 \
-  --quick
-```
-
-### Output
-
-```
-Running benchmark: 3 tasks × 1 backend = 3 combinations
-  [1/3] gsm_symbolic/dryrun ... 20 problems (quick=True: 5)
-  [2/3] medical_ner/dryrun  ... 5 problems
-  [3/3] template_fill/dryrun ... 5 problems
-
-Results:
-  gsm_symbolic  direct=0.40  ttf=0.60  delta=+0.200  overhead=28%
-  medical_ner   direct=0.60  ttf=0.70  delta=+0.100  overhead=22%
-  template_fill direct=0.80  ttf=0.80  delta=+0.000  overhead=18%
-
-Summary written to: benchmark_results/summary.csv
-```
 
 ---
 

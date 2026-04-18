@@ -28,7 +28,7 @@ Every time you constrain an LLM to produce JSON, the constrained decoding engine
 
 The loss was first documented in [arXiv 2408.02442](https://arxiv.org/abs/2408.02442) and quantified at up to **27%** on standard reasoning benchmarks. FormatShield calls this the **Format Tax**.
 
-FormatShield implements the Think-Then-Format (TTF) algorithm from the [CRANE paper (arXiv 2502.09061)](https://arxiv.org/abs/2502.09061), adds per-backend complexity scoring to decide *when* TTF is worth the overhead, and exposes a unified benchmarking harness so you can **measure the tax on your own workloads**.
+FormatShield implements the Think-Then-Format (TTF) algorithm from the [CRANE paper (arXiv 2502.09061)](https://arxiv.org/abs/2502.09061) and adds a training-free information-theoretic routing score Φ(prompt, schema) to decide *when* TTF is worth the overhead.
 
 ---
 
@@ -46,7 +46,7 @@ FormatShield implements the Think-Then-Format (TTF) algorithm from the [CRANE pa
                     ▼
            ThresholdOracle
       (per-backend calibrated threshold
-       OR sklearn LogisticRegression)
+       driven by Φ routing score)
                     │
           ┌─────────┴──────────┐
           │                    │
@@ -108,9 +108,6 @@ FormatShield implements the Think-Then-Format (TTF) algorithm from the [CRANE pa
 
     # Guidance backend
     pip install "formatshield[guidance]"
-
-    # Benchmarking tools (pandas, matplotlib, seaborn)
-    pip install "formatshield[benchmark]"
 
     # Everything
     pip install "formatshield[all]"

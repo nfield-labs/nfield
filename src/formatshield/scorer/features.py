@@ -7,7 +7,7 @@ streaming, and benchmarking pipeline.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Literal
 
 
@@ -148,62 +148,3 @@ class TokenUsage:
         }
 
 
-@dataclass
-class BenchmarkResult:
-    """
-    Aggregated result for a single benchmark task / backend / model combination.
-
-    Captures accuracy and latency metrics for both direct generation and the
-    Think-Then-Format (TTF) strategy, allowing head-to-head comparison.
-    """
-
-    task: str
-    """Benchmark task identifier (e.g. ``"nested_address_extraction"``)."""
-
-    backend: str
-    """Inference backend identifier (e.g. ``"vllm"``, ``"groq"``)."""
-
-    model: str
-    """Model identifier as passed to the backend (e.g. ``"gpt-4o"``)."""
-
-    direct_accuracy: float
-    """Exact-match / field-level accuracy for direct (non-TTF) generation (0.0–1.0)."""
-
-    ttf_accuracy: float
-    """Exact-match / field-level accuracy for TTF generation (0.0–1.0)."""
-
-    accuracy_delta: float
-    """``ttf_accuracy - direct_accuracy``; positive values mean TTF helps."""
-
-    direct_latency_ms: float
-    """Median end-to-end latency in milliseconds for direct generation."""
-
-    ttf_latency_ms: float
-    """Median end-to-end latency in milliseconds for TTF generation."""
-
-    overhead_pct: float
-    """Percentage latency increase introduced by TTF relative to direct:
-    ``(ttf_latency_ms - direct_latency_ms) / direct_latency_ms * 100``."""
-
-    complexity_score: float
-    """Single-float complexity score (0.0–1.0) computed by ComplexityScorer
-    for this task's prompt and schema."""
-
-    failure_modes_detected: list[str] = field(default_factory=list)
-    """List of failure-mode labels detected by FailureModeDetector for this task."""
-
-    def to_dict(self) -> dict:  # type: ignore[type-arg]
-        """Serialise to a flat dictionary suitable for CSV export or JSON logging."""
-        return {
-            "task": self.task,
-            "backend": self.backend,
-            "model": self.model,
-            "direct_accuracy": self.direct_accuracy,
-            "ttf_accuracy": self.ttf_accuracy,
-            "accuracy_delta": self.accuracy_delta,
-            "direct_latency_ms": self.direct_latency_ms,
-            "ttf_latency_ms": self.ttf_latency_ms,
-            "overhead_pct": self.overhead_pct,
-            "complexity_score": self.complexity_score,
-            "failure_modes_detected": ",".join(self.failure_modes_detected),
-        }

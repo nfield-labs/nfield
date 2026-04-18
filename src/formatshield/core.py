@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import asyncio
 import enum
+import hashlib
 import json
 import logging
 import time
@@ -41,7 +42,10 @@ from formatshield.hooks import (
 )
 from formatshield.observability.logger import StructuredLogger
 from formatshield.observability.metrics import MetricsCollector
+from formatshield.oracle.context import RoutingContext, TelemetryRecord
+from formatshield.oracle.oracle_x import OracleX
 from formatshield.oracle.routing_decision import RoutingDecision
+from formatshield.oracle.routing_score import compute_routing_score
 from formatshield.oracle.threshold_oracle import ThresholdOracle
 from formatshield.scorer.complexity_scorer import ComplexityScorer
 from formatshield.scorer.features import ComplexityFeatures, StreamEvent, TokenUsage
@@ -334,6 +338,38 @@ def _build_backend(
 
 
 # ---------------------------------------------------------------------------
+# Schema family inference helper
+# ---------------------------------------------------------------------------
+
+
+def _infer_schema_family(schema: dict[str, Any] | None) -> str:
+    """Infer the schema family from a JSON Schema dict.
+
+    Returns one of: ``"math"``, ``"ner"``, ``"extraction"``, ``"code"``,
+    ``"classification"``, or ``"unknown"``.
+    """
+    if not schema:
+        return "unknown"
+    title = str(schema.get("title", "")).lower()
+    props = {str(k).lower() for k in schema.get("properties", {}).keys()}
+    if any(kw in title for kw in ("math", "equat", "calcul", "numeric")):
+        return "math"
+    if any(kw in title for kw in ("entity", "ner", "named")):
+        return "ner"
+    if any(kw in props for kw in ("entity", "entities", "span", "mention")):
+        return "ner"
+    if any(kw in title for kw in ("extract", "parse")):
+        return "extraction"
+    if any(kw in title for kw in ("code", "function", "snippet")):
+        return "code"
+    if any(kw in title for kw in ("classify", "classif", "label", "categor")):
+        return "classification"
+    if any(kw in props for kw in ("label", "category", "class")):
+        return "classification"
+    return "unknown"
+
+
+# ---------------------------------------------------------------------------
 # FormatShield main class
 # ---------------------------------------------------------------------------
 
@@ -385,6 +421,7 @@ class FormatShield:
 
         self._scorer = ComplexityScorer()
         self._oracle = ThresholdOracle()
+        self._oracle_x: OracleX = OracleX()  # information-geometric routing, no artifact needed
         self._detector = FailureModeDetector()
 
         self._metrics = metrics or MetricsCollector()
@@ -464,12 +501,26 @@ class FormatShield:
             schema=schema_dict or {},
         )
 
-        # Routing decision
-        decision: RoutingDecision = self._oracle.predict(
+        # Routing decision via OracleX with information-geometric Φ score
+        phi_result = compute_routing_score(prompt, schema_dict or {})
+        ctx = RoutingContext(
+            backend_id=self.backend_name,
+            model_id=self.model.split("/")[-1],
+            task_id="unknown",
+            schema_family=_infer_schema_family(schema_dict),
+            prompt_id=hashlib.sha256(prompt.encode()).hexdigest()[:12],
+            phi_score=phi_result.phi,
+            phi_lambda2=phi_result.lambda2,
+            phi_tau=phi_result.tau,
+            phi_delta_k=phi_result.delta_k,
+        )
+        decision: RoutingDecision = self._oracle_x.predict(
             features=features,
             backend=self.backend_name,
             model_id=self.model,
             latency_budget_ms=self._latency_budget_ms,
+            cost_aware=self._cost_aware,
+            context=ctx,
         )
 
         # Override routing when failure modes demand direct
@@ -592,6 +643,22 @@ class FormatShield:
                     parsed = None
 
         latency_ms = (time.monotonic() - t_start) * 1000
+
+        # Emit TelemetryRecord for observability and future online adaptation
+        if self._oracle_x is not None and ctx is not None:
+            telemetry = TelemetryRecord(
+                features=features.to_feature_vector(),
+                routing_context=ctx,
+                chosen_action=decision.strategy,
+                expected_utility=float(decision.expected_accuracy_delta),
+                realized_outcome=None,
+                latency_ms=latency_ms,
+                token_cost=0.0,
+                schema_validity=schema_valid,
+                failure_modes=list(failure_modes),
+                label_verified=False,
+            )
+            logger.debug("FormatShield: TelemetryRecord: %s", telemetry.to_dict())
 
         # Observability
         self._metrics.record_routing(decision.strategy, self.backend_name)
@@ -748,7 +815,21 @@ class FormatShield:
 
         features = self._scorer.score(prompt, schema=schema_dict, model_id=self.model)
         failure_modes = self._detector.detect(features, self.model, schema_dict or {})
-        decision = self._oracle.predict(features, self.backend_name, self.model)
+        phi_result = compute_routing_score(prompt, schema_dict or {})
+        stream_ctx = RoutingContext(
+            backend_id=self.backend_name,
+            model_id=self.model.split("/")[-1],
+            task_id="unknown",
+            schema_family=_infer_schema_family(schema_dict),
+            prompt_id=hashlib.sha256(prompt.encode()).hexdigest()[:12],
+            phi_score=phi_result.phi,
+            phi_lambda2=phi_result.lambda2,
+            phi_tau=phi_result.tau,
+            phi_delta_k=phi_result.delta_k,
+        )
+        decision = self._oracle_x.predict(
+            features, self.backend_name, self.model, context=stream_ctx
+        )
 
         if self._detector.should_override_to_direct(failure_modes):
             decision = RoutingDecision(

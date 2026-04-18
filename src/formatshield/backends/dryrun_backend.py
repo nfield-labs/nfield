@@ -6,22 +6,21 @@ without requiring any API keys, network access, or GPU.  It returns structurally
 valid responses derived from the input schema, making it suitable for:
 
 * CI pipeline runs where live API keys are unavailable
-* Unit testing the benchmark harness and TTF engine
+* Unit testing the TTF engine
 * Demos and documentation examples
 * Development iteration without incurring API costs
 
 .. note::
-   Responses are *structurally* valid but semantically meaningless — accuracy
-   scores from the benchmark harness will reflect random baseline performance,
-   not real model capability.  Use a live backend for production benchmarks.
+   Responses are *structurally* valid but semantically meaningless.
+   Use a live backend for production use.
 
 Example::
 
     from formatshield.backends.dryrun_backend import DryRunBackend
+    import formatshield as fs
 
     backend = DryRunBackend(seed=42)
-    harness = BenchmarkHarness(backend_obj=backend)
-    results = await harness.run(tasks=["gsm_symbolic"], backends=["dryrun"], ...)
+    shield = fs.FormatShield(model="dryrun/test", backend=backend)
 """
 
 from __future__ import annotations

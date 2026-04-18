@@ -76,7 +76,7 @@ class RoutingDecision:
             result = await backend.generate_direct(prompt, schema)
     """
 
-    strategy: Literal["ttf", "direct", "hybrid"]
+    strategy: Literal["ttf", "direct", "hybrid", "safe-abstain"]
     expected_accuracy_delta: float
     expected_overhead_pct: float
     confidence: float
@@ -107,6 +107,11 @@ class RoutingDecision:
     def use_hybrid(self) -> bool:
         """``True`` when the oracle recommends the hybrid strategy (TTF with direct fallback)."""
         return self.strategy == "hybrid"
+
+    @property
+    def use_safe_abstain(self) -> bool:
+        """``True`` when Oracle-X cannot decide confidently and defers to ThresholdOracle."""
+        return self.strategy == "safe-abstain"
 
     # ------------------------------------------------------------------
     # String representation
