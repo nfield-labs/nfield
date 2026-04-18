@@ -195,7 +195,7 @@ class TestBatchProcessorResults:
         job = await proc.submit(["hello", "world"])
         results = await proc.results(job.job_id)
         for r in results:
-            assert isinstance(r, (BatchSuccess, BatchError))
+            assert isinstance(r, BatchSuccess | BatchError)
 
     @pytest.mark.asyncio
     async def test_results_raises_for_unknown_job(self) -> None:
