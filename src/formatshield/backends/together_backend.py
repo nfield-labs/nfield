@@ -49,6 +49,9 @@ class TogetherBackend:
     #: 16% baseline accuracy loss measured on FormatShield's benchmark suite.
     accuracy_loss_baseline: float | None = 0.16
 
+    #: Together AI does not support token-level logit biasing.
+    supports_logit_bias: bool = False
+
     def __init__(
         self,
         api_key: str | None = None,
@@ -122,6 +125,7 @@ class TogetherBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> str:
         """Generate a response and return the full text.
 
@@ -207,6 +211,7 @@ class TogetherBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> AsyncIterator[StreamEvent]:
         """Stream the model's response as StreamEvent objects.
 
@@ -260,6 +265,7 @@ class TogetherBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> AsyncIterator[StreamEvent]:
         import openai  # type: ignore[import-not-found]
 

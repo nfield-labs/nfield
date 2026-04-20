@@ -72,6 +72,11 @@ class GeminiBackend:
         """
         return 0.14
 
+    @property
+    def supports_logit_bias(self) -> bool:
+        """This backend does not support token-level logit biasing."""
+        return False
+
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
@@ -115,6 +120,7 @@ class GeminiBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> str:
         """Generate a response and return the full text.
 
@@ -212,6 +218,7 @@ class GeminiBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> AsyncIterator[StreamEvent]:
         """Stream the model's response as StreamEvent objects.
 
@@ -268,6 +275,7 @@ class GeminiBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> AsyncIterator[StreamEvent]:
         try:
             import google.api_core.exceptions  # pyright: ignore[reportMissingImports]

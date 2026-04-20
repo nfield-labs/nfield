@@ -74,6 +74,11 @@ class OutlinesBackend:
         """
         return 0.0
 
+    @property
+    def supports_logit_bias(self) -> bool:
+        """This backend does not support token-level logit biasing."""
+        return False
+
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------

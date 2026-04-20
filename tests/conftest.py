@@ -31,6 +31,10 @@ class MockBackend:
     name: str = "mock"
 
     @property
+    def supports_logit_bias(self) -> bool:
+        return False
+
+    @property
     def supports_kv_cache_reuse(self) -> bool:
         return False
 
@@ -44,6 +48,7 @@ class MockBackend:
         schema: dict | None = None,
         constraints: str | None = None,
         kv_cache_prefix: str | None = None,
+        *,
         temperature: float | None = None,
         max_tokens: int | None = None,
         seed: int | None = None,
@@ -52,6 +57,7 @@ class MockBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> str:
         """
         Return a deterministic response string based on the supplied arguments.

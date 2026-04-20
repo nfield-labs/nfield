@@ -77,6 +77,11 @@ class SGLangBackend:
         """
         return 0.20
 
+    @property
+    def supports_logit_bias(self) -> bool:
+        """This backend does not support token-level logit biasing."""
+        return False
+
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
@@ -147,6 +152,7 @@ class SGLangBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> str:
         """Generate a response and return the full text.
 
@@ -242,6 +248,7 @@ class SGLangBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> AsyncIterator[StreamEvent]:
         """Stream the model's response as StreamEvent objects.
 
@@ -295,6 +302,7 @@ class SGLangBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> AsyncIterator[StreamEvent]:
         messages = self._build_messages(prompt, schema, constraints)
 

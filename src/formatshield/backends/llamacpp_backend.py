@@ -68,6 +68,11 @@ class LlamaCppBackend:
         """
         return 0.12
 
+    @property
+    def supports_logit_bias(self) -> bool:
+        """This backend does not support token-level logit biasing."""
+        return False
+
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
@@ -148,6 +153,7 @@ class LlamaCppBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> str:
         """Generate a response using the local llama.cpp engine.
 
@@ -238,6 +244,7 @@ class LlamaCppBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> AsyncIterator[StreamEvent]:
         """Stream the model's response as :class:`StreamEvent` objects.
 

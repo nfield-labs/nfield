@@ -77,6 +77,24 @@ BACKEND_TTF_OVERHEAD: dict[str, float] = {
 _TTF_ACCURACY_DELTA: float = 0.17  # midpoint of 0.15–0.20 range
 _DIRECT_ACCURACY_DELTA: float = 0.0
 
+# ---------------------------------------------------------------------------
+# Φ-Spectrum 5-mode routing thresholds
+# ---------------------------------------------------------------------------
+
+#: Φ boundaries for the 5-mode routing ladder (ascending).
+#: Φ < 0.50          → direct
+#: Φ ∈ [0.50, 0.65)  → lite_ttf
+#: Φ ∈ [0.65, 0.80)  → standard_ttf
+#: Φ ∈ [0.80, 0.95)  → deep_ttf
+#: Φ ≥ 0.95          → sc_full
+PHI_MODE_THRESHOLDS: list[tuple[float, str]] = [
+    (0.95, "sc_full"),
+    (0.80, "deep_ttf"),
+    (0.65, "standard_ttf"),
+    (0.50, "lite_ttf"),
+]
+"""Φ threshold → routing mode mapping (checked highest-first)."""
+
 #: Heuristic confidence when no sklearn model is available.
 _HEURISTIC_CONFIDENCE: float = 0.70
 
@@ -245,6 +263,7 @@ class ThresholdOracle:
                 expected_overhead_pct=0.0,
                 confidence=0.95,
                 explanation="Native thinker model detected – TTF would double-think.",
+                routing_mode="direct",
             )
 
         # ------------------------------------------------------------------
@@ -263,6 +282,7 @@ class ThresholdOracle:
                         f"Estimated TTF overhead ({estimated_overhead_ms:.0f} ms) "
                         f"exceeds latency budget ({latency_budget_ms:.0f} ms)."
                     ),
+                    routing_mode="direct",
                 )
 
         # ------------------------------------------------------------------
@@ -297,17 +317,23 @@ class ThresholdOracle:
         # cost_aware: apply a small upward bias to the threshold
         effective_threshold = threshold + (0.03 if cost_aware else 0.0)
 
+        # Derive 5-mode routing from the weighted_score (treated as a proxy Φ)
+        mode = phi_spectrum_mode(weighted_score)
+
         if weighted_score > effective_threshold:
             explanation = (
                 f"Heuristic score {weighted_score:.3f} > threshold {effective_threshold:.2f} "
-                f"for backend '{backend_key}' → TTF."
+                f"for backend '{backend_key}' → {mode}."
             )
+            # Map spectrum mode to binary strategy for backward compat
+            strategy: str = "direct" if mode == "direct" else "ttf"
             return RoutingDecision(
-                strategy="ttf",
+                strategy=strategy,  # type: ignore[arg-type]
                 expected_accuracy_delta=_TTF_ACCURACY_DELTA,
                 expected_overhead_pct=estimated_overhead,
                 confidence=_HEURISTIC_CONFIDENCE,
                 explanation=explanation,
+                routing_mode=mode,  # type: ignore[arg-type]
             )
         else:
             explanation = (
@@ -320,12 +346,46 @@ class ThresholdOracle:
                 expected_overhead_pct=0.0,
                 confidence=_HEURISTIC_CONFIDENCE,
                 explanation=explanation,
+                routing_mode="direct",
             )
 
 
 # ---------------------------------------------------------------------------
 # Utility helpers
 # ---------------------------------------------------------------------------
+
+
+def phi_spectrum_mode(phi: float) -> str:
+    """Map a Φ score to one of the 5 routing mode strings.
+
+    Parameters
+    ----------
+    phi:
+        Routing score Φ ∈ [0, 1].
+
+    Returns
+    -------
+    str
+        One of ``"direct"``, ``"lite_ttf"``, ``"standard_ttf"``,
+        ``"deep_ttf"``, or ``"sc_full"``.
+
+    Examples
+    --------
+    >>> phi_spectrum_mode(0.30)
+    'direct'
+    >>> phi_spectrum_mode(0.55)
+    'lite_ttf'
+    >>> phi_spectrum_mode(0.70)
+    'standard_ttf'
+    >>> phi_spectrum_mode(0.85)
+    'deep_ttf'
+    >>> phi_spectrum_mode(0.97)
+    'sc_full'
+    """
+    for threshold, mode in PHI_MODE_THRESHOLDS:
+        if phi >= threshold:
+            return mode
+    return "direct"
 
 
 def _is_native_thinker(model_id: str) -> bool:

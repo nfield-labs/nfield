@@ -16,12 +16,13 @@ from formatshield.scorer.features import StreamEvent
 
 class AnthropicBackend:
     """
-    FormatShield backend that targets the
-    `Anthropic <https://www.anthropic.com>`_ hosted inference API.
+    FormatShield backend that targets the Anthropic hosted inference API.
 
-    Anthropic's Claude models excel at instruction-following and structured
-    output.  The API does **not** expose server-side KV-cache prefix reuse,
-    so :attr:`supports_kv_cache_reuse` is ``False``.
+    **Prompt caching:** When *kv_cache_prefix* is supplied to
+    :meth:`generate`, the prefix is sent as a separate content block tagged
+    with ``"cache_control": {"type": "ephemeral"}`` so that KV activations
+    for the static portion of the prompt are reused across requests.
+    :attr:`supports_kv_cache_reuse` is therefore ``True``.
 
     Parameters
     ----------
@@ -59,17 +60,24 @@ class AnthropicBackend:
 
     @property
     def supports_kv_cache_reuse(self) -> bool:
-        """Anthropic does not expose server-side KV-cache prefix reuse."""
-        return False
+        """Supports prompt caching via ``cache_control`` blocks.
+
+        When ``kv_cache_prefix`` is supplied to :meth:`generate`, it is sent
+        as a ``cache_control: {"type": "ephemeral"}`` content block so that
+        KV activations for the static portion of the prompt are reused across
+        requests sharing the same prefix.
+        """
+        return True
 
     @property
     def accuracy_loss_baseline(self) -> float | None:
-        """
-        12 % baseline accuracy loss for structured-output generation, as
-        measured across FormatShield's internal benchmark suite and
-        corroborated by the Anthropic JSON-mode evaluation literature.
-        """
+        """Estimated accuracy loss for structured-output generation."""
         return 0.12
+
+    @property
+    def supports_logit_bias(self) -> bool:
+        """This backend does not support token-level logit biasing."""
+        return False
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -127,6 +135,7 @@ class AnthropicBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> str:
         """
         Generate a response and return the full text.
@@ -173,13 +182,30 @@ class AnthropicBackend:
         RuntimeError
             Wraps any :exc:`anthropic.APIError` with a human-readable message.
         """
-        del kv_cache_prefix  # Anthropic does not support prefix caching
         system_prompt = self._build_system_prompt(schema, constraints)
+
+        # When a static cache prefix is supplied, structure the message as two
+        # content blocks: the prefix tagged with cache_control (so KV activations
+        # are reused across requests) followed by the variable prompt text.
+        if kv_cache_prefix:
+            message_content: list[dict] | str = [
+                {
+                    "type": "text",
+                    "text": kv_cache_prefix,
+                    "cache_control": {"type": "ephemeral"},
+                },
+                {
+                    "type": "text",
+                    "text": prompt,
+                },
+            ]
+        else:
+            message_content = prompt
 
         kwargs: dict = {
             "model": self.model,
             "max_tokens": max_tokens if max_tokens is not None else 4096,
-            "messages": [{"role": "user", "content": prompt}],
+            "messages": [{"role": "user", "content": message_content}],
         }
 
         if temperature is not None:
@@ -232,6 +258,7 @@ class AnthropicBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> AsyncIterator[StreamEvent]:
         """
         Stream the model's response as
@@ -304,6 +331,7 @@ class AnthropicBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> AsyncIterator[StreamEvent]:
         system_prompt = self._build_system_prompt(schema, constraints)
 

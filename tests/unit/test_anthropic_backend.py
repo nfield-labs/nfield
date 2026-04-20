@@ -56,10 +56,10 @@ def test_anthropic_backend_strips_prefix() -> None:
         assert backend.model == "claude-3-5-haiku-20241022"
 
 
-def test_anthropic_supports_kv_cache_reuse_false() -> None:
-    """AnthropicBackend.supports_kv_cache_reuse must be False."""
+def test_anthropic_supports_kv_cache_reuse_true() -> None:
+    """AnthropicBackend.supports_kv_cache_reuse must be True (prompt caching supported)."""
     with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "sk-ant-test"}):
-        assert AnthropicBackend().supports_kv_cache_reuse is False
+        assert AnthropicBackend().supports_kv_cache_reuse is True
 
 
 def test_anthropic_accuracy_loss_baseline() -> None:

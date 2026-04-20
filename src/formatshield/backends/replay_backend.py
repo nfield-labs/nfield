@@ -99,6 +99,11 @@ class RecordingBackend:
     def accuracy_loss_baseline(self) -> float | None:
         return getattr(self._backend, "accuracy_loss_baseline", None)  # type: ignore[no-any-return]
 
+    @property
+    def supports_logit_bias(self) -> bool:
+        """This backend does not support token-level logit biasing."""
+        return False
+
     async def generate(
         self,
         prompt: str,
@@ -197,6 +202,11 @@ class ReplayBackend:
     @property
     def accuracy_loss_baseline(self) -> float | None:
         return None
+
+    @property
+    def supports_logit_bias(self) -> bool:
+        """This backend does not support token-level logit biasing."""
+        return False
 
     def __len__(self) -> int:
         """Return the number of fixture entries loaded into the cache."""

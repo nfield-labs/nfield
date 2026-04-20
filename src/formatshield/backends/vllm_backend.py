@@ -50,11 +50,16 @@ class VLLMBackend:
         base_url: str = "http://localhost:8000/v1",
         api_key: str = "EMPTY",
         model: str = "meta-llama/Llama-3-70b-Instruct",
+        enable_prefix_caching: bool = True,
     ) -> None:
         self._client = AsyncOpenAI(api_key=api_key, base_url=base_url)
         self.base_url = base_url
         # Strip optional "vllm/" prefix so the raw model name reaches the API.
         self.model = model.removeprefix("vllm/")
+        # Track whether the server was started with --enable-prefix-caching.
+        # When True, kv_cache_prefix is sent as a system message so the server
+        # can reuse cached KV activations across requests with the same prefix.
+        self._enable_prefix_caching: bool = enable_prefix_caching
 
     # ------------------------------------------------------------------
     # Capability properties
@@ -75,14 +80,13 @@ class VLLMBackend:
 
     @property
     def accuracy_loss_baseline(self) -> float | None:
-        """
-        23 % baseline accuracy loss for structured-output generation on
-        vLLM-hosted models, as measured across the FormatShield benchmark
-        suite.  The slightly higher value compared to hosted APIs reflects
-        the wider variety of quantisation levels and sampling settings
-        typically used in self-hosted deployments.
-        """
+        """Estimated accuracy loss for structured-output generation."""
         return 0.23
+
+    @property
+    def supports_logit_bias(self) -> bool:
+        """vLLM supports logit bias via its OpenAI-compatible API."""
+        return True
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -138,6 +142,7 @@ class VLLMBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> str:
         """
         Generate a response using the local vLLM server and return the full
@@ -209,6 +214,8 @@ class VLLMBackend:
             kwargs["presence_penalty"] = presence_penalty
         if stop is not None:
             kwargs["stop"] = stop
+        if logit_bias is not None:
+            kwargs["logit_bias"] = logit_bias
 
         if constraints == "json":
             kwargs["response_format"] = {"type": "json_object"}

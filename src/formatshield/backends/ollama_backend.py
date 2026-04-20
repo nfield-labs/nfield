@@ -62,6 +62,11 @@ class OllamaBackend:
         """
         return 0.22
 
+    @property
+    def supports_logit_bias(self) -> bool:
+        """This backend does not support token-level logit biasing."""
+        return False
+
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
@@ -112,6 +117,7 @@ class OllamaBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> str:
         """
         Generate a response using the local Ollama server and return the full
@@ -220,6 +226,7 @@ class OllamaBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> AsyncIterator[StreamEvent]:
         """
         Stream the model's response as :class:`~formatshield.scorer.features.StreamEvent` objects.
@@ -291,6 +298,7 @@ class OllamaBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> AsyncIterator[StreamEvent]:
         client = AsyncClient(host=self.host)
         messages = self._build_messages(prompt, schema, constraints)

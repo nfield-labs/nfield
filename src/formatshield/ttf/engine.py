@@ -11,6 +11,7 @@ KV cache strategy:
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from collections.abc import AsyncIterator
@@ -20,12 +21,197 @@ from pydantic import BaseModel, ValidationError
 
 from formatshield._retry import FailedAttempt, FormatShieldRetryException, build_reask_prompt
 from formatshield.scorer.features import StreamEvent
-from formatshield.ttf.prompts import build_format_prompt, build_think_prompt, extract_thinking
+from formatshield.ttf.prompts import (
+    _collect_schema_field_info,
+    build_cache_prefix_for_format_prompt,
+    build_format_prompt,
+    build_schema_phi_think_prompt,
+    build_think_prompt,
+    extract_thinking,
+)
+from formatshield.ttf.quality_gate import score_thinking_trace
 
 if TYPE_CHECKING:
     from formatshield.backends.protocol import Backend
+    from formatshield.oracle.routing_score import RoutingScore
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Φ-Proportional Thinking Budget
+# ---------------------------------------------------------------------------
+
+def _phi_thinking_budget(phi: float) -> int:
+    """Map routing score Φ to a Pass 1 max-token budget.
+
+    Simple schemas (low Φ) get a small budget to avoid wasted tokens.
+    Complex, highly-coupled schemas (high Φ) get a generous budget so the
+    model has room for deep multi-step reasoning.
+
+    Thresholds:
+    - Φ ≥ 0.90 → 4096 tokens  (MAXIMUM depth)
+    - Φ ∈ [0.75, 0.90) → 1024 tokens  (DEEP / STANDARD)
+    - Φ ∈ [0.65, 0.75) → 512 tokens   (LIGHT)
+    - Φ < 0.65 → 256 tokens            (minimal; TTF rarely fires below 0.65)
+    """
+    if phi >= 0.90:
+        return 4096
+    if phi >= 0.75:
+        return 1024
+    if phi >= 0.65:
+        return 512
+    return 256
+
+
+# ---------------------------------------------------------------------------
+# Self-consistency helpers
+# ---------------------------------------------------------------------------
+
+#: Φ threshold above which self-consistency Pass 1 is triggered automatically.
+_SC_PHI_THRESHOLD: float = 0.95
+
+#: Default number of parallel Pass 1 traces for self-consistency mode.
+DEFAULT_SC_K: int = 3
+
+
+async def _run_self_consistency_pass1(
+    backend: Backend,
+    think_prompt: str,
+    k: int,
+    max_tokens: int | None,
+    logit_bias: dict[int, float] | None,
+    schema: dict[str, Any] | None,
+    routing_score: RoutingScore | None,
+) -> tuple[str, str]:
+    """Run *k* parallel Pass 1 traces and return the best ``(thinking_text, raw_thinking)``.
+
+    Each trace is scored by the Pass 1 quality gate.  The trace with the
+    highest score is returned.  When ``k == 1`` the function degenerates to
+    a single call (no overhead).
+
+    Parameters
+    ----------
+    backend:
+        Inference backend to call.
+    think_prompt:
+        The fully-built Pass 1 prompt (schema-aware or generic).
+    k:
+        Number of parallel traces to generate.  Must be ≥ 1.
+    max_tokens:
+        Token budget per trace (from Φ-proportional budget).
+    logit_bias:
+        Optional logit-bias map for field-name nudging.
+    schema:
+        JSON schema used for quality-gate scoring.  ``None`` skips gate scoring.
+    routing_score:
+        Routing score used by the quality gate.  ``None`` skips gate scoring.
+
+    Returns
+    -------
+    tuple[str, str]
+        ``(thinking_text, raw_thinking)`` of the best-scoring trace.
+    """
+    if k <= 1:
+        raw = await backend.generate(
+            think_prompt,
+            schema=None,
+            constraints=None,
+            max_tokens=max_tokens,
+            logit_bias=logit_bias,
+        )
+        return extract_thinking(raw), raw
+
+    # Launch k parallel Pass 1 calls
+    tasks = [
+        backend.generate(
+            think_prompt,
+            schema=None,
+            constraints=None,
+            max_tokens=max_tokens,
+            logit_bias=logit_bias,
+        )
+        for _ in range(k)
+    ]
+    results: list[str] = await asyncio.gather(*tasks, return_exceptions=False)
+
+    best_raw = results[0]
+    best_thinking = extract_thinking(best_raw)
+    best_score = 0.0
+
+    for raw in results:
+        thinking = extract_thinking(raw)
+        if schema is not None and routing_score is not None:
+            gate = score_thinking_trace(thinking, schema, routing_score)
+            score = gate.score
+        else:
+            # No schema — use trace length as a tiebreaker (longer = more reasoning)
+            score = float(len(thinking))
+
+        if score > best_score:
+            best_score = score
+            best_raw = raw
+            best_thinking = thinking
+
+    logger.debug(
+        "TTFEngine: self-consistency selected best trace (k=%d best_score=%.3f)",
+        k, best_score,
+    )
+    return best_thinking, best_raw
+
+
+# ---------------------------------------------------------------------------
+# Schema-vocabulary logit biasing
+# ---------------------------------------------------------------------------
+
+def _build_schema_logit_bias(
+    schema_fields: list[str],
+    encoding_name: str = "cl100k_base",
+    bias_value: float = 2.0,
+) -> dict[int, float]:
+    """Build a logit-bias mapping that nudges the model toward schema field names.
+
+    Each schema field name is tokenised and the first token of each name is
+    given a positive bias so Pass 1 reasoning is more likely to mention all
+    required field names — improving required-field coverage in the quality gate.
+
+    Parameters
+    ----------
+    schema_fields:
+        List of field name strings extracted from the target schema.
+    encoding_name:
+        tiktoken encoding to use for tokenisation.  Defaults to ``cl100k_base``
+        which covers GPT-4 / LLaMA-3 / Mistral token vocabularies.
+    bias_value:
+        Logit bias value (additive, in log-probability space).  ``2.0`` is a
+        gentle nudge; values above ``5.0`` can distort output quality.
+
+    Returns
+    -------
+    dict[int, float]
+        Mapping of ``{token_id: bias_value}`` suitable for the backend's
+        ``logit_bias`` parameter.  Empty dict if tiktoken is not installed.
+    """
+    try:
+        import tiktoken  # optional dependency
+
+        enc = tiktoken.get_encoding(encoding_name)
+    except ImportError:
+        logger.debug("_build_schema_logit_bias: tiktoken not installed — skipping")
+        return {}
+    except Exception as exc:
+        logger.debug("_build_schema_logit_bias: encoding error — %s", exc)
+        return {}
+
+    bias: dict[int, float] = {}
+    for field_name in schema_fields:
+        if not field_name:
+            continue
+        tokens = enc.encode(field_name)
+        if tokens:
+            # Bias only the first token of the field name to avoid bloating the map
+            bias[tokens[0]] = bias_value
+    return bias
 
 
 class TTFEngine:
@@ -74,11 +260,14 @@ class TTFEngine:
         ttf_fallback: bool = True,
         expose_thinking: bool = False,
         max_reasks: int = DEFAULT_MAX_REASKS,
+        ttf_self_consistency: int = 1,
     ) -> None:
         self._backend = backend
         self._ttf_fallback = ttf_fallback
         self._expose_thinking = expose_thinking
         self._max_reasks = max_reasks
+        # K for self-consistency: 1 = disabled, ≥2 = run K parallel Pass 1 traces
+        self._ttf_self_consistency: int = max(1, ttf_self_consistency)
 
     # ------------------------------------------------------------------
     # Primary generation method
@@ -90,6 +279,7 @@ class TTFEngine:
         schema: dict[str, Any] | None = None,
         schema_model: type[BaseModel] | None = None,
         kv_cache_prefix: str | None = None,
+        routing_score: RoutingScore | None = None,
     ) -> tuple[str, str]:
         """Run two-pass TTF generation and return ``(thinking_text, json_output)``.
 
@@ -106,6 +296,15 @@ class TTFEngine:
         kv_cache_prefix:
             Override the KV-cache prefix passed to the backend.  Defaults to the
             Pass 1 (think) prompt when the backend supports KV-cache reuse.
+        routing_score:
+            Optional :class:`~formatshield.oracle.routing_score.RoutingScore`
+            from OracleX.  When provided together with *schema*, enables:
+
+            * Schema-aware Pass 1 prompt that injects field dependency order,
+              enum constraints, Φ routing depth signal, and vocabulary bridge
+              hints for schema fields absent from the prompt vocabulary (ΔK gap).
+            * τ-conditioned Pass 2 temperature that scales down for
+              tight-constraint schemas (high τ) to reduce retries.
 
         Returns
         -------
@@ -119,30 +318,138 @@ class TTFEngine:
         RuntimeError
             Re-raised from the backend if both TTF and fallback paths fail.
         """
-        think_prompt = build_think_prompt(prompt)
+        # Use schema-aware prompt when routing signal is available
+        if routing_score is not None and schema is not None:
+            think_prompt = build_schema_phi_think_prompt(
+                original_prompt=prompt,
+                schema=schema,
+                phi=routing_score.phi,
+                tau=routing_score.tau,
+                delta_k=routing_score.delta_k,
+                lambda2=routing_score.lambda2,
+            )
+            logger.debug(
+                "TTFEngine: Pass 1 — schema-aware prompt "
+                "(Φ=%.3f τ=%.3f ΔK=%.3f backend=%s)",
+                routing_score.phi, routing_score.tau, routing_score.delta_k,
+                self._backend.name,
+            )
+        else:
+            think_prompt = build_think_prompt(prompt)
+            logger.debug(
+                "TTFEngine: Pass 1 — unconstrained reasoning (backend=%s)", self._backend.name
+            )
+
+        # τ-conditioned Pass 2 temperature.
+        # High τ (tight constraints: enums, booleans) → low temperature for precision.
+        # Low τ (free text fields) → higher temperature for semantic richness.
+        # Formula: temperature = max(0.05, 0.7 * (1 − τ))
+        pass2_temperature: float | None = None
+        if routing_score is not None:
+            pass2_temperature = max(0.05, 0.7 * (1.0 - routing_score.tau))
+            logger.debug(
+                "TTFEngine: Pass 2 temperature τ-conditioned to %.3f (τ=%.3f)",
+                pass2_temperature, routing_score.tau,
+            )
+
+        # Φ-proportional thinking budget.
+        # Budget scales with routing Φ: low Φ → 256 tokens, high Φ → 4096.
+        pass1_max_tokens: int | None = None
+        if routing_score is not None:
+            pass1_max_tokens = _phi_thinking_budget(routing_score.phi)
+            logger.debug(
+                "TTFEngine: Pass 1 budget — %d tokens (Φ=%.3f)",
+                pass1_max_tokens, routing_score.phi,
+            )
 
         # ------------------------------------------------------------------
         # Pass 1: unconstrained reasoning
         # ------------------------------------------------------------------
-        logger.debug("TTFEngine: Pass 1 — unconstrained reasoning (backend=%s)", self._backend.name)
-        raw_thinking = await self._backend.generate(
-            think_prompt,
-            schema=None,
-            constraints=None,
+
+        # Build soft logit bias toward schema field-name tokens when the backend
+        # supports it.  This nudges Pass 1 reasoning to mention all required fields,
+        # improving quality-gate field-coverage scores.
+        pass1_logit_bias: dict[int, float] | None = None
+        if schema is not None and getattr(self._backend, "supports_logit_bias", False):
+            field_infos = _collect_schema_field_info(schema)
+            field_names = [f["path"].split(".")[-1] for f in field_infos]
+            bias_map = _build_schema_logit_bias(field_names)
+            if bias_map:
+                pass1_logit_bias = bias_map
+                logger.debug(
+                    "TTFEngine: Pass 1 — logit bias active for %d field tokens",
+                    len(bias_map),
+                )
+
+        # Determine self-consistency K: explicit setting OR auto-trigger when Φ ≥ 0.95.
+        sc_k = self._ttf_self_consistency
+        if sc_k < 2 and routing_score is not None and routing_score.phi >= _SC_PHI_THRESHOLD:
+            sc_k = DEFAULT_SC_K
+            logger.debug(
+                "TTFEngine: auto-enabling self-consistency K=%d (Φ=%.3f ≥ %.2f)",
+                sc_k, routing_score.phi, _SC_PHI_THRESHOLD,
+            )
+
+        thinking_text, raw_thinking = await _run_self_consistency_pass1(
+            backend=self._backend,
+            think_prompt=think_prompt,
+            k=sc_k,
+            max_tokens=pass1_max_tokens,
+            logit_bias=pass1_logit_bias,
+            schema=schema,
+            routing_score=routing_score,
+        )
+        logger.debug(
+            "TTFEngine: Pass 1 complete — %d chars of thinking (k=%d)", len(thinking_text), sc_k
         )
 
-        thinking_text = extract_thinking(raw_thinking)
-        logger.debug("TTFEngine: Pass 1 complete — %d chars of thinking", len(thinking_text))
+        # Pass 1 quality gate.
+        # Score the thinking trace; retry once if it fails the heuristic checks.
+        if routing_score is not None and schema is not None:
+            gate_result = score_thinking_trace(thinking_text, schema, routing_score)
+            if not gate_result.passed:
+                logger.warning(
+                    "TTFEngine: Pass 1 quality gate FAILED (score=%.2f, failed=%s) — retrying",
+                    gate_result.score, gate_result.failed_checks,
+                )
+                thinking_text, raw_thinking = await _run_self_consistency_pass1(
+                    backend=self._backend,
+                    think_prompt=think_prompt,
+                    k=sc_k,
+                    max_tokens=pass1_max_tokens,
+                    logit_bias=pass1_logit_bias,
+                    schema=schema,
+                    routing_score=routing_score,
+                )
+                gate_result_retry = score_thinking_trace(thinking_text, schema, routing_score)
+                if not gate_result_retry.passed:
+                    logger.warning(
+                        "TTFEngine: Pass 1 quality gate FAILED after retry "
+                        "(score=%.2f) — continuing with degraded trace",
+                        gate_result_retry.score,
+                    )
+                else:
+                    logger.debug(
+                        "TTFEngine: Pass 1 quality gate passed after retry (score=%.2f)",
+                        gate_result_retry.score,
+                    )
 
         # ------------------------------------------------------------------
         # Pass 2: constrained formatting
         # ------------------------------------------------------------------
         format_prompt = build_format_prompt(think_prompt, raw_thinking, schema=schema)
 
-        # Use native KV-cache reuse when available (vLLM prefix caching)
+        # Build a static, schema-derived cache prefix for Pass 2 so backends
+        # with KV-cache prefix reuse can amortise the encoding cost of the
+        # format instruction across many requests that share the same schema.
         pass2_kv_prefix: str | None = None
         if self._backend.supports_kv_cache_reuse:
-            pass2_kv_prefix = kv_cache_prefix if kv_cache_prefix is not None else think_prompt
+            if kv_cache_prefix is not None:
+                pass2_kv_prefix = kv_cache_prefix
+            elif schema is not None:
+                pass2_kv_prefix = build_cache_prefix_for_format_prompt(schema)
+            else:
+                pass2_kv_prefix = think_prompt
             logger.debug(
                 "TTFEngine: Pass 2 — using KV-cache prefix reuse (backend=%s)", self._backend.name
             )
@@ -154,6 +461,7 @@ class TTFEngine:
             schema=schema,
             constraints="json",
             kv_cache_prefix=pass2_kv_prefix,
+            temperature=pass2_temperature,
         )
 
         logger.debug("TTFEngine: Pass 2 complete — %d chars of JSON output", len(json_output))

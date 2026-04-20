@@ -80,6 +80,11 @@ class GuidanceBackend:
         """
         return 0.05
 
+    @property
+    def supports_logit_bias(self) -> bool:
+        """This backend does not support token-level logit biasing."""
+        return False
+
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------

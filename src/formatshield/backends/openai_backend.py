@@ -63,6 +63,11 @@ class OpenAIBackend:
         return False
 
     @property
+    def supports_logit_bias(self) -> bool:
+        """OpenAI supports logit bias via its chat completions API."""
+        return True
+
+    @property
     def accuracy_loss_baseline(self) -> float | None:
         """
         15 % baseline accuracy loss for structured-output generation, as
@@ -121,6 +126,7 @@ class OpenAIBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> str:
         """
         Generate a response and return the full text.
@@ -191,6 +197,8 @@ class OpenAIBackend:
             kwargs["presence_penalty"] = presence_penalty
         if stop is not None:
             kwargs["stop"] = stop
+        if logit_bias is not None:
+            kwargs["logit_bias"] = logit_bias
 
         # Enable OpenAI JSON mode when the "json" constraint is present.
         if constraints == "json":

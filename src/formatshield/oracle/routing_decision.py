@@ -81,6 +81,17 @@ class RoutingDecision:
     expected_overhead_pct: float
     confidence: float
     explanation: str
+    routing_mode: Literal[
+        "direct", "lite_ttf", "standard_ttf", "deep_ttf", "sc_full"
+    ] = "direct"
+    """Granular 5-mode routing decision from the Φ-spectrum ladder.
+
+    * ``direct``       — Φ < 0.50: skip TTF entirely
+    * ``lite_ttf``     — Φ ∈ [0.50, 0.65): minimal think prompt, low budget
+    * ``standard_ttf`` — Φ ∈ [0.65, 0.80): full schema injection, standard budget
+    * ``deep_ttf``     — Φ ∈ [0.80, 0.95): deep schema injection, maximum budget
+    * ``sc_full``      — Φ ≥ 0.95: self-consistency K=3 parallel Pass 1 traces
+    """
     failure_modes: list[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:

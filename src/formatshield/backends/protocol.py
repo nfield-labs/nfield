@@ -77,6 +77,7 @@ class Backend(Protocol):
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> str:
         """
         Generate a response for *prompt* and return the full text.
@@ -187,6 +188,19 @@ class Backend(Protocol):
     # ------------------------------------------------------------------
     # Capability properties
     # ------------------------------------------------------------------
+
+    @property
+    def supports_logit_bias(self) -> bool:
+        """
+        ``True`` if the backend accepts a ``logit_bias`` mapping of
+        ``{token_id: bias_value}`` in :meth:`generate`.
+
+        When ``True``, the engine may inject soft token-level biases toward
+        schema field-name tokens during Pass 1 to improve field coverage.
+        Backends that do not support this should return ``False`` and ignore
+        any ``logit_bias`` argument passed to :meth:`generate`.
+        """
+        ...
 
     @property
     def supports_kv_cache_reuse(self) -> bool:

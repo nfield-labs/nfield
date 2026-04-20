@@ -96,6 +96,11 @@ class DryRunBackend:
         """
         return round(1.0 - self._direct_accuracy, 4)
 
+    @property
+    def supports_logit_bias(self) -> bool:
+        """DryRunBackend does not simulate logit bias."""
+        return False
+
     # ------------------------------------------------------------------
     # Core generation methods (Backend protocol)
     # ------------------------------------------------------------------
@@ -115,6 +120,7 @@ class DryRunBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> str:
         """
         Return a deterministic structured response without making any API call.

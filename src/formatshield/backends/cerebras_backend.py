@@ -67,6 +67,11 @@ class CerebrasBackend:
         """15 % baseline accuracy loss for structured-output generation on Cerebras."""
         return 0.15
 
+    @property
+    def supports_logit_bias(self) -> bool:
+        """This backend does not support token-level logit biasing."""
+        return False
+
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
@@ -148,6 +153,7 @@ class CerebrasBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> str:
         """Generate a response via the Cerebras chat-completions endpoint.
 
@@ -239,6 +245,7 @@ class CerebrasBackend:
         frequency_penalty: float | None = None,
         presence_penalty: float | None = None,
         stop: list[str] | str | None = None,
+        logit_bias: dict[int, float] | None = None,
     ) -> AsyncIterator[StreamEvent]:
         """Stream the model's response as :class:`StreamEvent` objects.
 
