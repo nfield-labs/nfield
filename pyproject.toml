@@ -146,9 +146,10 @@ typeCheckingMode = "standard"
 include = ["src"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "rcocr/tests"]
 asyncio_mode = "auto"
 addopts = "-v --tb=short"
+norecursedirs = ["_pending", ".git", "__pycache__", ".venv", "dist"]
 markers = [
     "asyncio: async tests (auto-detected by pytest-asyncio)",
     "integration: requires live API keys — skipped in CI unless secrets set",
