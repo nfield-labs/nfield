@@ -33,6 +33,11 @@ from formatshield.observability.audit_log import (  # noqa: E402
 )
 from formatshield.oracle.routing_score import compute_routing_score  # noqa: E402
 from formatshield.semantic.evaluator import evaluate_semantic_pair  # noqa: E402
+from formatshield.ttf.engine import (  # noqa: E402
+    _SC_PHI_THRESHOLD,
+    DEFAULT_SC_K,
+    _phi_thinking_budget,
+)
 
 app = FastAPI(title="FormatShield Demo")
 
@@ -47,10 +52,19 @@ GROQ_MODELS: list[str] = [
 ]
 _ALLOWED_MODELS: frozenset[str] = frozenset(GROQ_MODELS)
 
-# Preset loader — load demo/presets.json at startup
-PRESETS: list[dict] = json.loads(  # noqa: E501
-    (Path(__file__).parent / "presets.json").read_text(encoding="utf-8")
-)
+
+# Preset loader — merge presets.json + new_presets_30.json at startup
+def _load_presets() -> list[dict]:
+    base = json.loads((Path(__file__).parent / "presets.json").read_text(encoding="utf-8"))
+    extra_path = Path(__file__).parent / "new_presets_30.json"
+    if extra_path.exists():
+        extra = json.loads(extra_path.read_text(encoding="utf-8"))
+        existing_ids = {p.get("id") for p in base}
+        base.extend(p for p in extra if p.get("id") not in existing_ids)
+    return base
+
+
+PRESETS: list[dict] = _load_presets()
 
 _DEMO_AUDIT_INFO: dict[str, str | None] = {
     "mode": "in_memory",
@@ -250,8 +264,8 @@ def _compute_demo_score(
         + (3 if depth >= 3 else 1 if depth >= 2 else 0)
         + (2 if risk["has_combinators"] else 0)
     )
-    schema_is_complex = _risk_pts >= 6   # TTF overhead justified
-    schema_is_simple = _risk_pts <= 2    # direct mode is correct choice
+    schema_is_complex = _risk_pts >= 6  # TTF overhead justified
+    schema_is_simple = _risk_pts <= 2  # direct mode is correct choice
 
     # ── schema_validity 0-30 ─────────────────────────────────────────────────
     # Honest: both valid → 10 pts only (they are equal on this run)
@@ -260,7 +274,7 @@ def _compute_demo_score(
     elif fs_valid and raw_valid and not fs_schema_violation:
         schema_validity = 10  # equal — not a FS win
     elif fs_schema_violation and not raw_schema_violation:
-        schema_validity = 0   # FS violated a constraint raw Groq didn't
+        schema_validity = 0  # FS violated a constraint raw Groq didn't
     else:
         schema_validity = 0
 
@@ -268,17 +282,17 @@ def _compute_demo_score(
     # Rewards *correct routing decisions*, not just "TTF ran".
     # TTF on a simple schema = overhead without benefit → penalised.
     if used_ttf and schema_is_complex:
-        constraint_edge = 25   # TTF warranted and executed
+        constraint_edge = 25  # TTF warranted and executed
     elif used_ttf and not schema_is_complex and not schema_is_simple:
-        constraint_edge = 12   # borderline — plausible TTF
+        constraint_edge = 12  # borderline — plausible TTF
     elif used_ttf and schema_is_simple:
-        constraint_edge = 4    # TTF ran but schema didn't need it
+        constraint_edge = 4  # TTF ran but schema didn't need it
     elif not used_ttf and schema_is_simple:
-        constraint_edge = 20   # correct: direct mode, no wasted overhead
+        constraint_edge = 20  # correct: direct mode, no wasted overhead
     elif phi_score > 0.65 and not used_ttf:
-        constraint_edge = 10   # Φ flagged complexity but direct was used
+        constraint_edge = 10  # Φ flagged complexity but direct was used
     else:
-        constraint_edge = 8    # neutral
+        constraint_edge = 8  # neutral
 
     # ── reliability 0-20 ─────────────────────────────────────────────────────
     if fs_valid and not fallback:
@@ -300,7 +314,7 @@ def _compute_demo_score(
         # Schema is hard — raw passed *this run* but failure rate is non-trivial
         constraint_protection = 10
     elif _risk_pts >= 3 and raw_valid:
-        constraint_protection = 5   # moderate risk, raw OK this time
+        constraint_protection = 5  # moderate risk, raw OK this time
     else:
         constraint_protection = 0
 
@@ -320,9 +334,9 @@ def _compute_demo_score(
             elif ratio > 1.5 and schema_is_simple:
                 latency_efficiency = -5
             elif ratio > 2.0 and not schema_is_complex:
-                latency_efficiency = -5   # borderline schema, still slow
+                latency_efficiency = -5  # borderline schema, still slow
             elif ratio < 0.75:
-                latency_efficiency = 5    # FS actually faster
+                latency_efficiency = 5  # FS actually faster
 
     score = min(
         100,
@@ -357,11 +371,9 @@ def _compute_demo_score(
         if lat_ratio >= 4.0:
             lat_context = f"{lat_ratio:.0f}× slower ({fs_lat_v:.0f} ms vs {raw_lat_v:.0f} ms)"
         elif lat_ratio >= 1.5:
-            lat_context = (
-                f"{lat_ratio:.1f}× slower ({fs_lat_v:.0f} ms vs {raw_lat_v:.0f} ms)"
-            )
+            lat_context = f"{lat_ratio:.1f}× slower ({fs_lat_v:.0f} ms vs {raw_lat_v:.0f} ms)"
         elif lat_ratio < 0.75:
-            lat_context = f"{1/lat_ratio:.1f}× faster ({fs_lat_v:.0f} ms vs {raw_lat_v:.0f} ms)"
+            lat_context = f"{1 / lat_ratio:.1f}× faster ({fs_lat_v:.0f} ms vs {raw_lat_v:.0f} ms)"
         else:
             lat_context = f"comparable latency ({fs_lat_v:.0f} ms vs {raw_lat_v:.0f} ms)"
 
@@ -383,17 +395,12 @@ def _compute_demo_score(
     elif raw_json_invalid and fs_valid:
         verdict_tier = "decisive_win"
     elif (
-        schema_is_complex and used_ttf and fs_valid
-        and not fs_schema_violation and lat_ratio < 4.0
+        schema_is_complex and used_ttf and fs_valid and not fs_schema_violation and lat_ratio < 4.0
     ):
         # Complex schema, TTF warranted, latency not extreme (< 4×) — real marginal win
         verdict_tier = "marginal_win"
     elif (
-        schema_is_complex
-        and used_ttf
-        and fs_valid
-        and not fs_schema_violation
-        and lat_ratio >= 4.0
+        schema_is_complex and used_ttf and fs_valid and not fs_schema_violation and lat_ratio >= 4.0
     ):
         # Complex schema + TTF but latency is severe — call it a tie; cost vs benefit unclear
         verdict_tier = "tie"
@@ -520,8 +527,7 @@ def _compute_demo_score(
         )
     else:
         reasons.append(
-            f"Φ={phi_score:.3f} — routing decision: "
-            f"{'TTF' if used_ttf else 'direct'} mode."
+            f"Φ={phi_score:.3f} — routing decision: {'TTF' if used_ttf else 'direct'} mode."
         )
 
     # 3. Latency (always run-specific — never suppress)
@@ -579,8 +585,7 @@ def _compute_demo_score(
 
     if reliability == 0 and fallback:
         reasons.append(
-            "Fallback triggered — routing edge case; "
-            "indicates schema complexity at the boundary."
+            "Fallback triggered — routing edge case; indicates schema complexity at the boundary."
         )
 
     reliability_signal = schema_validity + reliability
@@ -679,9 +684,7 @@ def _compute_verdict(fs: dict, raw: dict, semantic_eval: dict | None = None) -> 
             f"Raw Groq violated schema constraint: {raw['schema_violation'][:120]}"
         )
     if fs_ok and fs.get("schema_violation"):
-        points["raw"].append(
-            f"FormatShield output violated schema: {fs['schema_violation'][:120]}"
-        )
+        points["raw"].append(f"FormatShield output violated schema: {fs['schema_violation'][:120]}")
 
     if semantic_eval is not None:
         sem_winner = semantic_eval.get("winner")
@@ -729,9 +732,7 @@ def _compute_verdict(fs: dict, raw: dict, semantic_eval: dict | None = None) -> 
             summary = f"{summary} Reliability favors FormatShield but semantic signal favors raw."
         elif winner == "raw" and sem_winner == "formatshield" and abs(sem_delta) >= 8.0:
             winner = "tie"
-            summary = (
-                f"{summary} Reliability favors raw but semantic signal favors FormatShield."
-            )
+            summary = f"{summary} Reliability favors raw but semantic signal favors FormatShield."
 
     return {
         "winner": winner,
@@ -860,18 +861,22 @@ async def compare(req: CompareRequest) -> dict:
 
     # Phi score — pure Python, no API call
     phi = compute_routing_score(req.prompt, schema_dict)
+    will_use_ttf = phi.phi > 0.65
     phi_info = {
         "phi": round(phi.phi, 4),
         "lambda2": round(phi.lambda2, 4),
         "tau": round(phi.tau, 4),
         "delta_k": round(phi.delta_k, 4),
         "explanation": phi.explanation,
-        "recommendation": "TTF" if phi.phi > 0.65 else "Direct",
+        "recommendation": "TTF" if will_use_ttf else "Direct",
+        # TTF Stage 1-4 metadata (schema-aware prompting, quality gate, self-consistency)
+        "thinking_budget_tokens": _phi_thinking_budget(phi.phi) if will_use_ttf else None,
+        "self_consistency_mode": phi.phi >= _SC_PHI_THRESHOLD,
+        "self_consistency_k": DEFAULT_SC_K if phi.phi >= _SC_PHI_THRESHOLD else 1,
+        "pass2_temperature": round(max(0.05, 0.7 * (1.0 - phi.tau)), 3) if will_use_ttf else None,
     }
 
-    fs_result = await _call_with_formatshield(
-        req.prompt, schema_dict, req.model, req.system_prompt
-    )
+    fs_result = await _call_with_formatshield(req.prompt, schema_dict, req.model, req.system_prompt)
     raw_result = await _call_raw_groq(
         req.prompt, req.schema_text, schema_dict, req.model, req.system_prompt
     )
@@ -932,9 +937,7 @@ async def _call_with_formatshield(
         independent_violation: str | None = None
         try:
             parsed_fs = json.loads(result.output)
-            independent_valid, independent_violation = _validate_against_schema(
-                parsed_fs, schema
-            )
+            independent_valid, independent_violation = _validate_against_schema(parsed_fs, schema)
         except Exception:  # noqa: S110
             pass  # non-JSON output — keep self-reported value
 

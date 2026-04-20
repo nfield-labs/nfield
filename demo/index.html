@@ -888,6 +888,26 @@
     }
     .phi-component span { color: var(--text); }
 
+    .phi-ttf-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .phi-meta-chip {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: var(--bg);
+    }
+    .phi-meta-chip.highlight {
+      border-color: var(--ttf);
+      color: var(--ttf);
+    }
+
     .phi-explanation {
       font-size: 11.5px;
       color: var(--muted);
@@ -1419,6 +1439,7 @@
           <div class="phi-component">ΔK = <span id="phi-dk">—</span></div>
         </div>
       </div>
+      <div class="phi-ttf-meta" id="phi-ttf-meta" style="display:none"></div>
       <div class="phi-explanation" id="phi-exp"></div>
     </div>
 
@@ -1850,6 +1871,20 @@
 
       if (!phi.explanation) document.getElementById('phi-exp').style.display = 'none';
       else                  document.getElementById('phi-exp').style.display = '';
+
+      // TTF Stage 1-4 metadata chips
+      const metaEl = document.getElementById('phi-ttf-meta');
+      if (isttf && (phi.thinking_budget_tokens || phi.pass2_temperature !== undefined || phi.self_consistency_mode !== undefined)) {
+        const chips = [];
+        if (phi.thinking_budget_tokens) chips.push(`<span class="phi-meta-chip">budget ${phi.thinking_budget_tokens} tok</span>`);
+        if (phi.pass2_temperature !== null && phi.pass2_temperature !== undefined) chips.push(`<span class="phi-meta-chip">T₂ = ${phi.pass2_temperature}</span>`);
+        if (phi.self_consistency_mode) chips.push(`<span class="phi-meta-chip highlight">self-consistent ×${phi.self_consistency_k || 3}</span>`);
+        metaEl.innerHTML = chips.join('');
+        metaEl.style.display = 'flex';
+      } else {
+        metaEl.style.display = 'none';
+        metaEl.innerHTML = '';
+      }
     }
 
     function renderRaw(data) {
