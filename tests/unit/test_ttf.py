@@ -379,14 +379,20 @@ class TestVocabularyBridgeHints:
     def test_bridge_block_present_when_dk_high(self) -> None:
         result = build_schema_phi_think_prompt(
             "Extract the classification from the supplied document.",
-            ENUM_SCHEMA, phi=0.75, tau=0.8, delta_k=0.80,
+            ENUM_SCHEMA,
+            phi=0.75,
+            tau=0.8,
+            delta_k=0.80,
         )
         assert "Vocabulary bridge" in result
 
     def test_bridge_block_absent_when_dk_low(self) -> None:
         result = build_schema_phi_think_prompt(
             "Extract the status and priority from this document.",
-            ENUM_SCHEMA, phi=0.75, tau=0.8, delta_k=0.30,
+            ENUM_SCHEMA,
+            phi=0.75,
+            tau=0.8,
+            delta_k=0.30,
         )
         assert "Vocabulary bridge" not in result
 
@@ -741,8 +747,7 @@ class TestQualityGateWiredInEngine:
                     if call_count["n"] == 1:
                         return "No useful thinking here."
                     return (
-                        "<think>name is required. age must be integer."
-                        " No contradictions.</think>"
+                        "<think>name is required. age must be integer. No contradictions.</think>"
                     )
                 return json.dumps({"name": "Alice", "age": 30})
 
@@ -884,10 +889,9 @@ class TestPrefixCachePromptBuilder:
         assert len(build_cache_prefix_for_format_prompt(SIMPLE_SCHEMA).strip()) > 20
 
     def test_different_schemas_produce_different_prefixes(self) -> None:
-        assert (
-            build_cache_prefix_for_format_prompt(SIMPLE_SCHEMA)
-            != build_cache_prefix_for_format_prompt(COMPLEX_SCHEMA)
-        )
+        assert build_cache_prefix_for_format_prompt(
+            SIMPLE_SCHEMA
+        ) != build_cache_prefix_for_format_prompt(COMPLEX_SCHEMA)
 
     def test_json_constraint_accepted(self) -> None:
         result = build_cache_prefix_for_format_prompt(SIMPLE_SCHEMA, constraints="json")
@@ -1085,10 +1089,14 @@ class TestQualityCostIntegration:
                     )
                 signals["temperature"] = temperature
                 signals["kv_prefix"] = kv_cache_prefix
-                return json.dumps({
-                    "order_id": "ORD-001", "status": "pending",
-                    "total": 99.99, "customer": {"name": "Alice", "email": "a@b.com"},
-                })
+                return json.dumps(
+                    {
+                        "order_id": "ORD-001",
+                        "status": "pending",
+                        "total": 99.99,
+                        "customer": {"name": "Alice", "email": "a@b.com"},
+                    }
+                )
 
         rs = RoutingScore(phi=0.95, lambda2=0.6, tau=0.9, delta_k=0.6, explanation="test")
         _thinking, output = await TTFEngine(backend=FullCaptureBackend()).generate(
@@ -1118,16 +1126,21 @@ class TestSchemaCacheKey:
         assert build_schema_cache_key(SIMPLE_SCHEMA) != build_schema_cache_key(ALTERNATE_SCHEMA)
 
     def test_descriptions_excluded_from_key(self) -> None:
-        assert (
-            build_schema_cache_key(SIMPLE_SCHEMA)
-            == build_schema_cache_key(SIMPLE_SCHEMA_WITH_DESCRIPTIONS)
+        assert build_schema_cache_key(SIMPLE_SCHEMA) == build_schema_cache_key(
+            SIMPLE_SCHEMA_WITH_DESCRIPTIONS
         )
 
     def test_enum_values_excluded_from_key(self) -> None:
-        a = {"type": "object", "properties": {"s": {"type": "string", "enum": ["a", "b"]}},
-             "required": ["s"]}
-        b = {"type": "object", "properties": {"s": {"type": "string", "enum": ["x", "y", "z"]}},
-             "required": ["s"]}
+        a = {
+            "type": "object",
+            "properties": {"s": {"type": "string", "enum": ["a", "b"]}},
+            "required": ["s"],
+        }
+        b = {
+            "type": "object",
+            "properties": {"s": {"type": "string", "enum": ["x", "y", "z"]}},
+            "required": ["s"],
+        }
         assert build_schema_cache_key(a) == build_schema_cache_key(b)
 
     def test_empty_schema_returns_key(self) -> None:
@@ -1136,10 +1149,16 @@ class TestSchemaCacheKey:
         assert len(key) == 12
 
     def test_required_difference_changes_key(self) -> None:
-        a = {"type": "object", "properties": {"n": {"type": "string"}, "a": {"type": "integer"}},
-             "required": ["n"]}
-        b = {"type": "object", "properties": {"n": {"type": "string"}, "a": {"type": "integer"}},
-             "required": ["n", "a"]}
+        a = {
+            "type": "object",
+            "properties": {"n": {"type": "string"}, "a": {"type": "integer"}},
+            "required": ["n"],
+        }
+        b = {
+            "type": "object",
+            "properties": {"n": {"type": "string"}, "a": {"type": "integer"}},
+            "required": ["n", "a"],
+        }
         assert build_schema_cache_key(a) != build_schema_cache_key(b)
 
 
@@ -1357,39 +1376,54 @@ class TestPhiSpectrumMode:
 class TestRoutingDecision:
     def test_default_routing_mode_is_direct(self) -> None:
         d = RoutingDecision(
-            strategy="direct", expected_accuracy_delta=0.0,
-            expected_overhead_pct=0.0, confidence=0.8, explanation="test",
+            strategy="direct",
+            expected_accuracy_delta=0.0,
+            expected_overhead_pct=0.0,
+            confidence=0.8,
+            explanation="test",
         )
         assert d.routing_mode == "direct"
 
     def test_routing_mode_lite_ttf(self) -> None:
         d = RoutingDecision(
-            strategy="ttf", expected_accuracy_delta=0.10,
-            expected_overhead_pct=20.0, confidence=0.7, explanation="test",
+            strategy="ttf",
+            expected_accuracy_delta=0.10,
+            expected_overhead_pct=20.0,
+            confidence=0.7,
+            explanation="test",
             routing_mode="lite_ttf",
         )
         assert d.routing_mode == "lite_ttf"
 
     def test_routing_mode_standard_ttf(self) -> None:
         d = RoutingDecision(
-            strategy="ttf", expected_accuracy_delta=0.15,
-            expected_overhead_pct=25.0, confidence=0.75, explanation="test",
+            strategy="ttf",
+            expected_accuracy_delta=0.15,
+            expected_overhead_pct=25.0,
+            confidence=0.75,
+            explanation="test",
             routing_mode="standard_ttf",
         )
         assert d.routing_mode == "standard_ttf"
 
     def test_routing_mode_sc_full(self) -> None:
         d = RoutingDecision(
-            strategy="ttf", expected_accuracy_delta=0.20,
-            expected_overhead_pct=35.0, confidence=0.9, explanation="test",
+            strategy="ttf",
+            expected_accuracy_delta=0.20,
+            expected_overhead_pct=35.0,
+            confidence=0.9,
+            explanation="test",
             routing_mode="sc_full",
         )
         assert d.routing_mode == "sc_full"
 
     def test_str_representation_works(self) -> None:
         d = RoutingDecision(
-            strategy="ttf", expected_accuracy_delta=0.17,
-            expected_overhead_pct=25.0, confidence=0.70, explanation="test",
+            strategy="ttf",
+            expected_accuracy_delta=0.17,
+            expected_overhead_pct=25.0,
+            confidence=0.70,
+            explanation="test",
             routing_mode="standard_ttf",
         )
         s = str(d)
@@ -1457,8 +1491,14 @@ class TestSelfCalibrator:
 
     def test_stats_keys(self) -> None:
         stats = SelfCalibrator(persist_path=None).stats()
-        for key in ("current_threshold", "sample_count", "window_size",
-                    "min_samples", "target_accuracy", "calibration_count"):
+        for key in (
+            "current_threshold",
+            "sample_count",
+            "window_size",
+            "min_samples",
+            "target_accuracy",
+            "calibration_count",
+        ):
             assert key in stats
 
     def test_no_calibration_below_min_samples(self) -> None:
@@ -1795,8 +1835,13 @@ class TestSelfConsistencyPass1Function:
     async def test_k1_makes_one_call(self) -> None:
         backend = _CountingBackend()
         await _run_self_consistency_pass1(
-            backend=backend, think_prompt="Analyse.", k=1,
-            max_tokens=None, logit_bias=None, schema=None, routing_score=None,
+            backend=backend,
+            think_prompt="Analyse.",
+            k=1,
+            max_tokens=None,
+            logit_bias=None,
+            schema=None,
+            routing_score=None,
         )
         assert backend.pass1_count == 1
 
@@ -1804,8 +1849,13 @@ class TestSelfConsistencyPass1Function:
     async def test_k3_makes_three_calls(self) -> None:
         backend = _CountingBackend()
         await _run_self_consistency_pass1(
-            backend=backend, think_prompt="Analyse.", k=3,
-            max_tokens=None, logit_bias=None, schema=None, routing_score=None,
+            backend=backend,
+            think_prompt="Analyse.",
+            k=3,
+            max_tokens=None,
+            logit_bias=None,
+            schema=None,
+            routing_score=None,
         )
         assert backend.pass1_count == 3
 
@@ -1813,8 +1863,13 @@ class TestSelfConsistencyPass1Function:
     async def test_k3_picks_longest_trace_without_schema(self) -> None:
         backend = _ScoredTraceBackend()
         thinking, _ = await _run_self_consistency_pass1(
-            backend=backend, think_prompt="Analyse.", k=3,
-            max_tokens=None, logit_bias=None, schema=None, routing_score=None,
+            backend=backend,
+            think_prompt="Analyse.",
+            k=3,
+            max_tokens=None,
+            logit_bias=None,
+            schema=None,
+            routing_score=None,
         )
         assert "Step 5" in thinking
 
@@ -1822,9 +1877,13 @@ class TestSelfConsistencyPass1Function:
     async def test_k3_with_schema_and_routing_score(self) -> None:
         backend = _ScoredTraceBackend()
         thinking, _raw = await _run_self_consistency_pass1(
-            backend=backend, think_prompt="Extract.", k=3,
-            max_tokens=512, logit_bias=None,
-            schema=SIMPLE_SCHEMA, routing_score=_make_rs(phi=0.97),
+            backend=backend,
+            think_prompt="Extract.",
+            k=3,
+            max_tokens=512,
+            logit_bias=None,
+            schema=SIMPLE_SCHEMA,
+            routing_score=_make_rs(phi=0.97),
         )
         assert isinstance(thinking, str)
         assert len(thinking) > 0
@@ -1833,8 +1892,13 @@ class TestSelfConsistencyPass1Function:
     async def test_k0_treated_as_k1(self) -> None:
         backend = _CountingBackend()
         await _run_self_consistency_pass1(
-            backend=backend, think_prompt="test", k=0,
-            max_tokens=None, logit_bias=None, schema=None, routing_score=None,
+            backend=backend,
+            think_prompt="test",
+            k=0,
+            max_tokens=None,
+            logit_bias=None,
+            schema=None,
+            routing_score=None,
         )
         assert backend.pass1_count == 1
 
@@ -1842,8 +1906,13 @@ class TestSelfConsistencyPass1Function:
     async def test_returns_extracted_thinking_without_tags(self) -> None:
         backend = _ScoredTraceBackend()
         thinking, raw = await _run_self_consistency_pass1(
-            backend=backend, think_prompt="Extract.", k=3,
-            max_tokens=None, logit_bias=None, schema=None, routing_score=None,
+            backend=backend,
+            think_prompt="Extract.",
+            k=3,
+            max_tokens=None,
+            logit_bias=None,
+            schema=None,
+            routing_score=None,
         )
         assert "<think>" not in thinking
         assert "<think>" in raw
@@ -1944,7 +2013,8 @@ class TestAutoTriggerSelfConsistency:
     async def test_just_below_threshold_does_not_trigger(self) -> None:
         backend = _CountingBackend()
         await TTFEngine(backend=backend, ttf_self_consistency=1).generate(
-            "Extract.", schema=SIMPLE_SCHEMA,
+            "Extract.",
+            schema=SIMPLE_SCHEMA,
             routing_score=_make_rs(phi=_SC_PHI_THRESHOLD - 0.001),
         )
         assert backend.pass1_count == 1
@@ -2001,14 +2071,11 @@ class TestAutoTriggerSelfConsistency:
 class _MockRCOCRBackend:
     name = "mock"
 
-    async def generate(
-        self, prompt: str, constraints: str | None = None, **kwargs: Any
-    ) -> str:
+    async def generate(self, prompt: str, constraints: str | None = None, **kwargs: Any) -> str:
         if constraints == "json":
             return json.dumps({"status": "extracted", "value": 42})
         return (
-            "<think>Step 1: read prompt. Step 2: identify fields. "
-            "Step 3: compose answer.</think>"
+            "<think>Step 1: read prompt. Step 2: identify fields. Step 3: compose answer.</think>"
         )
 
 
@@ -2161,8 +2228,11 @@ class TestSchemaAwareEngineIntegration:
             ) -> str:
                 captured_prompts.append(prompt)
                 return await super().generate(
-                    prompt, schema=schema, constraints=constraints,
-                    kv_cache_prefix=kv_cache_prefix, temperature=temperature,
+                    prompt,
+                    schema=schema,
+                    constraints=constraints,
+                    kv_cache_prefix=kv_cache_prefix,
+                    temperature=temperature,
                 )
 
         backend = CapturingBackend()
@@ -2186,8 +2256,11 @@ class TestSchemaAwareEngineIntegration:
             ) -> str:
                 captured_prompts.append(prompt)
                 return await super().generate(
-                    prompt, schema=schema, constraints=constraints,
-                    kv_cache_prefix=kv_cache_prefix, temperature=temperature,
+                    prompt,
+                    schema=schema,
+                    constraints=constraints,
+                    kv_cache_prefix=kv_cache_prefix,
+                    temperature=temperature,
                 )
 
         backend = CapturingBackend()

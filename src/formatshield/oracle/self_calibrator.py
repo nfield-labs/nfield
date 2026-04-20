@@ -209,9 +209,7 @@ class SelfCalibrator:
         self._target_accuracy = target_accuracy
         self._persist_path: Path | None = Path(persist_path) if persist_path else None
         self._lock = threading.Lock()
-        self._window: collections.deque[CalibrationRecord] = collections.deque(
-            maxlen=window_size
-        )
+        self._window: collections.deque[CalibrationRecord] = collections.deque(maxlen=window_size)
         self._current_threshold: float = initial_threshold
         self._calibration_count: int = 0
 
@@ -287,8 +285,7 @@ class SelfCalibrator:
         # Need both classes to fit; if all outcomes are one class, skip
         if sum(y) == 0 or sum(y) == len(y):
             logger.debug(
-                "SelfCalibrator: skipping recalibration — all labels are %d "
-                "(need both 0 and 1)",
+                "SelfCalibrator: skipping recalibration — all labels are %d (need both 0 and 1)",
                 y[0],
             )
             return
@@ -305,9 +302,13 @@ class SelfCalibrator:
         self._calibration_count += 1
 
         logger.info(
-            "SelfCalibrator: threshold recalibrated %.3f → %.3f "
-            "(n=%d good=%d w=%.3f b=%.3f)",
-            old, new_threshold, len(records), sum(y), w, b,
+            "SelfCalibrator: threshold recalibrated %.3f → %.3f (n=%d good=%d w=%.3f b=%.3f)",
+            old,
+            new_threshold,
+            len(records),
+            sum(y),
+            w,
+            b,
         )
 
         self._persist()
@@ -339,7 +340,8 @@ class SelfCalibrator:
             self._calibration_count = int(data.get("calibration_count", 0))
             logger.debug(
                 "SelfCalibrator: loaded persisted threshold=%.3f (recalibrations=%d)",
-                self._current_threshold, self._calibration_count,
+                self._current_threshold,
+                self._calibration_count,
             )
         except (OSError, KeyError, ValueError, json.JSONDecodeError) as exc:
             logger.warning("SelfCalibrator: could not load persisted threshold: %s", exc)

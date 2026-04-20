@@ -137,8 +137,13 @@ def _collect_schema_field_info(
         full_path = f"{prefix}.{name}" if prefix else name
         if not isinstance(sub, dict):
             results.append(
-                {"path": full_path, "type": "any", "required": name in parent_required,
-                 "enum": None, "description": ""}
+                {
+                    "path": full_path,
+                    "type": "any",
+                    "required": name in parent_required,
+                    "enum": None,
+                    "description": "",
+                }
             )
             continue
 
@@ -147,26 +152,24 @@ def _collect_schema_field_info(
         description = sub.get("description", "")
         is_required = name in parent_required
 
-        results.append({
-            "path": full_path,
-            "type": ftype,
-            "required": is_required,
-            "enum": enum_vals,
-            "description": description,
-        })
+        results.append(
+            {
+                "path": full_path,
+                "type": ftype,
+                "required": is_required,
+                "enum": enum_vals,
+                "description": description,
+            }
+        )
 
         # Recurse into nested objects
         if sub.get("properties"):
-            results.extend(
-                _collect_schema_field_info(sub, full_path, _depth=_depth + 1)
-            )
+            results.extend(_collect_schema_field_info(sub, full_path, _depth=_depth + 1))
 
         # Recurse into array item schemas
         items = sub.get("items", {})
         if isinstance(items, dict) and items.get("properties"):
-            results.extend(
-                _collect_schema_field_info(items, full_path + "[]", _depth=_depth + 1)
-            )
+            results.extend(_collect_schema_field_info(items, full_path + "[]", _depth=_depth + 1))
 
     # Handle allOf / anyOf / oneOf sub-schemas
     for kw in ("allOf", "anyOf", "oneOf"):
@@ -302,9 +305,7 @@ def build_schema_phi_think_prompt(
             req_marker = "required" if f["required"] else "optional"
             type_str = f["type"]
             desc_suffix = f"  # {f['description']}" if f.get("description") else ""
-            context_lines.append(
-                f"  {i:2d}. {f['path']}  ({type_str}, {req_marker}){desc_suffix}"
-            )
+            context_lines.append(f"  {i:2d}. {f['path']}  ({type_str}, {req_marker}){desc_suffix}")
 
     # ── Constrained fields block (enum / boolean / const) ─────────────────
     constrained = [f for f in fields if f.get("enum") or f.get("type") == "boolean"]
@@ -328,9 +329,7 @@ def build_schema_phi_think_prompt(
             context_lines.append(
                 f"Vocabulary bridge (ΔK={delta_k:.3f} — prompt/schema vocabulary gap detected):"
             )
-            context_lines.append(
-                "  The following schema fields were NOT found in the prompt."
-            )
+            context_lines.append("  The following schema fields were NOT found in the prompt.")
             context_lines.append(
                 "  You must still populate them using context clues from the prompt:"
             )
@@ -343,23 +342,17 @@ def build_schema_phi_think_prompt(
         "Think through this step by step:",
         "  1. For each required field (in the order listed above), determine what value"
         " the prompt implies.",
-        "  2. For constrained fields, select only from the listed allowed values — no"
-        " variations.",
+        "  2. For constrained fields, select only from the listed allowed values — no variations.",
         "  3. Resolve any vocabulary bridge gaps: if a schema field is not directly"
         " mentioned in the prompt, infer it from context.",
-        "  4. For nested / parent fields, reason about the parent's shape before its"
-        " children.",
+        "  4. For nested / parent fields, reason about the parent's shape before its children.",
         "",
         "Use <think>...</think> tags to record your reasoning.",
         "Do NOT produce any JSON or structured output yet — reasoning only.",
     ]
     reasoning_block = "\n".join(reasoning_steps)
 
-    return (
-        f"{original_prompt}\n\n"
-        f"{context_block}\n\n"
-        f"{reasoning_block}"
-    )
+    return f"{original_prompt}\n\n{context_block}\n\n{reasoning_block}"
 
 
 def build_think_prompt(original_prompt: str) -> str:
@@ -440,6 +433,7 @@ def build_format_prompt(
 # ---------------------------------------------------------------------------
 # Static cache prefix builder for Pass 2
 # ---------------------------------------------------------------------------
+
 
 def build_cache_prefix_for_format_prompt(
     schema: dict[str, Any] | None,

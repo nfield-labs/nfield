@@ -42,6 +42,7 @@ logger = logging.getLogger(__name__)
 # Φ-Proportional Thinking Budget
 # ---------------------------------------------------------------------------
 
+
 def _phi_thinking_budget(phi: float) -> int:
     """Map routing score Φ to a Pass 1 max-token budget.
 
@@ -155,7 +156,8 @@ async def _run_self_consistency_pass1(
 
     logger.debug(
         "TTFEngine: self-consistency selected best trace (k=%d best_score=%.3f)",
-        k, best_score,
+        k,
+        best_score,
     )
     return best_thinking, best_raw
 
@@ -163,6 +165,7 @@ async def _run_self_consistency_pass1(
 # ---------------------------------------------------------------------------
 # Schema-vocabulary logit biasing
 # ---------------------------------------------------------------------------
+
 
 def _build_schema_logit_bias(
     schema_fields: list[str],
@@ -329,9 +332,10 @@ class TTFEngine:
                 lambda2=routing_score.lambda2,
             )
             logger.debug(
-                "TTFEngine: Pass 1 — schema-aware prompt "
-                "(Φ=%.3f τ=%.3f ΔK=%.3f backend=%s)",
-                routing_score.phi, routing_score.tau, routing_score.delta_k,
+                "TTFEngine: Pass 1 — schema-aware prompt (Φ=%.3f τ=%.3f ΔK=%.3f backend=%s)",
+                routing_score.phi,
+                routing_score.tau,
+                routing_score.delta_k,
                 self._backend.name,
             )
         else:
@@ -349,7 +353,8 @@ class TTFEngine:
             pass2_temperature = max(0.05, 0.7 * (1.0 - routing_score.tau))
             logger.debug(
                 "TTFEngine: Pass 2 temperature τ-conditioned to %.3f (τ=%.3f)",
-                pass2_temperature, routing_score.tau,
+                pass2_temperature,
+                routing_score.tau,
             )
 
         # Φ-proportional thinking budget.
@@ -359,7 +364,8 @@ class TTFEngine:
             pass1_max_tokens = _phi_thinking_budget(routing_score.phi)
             logger.debug(
                 "TTFEngine: Pass 1 budget — %d tokens (Φ=%.3f)",
-                pass1_max_tokens, routing_score.phi,
+                pass1_max_tokens,
+                routing_score.phi,
             )
 
         # ------------------------------------------------------------------
@@ -387,7 +393,9 @@ class TTFEngine:
             sc_k = DEFAULT_SC_K
             logger.debug(
                 "TTFEngine: auto-enabling self-consistency K=%d (Φ=%.3f ≥ %.2f)",
-                sc_k, routing_score.phi, _SC_PHI_THRESHOLD,
+                sc_k,
+                routing_score.phi,
+                _SC_PHI_THRESHOLD,
             )
 
         thinking_text, raw_thinking = await _run_self_consistency_pass1(
@@ -410,7 +418,8 @@ class TTFEngine:
             if not gate_result.passed:
                 logger.warning(
                     "TTFEngine: Pass 1 quality gate FAILED (score=%.2f, failed=%s) — retrying",
-                    gate_result.score, gate_result.failed_checks,
+                    gate_result.score,
+                    gate_result.failed_checks,
                 )
                 thinking_text, raw_thinking = await _run_self_consistency_pass1(
                     backend=self._backend,

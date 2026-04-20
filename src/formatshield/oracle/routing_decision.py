@@ -81,9 +81,7 @@ class RoutingDecision:
     expected_overhead_pct: float
     confidence: float
     explanation: str
-    routing_mode: Literal[
-        "direct", "lite_ttf", "standard_ttf", "deep_ttf", "sc_full"
-    ] = "direct"
+    routing_mode: Literal["direct", "lite_ttf", "standard_ttf", "deep_ttf", "sc_full"] = "direct"
     """Granular 5-mode routing decision from the Φ-spectrum ladder.
 
     * ``direct``       — Φ < 0.50: skip TTF entirely

@@ -102,10 +102,7 @@ def _extract_structural_shape(node: Any, depth: int = 0) -> Any:
 
     props = node.get("properties")
     if isinstance(props, dict):
-        shape["p"] = {
-            k: _extract_structural_shape(v, depth + 1)
-            for k, v in sorted(props.items())
-        }
+        shape["p"] = {k: _extract_structural_shape(v, depth + 1) for k, v in sorted(props.items())}
 
     required = node.get("required")
     if isinstance(required, list):
@@ -226,7 +223,9 @@ class TraceCache:
             self._total_hits += 1
             logger.debug(
                 "TraceCache: HIT key=%s hits=%d age=%.1fs",
-                key, entry.hit_count, age,
+                key,
+                entry.hit_count,
+                age,
             )
             return entry.trace
 
