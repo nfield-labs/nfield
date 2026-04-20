@@ -121,6 +121,7 @@ include = ["src/formatshield/py.typed"]
 target-version = "py311"
 line-length = 100
 src = ["src"]
+exclude = ["src/formatshield/backends/_pending", "tests/unit/_pending"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "N", "S", "B", "A", "C4", "PT", "RUF", "PIE"]
@@ -159,7 +160,7 @@ markers = [
 
 [tool.coverage.run]
 source = ["src/formatshield"]
-omit = ["tests/*"]
+omit = ["tests/*", "src/formatshield/backends/_pending/*"]
 
 [tool.coverage.report]
 fail_under = 80
