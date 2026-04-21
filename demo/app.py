@@ -219,6 +219,37 @@ def _schema_depth(schema: object, _depth: int = 0) -> int:
     return max(candidates)
 
 
+def _compute_routing_mode(phi: float) -> str:
+    """Convert Phi score to 5-mode spectrum (actual FormatShield logic)."""
+    if phi < 0.50:
+        return "direct"
+    elif phi < 0.65:
+        return "lite_ttf"
+    elif phi < 0.80:
+        return "standard_ttf"
+    elif phi < 0.95:
+        return "deep_ttf"
+    else:
+        return "sc_full"  # self-consistency at Φ ≥ 0.95
+
+
+def _compute_phi_thinking_budget(phi: float) -> int:
+    """Return Φ-proportional thinking budget (actual FormatShield logic)."""
+    if phi >= 0.90:
+        return 4096
+    elif phi >= 0.75:
+        return 1024
+    elif phi >= 0.65:
+        return 512
+    else:
+        return 256
+
+
+def _compute_pass2_temperature(tau: float) -> float:
+    """Compute Pass 2 temperature from constraint tightness τ."""
+    return max(0.05, 0.7 * (1.0 - tau))
+
+
 def _compute_demo_score(
     fs_result: dict,
     raw_result: dict,
@@ -226,22 +257,21 @@ def _compute_demo_score(
     schema_dict: dict,
 ) -> dict:
     """
-    Compute a research-backed 0-100 Demo Score.
+    Simplified demo score showing actual routing decision quality.
 
-    Scoring axes — winner reflects *real output quality*, not process compliance:
-    - schema_validity   (0-30): FS valid when raw fails → clear win; both valid → 10 pts only
-    - constraint_edge   (0-25): TTF warranted by schema complexity; penalised if TTF ran
-                                 on a simple schema (unnecessary overhead)
-    - reliability       (0-20): first-pass success, no fallback required
-    - constraint_protection (0-25): raw violated a schema constraint FormatShield enforced
-    - latency_efficiency (-15 to +5): raw 3× faster on simple schema → −15 pts
+    Focus on:
+    - Was the routing decision (TTF vs Direct) appropriate for this schema?
+    - Did the output pass validation?
+    - What failure modes were detected?
     """
     fs_ok = fs_result.get("ok", False)
     raw_ok = raw_result.get("ok", False)
     fs_valid = fs_ok and fs_result.get("schema_valid", False)
     raw_valid = raw_ok and raw_result.get("schema_valid", False)
     phi_score = phi_info.get("phi", 0.0)
-    used_ttf = fs_ok and fs_result.get("routing_strategy") == "ttf"
+    tau = phi_info.get("tau", 0.0)
+    routing_mode = _compute_routing_mode(phi_score)
+    used_ttf = routing_mode != "direct"
     fallback = fs_result.get("fallback_triggered", True)
     raw_schema_violation = raw_ok and bool(raw_result.get("schema_violation"))
     fs_schema_violation = fs_ok and bool(fs_result.get("schema_violation"))
@@ -253,379 +283,125 @@ def _compute_demo_score(
     depth = cast(int, risk["nesting_depth"])
     enum_size = cast(int, risk["max_enum_size"])
 
-    # ── schema complexity score (used by multiple axes) ───────────────────────
-    # Weighted sum of hard constraint signals — determines if TTF overhead is justified
-    _risk_pts = (
-        (6 if cast(int, risk["max_enum_size"]) >= 8 else 3 if risk["large_enum"] else 0)
-        + (4 if risk["has_pattern"] else 0)
-        + (4 if risk["has_additional_props_false"] else 0)
-        + (3 if risk["has_array_cardinality"] else 0)
-        + (2 if risk["has_numeric_constraints"] else 0)
-        + (3 if depth >= 3 else 1 if depth >= 2 else 0)
-        + (2 if risk["has_combinators"] else 0)
-    )
-    schema_is_complex = _risk_pts >= 6  # TTF overhead justified
-    schema_is_simple = _risk_pts <= 2  # direct mode is correct choice
+    # ── Simple Routing Decision Verdict ──────────────────────────────────────
+    # Did FormatShield choose the right routing mode for this schema?
+    score = 50  # baseline
+    reasons: list[str] = []
 
-    # ── schema_validity 0-30 ─────────────────────────────────────────────────
-    # Honest: both valid → 10 pts only (they are equal on this run)
-    if fs_valid and not raw_valid and not fs_schema_violation:
-        schema_validity = 30
-    elif fs_valid and raw_valid and not fs_schema_violation:
-        schema_validity = 10  # equal — not a FS win
+    # Schema validation check
+    if fs_valid and not raw_valid:
+        score += 30
+        reasons.append(
+            "FS passed schema validation, raw failed — "
+            "FormatShield's constraint enforcement advantage demonstrated"
+        )
+    elif fs_valid and raw_valid:
+        score += 15
+        reasons.append("Both passed schema validation (equal on this run)")
+    elif not fs_valid and raw_valid:
+        score -= 20
+        reasons.append("FS failed validation but raw passed — routing or execution issue")
+    else:
+        reasons.append("Neither passed schema validation on this run")
+
+    # Routing decision quality
+    if phi_score >= 0.95 and routing_mode == "sc_full":
+        score += 10
+        reasons.append(f"Self-consistency correctly triggered at Φ={phi_score:.3f} (k=3)")
+    elif phi_score > 0.50 and used_ttf:
+        score += 10
+        reasons.append(f"TTF ({routing_mode}) correctly chosen for complex schema (Φ={phi_score:.3f})")
+    elif phi_score <= 0.50 and routing_mode == "direct":
+        score += 10
+        reasons.append(f"Direct mode chosen correctly for simple schema (Φ={phi_score:.3f})")
+    elif phi_score > 0.50 and routing_mode == "direct":
+        score -= 15
+        reasons.append(f"Missed TTF opportunity — Φ={phi_score:.3f} indicated complexity but direct was used")
+    elif phi_score < 0.50 and used_ttf:
+        score -= 10
+        reasons.append(f"Unnecessary TTF overhead — Φ={phi_score:.3f} suggested simple schema")
+
+    # Constraint violation detection
+    if raw_schema_violation and not fs_schema_violation:
+        score += 20
+        reasons.append(f"Raw violated constraint: {raw_result.get('schema_violation', '')[:60]}")
     elif fs_schema_violation and not raw_schema_violation:
-        schema_validity = 0  # FS violated a constraint raw Groq didn't
-    else:
-        schema_validity = 0
+        score -= 15
+        reasons.append(f"FS violated constraint raw didn't: {fs_result.get('schema_violation', '')[:60]}")
 
-    # ── constraint_edge 0-25 ─────────────────────────────────────────────────
-    # Rewards *correct routing decisions*, not just "TTF ran".
-    # TTF on a simple schema = overhead without benefit → penalised.
-    if used_ttf and schema_is_complex:
-        constraint_edge = 25  # TTF warranted and executed
-    elif used_ttf and not schema_is_complex and not schema_is_simple:
-        constraint_edge = 12  # borderline — plausible TTF
-    elif used_ttf and schema_is_simple:
-        constraint_edge = 4  # TTF ran but schema didn't need it
-    elif not used_ttf and schema_is_simple:
-        constraint_edge = 20  # correct: direct mode, no wasted overhead
-    elif phi_score > 0.65 and not used_ttf:
-        constraint_edge = 10  # Φ flagged complexity but direct was used
-    else:
-        constraint_edge = 8  # neutral
-
-    # ── reliability 0-20 ─────────────────────────────────────────────────────
+    # Fallback resilience
     if fs_valid and not fallback:
-        reliability = 20
-    elif not fallback:
-        reliability = 10
-    else:
-        reliability = 0
+        score += 5
+        reasons.append("First-pass success without fallback")
+    elif fallback:
+        reasons.append("Fallback was triggered")
 
-    # ── constraint_protection 0-25 ───────────────────────────────────────────
-    # Primary signal: raw Groq actually violated a constraint FormatShield enforced.
-    # Secondary: latent risk — schema features that raw LLMs fail on at non-trivial rates.
-    # No points for "schema looks hard but raw happened to pass this time".
-    if raw_schema_violation:
-        constraint_protection = 25  # raw broke a real constraint
-    elif raw_json_invalid:
-        constraint_protection = 15  # raw output wasn't even valid JSON
-    elif schema_is_complex and raw_valid:
-        # Schema is hard — raw passed *this run* but failure rate is non-trivial
-        constraint_protection = 10
-    elif _risk_pts >= 3 and raw_valid:
-        constraint_protection = 5  # moderate risk, raw OK this time
-    else:
-        constraint_protection = 0
-
-    # ── latency_efficiency -15 to +5 ─────────────────────────────────────────
-    # FormatShield's TTF overhead is a real cost. If raw Groq is much faster AND
-    # the schema doesn't justify TTF, that cost hurts the score.
-    latency_efficiency = 0
+    # Latency
     if fs_ok and raw_ok:
         fs_lat = float(fs_result.get("latency_ms") or 0)
         raw_lat = float(raw_result.get("latency_ms") or 0)
         if fs_lat > 0 and raw_lat > 0:
-            ratio = fs_lat / raw_lat  # >1 means FS is slower
-            if ratio > 3.0 and schema_is_simple:
-                latency_efficiency = -15  # 3× slower, simple schema = unjustified
-            elif ratio > 2.0 and schema_is_simple:
-                latency_efficiency = -10
-            elif ratio > 1.5 and schema_is_simple:
-                latency_efficiency = -5
-            elif ratio > 2.0 and not schema_is_complex:
-                latency_efficiency = -5  # borderline schema, still slow
-            elif ratio < 0.75:
-                latency_efficiency = 5  # FS actually faster
+            ratio = fs_lat / raw_lat
+            if ratio < 0.75:
+                score += 5
+                reasons.append(f"FS faster: {ratio:.1f}× ({fs_lat:.0f} vs {raw_lat:.0f} ms)")
+            elif ratio > 3.0:
+                score -= 10
+                reasons.append(f"FS slower: {ratio:.1f}× ({fs_lat:.0f} vs {raw_lat:.0f} ms)")
 
-    score = min(
-        100,
-        max(
-            0,
-            schema_validity
-            + constraint_edge
-            + reliability
-            + constraint_protection
-            + latency_efficiency,
-        ),
-    )
+    # Clamp score
+    score = min(100, max(0, score))
 
     # ── grade ────────────────────────────────────────────────────────────────
-    if score >= 82:
+    if score >= 80:
         grade = "A"
-    elif score >= 66:
+    elif score >= 70:
         grade = "B"
-    elif score >= 50:
+    elif score >= 60:
         grade = "C"
-    elif score >= 35:
+    elif score >= 40:
         grade = "D"
     else:
         grade = "F"
 
-    # ── latency context strings (used in verdict and reasons) ────────────────
-    fs_lat_v = float(fs_result.get("latency_ms") or 0) if fs_ok else 0.0
-    raw_lat_v = float(raw_result.get("latency_ms") or 0) if raw_ok else 0.0
-    lat_ratio = (fs_lat_v / raw_lat_v) if raw_lat_v > 0 and fs_lat_v > 0 else 1.0
-    lat_context = ""
-    if fs_lat_v > 0 and raw_lat_v > 0:
-        if lat_ratio >= 4.0:
-            lat_context = f"{lat_ratio:.0f}× slower ({fs_lat_v:.0f} ms vs {raw_lat_v:.0f} ms)"
-        elif lat_ratio >= 1.5:
-            lat_context = f"{lat_ratio:.1f}× slower ({fs_lat_v:.0f} ms vs {raw_lat_v:.0f} ms)"
-        elif lat_ratio < 0.75:
-            lat_context = f"{1 / lat_ratio:.1f}× faster ({fs_lat_v:.0f} ms vs {raw_lat_v:.0f} ms)"
-        else:
-            lat_context = f"comparable latency ({fs_lat_v:.0f} ms vs {raw_lat_v:.0f} ms)"
+    # Build summary based on score
+    if score >= 80:
+        summary = "FormatShield outperformed raw Groq on routing and validation."
+    elif score >= 60:
+        summary = "FormatShield showed good routing decisions and validation."
+    elif score >= 40:
+        summary = "Mixed results — both approaches had strengths and weaknesses."
+    else:
+        summary = "Raw Groq performed better on this schema and prompt combination."
 
-    # ── verdict_tier — 4-level scale reflecting real evidence magnitude ───────
-    # decisive_win : raw failed schema validation OR raw violated a hard constraint
-    # marginal_win : both valid, FS shows measurable advantage (complex schema + TTF)
-    # tie          : both valid, no clear evidence advantage, comparable or modest latency
-    # loss         : FS has schema violation raw doesn't, OR simple schema + FS much slower
-    if fs_schema_violation and not raw_schema_violation:
-        verdict_tier = "loss"
+    # Determine verdict (simple 3-way)
+    if fs_valid and not raw_valid:
+        verdict = "formatshield_wins"
     elif raw_valid and not fs_valid:
-        verdict_tier = "loss"
-    elif latency_efficiency <= -10 and schema_is_simple and not raw_schema_violation:
-        verdict_tier = "loss"  # simple schema, both valid, FS much slower — raw wins
-    elif fs_valid and not raw_valid and not fs_schema_violation:
-        verdict_tier = "decisive_win"
-    elif raw_schema_violation and not fs_schema_violation and fs_valid:
-        verdict_tier = "decisive_win"
-    elif raw_json_invalid and fs_valid:
-        verdict_tier = "decisive_win"
-    elif (
-        schema_is_complex and used_ttf and fs_valid and not fs_schema_violation and lat_ratio < 4.0
-    ):
-        # Complex schema, TTF warranted, latency not extreme (< 4×) — real marginal win
-        verdict_tier = "marginal_win"
-    elif (
-        schema_is_complex and used_ttf and fs_valid and not fs_schema_violation and lat_ratio >= 4.0
-    ):
-        # Complex schema + TTF but latency is severe — call it a tie; cost vs benefit unclear
-        verdict_tier = "tie"
-    elif latency_efficiency <= -5:
-        verdict_tier = "loss"
+        verdict = "raw_wins"
     else:
-        verdict_tier = "tie"
-
-    # winner field (kept for backward compat with verdict bar logic)
-    if verdict_tier in ("decisive_win", "marginal_win"):
-        winner = "formatshield"
-    elif verdict_tier == "loss":
-        winner = "raw"
-    else:
-        winner = "tie"
-
-    # ── tier labels and summary ───────────────────────────────────────────────
-    _tier_labels = {
-        "decisive_win": "Decisive Win",
-        "marginal_win": "Marginal Win",
-        "tie": "Tie",
-        "loss": "Loss",
-    }
-    tier_label = _tier_labels[verdict_tier]
-
-    if verdict_tier == "decisive_win" and raw_schema_violation:
-        summary = (
-            f"Decisive Win — raw Groq violated a schema constraint; "
-            f"FormatShield enforced it. {lat_context}."
-        )
-    elif verdict_tier == "decisive_win" and not raw_valid:
-        summary = (
-            f"Decisive Win — raw Groq produced invalid output; "
-            f"FormatShield passed schema validation. {lat_context}."
-        )
-    elif verdict_tier == "marginal_win":
-        summary = (
-            f"Marginal Win — both outputs schema-valid, but FormatShield's TTF routing "
-            f"added measurable reasoning quality on this complex schema. "
-            f"Cost: {lat_context}."
-        )
-    elif verdict_tier == "tie":
-        if not fs_valid and not raw_valid:
-            summary = (
-                "Tie — both outputs failed schema validation on this run. "
-                "This usually means the schema's constraints are fighting natural reasoning "
-                "(e.g., enum values that exclude valid intermediate units). "
-                "Review the schema design: constraints should enable structured reasoning, "
-                "not prevent correct answers."
-            )
-        elif fs_valid and raw_valid:
-            summary = (
-                "Tie — both outputs schema-valid with comparable quality on this run. "
-                "FormatShield's advantage shows on Hard/Enterprise schemas with large enums, "
-                "pattern constraints, or cross-field dependency rules."
-            )
-        else:
-            summary = (
-                "Tie — comparable result on this run. "
-                "Try a Hard or Enterprise preset to see FormatShield's constraint enforcement advantage."  # noqa: E501
-            )
-    else:  # loss
-        if latency_efficiency <= -10 and schema_is_simple:
-            summary = (
-                f"Raw Groq wins — simple schema, both outputs valid, "
-                f"FormatShield {lat_context}. "
-                "Latency overhead not justified here."
-            )
-        elif fs_schema_violation:
-            summary = (
-                "Raw Groq wins — independent jsonschema validation caught a constraint "
-                "violation in FormatShield's output that raw Groq avoided."
-            )
-        else:
-            summary = "Raw Groq wins on this run."
-
-    # ── reasons — run-specific evidence first, research claims only when applicable ──
-    reasons: list[str] = []
-
-    # 1. Schema adherence (run-specific)
-    if schema_validity == 30:
-        reasons.append(
-            "FormatShield passed jsonschema validation; raw Groq failed — "
-            "this is the primary constraint enforcement advantage (arXiv 2408.02442)."
-        )
-    elif schema_validity == 10:
-        reasons.append(
-            "Both outputs passed jsonschema validation on this run — "
-            "schema adherence is equal; verdict driven by latency and routing correctness."
-        )
-    else:
-        reasons.append(
-            "Neither output passed schema validation on this run. "
-            "When both fail, check if the schema's enum or pattern constraints "
-            "are preventing naturally correct outputs — "
-            "the schema may be fighting the reasoning task."
-        )
-
-    # 2. Routing decision quality (run-specific, no generic research claims unless TTF earned it)
-    if used_ttf and schema_is_complex and raw_schema_violation:
-        # TTF both warranted AND produced a better constraint outcome
-        reasons.append(
-            f"TTF routing (Φ={phi_score:.3f}) activated on a complex schema and "
-            f"enforced constraints that raw Groq violated. "
-            f"This is the core FormatShield value proposition (arXiv 2601.07525)."
-        )
-    elif used_ttf and schema_is_complex:
-        # TTF warranted by schema but both valid this run
-        reasons.append(
-            f"TTF routing (Φ={phi_score:.3f}) activated on a complex schema — "
-            f"both valid this run, but complex schemas fail for raw LLMs at non-trivial rates. "
-            f"The 27 pp accuracy recovery (arXiv 2601.07525) shows on repeated runs."
-        )
-    elif used_ttf and schema_is_simple:
-        reasons.append(
-            f"TTF activated (Φ={phi_score:.3f}) but schema complexity doesn't justify it "
-            f"({_risk_pts} risk pts, threshold is 6). "
-            "Use Hard/Enterprise presets to see TTF earn its latency cost."
-        )
-    elif not used_ttf and schema_is_simple:
-        reasons.append(
-            f"Φ={phi_score:.3f} — direct mode chosen correctly; "
-            "no TTF overhead on a simple schema (smart routing)."
-        )
-    else:
-        reasons.append(
-            f"Φ={phi_score:.3f} — routing decision: {'TTF' if used_ttf else 'direct'} mode."
-        )
-
-    # 3. Latency (always run-specific — never suppress)
-    if lat_context:
-        if verdict_tier in ("loss", "tie") and lat_ratio >= 1.5:
-            reasons.append(
-                f"Latency: FormatShield {lat_context}. "
-                "On simple schemas where both outputs are valid, this overhead "
-                "shifts the verdict toward raw Groq."
-            )
-        elif verdict_tier == "marginal_win" and lat_ratio >= 2.0:
-            reasons.append(
-                f"Latency cost: {lat_context}. "
-                "This is the expected TTF tradeoff — acceptable for high-stakes tasks "
-                "where schema precision matters more than speed."
-            )
-        elif lat_ratio < 0.75:
-            reasons.append(f"FormatShield was faster on this run: {lat_context}.")
-
-    # 4. Constraint violations (run-specific)
-    if raw_schema_violation:
-        violation_snip = raw_result.get("schema_violation", "")[:70]
-        reasons.append(
-            f"Raw Groq violated: '{violation_snip}' — "
-            "enum/pattern failures hit 5–36% of raw outputs (arXiv 2501.10868)."
-        )
-    if fs_schema_violation:
-        fs_violation_snip = fs_result.get("schema_violation", "")[:70]
-        reasons.append(
-            f"FormatShield also violated a constraint: '{fs_violation_snip}' — "
-            "independent jsonschema check caught this."
-        )
-
-    # 5. Latent risk notice (only when neither actually failed — purely informational)
-    if not raw_schema_violation and not fs_schema_violation and len(reasons) < 4:
-        if risk["large_enum"]:
-            reasons.append(
-                f"Schema has enum({enum_size} options) — both passed this run, but "
-                "raw LLMs hallucinate outside large enums on repeated runs "
-                "(arXiv 2408.02442). Run again to see the failure rate."
-            )
-        elif risk["has_pattern"]:
-            reasons.append(
-                "Schema has pattern constraints — both passed this run, but "
-                "33% baseline failure rate in SchemaBench (arXiv 2501.10868) "
-                "means raw will fail on repeated runs."
-            )
-
-    # 6. Redirect for simple/tie cases
-    if verdict_tier in ("tie", "loss") and len(reasons) < 4:
-        reasons.append(
-            "Load a Hard or Enterprise preset with a large enum, pattern constraint, "
-            "or strict additionalProperties to see FormatShield's decisive advantage."
-        )
-
-    if reliability == 0 and fallback:
-        reasons.append(
-            "Fallback triggered — routing edge case; indicates schema complexity at the boundary."
-        )
-
-    reliability_signal = schema_validity + reliability
-    semantic_proxy_signal = constraint_edge + constraint_protection
-    reliability_score = round((reliability_signal / 50.0) * 100.0, 1)
-    semantic_proxy_score = round((semantic_proxy_signal / 50.0) * 100.0, 1)
+        verdict = "tie"
 
     return {
         "score": score,
         "grade": grade,
-        "verdict_tier": verdict_tier,
-        "tier_label": tier_label,
-        "winner": winner,
         "summary": summary,
+        "verdict": verdict,
         "reasons": reasons,
-        "risk_profile": {
+        "routing_analysis": {
+            "phi_score": round(phi_score, 4),
+            "routing_mode": routing_mode,
+            "used_ttf": used_ttf,
+            "thinking_budget_tokens": phi_info.get("thinking_budget_tokens"),
+            "self_consistency_enabled": phi_info.get("self_consistency_enabled", False),
+            "pass2_temperature": phi_info.get("pass2_temperature"),
+        },
+        "schema_info": {
             "schema_depth": depth,
-            "large_enum": risk["large_enum"],
             "max_enum_size": enum_size,
-            "has_array_cardinality": risk["has_array_cardinality"],
-            "has_numeric_constraints": risk["has_numeric_constraints"],
             "has_pattern": risk["has_pattern"],
+            "has_large_enum": risk["large_enum"],
             "has_combinators": risk["has_combinators"],
-            "schema_complexity_pts": _risk_pts,
-            "schema_is_complex": schema_is_complex,
-            "schema_is_simple": schema_is_simple,
-        },
-        "breakdown": {
-            "schema_validity": schema_validity,
-            "routing_quality": constraint_edge,
-            "reliability": reliability,
-            "schema_advantage": constraint_protection,
-        },
-        "score_channels": {
-            "reliability_score": reliability_score,
-            "semantic_proxy_score": semantic_proxy_score,
-            "notes": (
-                "reliability_score reflects schema-validity and fallback stability; "
-                "semantic_proxy_score reflects routing quality plus constraint advantage"
-            ),
         },
     }
 
@@ -861,19 +637,39 @@ async def compare(req: CompareRequest) -> dict:
 
     # Phi score — pure Python, no API call
     phi = compute_routing_score(req.prompt, schema_dict)
-    will_use_ttf = phi.phi > 0.65
+    routing_mode = _compute_routing_mode(phi.phi)
+    will_use_ttf = routing_mode != "direct"
+    thinking_budget = _compute_phi_thinking_budget(phi.phi) if will_use_ttf else None
+    pass2_temp = _compute_pass2_temperature(phi.tau) if will_use_ttf else None
+    sc_mode = phi.phi >= 0.95  # self-consistency at Φ ≥ 0.95
     phi_info = {
         "phi": round(phi.phi, 4),
         "lambda2": round(phi.lambda2, 4),
         "tau": round(phi.tau, 4),
         "delta_k": round(phi.delta_k, 4),
         "explanation": phi.explanation,
-        "recommendation": "TTF" if will_use_ttf else "Direct",
-        # TTF Stage 1-4 metadata (schema-aware prompting, quality gate, self-consistency)
-        "thinking_budget_tokens": _phi_thinking_budget(phi.phi) if will_use_ttf else None,
-        "self_consistency_mode": phi.phi >= _SC_PHI_THRESHOLD,
-        "self_consistency_k": DEFAULT_SC_K if phi.phi >= _SC_PHI_THRESHOLD else 1,
-        "pass2_temperature": round(max(0.05, 0.7 * (1.0 - phi.tau)), 3) if will_use_ttf else None,
+        "routing_mode": routing_mode,
+        "routing_description": {
+            "direct": "Single-pass generation (no thinking)",
+            "lite_ttf": "Light thinking budget (256 tokens)",
+            "standard_ttf": "Standard thinking budget (512 tokens)",
+            "deep_ttf": "Deep thinking budget (1024 tokens)",
+            "sc_full": "Self-consistency with 3 parallel traces (4096 tokens each)",
+        }[routing_mode],
+        # Thinking budget — Φ-proportional
+        "thinking_budget_tokens": thinking_budget,
+        # Self-consistency — auto-trigger at Φ ≥ 0.95
+        "self_consistency_enabled": sc_mode,
+        "self_consistency_k": 3 if sc_mode else 1,
+        "self_consistency_criteria": [
+            "required-field coverage",
+            "contradiction-free",
+            "vocabulary-bridge coverage",
+        ] if sc_mode else [],
+        # Pass 2 temperature — conditioned on constraint tightness τ
+        "pass2_temperature": round(pass2_temp, 3) if (will_use_ttf and pass2_temp is not None) else None,
+        "pass2_temperature_formula": "max(0.05, 0.7 * (1.0 - tau))",
+        "tau_constraint_tightness": round(phi.tau, 3),
     }
 
     fs_result = await _call_with_formatshield(req.prompt, schema_dict, req.model, req.system_prompt)

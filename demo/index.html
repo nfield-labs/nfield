@@ -987,6 +987,7 @@
     }
     .badge.valid   { background: #14532d; color: var(--green); }
     .badge.invalid { background: #450a0a; color: var(--red); }
+    .badge.warning { background: #5a2a1a; color: var(--yellow); border: 1px solid var(--yellow); }
     .badge.violation-badge {
       max-width: 340px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
       font-size: 0.7rem; cursor: help; border: 1px solid var(--red);
@@ -1851,7 +1852,8 @@
       bar.style.display = 'block';
 
       const val   = phi.phi;
-      const isttf = val > 0.65;
+      const mode  = phi.routing_mode || 'direct';  // 5-mode spectrum
+      const isttf = mode !== 'direct';
 
       document.getElementById('phi-value').textContent = val.toFixed(4);
       document.getElementById('phi-value').className   = `phi-main ${isttf ? 'ttf' : 'direct'}`;
@@ -1860,27 +1862,48 @@
       fill.style.width = (val * 100).toFixed(1) + '%';
       fill.className   = `gauge-fill ${isttf ? 'ttf' : 'direct'}`;
 
+      // Show 5-mode routing spectrum
+      const modeLabels = {
+        'direct': 'Direct Mode',
+        'lite_ttf': 'Lite TTF',
+        'standard_ttf': 'Standard TTF',
+        'deep_ttf': 'Deep TTF',
+        'sc_full': 'Self-Consistent (SC)'
+      };
       const rec = document.getElementById('routing-rec');
-      rec.textContent = isttf ? 'TTF Recommended' : 'Direct Recommended';
+      rec.textContent = modeLabels[mode] || 'Unknown';
       rec.className   = `routing-badge ${isttf ? 'ttf' : 'direct'}`;
 
       document.getElementById('phi-l2').textContent  = phi.lambda2  !== undefined ? phi.lambda2.toFixed(4)  : '—';
       document.getElementById('phi-tau').textContent  = phi.tau      !== undefined ? phi.tau.toFixed(4)      : '—';
       document.getElementById('phi-dk').textContent   = phi.delta_k  !== undefined ? phi.delta_k.toFixed(4)  : '—';
-      document.getElementById('phi-exp').textContent  = phi.explanation || '';
 
-      if (!phi.explanation) document.getElementById('phi-exp').style.display = 'none';
-      else                  document.getElementById('phi-exp').style.display = '';
+      // Show routing explanation (includes Φ-proportional budget info)
+      const explanation = phi.explanation || '';
+      const modeDesc = phi.routing_description || '';
+      document.getElementById('phi-exp').textContent = explanation ? `${explanation} — ${modeDesc}` : modeDesc;
 
-      // TTF Stage 1-4 metadata chips
+      if (!explanation && !modeDesc) document.getElementById('phi-exp').style.display = 'none';
+      else                           document.getElementById('phi-exp').style.display = '';
+
+      // TTF metadata chips: thinking budget, Pass 2 temperature, self-consistency
       const metaEl = document.getElementById('phi-ttf-meta');
-      if (isttf && (phi.thinking_budget_tokens || phi.pass2_temperature !== undefined || phi.self_consistency_mode !== undefined)) {
+      if (isttf) {
         const chips = [];
-        if (phi.thinking_budget_tokens) chips.push(`<span class="phi-meta-chip">budget ${phi.thinking_budget_tokens} tok</span>`);
-        if (phi.pass2_temperature !== null && phi.pass2_temperature !== undefined) chips.push(`<span class="phi-meta-chip">T₂ = ${phi.pass2_temperature}</span>`);
-        if (phi.self_consistency_mode) chips.push(`<span class="phi-meta-chip highlight">self-consistent ×${phi.self_consistency_k || 3}</span>`);
+        // Φ-proportional thinking budget
+        if (phi.thinking_budget_tokens)
+          chips.push(`<span class="phi-meta-chip">thinking ${phi.thinking_budget_tokens} tok</span>`);
+        // Pass 2 temperature (conditioned on τ)
+        if (phi.pass2_temperature !== null && phi.pass2_temperature !== undefined)
+          chips.push(`<span class="phi-meta-chip">T₂=${phi.pass2_temperature} (τ=${phi.tau_constraint_tightness})</span>`);
+        // Self-consistency: auto-trigger at Φ ≥ 0.95
+        if (phi.self_consistency_enabled) {
+          const k = phi.self_consistency_k || 3;
+          const criteria = (phi.self_consistency_criteria || []).join(', ');
+          chips.push(`<span class="phi-meta-chip highlight">SC ×${k} [${criteria}]</span>`);
+        }
         metaEl.innerHTML = chips.join('');
-        metaEl.style.display = 'flex';
+        metaEl.style.display = chips.length > 0 ? 'flex' : 'none';
       } else {
         metaEl.style.display = 'none';
         metaEl.innerHTML = '';
@@ -1943,12 +1966,24 @@
         ? `<span class="badge invalid violation-badge" title="${escHtml(data.schema_violation)}">⚠ ${escHtml(data.schema_violation.slice(0,60))}${data.schema_violation.length > 60 ? '…' : ''}</span>`
         : '';
 
+      // Failure modes (if any)
+      const failureModeBadges = (data.failure_modes && data.failure_modes.length > 0)
+        ? data.failure_modes.map(m => `<span class="badge warning" title="Failure mode: ${escHtml(m)}">${escHtml(m)}</span>`).join('')
+        : '';
+
+      // Fallback information
+      const fallbackBadge = data.fallback_triggered
+        ? `<span class="badge warning" title="Fallback was triggered — routing edge case or validation retry">↻ Fallback</span>`
+        : '';
+
       badges.innerHTML = [
         `<span class="badge ${data.schema_valid ? 'valid' : 'invalid'}">${data.schema_valid ? 'VALID' : 'INVALID'}</span>`,
         fsViolationBadge,
         `<span class="badge ${isttf ? 'ttf-badge' : 'direct-badge'}">${data.routing_strategy.toUpperCase()}</span>`,
+        failureModeBadges,
+        fallbackBadge,
         `<span class="badge latency">${Math.round(data.latency_ms)} ms</span>`
-      ].join('');
+      ].filter(b => b).join('');
 
       _activateToggle('fs');
       _renderFSFormatted(data);
@@ -1984,12 +2019,12 @@
 
       score = Math.max(0, Math.min(100, score));
 
-      const grade = score >= 90 ? 'A+' : score >= 85 ? 'A' : score >= 80 ? 'A−' :
-                    score >= 75 ? 'B+' : score >= 70 ? 'B' : score >= 65 ? 'B−' :
-                    score >= 55 ? 'C'  : score >= 40 ? 'D' : 'F';
+      // Simplified grade based on new routing logic
+      const grade = score >= 80 ? 'A' : score >= 70 ? 'B' :
+                    score >= 60 ? 'C' : score >= 40 ? 'D' : 'F';
 
-      const colorClass = score >= 85 ? 'score-green' : score >= 70 ? 'score-blue' :
-                         score >= 55 ? 'score-yellow' : 'score-red';
+      const colorClass = score >= 80 ? 'score-green' : score >= 70 ? 'score-blue' :
+                         score >= 60 ? 'score-yellow' : 'score-red';
       card.className = colorClass;
 
       // Animated count-up for score number
@@ -2011,19 +2046,18 @@
       });
 
       const winnerBadge = document.getElementById('score-winner-badge');
-      // 4-tier verdict labels — honest about magnitude, not just binary win/lose
-      const tierLabels = {
-        decisive_win: '★ Decisive Win',
-        marginal_win: '▲ Marginal Win',
-        tie:          '— Tie',
-        loss:         '▼ Raw Groq Wins'
+      // Simplified verdict: formatshield_wins, raw_wins, or tie
+      const verdictLabels = {
+        formatshield_wins: '★ FormatShield Wins',
+        raw_wins:         '▼ Raw Groq Wins',
+        tie:              '— Tie'
       };
-      const tier = verdict.verdict_tier || (
-        verdict.winner === 'formatshield' ? 'marginal_win' :
-        verdict.winner === 'raw'          ? 'loss' : 'tie'
+      const verdictTier = verdict.verdict || (
+        verdict.winner === 'formatshield' ? 'formatshield_wins' :
+        verdict.winner === 'raw'          ? 'raw_wins' : 'tie'
       );
-      winnerBadge.textContent = tierLabels[tier] || verdict.tier_label || '—';
-      winnerBadge.className   = `score-winner-badge verdict-${tier}`;
+      winnerBadge.textContent = verdictLabels[verdictTier] || '—';
+      winnerBadge.className   = `score-winner-badge verdict-${verdictTier}`;
 
       document.getElementById('score-summary').textContent = verdict.summary || '';
 

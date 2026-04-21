@@ -47,6 +47,8 @@ def shield_with_mock(mock_backend, monkeypatch) -> FormatShield:
     shield._ttf_fallback = True
     shield._expose_thinking = False
     shield._debug = False
+    shield._adaptive_confidence = False
+    shield._adaptive_confidence_threshold = 0.55
 
     from formatshield.hooks import Hooks
     from formatshield.observability.logger import StructuredLogger
@@ -112,6 +114,8 @@ async def test_native_thinker_always_direct(mock_backend) -> None:
     shield._ttf_fallback = True
     shield._expose_thinking = False
     shield._debug = False
+    shield._adaptive_confidence = False
+    shield._adaptive_confidence_threshold = 0.55
 
     from formatshield.hooks import Hooks
     from formatshield.observability.logger import StructuredLogger
