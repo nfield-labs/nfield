@@ -59,27 +59,29 @@ Usage:
     reask = build_surgical_reask(output, [failure])
 """
 
-from formatshield.reasoning.aggregation_compiler import (
-    AggregationCompiler,
-    AggregationPattern,
-    AggregationRule,
-    AggregationVerificationResult,
-    build_aggregation_reask,
-    compile_aggregation_rules,
-    verify_aggregation_rules,
-)
+# FUTURE (2026): Advanced aggregation rule derivations (Currently Unused)
+# from formatshield.reasoning.aggregation_compiler import (
+#     AggregationCompiler,
+#     AggregationPattern,
+#     AggregationRule,
+#     AggregationVerificationResult,
+#     build_aggregation_reask,
+#     compile_aggregation_rules,
+#     verify_aggregation_rules,
+# )
 from formatshield.reasoning.constraint_engine import (
     ConstraintExtractor,
     extract_constraints,
 )
-from formatshield.reasoning.constraint_graph import (
-    ConstraintPropagationGraph,
-    DomainReduction,
-    EdgeType,
-    GraphEdge,
-    PropagationResult,
-    build_constraint_graph,
-)
+# FUTURE (2026): Bidirectional semantic constraint propagation (Currently Unused)
+# from formatshield.reasoning.constraint_graph import (
+#     ConstraintPropagationGraph,
+#     DomainReduction,
+#     EdgeType,
+#     GraphEdge,
+#     PropagationResult,
+#     build_constraint_graph,
+# )
 from formatshield.reasoning.execution_plan import (
     ExecutionPlan,
     ExecutionPlanBuilder,
@@ -97,70 +99,75 @@ from formatshield.reasoning.reasoning_task import (
     ReasoningTaskConfig,
     ThinkingShaping,
 )
-from formatshield.reasoning.retry_budget import (
-    BudgetAllocation,
-    FailureClassification,
-    FailureTriager,
-    FailureType,
-    RetryBudgetAllocator,
-    SurgicalReasker,
-    allocate_retry_budget,
-    build_surgical_reask,
-    classify_failure,
-)
+# FUTURE (2026): Schema complexity-aware retry budgets (Currently Unused)
+# from formatshield.reasoning.retry_budget import (
+#     BudgetAllocation,
+#     FailureClassification,
+#     FailureTriager,
+#     FailureType,
+#     RetryBudgetAllocator,
+#     SurgicalReasker,
+#     allocate_retry_budget,
+#     build_surgical_reask,
+#     classify_failure,
+# )
 from formatshield.reasoning.schema_compiler import (
     SchemaCompiler,
     compile_schema_to_task,
 )
-from formatshield.reasoning.step_gate import (
-    GateResult,
-    StepCheckResult,
-    TemporalStepGate,
-    check_execution_steps,
-    parse_partial_output,
-)
+# FUTURE (2026): Forward-steering enforcement at step boundaries (Currently Unused)
+# from formatshield.reasoning.step_gate import (
+#     GateResult,
+#     StepCheckResult,
+#     TemporalStepGate,
+#     check_execution_steps,
+#     parse_partial_output,
+# )
 
 __all__ = [
-    "AggregationCompiler",
-    "AggregationPattern",
-    "AggregationRule",
-    "AggregationVerificationResult",
-    "BudgetAllocation",
+    # --- ACTIVE CORE MODULES ---
     "ConstraintExtractor",
-    "ConstraintPropagationGraph",
     "ConstraintRule",
-    "DomainReduction",
-    "EdgeType",
     "ExecutionPlan",
     "ExecutionPlanBuilder",
     "ExecutionStep",
-    "FailureClassification",
-    "FailureTriager",
-    "FailureType",
-    "GateResult",
-    "GraphEdge",
     "PhiController",
-    "PropagationResult",
     "ReasoningTask",
     "ReasoningTaskConfig",
-    "RetryBudgetAllocator",
     "SchemaCompiler",
-    "StepCheckResult",
-    "SurgicalReasker",
-    "TemporalStepGate",
     "ThinkingShaping",
-    "allocate_retry_budget",
-    "build_aggregation_reask",
-    "build_constraint_graph",
     "build_execution_plan",
-    "build_surgical_reask",
-    "check_execution_steps",
-    "classify_failure",
-    "compile_aggregation_rules",
     "compile_schema_to_task",
     "extract_constraints",
-    "parse_partial_output",
     "render_execution_plan",
     "shape_thinking_with_phi",
-    "verify_aggregation_rules",
+    
+    # --- FUTURE (2026) / UNUSED MODULES ---
+    # "AggregationCompiler",
+    # "AggregationPattern",
+    # "AggregationRule",
+    # "AggregationVerificationResult",
+    # "BudgetAllocation",
+    # "ConstraintPropagationGraph",
+    # "DomainReduction",
+    # "EdgeType",
+    # "FailureClassification",
+    # "FailureTriager",
+    # "FailureType",
+    # "GateResult",
+    # "GraphEdge",
+    # "PropagationResult",
+    # "RetryBudgetAllocator",
+    # "StepCheckResult",
+    # "SurgicalReasker",
+    # "TemporalStepGate",
+    # "allocate_retry_budget",
+    # "build_aggregation_reask",
+    # "build_constraint_graph",
+    # "build_surgical_reask",
+    # "check_execution_steps",
+    # "classify_failure",
+    # "compile_aggregation_rules",
+    # "parse_partial_output",
+    # "verify_aggregation_rules",
 ]

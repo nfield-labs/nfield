@@ -30,6 +30,11 @@ from formatshield.ttf.prompts import (
     extract_thinking,
 )
 from formatshield.ttf.quality_gate import score_thinking_trace
+from formatshield.ttf.low_latency_ttf import (
+    LowLatencyConfig,
+    compute_low_latency_thinking_budget,
+    get_selective_reasoning_focus,
+)
 
 if TYPE_CHECKING:
     from formatshield.backends.protocol import Backend
@@ -264,6 +269,8 @@ class TTFEngine:
         expose_thinking: bool = False,
         max_reasks: int = DEFAULT_MAX_REASKS,
         ttf_self_consistency: int = 1,
+        low_latency_mode: bool = False,
+        low_latency_config: LowLatencyConfig | None = None,
     ) -> None:
         self._backend = backend
         self._ttf_fallback = ttf_fallback
@@ -271,6 +278,8 @@ class TTFEngine:
         self._max_reasks = max_reasks
         # K for self-consistency: 1 = disabled, ≥2 = run K parallel Pass 1 traces
         self._ttf_self_consistency: int = max(1, ttf_self_consistency)
+        self._low_latency_mode = low_latency_mode
+        self._low_latency_config = low_latency_config or LowLatencyConfig()
 
     # ------------------------------------------------------------------
     # Primary generation method
@@ -361,12 +370,24 @@ class TTFEngine:
         # Budget scales with routing Φ: low Φ → 256 tokens, high Φ → 4096.
         pass1_max_tokens: int | None = None
         if routing_score is not None:
-            pass1_max_tokens = _phi_thinking_budget(routing_score.phi)
+            if self._low_latency_mode:
+                pass1_max_tokens = compute_low_latency_thinking_budget(
+                    routing_score.phi,
+                    config=self._low_latency_config,
+                )
+            else:
+                pass1_max_tokens = _phi_thinking_budget(routing_score.phi)
             logger.debug(
                 "TTFEngine: Pass 1 budget — %d tokens (Φ=%.3f)",
                 pass1_max_tokens,
                 routing_score.phi,
             )
+
+        if self._low_latency_mode and routing_score is not None and schema is not None:
+            selective_focus = get_selective_reasoning_focus(schema, routing_score.tau)
+            if selective_focus:
+                think_prompt = f"{think_prompt}\n\n{selective_focus}"
+                logger.debug("TTFEngine: low-latency selective reasoning focus enabled")
 
         # ------------------------------------------------------------------
         # Pass 1: unconstrained reasoning

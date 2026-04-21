@@ -53,6 +53,7 @@ from formatshield.oracle.routing_score import compute_routing_score
 from formatshield.oracle.threshold_oracle import ThresholdOracle
 from formatshield.scorer.complexity_scorer import ComplexityScorer
 from formatshield.scorer.features import ComplexityFeatures, StreamEvent, TokenUsage
+from formatshield.semantic.schema_alignment import SchemaAuthority, assess_schema_alignment
 from formatshield.ttf.failure_detector import FailureModeDetector
 
 if TYPE_CHECKING:
@@ -521,6 +522,58 @@ def _validate_against_json_schema(instance: Any, schema: dict[str, Any]) -> tupl
         return False, str(exc)
 
 
+def _collect_grounding_violations(
+    instance: Any,
+    schema: dict[str, Any],
+    prompt: str,
+    path: str = "$",
+) -> list[str]:
+    """Best-effort anti-fabrication checks for direct mode.
+
+    This currently enforces grounding for common identifier-like fields such as
+    ``format: email``. It intentionally returns violations (instead of mutating
+    values) so callers can decide whether to reject or fall back.
+    """
+    violations: list[str] = []
+    prompt_lower = prompt.lower()
+
+    schema_type = schema.get("type")
+    if schema_type == "object" and isinstance(instance, dict):
+        properties = schema.get("properties")
+        if isinstance(properties, dict):
+            for key, child_schema_obj in properties.items():
+                if key not in instance or not isinstance(child_schema_obj, dict):
+                    continue
+                child_path = f"{path}.{key}"
+                violations.extend(
+                    _collect_grounding_violations(
+                        instance[key],
+                        child_schema_obj,
+                        prompt,
+                        child_path,
+                    )
+                )
+
+    elif schema_type == "array" and isinstance(instance, list):
+        item_schema = schema.get("items")
+        if isinstance(item_schema, dict):
+            for idx, item in enumerate(instance):
+                violations.extend(
+                    _collect_grounding_violations(item, item_schema, prompt, f"{path}[{idx}]")
+                )
+
+    elif schema_type == "string" and isinstance(instance, str):
+        schema_format = str(schema.get("format", "")).lower()
+        value = instance.strip()
+        if schema_format == "email" and value:
+            if value.lower() not in prompt_lower:
+                violations.append(
+                    f"{path}: email value appears fabricated (not present in prompt)"
+                )
+
+    return violations
+
+
 # ---------------------------------------------------------------------------
 # FormatShield main class
 # ---------------------------------------------------------------------------
@@ -610,6 +663,7 @@ class FormatShield:
         output_type: type[Any] | None = None,
         debug: bool | None = None,
         *,
+        low_latency_mode: bool = False,
         temperature: float | None = None,
         max_tokens: int | None = None,
         seed: int | None = None,
@@ -628,6 +682,8 @@ class FormatShield:
                 Enum subclass, Literal[...], or list[T]). When provided and schema
                 is None, a JSON Schema is auto-derived from the type.
             debug: Override instance-level debug flag for this call.
+            low_latency_mode: Enable low-latency TTF budget capping and selective
+                reasoning in the TTF engine.
             temperature: Sampling temperature passed to the backend.
             max_tokens: Maximum tokens to generate.
             seed: RNG seed for reproducible sampling.
@@ -654,6 +710,37 @@ class FormatShield:
         # output_type: derive schema if not already provided
         if output_type is not None and schema_dict is None:
             schema_dict = _build_schema_from_output_type(output_type) or None
+
+        alignment_result = None
+        if schema_dict is not None and prompt.strip():
+            alignment_result = assess_schema_alignment(schema_dict, prompt)
+            if alignment_result.authority == SchemaAuthority.FALLBACK:
+                block_reason = (
+                    "Schema-prompt mismatch detected. "
+                    f"Alignment score={alignment_result.alignment_score:.2f}. "
+                    f"{alignment_result.explanation}"
+                )
+                self._hooks.emit(
+                    HOOK_REQUEST_POLICY_CHECK,
+                    {
+                        "phase": "schema_alignment",
+                        "allowed": False,
+                        "reason": block_reason,
+                        "model": self.model,
+                        "backend": self.backend_name,
+                    },
+                )
+                self._record_audit_event(
+                    "policy.schema_alignment.blocked",
+                    {
+                        "model": self.model,
+                        "backend": self.backend_name,
+                        "reason": block_reason,
+                        "alignment_score": alignment_result.alignment_score,
+                        "authority": alignment_result.authority.value,
+                    },
+                )
+                raise ValueError(block_reason)
 
         policy_pre_route: dict[str, Any] = {
             "phase": "pre_route",
@@ -726,7 +813,11 @@ class FormatShield:
             features=features,
             model_id=self.model,
             schema=schema_dict or {},
+            prompt=prompt,
         )
+        if alignment_result is not None and alignment_result.authority == SchemaAuthority.LOOSE:
+            if "schema_alignment_loose" not in failure_modes:
+                failure_modes.append("schema_alignment_loose")
 
         # Routing decision via OracleX with information-geometric Φ score
         phi_result = compute_routing_score(prompt, schema_dict or {})
@@ -915,6 +1006,7 @@ class FormatShield:
                 backend=self._backend,
                 ttf_fallback=self._ttf_fallback,
                 expose_thinking=self._expose_thinking,
+                low_latency_mode=low_latency_mode,
             )
             try:
                 thinking, output = await engine.generate(
@@ -1017,6 +1109,23 @@ class FormatShield:
                     schema_valid = True
                 except (json.JSONDecodeError, ValueError):
                     parsed = None
+
+        if (
+            decision.strategy == "direct"
+            and schema_dict is not None
+            and schema_valid
+            and isinstance(parsed, dict)
+        ):
+            grounding_violations = _collect_grounding_violations(parsed, schema_dict, prompt)
+            if grounding_violations:
+                schema_valid = False
+                if "anti_fabrication_violation" not in failure_modes:
+                    failure_modes.append("anti_fabrication_violation")
+                self._hooks.emit(
+                    HOOK_PARSE_ERROR,
+                    ValueError("; ".join(grounding_violations)),
+                    output,
+                )
 
         policy_post_output: dict[str, Any] = {
             "phase": "post_output",
@@ -1128,6 +1237,7 @@ class FormatShield:
         output_type: type[Any] | None = None,
         debug: bool | None = None,
         *,
+        low_latency_mode: bool = False,
         temperature: float | None = None,
         max_tokens: int | None = None,
         seed: int | None = None,
@@ -1147,6 +1257,7 @@ class FormatShield:
             schema: Pydantic model class or JSON Schema dict.
             output_type: Python type to cast output to (int, Enum, Literal, list[T]).
             debug: Override instance-level debug flag.
+            low_latency_mode: Enable low-latency TTF optimizations.
             temperature: Sampling temperature.
             max_tokens: Maximum tokens to generate.
             seed: RNG seed for reproducible sampling.
@@ -1179,6 +1290,7 @@ class FormatShield:
                                 schema,
                                 output_type,
                                 debug,
+                                low_latency_mode=low_latency_mode,
                                 temperature=temperature,
                                 max_tokens=max_tokens,
                                 seed=seed,
@@ -1211,6 +1323,7 @@ class FormatShield:
                     schema,
                     output_type,
                     debug,
+                    low_latency_mode=low_latency_mode,
                     temperature=temperature,
                     max_tokens=max_tokens,
                     seed=seed,
@@ -1239,8 +1352,22 @@ class FormatShield:
             elif isinstance(schema, dict):
                 schema_dict = schema
 
+        if schema_dict is not None and prompt.strip():
+            alignment_result = assess_schema_alignment(schema_dict, prompt)
+            if alignment_result.authority == SchemaAuthority.FALLBACK:
+                raise ValueError(
+                    "Schema-prompt mismatch detected for stream(). "
+                    f"Alignment score={alignment_result.alignment_score:.2f}. "
+                    f"{alignment_result.explanation}"
+                )
+
         features = self._scorer.score(prompt, schema=schema_dict, model_id=self.model)
-        failure_modes = self._detector.detect(features, self.model, schema_dict or {})
+        failure_modes = self._detector.detect(
+            features,
+            self.model,
+            schema_dict or {},
+            prompt=prompt,
+        )
         phi_result = compute_routing_score(prompt, schema_dict or {})
         stream_ctx = RoutingContext(
             backend_id=self.backend_name,
@@ -1395,6 +1522,7 @@ async def generate(
     model: str = "groq/llama-3.3-70b-versatile",
     output_type: type[Any] | None = None,
     *,
+    low_latency_mode: bool = False,
     temperature: float | None = None,
     max_tokens: int | None = None,
     seed: int | None = None,
@@ -1417,6 +1545,8 @@ async def generate(
         Model identifier in ``"provider/model"`` format.
     output_type:
         Python type to cast the output to (int, Enum, Literal, list[T]).
+    low_latency_mode:
+        Enable low-latency TTF optimizations.
     temperature:
         Sampling temperature passed to the backend.
     max_tokens:
@@ -1441,6 +1571,7 @@ async def generate(
         prompt,
         schema,
         output_type=output_type,
+        low_latency_mode=low_latency_mode,
         temperature=temperature,
         max_tokens=max_tokens,
         seed=seed,

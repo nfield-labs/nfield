@@ -303,12 +303,45 @@ class OracleX:
             components = (
                 f"λ̃₂={context.phi_lambda2:.3f} τ={context.phi_tau:.3f} ΔK={context.phi_delta_k:.3f}"
             )
+            
+            # Confidence reflects TWO signals:
+            # 1. Distance from threshold (far = more confident in decision)
+            # 2. Distance from 0.5 (how unambiguous is the zone itself)
+            # 
+            # Goal: "clearly in simple zone" (Φ=0.2) gets high confidence
+            #       "clearly in complex zone" (Φ=0.8) gets high confidence
+            #       "near threshold" (Φ≈0.65) gets medium confidence
+            
+            distance_from_threshold = abs(phi - threshold)
+            # How far is phi from the "neutral" 0.5 point? (unambiguity signal)
+            distance_from_neutral = abs(phi - 0.5)
+            
+            # Combine signals: threshold distance is primary, neutral distance is secondary
+            # At threshold ± 0.02: confidence = 0.50
+            # At threshold ± 0.20: confidence = 0.88
+            # Very close to neutral (0.45-0.55): max confidence capped at 0.70
+            
+            if distance_from_threshold < 0.02:
+                base_confidence = 0.50
+            elif distance_from_threshold > 0.20:
+                base_confidence = 0.88
+            else:
+                normalized = (distance_from_threshold - 0.02) / (0.20 - 0.02)
+                base_confidence = 0.50 + (0.88 - 0.50) * normalized
+            
+            # Adjust: if very close to neutral, cap confidence (ambiguous zone)
+            if distance_from_neutral < 0.05:
+                base_confidence = min(base_confidence, 0.70)
+            elif distance_from_neutral > 0.20:
+                # Far from neutral: boost confidence slightly
+                base_confidence = min(base_confidence + 0.05, 1.0)
+            
             if phi > threshold:
                 return RoutingDecision(
                     strategy="ttf",
                     expected_accuracy_delta=_TTF_ACCURACY_DELTA,
                     expected_overhead_pct=overhead_pct,
-                    confidence=min(abs(phi - threshold) * 2.0, 1.0),
+                    confidence=base_confidence,
                     explanation=(
                         f"OracleX Φ={phi:.3f} > threshold={threshold:.3f} → TTF ({components})."
                     ),
@@ -317,7 +350,7 @@ class OracleX:
                 strategy="direct",
                 expected_accuracy_delta=_DIRECT_ACCURACY_DELTA,
                 expected_overhead_pct=0.0,
-                confidence=min(abs(phi - threshold) * 2.0, 1.0),
+                confidence=base_confidence,
                 explanation=(
                     f"OracleX Φ={phi:.3f} ≤ threshold={threshold:.3f} → direct ({components})."
                 ),

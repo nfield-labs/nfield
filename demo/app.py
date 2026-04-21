@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import dataclasses
 import json
+import logging
 import os
 import time
 from pathlib import Path
@@ -33,6 +34,10 @@ from formatshield.observability.audit_log import (  # noqa: E402
 )
 from formatshield.oracle.routing_score import compute_routing_score  # noqa: E402
 from formatshield.semantic.evaluator import evaluate_semantic_pair  # noqa: E402
+from formatshield.semantic.schema_alignment import (  # noqa: E402
+    SchemaAuthority,
+    assess_schema_alignment,
+)
 from formatshield.ttf.engine import (  # noqa: E402
     _SC_PHI_THRESHOLD,
     DEFAULT_SC_K,
@@ -40,6 +45,7 @@ from formatshield.ttf.engine import (  # noqa: E402
 )
 
 app = FastAPI(title="FormatShield Demo")
+logger = logging.getLogger(__name__)
 
 _HTML = (Path(__file__).parent / "index.html").read_text(encoding="utf-8")
 
@@ -147,6 +153,10 @@ class CompareRequest(BaseModel):
     schema_text: str  # raw JSON string of the schema
     model: str = "groq/llama-3.3-70b-versatile"
     system_prompt: str = ""
+    # Low-latency TTF optimization (experimental)
+    # Enables: early exit (skip Pass 2 if conf ≥ 0.85), budget capping (max 512 tokens),
+    # selective reasoning (constrained fields only). Targets 2-3x latency improvement.
+    low_latency_mode: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -412,71 +422,128 @@ def _compute_demo_score(
 
 
 def _compute_verdict(fs: dict, raw: dict, semantic_eval: dict | None = None) -> dict:
-    """Compare both sides and produce a human-readable winner summary."""
+    """Compare both sides using weighted hierarchy: Correctness (4x) > Reliability (2x) > Performance (1x).
+    
+    This prioritizes semantic correctness over speed, as per research validation guidelines.
+    Performance (latency) only breaks ties when correctness is equal.
+    """
     points: dict[str, list[str]] = {"formatshield": [], "raw": [], "tie": []}
+    
+    # Weighted scoring: correctness >> reliability >> performance
+    fs_weighted_score = 0.0
+    raw_weighted_score = 0.0
 
     fs_ok = fs.get("ok", False)
     raw_ok = raw.get("ok", False)
 
-    # Validity
+    # ─────────────────────────────────────────────────────────────────────────────
+    # TIER 1: CORRECTNESS (4x weight) — schema validity & constraint enforcement
+    # ─────────────────────────────────────────────────────────────────────────────
+    
     fs_valid = fs_ok and fs.get("schema_valid", False)
     raw_valid = raw_ok and raw.get("schema_valid", False)
+    
     if fs_valid and not raw_valid:
-        points["formatshield"].append("Schema valid ✓ (raw output failed schema check)")
+        fs_weighted_score += 4.0
+        points["formatshield"].append("✓ CORRECTNESS: Schema valid (raw output failed schema check)")
     elif raw_valid and not fs_valid:
-        points["raw"].append("Schema valid ✓")
+        raw_weighted_score += 4.0
+        points["raw"].append("✓ CORRECTNESS: Schema valid")
     elif fs_valid and raw_valid:
         points["tie"].append("Both schema-valid")
     else:
         points["tie"].append("Both schema-invalid")
-
-    # Latency
-    fs_lat = fs.get("latency_ms") if fs_ok else None
-    raw_lat = raw.get("latency_ms") if raw_ok else None
-    if fs_lat and raw_lat:
-        diff = abs(fs_lat - raw_lat)
-        if diff < 80:
-            points["tie"].append(f"Latency within {diff:.0f} ms")
-        elif raw_lat < fs_lat:
-            points["raw"].append(f"Faster by {diff:.0f} ms ({raw_lat:.0f} vs {fs_lat:.0f})")
-        else:
-            points["formatshield"].append(
-                f"Faster by {diff:.0f} ms ({fs_lat:.0f} vs {raw_lat:.0f})"
-            )
-
-    # TTF routing
-    if fs_ok and fs.get("routing_strategy") == "ttf":
-        points["formatshield"].append("TTF activated — structured reasoning before output")
-    elif fs_ok:
-        points["formatshield"].append("Smart routing: direct mode sufficient for this prompt")
-
-    # Fallback resilience
-    if fs_ok and not fs.get("fallback_triggered", True):
-        points["formatshield"].append("No fallback needed — first-pass success")
-
-    # Schema violation evidence
+    
+    # Schema violation detection (constraint enforcement)
     if raw_ok and raw.get("schema_violation"):
+        fs_weighted_score += 4.0
         points["formatshield"].append(
-            f"Raw Groq violated schema constraint: {raw['schema_violation'][:120]}"
+            f"✓ CORRECTNESS: Raw Groq violated schema constraint: {raw['schema_violation'][:90]}"
         )
     if fs_ok and fs.get("schema_violation"):
-        points["raw"].append(f"FormatShield output violated schema: {fs['schema_violation'][:120]}")
+        raw_weighted_score += 4.0
+        points["raw"].append(f"✓ CORRECTNESS: FormatShield output violated schema: {fs['schema_violation'][:90]}")
 
+    # ─────────────────────────────────────────────────────────────────────────────
+    # TIER 2: RELIABILITY (2x weight) — semantic quality & fallback behavior
+    # ─────────────────────────────────────────────────────────────────────────────
+    
     if semantic_eval is not None:
         sem_winner = semantic_eval.get("winner")
         sem_delta = float(semantic_eval.get("delta", 0.0) or 0.0)
         sem_summary = str(semantic_eval.get("summary") or "")
+        
         if sem_summary:
-            if sem_winner == "formatshield":
-                points["formatshield"].append(f"Semantic signal: {sem_summary}")
-            elif sem_winner == "raw":
-                points["raw"].append(f"Semantic signal: {sem_summary}")
+            if sem_winner == "formatshield" and abs(sem_delta) >= 1.0:
+                fs_weighted_score += 2.0
+                points["formatshield"].append(f"✓ RELIABILITY: Semantic signal: {sem_summary}")
+            elif sem_winner == "raw" and abs(sem_delta) >= 1.0:
+                raw_weighted_score += 2.0
+                points["raw"].append(f"✓ RELIABILITY: Semantic signal: {sem_summary}")
             else:
                 points["tie"].append(f"Semantic signal: {sem_summary}")
+    
+    # Fallback resilience (FormatShield advantage)
+    if fs_ok and not fs.get("fallback_triggered", True):
+        fs_weighted_score += 2.0
+        points["formatshield"].append("✓ RELIABILITY: First-pass success (no fallback needed)")
+    elif fs_ok and fs.get("fallback_triggered"):
+        raw_weighted_score += 1.0
+        points["raw"].append("Note: FormatShield needed fallback")
+    
+    # TTF routing quality (FormatShield advantage)
+    if fs_ok and fs.get("routing_strategy") == "ttf":
+        points["formatshield"].append("ℹ Routing: TTF activated — structured reasoning before output")
+    elif fs_ok:
+        points["formatshield"].append("ℹ Routing: Direct mode sufficient for this prompt")
 
-    # Overall winner
-    fs_score = len(points["formatshield"])
-    raw_score = len(points["raw"])
+    # ─────────────────────────────────────────────────────────────────────────────
+    # TIER 3: PERFORMANCE (1x weight) — latency (tiebreaker only)
+    # ─────────────────────────────────────────────────────────────────────────────
+    
+    fs_lat = fs.get("latency_ms") if fs_ok else None
+    raw_lat = raw.get("latency_ms") if raw_ok else None
+    latency_note = ""
+    
+    if fs_lat and raw_lat:
+        diff = abs(fs_lat - raw_lat)
+        if diff < 80:
+            latency_note = f"(latency within {diff:.0f} ms — performance tie)"
+        elif raw_lat < fs_lat:
+            raw_weighted_score += 1.0
+            latency_note = f"(Raw faster by {diff:.0f} ms: {raw_lat:.0f} vs {fs_lat:.0f})"
+        else:
+            fs_weighted_score += 1.0
+            latency_note = f"(FS faster by {diff:.0f} ms: {fs_lat:.0f} vs {raw_lat:.0f})"
+
+    # ─────────────────────────────────────────────────────────────────────────────
+    # EXTRACTION TASK PENALTY: When both use direct mode and produce identical outputs,
+    # FormatShield's overhead (feature scoring + oracle computation) is pure waste.
+    # On simple extraction tasks, raw Groq wins purely on latency.
+    # ─────────────────────────────────────────────────────────────────────────────
+    
+    fs_routing = fs.get("routing_strategy") if fs_ok else None
+    both_direct = fs_routing == "direct" and not (raw_ok and raw.get("schema_violation"))
+    identical_correctness = fs_weighted_score == raw_weighted_score and fs_weighted_score > 0
+    
+    if both_direct and identical_correctness and fs_lat and raw_lat:
+        # On extraction tasks, latency becomes the primary factor (not a tiebreaker)
+        latency_delta = fs_lat - raw_lat
+        if latency_delta > 100:  # Significant overhead (>100ms)
+            raw_weighted_score += 3.0  # Heavy penalty for unnecessary overhead on extraction
+            latency_note = (
+                f"(Raw faster by {abs(latency_delta):.0f}ms on extraction task: "
+                f"{raw_lat:.0f} vs {fs_lat:.0f})"
+            )
+            points["raw"].append(
+                f"✓ EXTRACTION: Direct mode + identical output → latency is decisive. "
+                f"FormatShield overhead {latency_delta:.0f}ms not justified."
+            )
+    
+    # ─────────────────────────────────────────────────────────────────────────────
+    # Determine winner based on weighted scores
+    # ─────────────────────────────────────────────────────────────────────────────
+    
     if not fs_ok and not raw_ok:
         winner = "none"
         summary = "Both calls failed."
@@ -486,29 +553,15 @@ def _compute_verdict(fs: dict, raw: dict, semantic_eval: dict | None = None) -> 
     elif not raw_ok:
         winner = "formatshield"
         summary = "Raw Groq call failed; FormatShield succeeded."
-    elif fs_score > raw_score:
+    elif fs_weighted_score > raw_weighted_score:
         winner = "formatshield"
-        summary = "FormatShield wins on this run."
-    elif raw_score > fs_score:
+        summary = f"FormatShield wins on correctness + reliability. {latency_note}".strip()
+    elif raw_weighted_score > fs_weighted_score:
         winner = "raw"
-        summary = "Raw Groq wins on this run."
+        summary = f"Raw Groq wins. {latency_note}".strip()
     else:
         winner = "tie"
-        summary = "Comparable result — FormatShield adds routing intelligence at no cost."
-
-    if semantic_eval is not None:
-        sem_winner = semantic_eval.get("winner")
-        sem_delta = float(semantic_eval.get("delta", 0.0) or 0.0)
-        sem_summary = str(semantic_eval.get("summary") or "")
-        if winner == "tie" and sem_winner in {"formatshield", "raw"} and abs(sem_delta) >= 2.0:
-            winner = sem_winner
-            summary = f"{summary} Tie broken by semantic signal: {sem_summary}"
-        elif winner == "formatshield" and sem_winner == "raw" and abs(sem_delta) >= 8.0:
-            winner = "tie"
-            summary = f"{summary} Reliability favors FormatShield but semantic signal favors raw."
-        elif winner == "raw" and sem_winner == "formatshield" and abs(sem_delta) >= 8.0:
-            winner = "tie"
-            summary = f"{summary} Reliability favors raw but semantic signal favors FormatShield."
+        summary = f"Comparable result on correctness + reliability. {latency_note}".strip()
 
     return {
         "winner": winner,
@@ -516,6 +569,10 @@ def _compute_verdict(fs: dict, raw: dict, semantic_eval: dict | None = None) -> 
         "formatshield_points": points["formatshield"],
         "raw_points": points["raw"],
         "tie_points": points["tie"],
+        "weighted_scores": {
+            "formatshield": round(fs_weighted_score, 1),
+            "raw": round(raw_weighted_score, 1),
+        },
     }
 
 
@@ -635,6 +692,18 @@ async def compare(req: CompareRequest) -> dict:
     if not req.prompt.strip():
         raise HTTPException(status_code=400, detail="Prompt must not be empty")
 
+    alignment = assess_schema_alignment(schema_dict, req.prompt)
+    if alignment.authority == SchemaAuthority.FALLBACK:
+        logger.warning("Schema alignment blocked compare: %s", alignment.explanation)
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Schema-prompt mismatch detected. "
+                f"Alignment score={alignment.alignment_score:.2f}. "
+                f"{alignment.explanation}"
+            ),
+        )
+
     # Phi score — pure Python, no API call
     phi = compute_routing_score(req.prompt, schema_dict)
     routing_mode = _compute_routing_mode(phi.phi)
@@ -670,9 +739,20 @@ async def compare(req: CompareRequest) -> dict:
         "pass2_temperature": round(pass2_temp, 3) if (will_use_ttf and pass2_temp is not None) else None,
         "pass2_temperature_formula": "max(0.05, 0.7 * (1.0 - tau))",
         "tau_constraint_tightness": round(phi.tau, 3),
+        "schema_alignment": {
+            "score": round(alignment.alignment_score, 3),
+            "authority": alignment.authority.value,
+            "explanation": alignment.explanation,
+        },
     }
 
-    fs_result = await _call_with_formatshield(req.prompt, schema_dict, req.model, req.system_prompt)
+    fs_result = await _call_with_formatshield(
+        req.prompt,
+        schema_dict,
+        req.model,
+        req.system_prompt,
+        req.low_latency_mode,
+    )
     raw_result = await _call_raw_groq(
         req.prompt, req.schema_text, schema_dict, req.model, req.system_prompt
     )
@@ -710,13 +790,21 @@ async def compare(req: CompareRequest) -> dict:
 
 
 async def _call_with_formatshield(
-    prompt: str, schema: dict, model: str, system_prompt: str = ""
+    prompt: str,
+    schema: dict,
+    model: str,
+    system_prompt: str = "",
+    low_latency_mode: bool = False,
 ) -> dict:
     try:
         shield = fs.FormatShield(model=model, audit_logger=_DEMO_AUDIT_LOGGER)
         t0 = time.perf_counter()
         full_prompt = f"{system_prompt}\n\n{prompt}".strip() if system_prompt else prompt
-        result: fs.GenerationResult = await shield.generate(prompt=full_prompt, schema=schema)
+        result: fs.GenerationResult = await shield.generate(
+            prompt=full_prompt,
+            schema=schema,
+            low_latency_mode=low_latency_mode,
+        )
         latency = round((time.perf_counter() - t0) * 1000, 1)
 
         try:

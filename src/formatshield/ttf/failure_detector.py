@@ -47,6 +47,9 @@ FAILURE_MODES: list[str] = [
     "short_prompt",  # not enough context for TTF to help
     "template_fill",  # highly templated prompt → no reasoning needed
     "ambiguous_schema",  # anyOf/oneOf at root → TTF can't help schema selection
+    "schema_reasoning_mismatch",  # prompt intent conflicts with schema intent
+    "reasoning_with_flat_schema",  # reasoning prompt but schema cannot express it well
+    "mislabeled_extraction",  # extraction phrasing mixed with reasoning intent
 ]
 
 # ---------------------------------------------------------------------------
@@ -125,6 +128,7 @@ class FailureModeDetector:
         features: ComplexityFeatures,
         model_id: str,
         schema: dict[str, Any] | None = None,
+        prompt: str | None = None,
     ) -> list[str]:
         """Run all failure-mode checks and return detected mode labels.
 
@@ -144,7 +148,7 @@ class FailureModeDetector:
             failure modes were detected and TTF routing stands.
         """
         try:
-            return self._detect_impl(features, model_id, schema or {})
+            return self._detect_impl(features, model_id, schema or {}, prompt)
         except Exception:
             logger.warning(
                 "FailureModeDetector.detect: unexpected error — returning empty list",
@@ -238,16 +242,46 @@ class FailureModeDetector:
         features: ComplexityFeatures,
         model_id: str,
         schema: dict[str, Any],
+        prompt: str | None,
     ) -> list[str]:
         detected: list[str] = []
+        has_reasoning_intent = False
+
+        if prompt:
+            from formatshield.semantic.schema_alignment import assess_schema_alignment
+            from formatshield.semantic.semantic_failure_detector import (
+                detect_mislabeled_extraction,
+                detect_reasoning_intent,
+                detect_reasoning_with_flat_schema,
+                detect_schema_reasoning_mismatch,
+            )
+
+            has_reasoning_intent = detect_reasoning_intent(prompt)
+
+            alignment = assess_schema_alignment(schema, prompt)
+            schema_mismatch = detect_schema_reasoning_mismatch(
+                schema,
+                prompt,
+                alignment.alignment_score,
+            )
+            if schema_mismatch:
+                detected.append("schema_reasoning_mismatch")
+
+            reasoning_flat_schema = detect_reasoning_with_flat_schema(schema, prompt)
+            if reasoning_flat_schema:
+                detected.append("reasoning_with_flat_schema")
+
+            mislabeled_extraction = detect_mislabeled_extraction(prompt)
+            if mislabeled_extraction:
+                detected.append("mislabeled_extraction")
 
         if self._is_native_thinker(model_id):
             detected.append("native_thinker")
 
-        if self._is_short_prompt(features):
+        if self._is_short_prompt(features) and not has_reasoning_intent:
             detected.append("short_prompt")
 
-        if self._is_simple_extraction(features):
+        if self._is_simple_extraction(features) and not has_reasoning_intent:
             detected.append("simple_extraction")
 
         if self._is_schema_too_constrained(features, schema):
