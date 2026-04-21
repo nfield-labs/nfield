@@ -8,8 +8,9 @@ Defines the core dataclasses that flow through the reasoning pipeline:
 - ReasoningTaskConfig: feature flags and tuning parameters
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Literal, Optional
+from typing import Any, Literal
 
 
 @dataclass
@@ -29,7 +30,7 @@ class ConstraintRule:
     schema_path: str
     constraint_value: Any
     injection_point: Literal["pass1_system", "pass1_user", "pass2_system", "validation"]
-    validator: Optional[Callable[[Any], bool]] = None
+    validator: Callable[[Any], bool] | None = None
     priority: Literal["hard", "soft"] = "soft"
 
     def __post_init__(self) -> None:
@@ -54,7 +55,7 @@ class ThinkingShaping:
 
     decomposition_strategy: str
     constraint_focus: str
-    vocabulary_bridge: Optional[str] = None
+    vocabulary_bridge: str | None = None
     thinking_budget: int = 256
 
     def __post_init__(self) -> None:
@@ -78,11 +79,11 @@ class ReasoningTask:
 
     task_type: Literal["extraction", "classification", "reasoning"]
     instructions: str
-    constraints: List[ConstraintRule] = field(default_factory=list)
-    field_dependencies: Dict[str, List[str]] = field(default_factory=dict)
+    constraints: list[ConstraintRule] = field(default_factory=list)
+    field_dependencies: dict[str, list[str]] = field(default_factory=dict)
     schema_summary: str = ""
-    vocabulary_bridge: Optional[str] = None
-    thinking_strategy: Optional[str] = None
+    vocabulary_bridge: str | None = None
+    thinking_strategy: str | None = None
     estimated_tokens: int = 256
 
     def __post_init__(self) -> None:

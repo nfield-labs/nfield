@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 
 _COT_KEYWORDS: frozenset[str] = frozenset(
     {
+        # Explicit computation / logical reasoning
         "because",
         "therefore",
         "step",
@@ -46,6 +47,32 @@ _COT_KEYWORDS: frozenset[str] = frozenset(
         "compare",
         "evaluate",
         "explain",
+        # Implicit reasoning — domain action verbs that require multi-step inference
+        # even when no explicit computation keyword appears in the prompt.
+        # Medical/clinical: treatment planning, diagnosis, prescription
+        "assess",
+        "assesses",
+        "assessing",
+        "recommend",
+        "recommends",
+        "prescribe",
+        "prescribes",
+        "prescribed",
+        "diagnose",
+        "diagnoses",
+        "diagnosing",
+        # Cross-domain planning / decision-making
+        "plan",
+        "classify",
+        "classifies",
+        "predict",
+        "predicts",
+        "determine",
+        "determines",
+        "suggest",
+        "suggests",
+        "optimize",
+        "optimise",
     }
 )
 

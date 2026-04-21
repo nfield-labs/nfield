@@ -8,7 +8,13 @@ from pathlib import Path
 import pytest
 
 from formatshield.oracle.context import RoutingContext, TelemetryRecord
-from formatshield.oracle.oracle_x import OracleX
+from formatshield.oracle.oracle_x import (
+    _ENTROPY_COMPLEXITY_THRESHOLD,
+    _EXTRACTION_TAU_THRESHOLD,
+    _FLAT_SCHEMA_LAMBDA2,
+    _SEMANTIC_REASONING_OPS_THRESHOLD,
+    OracleX,
+)
 from formatshield.scorer.features import ComplexityFeatures
 
 # ---------------------------------------------------------------------------
@@ -300,6 +306,157 @@ def test_use_safe_abstain_property() -> None:
         explanation="test",
     )
     assert d2.use_safe_abstain is False
+
+
+# ---------------------------------------------------------------------------
+# Rule 2.5 — flat schema + low-τ extraction override
+# ---------------------------------------------------------------------------
+
+
+def test_flat_schema_low_tau_routes_direct() -> None:
+    """Flat schema (λ̃₂<0.20) + low τ + zero reasoning ops must route direct.
+
+    Pure extraction: schema has no depth, few constraints, and no CoT keywords
+    in the prompt — TTF adds latency with no benefit.
+    """
+    oracle = _make_oracle()
+    ctx = RoutingContext(
+        backend_id="groq",
+        model_id="llama-3.1-8b-instant",
+        task_id="extraction-test",
+        schema_family="extraction",
+        prompt_id="extract001",
+        phi_score=0.75,  # above threshold but flat schema + 0 ops overrides
+        phi_lambda2=0.05,  # flat
+        phi_tau=0.25,  # low constraint
+        phi_delta_k=0.60,
+    )
+    decision = oracle.predict(
+        _make_features(required_reasoning_ops=0),
+        backend="groq",
+        model_id="llama-3.1-8b-instant",
+        context=ctx,
+    )
+    assert decision.strategy == "direct"
+    assert "extraction" in decision.explanation.lower() or "τ=" in decision.explanation
+
+
+def test_flat_schema_high_tau_still_routes_ttf() -> None:
+    """Flat schema with HIGH τ (reasoning-heavy, many constraints) must still route TTF.
+
+    The finance risk assessment demo is exactly this case:
+    λ̃₂=0, τ=0.56 (above 0.40 threshold), ΔK=0.83 → must TTF.
+    """
+    oracle = _make_oracle()
+    ctx = RoutingContext(
+        backend_id="groq",
+        model_id="llama-3.1-8b-instant",
+        task_id="finance-risk",
+        schema_family="finance",
+        prompt_id="finance001",
+        phi_score=0.685,
+        phi_lambda2=0.0,
+        phi_tau=0.56,  # above 0.40 — reasoning task, not extraction
+        phi_delta_k=0.834,
+    )
+    decision = oracle.predict(
+        _make_features(),
+        backend="groq",
+        model_id="llama-3.1-8b-instant",
+        context=ctx,
+    )
+    assert decision.strategy == "ttf"
+
+
+def test_extraction_override_explanation_mentions_tau() -> None:
+    """Extraction override explanation must expose τ value for observability."""
+    oracle = _make_oracle()
+    ctx = RoutingContext(
+        backend_id="groq",
+        model_id="llama-3.1-8b-instant",
+        task_id="test",
+        schema_family="extraction",
+        prompt_id="obs001",
+        phi_score=0.80,
+        phi_lambda2=0.10,
+        phi_tau=0.30,
+        phi_delta_k=0.50,
+    )
+    decision = oracle.predict(
+        _make_features(required_reasoning_ops=0),
+        backend="groq",
+        model_id="llama-3.1-8b-instant",
+        context=ctx,
+    )
+    assert decision.strategy == "direct"
+    assert "τ=" in decision.explanation
+
+
+def test_semantic_complexity_overrides_extraction_shortcut() -> None:
+    """Even with flat schema + low τ, a prompt with CoT keywords must route TTF.
+
+    Medical plan with 'calculate eGFR' has required_reasoning_ops >= 1.
+    The extraction override must NOT fire in this case.
+    """
+    oracle = _make_oracle()
+    ctx = RoutingContext(
+        backend_id="groq",
+        model_id="llama-3.1-8b-instant",
+        task_id="medical",
+        schema_family="medical",
+        prompt_id="med001",
+        phi_score=0.70,  # above threshold
+        phi_lambda2=0.05,  # flat schema
+        phi_tau=0.30,  # low constraint (would have triggered shortcut without ops check)
+        phi_delta_k=0.55,
+    )
+    # 1 reasoning op (e.g. "calculate") — semantic complexity present
+    decision = oracle.predict(
+        _make_features(required_reasoning_ops=_SEMANTIC_REASONING_OPS_THRESHOLD),
+        backend="groq",
+        model_id="llama-3.1-8b-instant",
+        context=ctx,
+    )
+    assert decision.strategy == "ttf"
+
+
+def test_high_entropy_prompt_overrides_extraction_shortcut() -> None:
+    """Flat schema + low τ + high token entropy must NOT route direct.
+
+    A lexically dense prompt (high entropy) signals a complex technical task
+    even when no CoT keywords are present.  The entropy gate must fire.
+    """
+    oracle = _make_oracle()
+    ctx = RoutingContext(
+        backend_id="groq",
+        model_id="llama-3.1-8b-instant",
+        task_id="dense-spec",
+        schema_family="technical",
+        prompt_id="entropy001",
+        phi_score=0.72,
+        phi_lambda2=0.05,
+        phi_tau=0.30,
+        phi_delta_k=0.60,
+    )
+    # zero reasoning keywords but very high entropy (dense technical vocabulary)
+    decision = oracle.predict(
+        _make_features(
+            required_reasoning_ops=0,
+            token_entropy=_ENTROPY_COMPLEXITY_THRESHOLD + 0.02,
+        ),
+        backend="groq",
+        model_id="llama-3.1-8b-instant",
+        context=ctx,
+    )
+    assert decision.strategy == "ttf"
+
+
+def test_constants_have_correct_types() -> None:
+    """Routing threshold constants must be the expected types."""
+    assert isinstance(_FLAT_SCHEMA_LAMBDA2, float)
+    assert isinstance(_EXTRACTION_TAU_THRESHOLD, float)
+    assert isinstance(_SEMANTIC_REASONING_OPS_THRESHOLD, int)
+    assert isinstance(_ENTROPY_COMPLEXITY_THRESHOLD, float)
 
 
 # ---------------------------------------------------------------------------

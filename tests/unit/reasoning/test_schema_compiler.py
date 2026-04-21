@@ -9,8 +9,9 @@ Tests the schema_compiler module's ability to:
 """
 
 import pytest
+
 from formatshield.oracle.routing_score import compute_routing_score
-from formatshield.reasoning import compile_schema_to_task, ReasoningTask
+from formatshield.reasoning import compile_schema_to_task
 
 
 class TestTaskTypeDetection:
@@ -23,9 +24,9 @@ class TestTaskTypeDetection:
             "properties": {
                 "first_name": {"type": "string"},
                 "last_name": {"type": "string"},
-                "email": {"type": "string"}
+                "email": {"type": "string"},
             },
-            "required": ["first_name", "last_name", "email"]
+            "required": ["first_name", "last_name", "email"],
         }
         routing_score = compute_routing_score("Extract personal info", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -40,9 +41,9 @@ class TestTaskTypeDetection:
                 "category": {"enum": ["A", "B", "C"]},
                 "priority": {"enum": ["low", "medium", "high"]},
                 "description": {"type": "string"},
-                "tags": {"type": "array", "items": {"type": "string"}}
+                "tags": {"type": "array", "items": {"type": "string"}},
             },
-            "required": ["category", "priority"]
+            "required": ["category", "priority"],
         }
         routing_score = compute_routing_score("Classify this item", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -69,22 +70,22 @@ class TestTaskTypeDetection:
                                 "properties": {
                                     "name": {"type": "string"},
                                     "cost": {"type": "number"},
-                                    "benefit": {"type": "number"}
-                                }
-                            }
-                        }
-                    }
+                                    "benefit": {"type": "number"},
+                                },
+                            },
+                        },
+                    },
                 },
                 "constraints": {
                     "type": "object",
                     "properties": {
                         "time_limit": {"type": "string"},
                         "budget": {"type": "number"},
-                        "regulatory_requirements": {"type": "array", "items": {"type": "string"}}
-                    }
-                }
+                        "regulatory_requirements": {"type": "array", "items": {"type": "string"}},
+                    },
+                },
             },
-            "required": ["decision"]
+            "required": ["decision"],
         }
         routing_score = compute_routing_score("Make a complex decision", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -101,11 +102,8 @@ class TestInstructionGeneration:
         """Extraction: direct mapping, no reasoning"""
         schema = {
             "type": "object",
-            "properties": {
-                "name": {"type": "string"},
-                "age": {"type": "integer"}
-            },
-            "required": ["name"]
+            "properties": {"name": {"type": "string"}, "age": {"type": "integer"}},
+            "required": ["name"],
         }
         routing_score = compute_routing_score("Extract data", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -123,9 +121,9 @@ class TestInstructionGeneration:
             "properties": {
                 "status": {"enum": ["pending", "approved", "rejected"]},
                 "priority": {"enum": ["low", "high"]},
-                "notes": {"type": "string"}
+                "notes": {"type": "string"},
             },
-            "required": ["status"]
+            "required": ["status"],
         }
         routing_score = compute_routing_score("Classify status", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -145,9 +143,9 @@ class TestInstructionGeneration:
                 "evidence": {"type": "array", "items": {"type": "string"}},
                 "constraints": {"type": "object", "properties": {}},
                 "dependencies": {"type": "object", "properties": {}},
-                "tradeoffs": {"type": "array", "items": {"type": "string"}}
+                "tradeoffs": {"type": "array", "items": {"type": "string"}},
             },
-            "required": ["recommendation"]
+            "required": ["recommendation"],
         }
         routing_score = compute_routing_score("Complex decision", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -164,10 +162,7 @@ class TestDependencyExtraction:
         """Flat schema: fields have no dependencies"""
         schema = {
             "type": "object",
-            "properties": {
-                "first": {"type": "string"},
-                "second": {"type": "string"}
-            }
+            "properties": {"first": {"type": "string"}, "second": {"type": "string"}},
         }
         routing_score = compute_routing_score("Test", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -182,12 +177,9 @@ class TestDependencyExtraction:
             "properties": {
                 "address": {
                     "type": "object",
-                    "properties": {
-                        "street": {"type": "string"},
-                        "city": {"type": "string"}
-                    }
+                    "properties": {"street": {"type": "string"}, "city": {"type": "string"}},
                 }
-            }
+            },
         }
         routing_score = compute_routing_score("Test", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -201,12 +193,12 @@ class TestDependencyExtraction:
             "type": "object",
             "properties": {
                 "has_children": {"type": "boolean"},
-                "num_children": {"type": "integer"}
+                "num_children": {"type": "integer"},
             },
             "dependentSchemas": {
                 "if": {"properties": {"has_children": {"const": True}}},
-                "then": {"required": ["num_children"]}
-            }
+                "then": {"required": ["num_children"]},
+            },
         }
         routing_score = compute_routing_score("Test", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -220,10 +212,7 @@ class TestTokenEstimation:
 
     def test_extraction_minimal_budget(self):
         """Extraction task: minimal tokens (baseline)"""
-        schema = {
-            "type": "object",
-            "properties": {"name": {"type": "string"}}
-        }
+        schema = {"type": "object", "properties": {"name": {"type": "string"}}}
         routing_score = compute_routing_score("Extract", schema)
         task = compile_schema_to_task(schema, routing_score)
 
@@ -237,8 +226,8 @@ class TestTokenEstimation:
             "properties": {
                 "status": {"enum": ["A", "B"]},
                 "priority": {"enum": ["low", "high"]},
-                "tags": {"type": "array", "items": {"type": "string"}}
-            }
+                "tags": {"type": "array", "items": {"type": "string"}},
+            },
         }
         routing_score = compute_routing_score("Classify", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -256,8 +245,8 @@ class TestTokenEstimation:
                 "tradeoffs": {"type": "array"},
                 "constraints": {"type": "object"},
                 "dependencies": {"type": "object"},
-                "evidence": {"type": "array"}
-            }
+                "evidence": {"type": "array"},
+            },
         }
         routing_score = compute_routing_score("Reason", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -273,10 +262,7 @@ class TestVocabularyGapDetection:
         """ΔK ≤ 0.5: no vocabulary bridge needed"""
         schema = {
             "type": "object",
-            "properties": {
-                "status": {"type": "string"},
-                "priority": {"type": "string"}
-            }
+            "properties": {"status": {"type": "string"}, "priority": {"type": "string"}},
         }
         routing_score = compute_routing_score("Simple prompt matching schema", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -289,22 +275,21 @@ class TestVocabularyGapDetection:
         """ΔK > 0.5: vocabulary bridge injected"""
         schema = {
             "type": "object",
-            "properties": {
-                "status": {"type": "string"},
-                "priority": {"type": "string"}
-            }
+            "properties": {"status": {"type": "string"}, "priority": {"type": "string"}},
         }
         # Use very different terminology to trigger high ΔK
         routing_score = compute_routing_score(
-            "What is the current state and urgency level with completely different wording?",
-            schema
+            "What is the current state and urgency level with completely different wording?", schema
         )
         task = compile_schema_to_task(schema, routing_score)
 
         # When ΔK is high, include vocabulary bridge
         if routing_score.delta_k > 0.5:
             assert task.vocabulary_bridge is not None
-            assert "field names" in task.vocabulary_bridge.lower() or "schema" in task.vocabulary_bridge.lower()
+            assert (
+                "field names" in task.vocabulary_bridge.lower()
+                or "schema" in task.vocabulary_bridge.lower()
+            )
 
 
 class TestSchemaSummary:
@@ -317,9 +302,9 @@ class TestSchemaSummary:
             "properties": {
                 "a": {"type": "string"},
                 "b": {"type": "string"},
-                "c": {"type": "string"}
+                "c": {"type": "string"},
             },
-            "required": ["a", "b"]
+            "required": ["a", "b"],
         }
         routing_score = compute_routing_score("Test", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -334,8 +319,8 @@ class TestSchemaSummary:
             "properties": {
                 "status": {"enum": ["A", "B"]},
                 "priority": {"enum": ["low", "high"]},
-                "name": {"type": "string"}
-            }
+                "name": {"type": "string"},
+            },
         }
         routing_score = compute_routing_score("Test", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -352,8 +337,8 @@ class TestSchemaSummary:
                 "name": {"type": "string"},
                 "age": {"type": "integer"},
                 "tags": {"type": "array", "items": {"type": "string"}},
-                "metadata": {"type": "object", "properties": {}}
-            }
+                "metadata": {"type": "object", "properties": {}},
+            },
         }
         routing_score = compute_routing_score("Test", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -370,7 +355,7 @@ class TestReasoningTaskDataContract:
         schema = {
             "type": "object",
             "properties": {"field": {"type": "string"}},
-            "required": ["field"]
+            "required": ["field"],
         }
         routing_score = compute_routing_score("Test", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -383,10 +368,7 @@ class TestReasoningTaskDataContract:
 
     def test_task_type_is_valid_enum(self):
         """task_type is one of: extraction, classification, reasoning"""
-        schema = {
-            "type": "object",
-            "properties": {"field": {"type": "string"}}
-        }
+        schema = {"type": "object", "properties": {"field": {"type": "string"}}}
         routing_score = compute_routing_score("Test", schema)
         task = compile_schema_to_task(schema, routing_score)
 
@@ -397,7 +379,7 @@ class TestReasoningTaskDataContract:
         schema = {
             "type": "object",
             "properties": {"field": {"type": "string"}},
-            "required": ["field"]
+            "required": ["field"],
         }
         routing_score = compute_routing_score("Test", schema)
         task = compile_schema_to_task(schema, routing_score)
@@ -409,7 +391,7 @@ class TestReasoningTaskDataContract:
         """field_dependencies is dict of field → list of dependencies"""
         schema = {
             "type": "object",
-            "properties": {"a": {"type": "string"}, "b": {"type": "string"}}
+            "properties": {"a": {"type": "string"}, "b": {"type": "string"}},
         }
         routing_score = compute_routing_score("Test", schema)
         task = compile_schema_to_task(schema, routing_score)

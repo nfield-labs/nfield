@@ -11,15 +11,15 @@ This test DRIVES the implementation. It should FAIL initially.
 """
 
 import pytest
-from typing import Any, Dict
+
 from formatshield.oracle.routing_score import compute_routing_score
 from formatshield.reasoning import (
+    ConstraintRule,
+    ReasoningTask,
+    ThinkingShaping,
     compile_schema_to_task,
     extract_constraints,
     shape_thinking_with_phi,
-    ReasoningTask,
-    ConstraintRule,
-    ThinkingShaping,
 )
 
 
@@ -33,9 +33,9 @@ class TestSchemaCompilation:
             "properties": {
                 "name": {"type": "string"},
                 "email": {"type": "string"},
-                "age": {"type": "integer"}
+                "age": {"type": "integer"},
             },
-            "required": ["name", "email"]
+            "required": ["name", "email"],
         }
 
         routing_score = compute_routing_score("Extract contact info", schema)
@@ -57,9 +57,9 @@ class TestSchemaCompilation:
                 },
                 "special_category": {"type": "boolean"},
                 "purpose": {"type": "string"},
-                "additional_field": {"type": "string"}
+                "additional_field": {"type": "string"},
             },
-            "required": ["processing_basis"]
+            "required": ["processing_basis"],
         }
 
         routing_score = compute_routing_score("Classify GDPR processing basis", schema)
@@ -70,7 +70,8 @@ class TestSchemaCompilation:
         assert "processing_basis" in task.instructions.lower()
 
     def test_reasoning_task_detection(self):
-        """Complex interconnected schema → extraction, classification, or reasoning task (depending on λ̃₂)"""
+        """Complex interconnected schema → extraction, classification, or reasoning task
+        (depending on λ̃₂)"""
         schema = {
             "type": "object",
             "properties": {
@@ -80,7 +81,7 @@ class TestSchemaCompilation:
                 "alternative_options": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "minItems": 1
+                    "minItems": 1,
                 },
                 "decision_criteria": {
                     "type": "object",
@@ -88,18 +89,18 @@ class TestSchemaCompilation:
                         "cost_benefit_favorable": {"type": "boolean"},
                         "stakeholder_impact": {"type": "string"},
                         "regulatory_impact": {"type": "string"},
-                        "competitive_advantage": {"type": "string"}
-                    }
+                        "competitive_advantage": {"type": "string"},
+                    },
                 },
                 "dependencies": {
                     "type": "object",
                     "properties": {
                         "related_decisions": {"type": "array", "items": {"type": "string"}},
-                        "blocking_factors": {"type": "array", "items": {"type": "string"}}
-                    }
-                }
+                        "blocking_factors": {"type": "array", "items": {"type": "string"}},
+                    },
+                },
             },
-            "required": ["recommendation", "risk_level"]
+            "required": ["recommendation", "risk_level"],
         }
 
         routing_score = compute_routing_score("Recommend strategy considering tradeoffs", schema)
@@ -119,8 +120,8 @@ class TestConstraintExtraction:
             "type": "object",
             "properties": {
                 "status": {"enum": ["pending", "approved", "rejected"]},
-                "priority": {"enum": ["low", "medium", "high"]}
-            }
+                "priority": {"enum": ["low", "medium", "high"]},
+            },
         }
         prompt = "What is the status of the request?"
 
@@ -141,14 +142,12 @@ class TestConstraintExtraction:
             "type": "object",
             "properties": {
                 "transfer_to_third_country": {"type": "boolean"},
-                "transfer_mechanism": {
-                    "enum": ["SCCs", "BCRs", "Adequacy Decision"]
-                }
+                "transfer_mechanism": {"enum": ["SCCs", "BCRs", "Adequacy Decision"]},
             },
             "dependentSchemas": {
                 "if": {"properties": {"transfer_to_third_country": {"const": True}}},
-                "then": {"required": ["transfer_mechanism"]}
-            }
+                "then": {"required": ["transfer_mechanism"]},
+            },
         }
         prompt = "Check if data is transferred and how."
 
@@ -163,11 +162,7 @@ class TestConstraintExtraction:
         """Extract vocabulary mapping when ΔK > threshold"""
         schema = {
             "type": "object",
-            "properties": {
-                "processing_basis": {
-                    "enum": ["consent", "legitimate_interest"]
-                }
-            }
+            "properties": {"processing_basis": {"enum": ["consent", "legitimate_interest"]}},
         }
         prompt = "Does the user give permission or is there a business reason?"
 
@@ -176,7 +171,13 @@ class TestConstraintExtraction:
 
         # Should include vocabulary mapping if ΔK is high
         if routing_score.delta_k > 0.5:
-            assert any("vocabulary" in r.rule_type.lower() or "bridge" in r.description.lower() for r in rules) or len(rules) > 0
+            assert (
+                any(
+                    "vocabulary" in r.rule_type.lower() or "bridge" in r.description.lower()
+                    for r in rules
+                )
+                or len(rules) > 0
+            )
 
 
 class TestPhiController:
@@ -186,17 +187,17 @@ class TestPhiController:
         """Low λ̃₂ → flat extraction strategy"""
         schema = {
             "type": "object",
-            "properties": {
-                "name": {"type": "string"},
-                "email": {"type": "string"}
-            }
+            "properties": {"name": {"type": "string"}, "email": {"type": "string"}},
         }
 
         routing_score = compute_routing_score("Extract data", schema)
         shaping = shape_thinking_with_phi(routing_score)
 
         assert shaping is not None
-        assert "flat" in shaping.decomposition_strategy.lower() or "extraction" in shaping.decomposition_strategy.lower()
+        assert (
+            "flat" in shaping.decomposition_strategy.lower()
+            or "extraction" in shaping.decomposition_strategy.lower()
+        )
         assert shaping.thinking_budget >= 256  # Minimum
 
     def test_high_constraint_strict_focus(self):
@@ -206,8 +207,8 @@ class TestPhiController:
             "properties": {
                 "status": {"enum": ["pending", "approved", "rejected"]},
                 "priority": {"enum": ["low", "medium", "high"]},
-                "category": {"enum": ["A", "B", "C"]}
-            }
+                "category": {"enum": ["A", "B", "C"]},
+            },
         }
 
         routing_score = compute_routing_score("Choose exact status", schema)
@@ -216,20 +217,23 @@ class TestPhiController:
         assert shaping is not None
         # High τ should recommend strict focus
         if routing_score.tau > 0.7:
-            assert "strict" in shaping.constraint_focus.lower() or "enum" in shaping.constraint_focus.lower()
+            assert (
+                "strict" in shaping.constraint_focus.lower()
+                or "enum" in shaping.constraint_focus.lower()
+            )
 
     def test_high_alignment_gap_vocabulary_bridge(self):
         """High ΔK → vocabulary bridge injection"""
         schema = {
             "type": "object",
             "properties": {
-                "processing_basis": {
-                    "enum": ["consent", "contract", "legal_obligation"]
-                }
-            }
+                "processing_basis": {"enum": ["consent", "contract", "legal_obligation"]}
+            },
         }
         # Prompt uses different terminology
-        prompt = "Does the user give permission, is it required by contract, or is it legally mandated?"
+        prompt = (
+            "Does the user give permission, is it required by contract, or is it legally mandated?"
+        )
 
         routing_score = compute_routing_score(prompt, schema)
         shaping = shape_thinking_with_phi(routing_score)
@@ -240,10 +244,7 @@ class TestPhiController:
 
     def test_thinking_budget_scales_with_phi(self):
         """Higher Φ → higher thinking budget"""
-        simple_schema = {
-            "type": "object",
-            "properties": {"name": {"type": "string"}}
-        }
+        simple_schema = {"type": "object", "properties": {"name": {"type": "string"}}}
 
         complex_schema = {
             "type": "object",
@@ -251,8 +252,8 @@ class TestPhiController:
                 "recommendation": {"enum": ["A", "B", "C"]},
                 "rationale": {"type": "string"},
                 "dependencies": {"type": "object", "properties": {}},
-                "tradeoffs": {"type": "array", "items": {"type": "string"}}
-            }
+                "tradeoffs": {"type": "array", "items": {"type": "string"}},
+            },
         }
 
         simple_routing = compute_routing_score("Simple task", simple_schema)
@@ -307,7 +308,7 @@ class TestDataContracts:
             instructions="Extract the name and email.",
             constraints=[],
             field_dependencies={"name": [], "email": []},
-            schema_summary="Simple contact extraction"
+            schema_summary="Simple contact extraction",
         )
 
         assert task.task_type == "extraction"
@@ -323,7 +324,7 @@ class TestDataContracts:
             constraint_value=["pending", "approved", "rejected"],
             injection_point="pass1_system",
             validator=lambda x: x in ["pending", "approved", "rejected"],
-            priority="hard"
+            priority="hard",
         )
 
         assert rule.rule_type == "enum"
@@ -336,7 +337,7 @@ class TestDataContracts:
             decomposition_strategy="HIERARCHICAL_EXTRACTION",
             constraint_focus="SOFT_CONSTRAINTS",
             vocabulary_bridge="Map 'vendor' to 'third_party_recipient'",
-            thinking_budget=512
+            thinking_budget=512,
         )
 
         assert shaping.decomposition_strategy == "HIERARCHICAL_EXTRACTION"

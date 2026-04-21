@@ -16,7 +16,9 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from formatshield.oracle.routing_score import RoutingScore
-    from formatshield.reasoning import ReasoningTask, ConstraintRule, ThinkingShaping, ReasoningTaskConfig
+    from formatshield.reasoning import (
+        ReasoningTaskConfig,
+    )
 
 logger = logging.getLogger(__name__)
 
@@ -53,16 +55,18 @@ def build_reasoning_context(
         All keys are guaranteed to be present; 'error' is None if successful.
     """
     from formatshield.reasoning import (
+        ReasoningTaskConfig,
         compile_schema_to_task,
         extract_constraints,
         shape_thinking_with_phi,
-        ReasoningTaskConfig,
     )
+    from formatshield.reasoning.execution_plan import build_execution_plan
 
     context: dict[str, Any] = {
         "task": None,
         "constraints": [],
         "thinking_shaping": None,
+        "execution_plan": None,
         "error": None,
     }
 
@@ -76,10 +80,10 @@ def build_reasoning_context(
         return context
 
     try:
-        # 1. Compile schema to task
+        # 1. Compile schema to task (pass prompt for semantic task-type detection)
         if config.enable_schema_aware_reasoning:
             try:
-                context["task"] = compile_schema_to_task(schema, routing_score)
+                context["task"] = compile_schema_to_task(schema, routing_score, prompt=prompt)
                 logger.debug(
                     "ReasoningIntegration: compiled schema to %s task",
                     context["task"].task_type,
@@ -113,6 +117,21 @@ def build_reasoning_context(
                 logger.warning("ReasoningIntegration: thinking shaping failed: %s", e)
                 if context["error"] is None:
                     context["error"] = str(e)
+
+        # 4. Build execution plan (always attempt when schema is available)
+        if schema and config.is_any_enabled():
+            try:
+                plan = build_execution_plan(schema, routing_score)
+                if not plan.is_empty():
+                    context["execution_plan"] = plan
+                    logger.debug(
+                        "ReasoningIntegration: execution plan (%d steps, %d rules)",
+                        len(plan.steps),
+                        len(plan.consistency_rules),
+                    )
+            except Exception as e:
+                logger.warning("ReasoningIntegration: execution plan build failed: %s", e)
+                # Not a fatal error — execution plan is additive
 
     except Exception as e:
         logger.error("ReasoningIntegration: unexpected error building context: %s", e)
@@ -156,12 +175,21 @@ def inject_reasoning_into_prompt(
     task = reasoning_context.get("task")
     constraints = reasoning_context.get("constraints", [])
     thinking_shaping = reasoning_context.get("thinking_shaping")
+    execution_plan = reasoning_context.get("execution_plan")
 
-    if task is None and not constraints and thinking_shaping is None:
+    if task is None and not constraints and thinking_shaping is None and execution_plan is None:
         return base_prompt
 
-    # Build injection sections
-    sections = []
+    # Build injection sections — execution plan comes FIRST (highest priority)
+    sections: list[str] = []
+
+    # 0. Execution plan (new — most prominent, controls cognition order)
+    if execution_plan is not None:
+        from formatshield.reasoning.execution_plan import render_execution_plan
+
+        plan_text = render_execution_plan(execution_plan)
+        if plan_text:
+            sections.append(f"\n{plan_text}")
 
     # 1. Task-specific instructions
     if task is not None:
@@ -173,24 +201,25 @@ def inject_reasoning_into_prompt(
             sections.append("\n### Schema Summary")
             sections.append(task.schema_summary)
 
-    # 2. Constraint rules (high-priority only)
+    # 2. Constraint rules (hard constraints only — binding)
     if constraints:
         hard_constraints = [c for c in constraints if c.priority == "hard"]
         if hard_constraints:
-            sections.append("\n## CONSTRAINTS")
-            sections.append("These constraints are MANDATORY and must be satisfied:")
-            for rule in hard_constraints[:5]:  # Limit to top 5 to avoid prompt bloat
-                sections.append(f"- {rule.description}")
+            sections.append("\n## BINDING CONSTRAINTS")
+            sections.append(
+                "The following constraints are NON-NEGOTIABLE. "
+                "Violating any of them makes the output INVALID:"
+            )
+            for rule in hard_constraints[:7]:  # Top 7 hard rules
+                sections.append(f"  ✗ {rule.description}")
 
     # 3. Thinking strategy
     if thinking_shaping is not None:
         sections.append("\n## THINKING STRATEGY")
-        sections.append(f"Decomposition: {thinking_shaping.decomposition_strategy[:100]}...")
-        sections.append(f"Constraint Focus: {thinking_shaping.constraint_focus[:100]}...")
+        sections.append(f"Decomposition: {thinking_shaping.decomposition_strategy[:120]}")
+        sections.append(f"Constraint Focus: {thinking_shaping.constraint_focus[:120]}")
         if thinking_shaping.vocabulary_bridge:
-            sections.append(
-                f"Vocabulary Mapping: {thinking_shaping.vocabulary_bridge[:100]}..."
-            )
+            sections.append(f"Vocabulary Mapping: {thinking_shaping.vocabulary_bridge[:120]}")
 
     # Merge into base prompt
     injection = "\n".join(sections)

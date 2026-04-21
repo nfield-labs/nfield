@@ -45,8 +45,10 @@ from formatshield.ttf.engine import (
     _run_self_consistency_pass1,
 )
 from formatshield.ttf.prompts import (
+    _ANCHOR_DK_THRESHOLD,
     _DK_VOCAB_BRIDGE_THRESHOLD,
     _collect_schema_field_info,
+    _extract_numeric_anchors,
     _phi_depth_label,
     _vocabulary_bridge_hints,
     build_cache_prefix_for_format_prompt,
@@ -398,6 +400,169 @@ class TestVocabularyBridgeHints:
 
     def test_threshold_constant_is_correct(self) -> None:
         assert _DK_VOCAB_BRIDGE_THRESHOLD == 0.50
+
+
+# ===========================================================================
+# 2b. Cross-field constraints injection
+# ===========================================================================
+
+
+CONSTRAINED_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "probability_of_loss": {"type": "number", "minimum": 0, "maximum": 1},
+        "expected_loss_ratio": {"type": "number", "minimum": 0, "maximum": 2},
+        "underwriting_tier": {
+            "type": "string",
+            "enum": ["approved", "approved_with_conditions", "declined"],
+        },
+    },
+    "required": ["probability_of_loss", "expected_loss_ratio", "underwriting_tier"],
+    "constraints": {
+        "statistical_validity": (
+            "confidence_interval_lower < expected_loss_ratio <= confidence_interval_upper"
+        ),
+        "underwriting_logic": (
+            "If expected_loss_ratio > 0.89, underwriting_tier must be"
+            " 'declined' or 'approved_with_conditions'"
+        ),
+    },
+}
+
+
+class TestCrossFieldConstraintsInjection:
+    def test_constraints_block_present_when_schema_has_constraints(self) -> None:
+        result = build_schema_phi_think_prompt(
+            "Assess risk.", CONSTRAINED_SCHEMA, phi=0.75, tau=0.5, delta_k=0.4
+        )
+        assert "Cross-field constraints" in result
+
+    def test_constraint_names_present(self) -> None:
+        result = build_schema_phi_think_prompt(
+            "Assess risk.", CONSTRAINED_SCHEMA, phi=0.75, tau=0.5, delta_k=0.4
+        )
+        assert "statistical_validity" in result
+        assert "underwriting_logic" in result
+
+    def test_constraint_rule_text_present(self) -> None:
+        result = build_schema_phi_think_prompt(
+            "Assess risk.", CONSTRAINED_SCHEMA, phi=0.75, tau=0.5, delta_k=0.4
+        )
+        assert "confidence_interval_lower < expected_loss_ratio" in result
+        assert "expected_loss_ratio > 0.89" in result
+
+    def test_verify_step_present_when_constraints_exist(self) -> None:
+        result = build_schema_phi_think_prompt(
+            "Assess risk.", CONSTRAINED_SCHEMA, phi=0.75, tau=0.5, delta_k=0.4
+        )
+        assert "cross-field constraints" in result.lower()
+
+    def test_no_constraints_block_when_schema_has_none(self) -> None:
+        result = build_schema_phi_think_prompt(
+            "test", SIMPLE_SCHEMA, phi=0.75, tau=0.3, delta_k=0.4
+        )
+        assert "Cross-field constraints" not in result
+
+    def test_no_verify_step_when_no_constraints(self) -> None:
+        result = build_schema_phi_think_prompt(
+            "test", SIMPLE_SCHEMA, phi=0.75, tau=0.3, delta_k=0.4
+        )
+        assert "Verify your computed values" not in result
+
+    def test_anti_fabrication_rule_present(self) -> None:
+        result = build_schema_phi_think_prompt(
+            "test", SIMPLE_SCHEMA, phi=0.75, tau=0.3, delta_k=0.4
+        )
+        assert "Anti-fabrication" in result
+
+    def test_anti_fabrication_covers_all_field_types(self) -> None:
+        result = build_schema_phi_think_prompt(
+            "test", SIMPLE_SCHEMA, phi=0.75, tau=0.3, delta_k=0.4
+        )
+        # Must cover strings, numbers, enums, arrays
+        assert "strings" in result
+        assert "numbers" in result
+        assert "enums" in result
+        assert "arrays" in result
+
+    def test_anti_fabrication_worse_than_empty_statement(self) -> None:
+        result = build_schema_phi_think_prompt(
+            "test", SIMPLE_SCHEMA, phi=0.75, tau=0.3, delta_k=0.4
+        )
+        assert "worse than returning empty" in result
+
+
+# ===========================================================================
+# 2c. Numeric anchors
+# ===========================================================================
+
+
+class TestExtractNumericAnchors:
+    def test_finds_floats_in_prompt(self) -> None:
+        anchors = _extract_numeric_anchors("industry avg loss ratio: 0.62, threshold 0.89")
+        values = " ".join(anchors)
+        assert "0.62" in values
+        assert "0.89" in values
+
+    def test_includes_context_words(self) -> None:
+        anchors = _extract_numeric_anchors("industry avg loss ratio 0.62 used as baseline")
+        assert len(anchors) > 0
+        assert "context:" in anchors[0]
+
+    def test_skips_large_integers(self) -> None:
+        # 82000000 must not appear as a leading anchor value — only 0.62 should be a value
+        anchors = _extract_numeric_anchors("company revenue 82000000 dollars and ratio 0.62")
+        # Each anchor line starts "  <value> — context:" — only 0.62 should lead
+        anchor_values = [line.split("—")[0].strip() for line in anchors]
+        assert "82000000" not in anchor_values
+        assert "0.62" in " ".join(anchor_values)
+
+    def test_deduplicates_same_value(self) -> None:
+        anchors = _extract_numeric_anchors("0.62 expected. Industry avg is 0.62.")
+        count_062 = sum(1 for a in anchors if "0.62" in a)
+        assert count_062 == 1
+
+    def test_respects_max_anchors(self) -> None:
+        prompt = " ".join(f"{i * 0.1:.1f}" for i in range(1, 20))
+        anchors = _extract_numeric_anchors(prompt, max_anchors=4)
+        assert len(anchors) <= 4
+
+    def test_empty_prompt_returns_empty(self) -> None:
+        assert _extract_numeric_anchors("") == []
+
+    def test_no_numbers_returns_empty(self) -> None:
+        assert _extract_numeric_anchors("extract the name and address from the text") == []
+
+    def test_anchors_injected_in_prompt_when_dk_high(self) -> None:
+        result = build_schema_phi_think_prompt(
+            "Assess risk with industry avg 0.62 and threshold 0.89",
+            CONSTRAINED_SCHEMA,
+            phi=0.75,
+            tau=0.5,
+            delta_k=_ANCHOR_DK_THRESHOLD + 0.1,
+        )
+        assert "Numeric anchors" in result
+        assert "0.62" in result
+
+    def test_anchors_absent_when_dk_low(self) -> None:
+        result = build_schema_phi_think_prompt(
+            "Assess risk with probability 0.62",
+            SIMPLE_SCHEMA,
+            phi=0.75,
+            tau=0.3,
+            delta_k=_ANCHOR_DK_THRESHOLD - 0.05,
+        )
+        assert "Numeric anchors" not in result
+
+    def test_do_not_invent_instruction_present(self) -> None:
+        result = build_schema_phi_think_prompt(
+            "Loss ratio baseline 0.62, threshold 0.89",
+            CONSTRAINED_SCHEMA,
+            phi=0.75,
+            tau=0.5,
+            delta_k=_ANCHOR_DK_THRESHOLD + 0.1,
+        )
+        assert "do NOT invent" in result
 
 
 # ===========================================================================

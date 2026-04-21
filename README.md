@@ -49,11 +49,11 @@ result = await fs.generate(
 
 ## News
 
-- **2026/04** — FormatShield v0.3 released: closed-form Φ routing score (no training, no pkl files), 7 backends, TTF engine, 567 tests, 81% coverage
+- **2026/04/21** — Reasoning engine complete (all 3 stages): constraint propagation graph, complexity-aware retry budget, self-calibrating Φ-Oracle · 1814 tests · 87% coverage
+- **2026/04** — FormatShield v0.3 released: closed-form Φ routing score (no training, no pkl files), 9 active backends, TTF engine, reasoning engine foundation
 - **2026/04** — "The Format Tax" (arXiv 2604.03616) confirms accuracy loss across 6 open-weight models and 4 output formats — the definitive empirical study
 - **2025/06** — CRANE (arXiv 2502.09061) accepted at **ICML 2025** — the research basis for TTF. FormatShield productionizes the algorithm across all backends
 - **2024/12** — "Let Me Speak Freely?" (arXiv 2408.02442) published at **EMNLP 2024** — quantifies 27.3pp accuracy loss from constrained decoding. The reason FormatShield exists
-- **(Upcoming v0.4.0)** — Together AI, Fireworks AI, Mistral AI backends · LangChain `FormatShieldLLM`
 
 ---
 
@@ -69,7 +69,7 @@ result = await fs.generate(
 - [Real-World Use Cases](#real-world-use-cases)
 - [Ecosystem Integrations](#ecosystem-integrations)
 - [Agent Framework Integration](#agent-framework-integration)
-- [Architecture](#architecture-7-components)
+- [Architecture](#architecture-10-components)
 - [The 5 Objections](#why-not-just----the-5-objections)
 - [Research Background](#research-background)
 - [Contributing](#contributing)
@@ -362,10 +362,13 @@ More examples in [`examples/`](examples/):
 | Ollama (local) | ✅ Supported | `pip install formatshield` |
 | vLLM (self-hosted) | ✅ Supported | `pip install formatshield[vllm]` |
 | Outlines (constrained local) | ✅ Supported | `pip install formatshield[outlines]` |
-| Together AI | 🔜 v0.1.0 | — |
-| Fireworks AI | 🔜 v0.1.0 | — |
-| Mistral AI | 🔜 v0.1.0 | — |
-| Cohere | 🔜 Community PR welcome | — |
+| Together AI | 🔜 Staging | — |
+| Fireworks AI | 🔜 Staging | — |
+| Mistral AI | 🔜 Staging | — |
+| Cohere | 🔜 Staging | — |
+| SGLang | 🔜 Staging | — |
+| Transformers (HF) | 🔜 Staging | — |
+| llama.cpp | 🔜 Staging | — |
 
 **Agent Frameworks**
 
@@ -419,19 +422,32 @@ chain = prompt_template | llm | output_parser
 
 ---
 
-## Architecture (7 Components)
+## Architecture (10 Components)
 
 ```
-ComplexityScorer → ThresholdOracle (Φ score) → FailureModeDetector → TTFEngine → Backend Adapter
+ComplexityScorer → OracleX (Φ score) → ReasoningEngine → TTFEngine → Backend Adapter
+                        ↕
+                 PhiOracleCalibrator (self-calibrating threshold)
 ```
 
 1. **ComplexityScorer** — 6-feature scoring: token entropy, schema depth, reasoning ops, instruction tuning, prompt length, constraint count
-2. **ThresholdOracle** — training-free Φ routing score (Fiedler + entropy + NCD); `Φ = 1 − exp(−(A·λ̃₂² + B·τ·λ̃₂ + C·ΔK))` where λ̃₂ = Fiedler value (schema graph), τ = constraint tightness (entropy), ΔK = NCD prompt-schema alignment gap
-3. **TTF Engine** — two-pass generation (CRANE pattern, arXiv 2502.09061)
-4. **FailureModeDetector** — 6 checks for when TTF would hurt (simple extraction, schema_too_constrained, native_thinker, short_prompt, template_fill, ambiguous_schema)
-5. **Backend Adapters** — Groq, OpenAI, Anthropic, OpenRouter, Ollama, vLLM, Outlines (same interface, swappable)
-6. **StreamingEngine** — SSE-compatible async generator
-7. **CLI** — `formatshield generate`
+2. **OracleX / ThresholdOracle** — training-free Φ routing score (Fiedler + entropy + NCD); `Φ = 1 − exp(−(A·λ̃₂² + B·τ·λ̃₂ + C·ΔK))`. Route: `Φ > threshold → TTF`
+3. **PhiOracleCalibrator** — self-calibrating threshold over (λ̃₂, τ, ΔK) feature space via Nadaraya-Watson kernel regression. Threshold adapts from production traffic. Cold start falls back to Oracle-X default.
+4. **Reasoning Engine** (8 modules) — schema-conditioned reasoning compiler:
+   - `schema_compiler` — converts JSON schema → reasoning task program
+   - `constraint_engine` — extracts rules from schema + prompt
+   - `phi_controller` — shapes thinking using Φ components (λ̃₂, τ, ΔK)
+   - `execution_plan` — binding step-by-step execution protocols
+   - `aggregation_compiler` — derives aggregation rules (boolean/numeric/enum consistency)
+   - `step_gate` — forward-steering enforcement at step boundaries
+   - `constraint_graph` — bidirectional semantic constraint propagation across schema fields
+   - `retry_budget` — complexity-aware retry allocation + targeted failure correction
+5. **TTF Engine** — two-pass generation (CRANE pattern, arXiv 2502.09061)
+6. **FailureModeDetector** — 6 checks for when TTF would hurt (simple extraction, schema_too_constrained, native_thinker, short_prompt, template_fill, ambiguous_schema)
+7. **Backend Adapters** — Groq, OpenAI, Anthropic, OpenRouter, Ollama, vLLM, Outlines, Gemini, Guidance (9 active; 11 more in staging)
+8. **StreamingEngine** — SSE-compatible async generator
+9. **Observability** — tamper-evident audit logs, OpenTelemetry, metrics
+10. **CLI** — `formatshield generate`
 
 ---
 
@@ -466,6 +482,54 @@ FormatShield is the production implementation of findings from:
 | arXiv 2309.06180 (vLLM) | PagedAttention prefix caching | vLLM KV cache reuse |
 
 **The routing gap no paper addresses:** At what complexity score does TTF become beneficial? Does this vary by backend? FormatShield answers this with the closed-form Φ score — a training-free, information-theoretic signal derived from the schema's Fiedler value, constraint entropy, and prompt-schema NCD alignment.
+
+---
+
+## Directory Structure
+
+```
+src/formatshield/
+├── backends/          # 9 active: groq, openai, anthropic, openrouter, ollama, vllm, outlines, gemini, guidance
+│   └── _pending/      # 11 staging: cohere, mistral, together, fireworks, sglang, transformers, llamacpp, ...
+├── batch/             # Batch processor for high-throughput inference
+├── dsl/               # Schema DSL: Maybe, Partial, Iterable types
+├── formats/           # Non-JSON output: markdown, latex, xml, router
+├── governance/        # Policy engine (rate limits, keyword filters, schema requirements)
+├── integrations/      # LangChain, LangGraph, AutoGen drop-ins
+├── observability/     # Tamper-evident audit logs, OpenTelemetry, metrics
+├── oracle/            # Routing intelligence
+│   ├── oracle_x.py         # OracleX — training-free Φ routing score
+│   ├── phi_calibrator.py   # Self-calibrating threshold (Nadaraya-Watson GP)
+│   ├── self_calibrator.py  # Rolling 1D logistic calibration
+│   ├── routing_score.py    # Φ = 1 − exp(−(A·λ̃₂² + B·τ·λ̃₂ + C·ΔK))
+│   ├── schema_graph.py     # Fiedler value computation
+│   ├── schema_entropy.py   # Constraint tightness τ
+│   └── ncd.py              # NCD alignment gap ΔK via zlib
+├── reasoning/         # Schema-conditioned reasoning engine
+│   ├── aggregation_compiler.py   # Derive boolean/numeric/enum aggregation rules
+│   ├── constraint_engine.py      # Extract constraint rules from schema + prompt
+│   ├── constraint_graph.py       # Bidirectional semantic constraint propagation
+│   ├── execution_plan.py         # Binding step-by-step execution protocols
+│   ├── phi_controller.py         # Shape thinking using Φ components
+│   ├── reasoning_task.py         # Reasoning task dataclass + merging
+│   ├── retry_budget.py           # Complexity-aware retry budget + surgical reask
+│   ├── schema_compiler.py        # JSON schema → reasoning task program
+│   └── step_gate.py              # Forward-steering enforcement at step boundaries
+├── scorer/            # ComplexityScorer: 6 features → composite score
+├── semantic/          # Semantic evaluator for TTF output quality
+├── streaming/         # SSE-compatible async generator
+├── ttf/               # Think-Then-Format engine (CRANE pattern)
+│   ├── engine.py              # Two-pass generation orchestration
+│   ├── failure_detector.py    # 6 failure mode checks
+│   ├── quality_gate.py        # Pass-1 output quality gate
+│   ├── reasoning_integration.py # Connects reasoning engine to TTF
+│   └── trace_cache.py         # KV cache trace for Pass 2
+├── types/             # DSL types (Maybe, Partial, Iterable)
+├── core.py            # FormatShield main class
+├── cli.py             # `formatshield generate` CLI
+├── generator.py       # Low-level generation primitives
+└── caching.py         # Response caching layer
+```
 
 ---
 

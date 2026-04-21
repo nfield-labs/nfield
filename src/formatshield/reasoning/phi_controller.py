@@ -10,7 +10,6 @@ The core insight: Use information-theoretic signals to guide cognition,
 not just for routing but for controlling HOW the model thinks.
 """
 
-from typing import Optional
 from formatshield.oracle.routing_score import RoutingScore
 from formatshield.reasoning.reasoning_task import ThinkingShaping
 
@@ -127,7 +126,7 @@ class PhiController:
                 "If the correct value is not in the enum, flag this as impossible."
             )
 
-    def _bridge_from_delta_k(self) -> Optional[str]:
+    def _bridge_from_delta_k(self) -> str | None:
         """
         Map ΔK (alignment_gap) to vocabulary bridge instruction.
 
@@ -145,7 +144,7 @@ class PhiController:
             "VOCABULARY BRIDGE: The prompt uses different terminology than the schema. "
             "Map prompt concepts to schema field names explicitly. "
             "For example, if the prompt says 'decision' and schema has 'recommendation', "
-            "clarify the mapping: 'I interpret the decision (from the prompt) as recommendation (from the schema)'."
+            "clarify: 'I interpret the decision (from prompt) as recommendation (from schema)'."
         )
 
     def _estimate_thinking_budget(self) -> int:

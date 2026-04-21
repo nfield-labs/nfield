@@ -194,6 +194,36 @@ def test_cot_keywords_detected(scorer: ComplexityScorer) -> None:
     )
 
 
+def test_implicit_reasoning_keywords_detected(scorer: ComplexityScorer) -> None:
+    """Implicit reasoning verbs (assess, recommend, plan) must count as reasoning ops."""
+    prompt = "Assess the patient condition and recommend a treatment plan."
+    features = scorer.score(prompt)
+    assert features.required_reasoning_ops >= 2, (
+        f"Expected >= 2 ops for 'assess + recommend + plan' prompt, "
+        f"got {features.required_reasoning_ops}"
+    )
+
+
+def test_implicit_medical_keywords_detected(scorer: ComplexityScorer) -> None:
+    """Medical domain verbs (prescribe, diagnose) must count as reasoning ops."""
+    prompt = "Diagnose the condition and prescribe appropriate medication."
+    features = scorer.score(prompt)
+    assert features.required_reasoning_ops >= 2, (
+        f"Expected >= 2 ops for 'diagnose + prescribe' prompt, "
+        f"got {features.required_reasoning_ops}"
+    )
+
+
+def test_pure_extraction_has_zero_ops(scorer: ComplexityScorer) -> None:
+    """A pure extraction prompt with no reasoning verbs must have zero ops."""
+    prompt = "Extract the patient name, date of birth, and address from the text."
+    features = scorer.score(prompt)
+    assert features.required_reasoning_ops == 0, (
+        f"Expected 0 reasoning ops for pure extraction, "
+        f"got {features.required_reasoning_ops}"
+    )
+
+
 # ---------------------------------------------------------------------------
 # Tests: prompt length buckets
 # ---------------------------------------------------------------------------

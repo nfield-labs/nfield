@@ -55,6 +55,28 @@ from formatshield.oracle.threshold_oracle import (  # noqa: E402
 #: Feature flag — kept for API compatibility; online adaptation is removed.
 ENABLE_ONLINE_ADAPTATION: bool = False
 
+#: λ̃₂ below this value indicates a flat schema (no dependency graph depth).
+_FLAT_SCHEMA_LAMBDA2: float = 0.20
+
+#: τ below this value, combined with a flat schema, indicates a simple extraction
+#: task — TTF adds overhead without reasoning benefit.
+#: At τ=0.40 the schema has almost no cross-field constraints; at τ≥0.40 there is
+#: enough constraint coupling to make TTF-guided reasoning worth the latency cost.
+_EXTRACTION_TAU_THRESHOLD: float = 0.40
+
+#: Minimum required_reasoning_ops count for the extraction override to fire.
+#: If the prompt contains even 1 CoT keyword (calculate, evaluate, assess, plan, …)
+#: the task is semantically complex — the extraction shortcut must NOT apply.
+#: Value 1 means "0 ops required" (strictly less than 1 == zero).
+_SEMANTIC_REASONING_OPS_THRESHOLD: int = 1
+
+#: Token entropy above this value indicates a lexically dense / diverse prompt —
+#: used as a secondary gate when no CoT keywords are present but the vocabulary
+#: richness signals a complex domain task (e.g. dense technical specifications).
+#: Calibrated at 0.88: above this, virtually all tokens in the prompt are unique,
+#: which strongly correlates with multi-concept technical prompts.
+_ENTROPY_COMPLEXITY_THRESHOLD: float = 0.88
+
 
 # ---------------------------------------------------------------------------
 # OracleX
@@ -244,6 +266,37 @@ class OracleX:
         context: RoutingContext | None = None,
     ) -> RoutingDecision:
         """Route using Φ score (when available) or heuristic weighted-score fallback."""
+        # Rule 2.5: Flat schema + low τ + no semantic complexity signals → direct.
+        # Three schema signals must all be low (flat, few constraints, no ops/entropy)
+        # before the extraction shortcut fires.  Any one elevated signal means the
+        # prompt carries multi-step reasoning — TTF benefit outweighs the overhead.
+        #
+        # Two independent semantic signals guard against misclassification:
+        #   1. required_reasoning_ops — explicit CoT verbs (calculate, assess, plan, …)
+        #   2. token_entropy — lexical density, catches dense technical specs that
+        #      have no keyword hits but have near-unique token distributions.
+        _is_semantically_complex = (
+            features.required_reasoning_ops >= _SEMANTIC_REASONING_OPS_THRESHOLD
+            or features.token_entropy > _ENTROPY_COMPLEXITY_THRESHOLD
+        )
+        if (
+            context is not None
+            and context.phi_lambda2 < _FLAT_SCHEMA_LAMBDA2
+            and context.phi_tau < _EXTRACTION_TAU_THRESHOLD
+            and not _is_semantically_complex
+        ):
+            return RoutingDecision(
+                strategy="direct",
+                expected_accuracy_delta=_DIRECT_ACCURACY_DELTA,
+                expected_overhead_pct=0.0,
+                confidence=0.80,
+                explanation=(
+                    f"Flat schema (λ̃₂={context.phi_lambda2:.3f}<{_FLAT_SCHEMA_LAMBDA2})"
+                    f" + low τ={context.phi_tau:.3f}<{_EXTRACTION_TAU_THRESHOLD}"
+                    " — extraction task, TTF not justified."
+                ),
+            )
+
         # Use information-geometric Φ score when context provides it
         if context is not None and context.phi_score > 0:
             phi = context.phi_score

@@ -10,7 +10,8 @@ Three types of constraints:
 """
 
 import re
-from typing import Any, Callable, List, Optional, Set
+from typing import Any
+
 from formatshield.oracle.routing_score import RoutingScore
 from formatshield.reasoning.reasoning_task import ConstraintRule
 
@@ -31,7 +32,7 @@ class ConstraintExtractor:
         self.delta_k = routing_score.delta_k
         self.phi = routing_score.phi
 
-    def extract(self, schema: dict, prompt: str) -> List[ConstraintRule]:
+    def extract(self, schema: dict, prompt: str) -> list[ConstraintRule]:
         """
         Main entry point: extract all constraints from schema + prompt.
 
@@ -42,7 +43,7 @@ class ConstraintExtractor:
         Returns:
             List of ConstraintRule in priority order (hard rules first)
         """
-        all_rules: List[ConstraintRule] = []
+        all_rules: list[ConstraintRule] = []
 
         # Extract schema-native constraints
         all_rules.extend(self._extract_enum_rules(schema))
@@ -64,9 +65,9 @@ class ConstraintExtractor:
 
         return all_rules
 
-    def _extract_enum_rules(self, schema: dict) -> List[ConstraintRule]:
+    def _extract_enum_rules(self, schema: dict) -> list[ConstraintRule]:
         """Extract enumeration constraints (choice from fixed set)."""
-        rules: List[ConstraintRule] = []
+        rules: list[ConstraintRule] = []
 
         def walk_enum(node: Any, path: str = "") -> None:
             """Recursively find enum fields."""
@@ -76,7 +77,11 @@ class ConstraintExtractor:
                     rules.append(
                         ConstraintRule(
                             rule_type="enum",
-                            description=f"Must be one of: {', '.join(str(v) for v in enum_values)}",
+                            description=(
+                                f"BINDING: Must be exactly one of: "
+                                f"{', '.join(str(v) for v in enum_values)} — "
+                                f"any other value is INVALID"
+                            ),
                             schema_path=path or "root",
                             constraint_value=enum_values,
                             injection_point="pass1_system",
@@ -88,7 +93,8 @@ class ConstraintExtractor:
                 # Recurse
                 if "properties" in node:
                     for name, spec in node["properties"].items():
-                        walk_enum(spec, f"{path}.properties.{name}" if path else f"properties.{name}")
+                        sub = f"{path}.properties.{name}" if path else f"properties.{name}"
+                        walk_enum(spec, sub)
 
                 if "items" in node:
                     walk_enum(node["items"], f"{path}.items")
@@ -96,9 +102,9 @@ class ConstraintExtractor:
         walk_enum(schema)
         return rules
 
-    def _extract_range_rules(self, schema: dict) -> List[ConstraintRule]:
+    def _extract_range_rules(self, schema: dict) -> list[ConstraintRule]:
         """Extract numeric range constraints (min/max, minItems/maxItems)."""
-        rules: List[ConstraintRule] = []
+        rules: list[ConstraintRule] = []
 
         def walk_range(node: Any, path: str = "") -> None:
             """Recursively find range constraints."""
@@ -136,7 +142,18 @@ class ConstraintExtractor:
                 if "minItems" in node or "maxItems" in node:
                     min_items = node.get("minItems")
                     max_items = node.get("maxItems")
-                    description = f"Array must have {min_items}-{max_items} items"
+                    parts = []
+                    if min_items is not None:
+                        parts.append(f"at least {min_items}")
+                    if max_items is not None:
+                        parts.append(f"at most {max_items}")
+                    count_str = " and ".join(parts)
+                    description = (
+                        f"BINDING: Array MUST contain {count_str} items — "
+                        f"fewer than {min_items} is INVALID"
+                        if min_items is not None
+                        else f"Array must have {min_items}-{max_items} items"
+                    )
 
                     def validate_items(x: Any, min_i=min_items, max_i=max_items) -> bool:
                         if not isinstance(x, list):
@@ -147,29 +164,33 @@ class ConstraintExtractor:
                             return False
                         return True
 
+                    # minItems is a hard structural requirement
+                    item_priority = "hard" if min_items is not None else "soft"
+
                     rules.append(
                         ConstraintRule(
                             rule_type="range",
                             description=description,
                             schema_path=path or "root",
                             constraint_value=(min_items, max_items),
-                            injection_point="validation",
+                            injection_point="pass1_system",
                             validator=validate_items,
-                            priority="soft",
+                            priority=item_priority,
                         )
                     )
 
                 # Recurse
                 if "properties" in node:
                     for name, spec in node["properties"].items():
-                        walk_range(spec, f"{path}.properties.{name}" if path else f"properties.{name}")
+                        sub = f"{path}.properties.{name}" if path else f"properties.{name}"
+                        walk_range(spec, sub)
 
         walk_range(schema)
         return rules
 
-    def _extract_type_rules(self, schema: dict) -> List[ConstraintRule]:
+    def _extract_type_rules(self, schema: dict) -> list[ConstraintRule]:
         """Extract type constraints (string, number, boolean, etc.)."""
-        rules: List[ConstraintRule] = []
+        rules: list[ConstraintRule] = []
 
         def walk_types(node: Any, path: str = "") -> None:
             """Recursively find type constraints."""
@@ -206,14 +227,15 @@ class ConstraintExtractor:
             if isinstance(node, dict):
                 if "properties" in node:
                     for name, spec in node["properties"].items():
-                        walk_types(spec, f"{path}.properties.{name}" if path else f"properties.{name}")
+                        sub = f"{path}.properties.{name}" if path else f"properties.{name}"
+                        walk_types(spec, sub)
 
         walk_types(schema)
         return rules
 
-    def _extract_pattern_rules(self, schema: dict) -> List[ConstraintRule]:
+    def _extract_pattern_rules(self, schema: dict) -> list[ConstraintRule]:
         """Extract regex pattern constraints."""
-        rules: List[ConstraintRule] = []
+        rules: list[ConstraintRule] = []
 
         def walk_patterns(node: Any, path: str = "") -> None:
             """Recursively find pattern constraints."""
@@ -243,14 +265,15 @@ class ConstraintExtractor:
             if isinstance(node, dict):
                 if "properties" in node:
                     for name, spec in node["properties"].items():
-                        walk_patterns(spec, f"{path}.properties.{name}" if path else f"properties.{name}")
+                        sub = f"{path}.properties.{name}" if path else f"properties.{name}"
+                        walk_patterns(spec, sub)
 
         walk_patterns(schema)
         return rules
 
-    def _extract_conditional_rules(self, schema: dict) -> List[ConstraintRule]:
+    def _extract_conditional_rules(self, schema: dict) -> list[ConstraintRule]:
         """Extract if-then-else conditional rules."""
-        rules: List[ConstraintRule] = []
+        rules: list[ConstraintRule] = []
 
         if "dependentSchemas" not in schema:
             return rules
@@ -277,9 +300,9 @@ class ConstraintExtractor:
 
         return rules
 
-    def _extract_dependency_rules(self, schema: dict) -> List[ConstraintRule]:
+    def _extract_dependency_rules(self, schema: dict) -> list[ConstraintRule]:
         """Extract field interdependency rules."""
-        rules: List[ConstraintRule] = []
+        rules: list[ConstraintRule] = []
 
         # additionalProperties: false → no unknown fields allowed
         if schema.get("additionalProperties") is False:
@@ -321,22 +344,24 @@ class ConstraintExtractor:
 
         return rules
 
-    def _extract_vocabulary_rules(self, schema: dict, prompt: str) -> List[ConstraintRule]:
+    def _extract_vocabulary_rules(self, schema: dict, prompt: str) -> list[ConstraintRule]:
         """Extract vocabulary mapping rules when ΔK > threshold."""
-        rules: List[ConstraintRule] = []
+        rules: list[ConstraintRule] = []
 
         props = schema.get("properties", {})
         prompt_lower = prompt.lower()
 
         # Simple heuristic: if schema field name doesn't appear in prompt, flag it
         unmapped_fields = [
-            name for name in props.keys()
-            if name.lower() not in prompt_lower and name.replace("_", " ").lower() not in prompt_lower
+            name
+            for name in props.keys()
+            if name.lower() not in prompt_lower
+            and name.replace("_", " ").lower() not in prompt_lower
         ]
 
         if unmapped_fields:
             description = (
-                f"Vocabulary bridge needed. Schema fields not mentioned in prompt: {unmapped_fields}. "
+                f"Vocabulary bridge needed. Schema fields not in prompt: {unmapped_fields}. "
                 f"Map them explicitly using schema understanding."
             )
 
@@ -354,7 +379,9 @@ class ConstraintExtractor:
         return rules
 
 
-def extract_constraints(schema: dict, prompt: str, routing_score: RoutingScore) -> List[ConstraintRule]:
+def extract_constraints(
+    schema: dict, prompt: str, routing_score: RoutingScore
+) -> list[ConstraintRule]:
     """
     Public API: extract constraints from schema and prompt.
 

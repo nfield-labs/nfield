@@ -239,6 +239,82 @@ def _vocabulary_bridge_hints(
     return hints
 
 
+#: Number of context words captured before/after each numeric anchor.
+_ANCHOR_CONTEXT_WINDOW: int = 4
+
+#: Maximum numeric anchors to inject (avoids over-cluttering the prompt).
+_MAX_NUMERIC_ANCHORS: int = 6
+
+#: ΔK threshold above which numeric anchor injection is enabled.
+#: Below this value the prompt vocabulary largely matches the schema — no anchoring needed.
+_ANCHOR_DK_THRESHOLD: float = 0.30
+
+
+def _extract_numeric_anchors(prompt: str, max_anchors: int = _MAX_NUMERIC_ANCHORS) -> list[str]:
+    """Extract key numeric values from *prompt* with surrounding context.
+
+    Finds all decimal numbers (integers and floats) in the prompt, captures
+    a window of context words around each one, and returns anchor lines to
+    inject into the TTF Pass 1 reasoning prompt.  These lines tell the model
+    to ground its calculations in the actual values from the prompt rather
+    than inventing plausible-sounding numbers.
+
+    Parameters
+    ----------
+    prompt:
+        The original user prompt.
+    max_anchors:
+        Maximum number of anchor lines to return.
+
+    Returns
+    -------
+    list[str]
+        Lines of the form ``"  <value> — context: '<surrounding words>'"``
+        ready to embed in the prompt context block.
+    """
+    # Tokenise to words for context window extraction
+    words = re.split(r"\s+", prompt.strip())
+
+    # Find all numeric tokens (integers and floats, skip pure year-like 4-digit ints)
+    numeric_re = re.compile(r"^-?\d+(?:\.\d+)?%?$")
+    anchors: list[str] = []
+    seen_values: set[str] = set()
+
+    for i, word in enumerate(words):
+        # Strip common surrounding punctuation before matching
+        clean = word.strip(".,;:()[]{}\"'")
+        if not numeric_re.match(clean):
+            continue
+
+        # Skip very large integers that are likely counts/years, not domain values
+        try:
+            as_float = float(clean.rstrip("%"))
+        except ValueError:
+            continue
+        if as_float > 1_000_000 or (as_float == int(as_float) and as_float > 9_999):
+            continue
+
+        # Deduplicate by value
+        norm_key = f"{as_float:.4g}"
+        if norm_key in seen_values:
+            continue
+        seen_values.add(norm_key)
+
+        # Capture context window
+        start = max(0, i - _ANCHOR_CONTEXT_WINDOW)
+        end = min(len(words), i + _ANCHOR_CONTEXT_WINDOW + 1)
+        ctx_words = [w for w in words[start:end] if w != word]
+        ctx = " ".join(ctx_words).strip()
+        ctx_snippet = ctx[:60] if ctx else "—"
+
+        anchors.append(f"  {clean} — context: '{ctx_snippet}'")
+
+        if len(anchors) >= max_anchors:
+            break
+
+    return anchors
+
+
 # ---------------------------------------------------------------------------
 # Public helpers
 # ---------------------------------------------------------------------------
@@ -321,6 +397,31 @@ def build_schema_phi_think_prompt(
             elif f.get("type") == "boolean":
                 context_lines.append(f"  {f['path']}: true or false")
 
+    # ── Cross-field constraints block ──────────────────────────────────────
+    schema_constraints: dict[str, Any] = schema.get("constraints", {})
+    if schema_constraints:
+        context_lines.append("")
+        context_lines.append(
+            "Cross-field constraints — your reasoning MUST satisfy ALL of these:"
+        )
+        for name, rule in schema_constraints.items():
+            context_lines.append(f"  [{name}] {rule}")
+
+    # ── Numeric anchors block ─────────────────────────────────────────────────
+    # Always inject when ΔK exceeds the anchor threshold — high vocabulary mismatch
+    # means the model is likely to invent plausible numbers rather than use the ones
+    # already supplied in the prompt.  By showing the exact values and their context,
+    # we ground the model's calculations in the prompt data.
+    if delta_k > _ANCHOR_DK_THRESHOLD:
+        anchors = _extract_numeric_anchors(original_prompt)
+        if anchors:
+            context_lines.append("")
+            context_lines.append(
+                "Numeric anchors — ground your calculations in these values from the prompt"
+                " (do NOT invent numbers that contradict these):"
+            )
+            context_lines.extend(anchors)
+
     # ── Vocabulary bridge hints ─────────────────────────────────────────────
     if delta_k > _DK_VOCAB_BRIDGE_THRESHOLD and fields:
         hints = _vocabulary_bridge_hints(original_prompt, fields)
@@ -346,6 +447,22 @@ def build_schema_phi_think_prompt(
         "  3. Resolve any vocabulary bridge gaps: if a schema field is not directly"
         " mentioned in the prompt, infer it from context.",
         "  4. For nested / parent fields, reason about the parent's shape before its children.",
+    ]
+    if schema_constraints:
+        reasoning_steps.append(
+            "  5. Verify your computed values satisfy ALL cross-field constraints listed above"
+            " before finalising — adjust if any constraint is violated."
+        )
+    reasoning_steps += [
+        "",
+        "Anti-fabrication rule (NON-NEGOTIABLE):",
+        "  Do NOT invent, guess, or hallucinate values that are absent from the prompt.",
+        "  If a required field's value is not present or cannot be reliably inferred:",
+        "    - strings → use \"\" or \"unknown\"",
+        "    - numbers → use 0 only if semantically correct; otherwise flag in your reasoning",
+        "    - enums → select only if the choice is clearly inferable from the prompt",
+        "    - arrays → use [] if no items are mentioned",
+        "  Fabricating schema-valid but semantically wrong data is worse than returning empty.",
         "",
         "Use <think>...</think> tags to record your reasoning.",
         "Do NOT produce any JSON or structured output yet — reasoning only.",

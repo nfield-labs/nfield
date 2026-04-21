@@ -757,6 +757,83 @@
       color: var(--text);
     }
 
+    /* =====================================================================
+       SEMANTIC METRICS DASHBOARD (4-Metric: Type, Recall, Integrity, Completeness)
+    ===================================================================== */
+    .semantic-metrics-dashboard {
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .semantic-metrics-header {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .semantic-metrics-comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 700px) { .semantic-metrics-comparison { grid-template-columns: 1fr; } }
+
+    .semantic-metrics-column {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .semantic-metrics-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .semantic-metric-card {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+    }
+
+    .metric-name {
+      font-size: 11px;
+      color: var(--muted);
+      min-width: 90px;
+    }
+
+    .metric-bar-track {
+      flex: 1;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 2px;
+      overflow: hidden;
+      min-width: 60px;
+    }
+
+    .metric-bar-fill {
+      height: 100%;
+      transition: width 0.3s ease, background-color 0.3s ease;
+    }
+
+    .metric-value {
+      font-size: 10px;
+      font-family: var(--mono);
+      font-weight: 700;
+      color: var(--text);
+      min-width: 35px;
+      text-align: right;
+    }
+
     /* Reasons */
     .score-reasons {
       border-top: 1px solid var(--border);
@@ -1406,6 +1483,63 @@
         </div>
       </div>
 
+      <!-- NEW: 4-Metric Semantic Dashboard (Type, Recall, Integrity, Completeness) -->
+      <div class="semantic-metrics-dashboard" id="semantic-metrics-dashboard">
+        <div class="semantic-metrics-header">Semantic Validation Metrics (0-100%)</div>
+
+        <div class="semantic-metrics-comparison">
+          <!-- FormatShield Metrics -->
+          <div class="semantic-metrics-column">
+            <div class="semantic-metrics-title">🎯 FormatShield</div>
+            <div class="semantic-metric-card">
+              <div class="metric-name">Type Match</div>
+              <div class="metric-bar-track"><div class="metric-bar-fill" id="sem-fs-type" style="width:0%; background:#3b82f6;"></div></div>
+              <div class="metric-value" id="sem-fs-type-val">0%</div>
+            </div>
+            <div class="semantic-metric-card">
+              <div class="metric-name">Recall</div>
+              <div class="metric-bar-track"><div class="metric-bar-fill" id="sem-fs-recall" style="width:0%; background:#8b5cf6;"></div></div>
+              <div class="metric-value" id="sem-fs-recall-val">0%</div>
+            </div>
+            <div class="semantic-metric-card">
+              <div class="metric-name">Integrity</div>
+              <div class="metric-bar-track"><div class="metric-bar-fill" id="sem-fs-integrity" style="width:0%; background:#22c55e;"></div></div>
+              <div class="metric-value" id="sem-fs-integrity-val">0%</div>
+            </div>
+            <div class="semantic-metric-card">
+              <div class="metric-name">Completeness</div>
+              <div class="metric-bar-track"><div class="metric-bar-fill" id="sem-fs-completeness" style="width:0%; background:#f97316;"></div></div>
+              <div class="metric-value" id="sem-fs-completeness-val">0%</div>
+            </div>
+          </div>
+
+          <!-- Raw Metrics -->
+          <div class="semantic-metrics-column">
+            <div class="semantic-metrics-title">📋 Raw Groq</div>
+            <div class="semantic-metric-card">
+              <div class="metric-name">Type Match</div>
+              <div class="metric-bar-track"><div class="metric-bar-fill" id="sem-raw-type" style="width:0%; background:#3b82f6;"></div></div>
+              <div class="metric-value" id="sem-raw-type-val">0%</div>
+            </div>
+            <div class="semantic-metric-card">
+              <div class="metric-name">Recall</div>
+              <div class="metric-bar-track"><div class="metric-bar-fill" id="sem-raw-recall" style="width:0%; background:#8b5cf6;"></div></div>
+              <div class="metric-value" id="sem-raw-recall-val">0%</div>
+            </div>
+            <div class="semantic-metric-card">
+              <div class="metric-name">Integrity</div>
+              <div class="metric-bar-track"><div class="metric-bar-fill" id="sem-raw-integrity" style="width:0%; background:#22c55e;"></div></div>
+              <div class="metric-value" id="sem-raw-integrity-val">0%</div>
+            </div>
+            <div class="semantic-metric-card">
+              <div class="metric-name">Completeness</div>
+              <div class="metric-bar-track"><div class="metric-bar-fill" id="sem-raw-completeness" style="width:0%; background:#f97316;"></div></div>
+              <div class="metric-value" id="sem-raw-completeness-val">0%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="score-reasons">
         <div class="score-reasons-label">Key factors</div>
         <ul class="score-reason-list" id="score-reason-list"></ul>
@@ -1833,6 +1967,10 @@
           data.without_formatshield,
           data.semantic_evaluation
         );
+        // NEW: Populate 4-metric semantic dashboard
+        if (data.semantic_metrics) {
+          renderSemanticMetrics(data.semantic_metrics);
+        }
       } catch (e) {
         document.getElementById('raw-body').innerHTML =
           `<div class="error-box">Error: ${escHtml(e.message)}</div>`;
@@ -2251,6 +2389,40 @@
         .replace(/&/g, '&amp;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
+    }
+
+    // NEW: Render 4-metric semantic dashboard
+    function renderSemanticMetrics(metrics) {
+      const update = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.style.width = Math.max(0, Math.min(100, value)) + '%';
+      };
+      const updateValue = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = Math.round(value) + '%';
+      };
+
+      // FormatShield metrics
+      const fs = metrics.formatshield || {};
+      update('sem-fs-type', fs.type_match || 0);
+      update('sem-fs-recall', fs.recall || 0);
+      update('sem-fs-integrity', fs.integrity || 0);
+      update('sem-fs-completeness', fs.completeness || 0);
+      updateValue('sem-fs-type-val', fs.type_match || 0);
+      updateValue('sem-fs-recall-val', fs.recall || 0);
+      updateValue('sem-fs-integrity-val', fs.integrity || 0);
+      updateValue('sem-fs-completeness-val', fs.completeness || 0);
+
+      // Raw metrics
+      const raw = metrics.raw || {};
+      update('sem-raw-type', raw.type_match || 0);
+      update('sem-raw-recall', raw.recall || 0);
+      update('sem-raw-integrity', raw.integrity || 0);
+      update('sem-raw-completeness', raw.completeness || 0);
+      updateValue('sem-raw-type-val', raw.type_match || 0);
+      updateValue('sem-raw-recall-val', raw.recall || 0);
+      updateValue('sem-raw-integrity-val', raw.integrity || 0);
+      updateValue('sem-raw-completeness-val', raw.completeness || 0);
     }
 
     // Ctrl+Enter shortcut

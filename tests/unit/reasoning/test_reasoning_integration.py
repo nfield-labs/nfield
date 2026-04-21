@@ -5,12 +5,13 @@ Tests the integration of reasoning module into TTFEngine.
 """
 
 import pytest
+
 from formatshield.oracle.routing_score import compute_routing_score
+from formatshield.reasoning import ReasoningTaskConfig
 from formatshield.ttf.reasoning_integration import (
     build_reasoning_context,
     inject_reasoning_into_prompt,
 )
-from formatshield.reasoning import ReasoningTaskConfig
 
 
 class TestBuildReasoningContext:
@@ -22,9 +23,9 @@ class TestBuildReasoningContext:
             "type": "object",
             "properties": {
                 "status": {"enum": ["pending", "approved", "rejected"]},
-                "notes": {"type": "string"}
+                "notes": {"type": "string"},
             },
-            "required": ["status"]
+            "required": ["status"],
         }
         prompt = "What is the status?"
         routing_score = compute_routing_score(prompt, schema)
@@ -79,7 +80,7 @@ class TestBuildReasoningContext:
         schema = {
             "type": "object",
             "properties": {"name": {"type": "string"}},
-            "required": ["name"]
+            "required": ["name"],
         }
         prompt = "Extract name"
         routing_score = compute_routing_score(prompt, schema)
@@ -99,10 +100,7 @@ class TestBuildReasoningContext:
 
     def test_context_with_only_constraints_enabled(self):
         """Only constraint extraction enabled"""
-        schema = {
-            "type": "object",
-            "properties": {"status": {"enum": ["A", "B"]}}
-        }
+        schema = {"type": "object", "properties": {"status": {"enum": ["A", "B"]}}}
         prompt = "Status?"
         routing_score = compute_routing_score(prompt, schema)
 
@@ -147,7 +145,7 @@ class TestBuildReasoningContext:
 
         context = build_reasoning_context(schema, prompt, routing_score)
 
-        expected_keys = {"task", "constraints", "thinking_shaping", "error"}
+        expected_keys = {"task", "constraints", "thinking_shaping", "execution_plan", "error"}
         assert set(context.keys()) == expected_keys
 
     def test_context_with_invalid_schema(self):
@@ -163,9 +161,9 @@ class TestBuildReasoningContext:
             context = build_reasoning_context(schema, prompt, routing_score, config)
             # Either succeeds silently or error is set
             assert isinstance(context, dict)
-        except Exception:
+        except Exception as exc:
             # Acceptable to raise on truly invalid input
-            pass
+            _ = exc
 
 
 class TestInjectReasoningIntoPrompt:
@@ -175,10 +173,7 @@ class TestInjectReasoningIntoPrompt:
         """Full reasoning context: instructions, constraints, strategy injected"""
         schema = {
             "type": "object",
-            "properties": {
-                "status": {"enum": ["A", "B"]},
-                "notes": {"type": "string"}
-            }
+            "properties": {"status": {"enum": ["A", "B"]}, "notes": {"type": "string"}},
         }
         prompt = "What is the status?"
         routing_score = compute_routing_score(prompt, schema)
@@ -196,8 +191,12 @@ class TestInjectReasoningIntoPrompt:
 
         # Enhanced prompt should be longer
         assert len(enhanced) > len(base_prompt)
-        # Should contain reasoning markers
-        assert "REASONING TASK" in enhanced or "Instructions" in enhanced
+        # Should contain reasoning markers (from task or execution plan)
+        assert (
+            "REASONING TASK" in enhanced
+            or "Instructions" in enhanced
+            or "EXECUTION PROTOCOL" in enhanced
+        )
         # Base prompt should still be there
         assert base_prompt in enhanced
 
@@ -256,8 +255,8 @@ class TestInjectReasoningIntoPrompt:
             "type": "object",
             "properties": {
                 "status": {"enum": ["pending", "approved"]},
-                "priority": {"enum": ["low", "high"]}
-            }
+                "priority": {"enum": ["low", "high"]},
+            },
         }
         prompt = "Status and priority?"
         routing_score = compute_routing_score(prompt, schema)
@@ -274,16 +273,15 @@ class TestInjectReasoningIntoPrompt:
         enhanced = inject_reasoning_into_prompt(base_prompt, context)
 
         assert len(enhanced) >= len(base_prompt)
-        # Should have constraints section
-        assert "CONSTRAINTS" in enhanced or "pending" in enhanced
+        # Should have constraints section or execution protocol
+        assert (
+            "CONSTRAINTS" in enhanced or "pending" in enhanced or "EXECUTION PROTOCOL" in enhanced
+        )
 
     def test_inject_preserves_base_prompt(self):
         """Base prompt is always preserved in enhanced version"""
         base_prompt = "This is the original prompt with important context."
-        schema = {
-            "type": "object",
-            "properties": {"status": {"enum": ["A", "B"]}}
-        }
+        schema = {"type": "object", "properties": {"status": {"enum": ["A", "B"]}}}
         prompt = "What is status?"
         routing_score = compute_routing_score(prompt, schema)
 
@@ -305,9 +303,9 @@ class TestReasoningContextIntegration:
             "properties": {
                 "first_name": {"type": "string"},
                 "last_name": {"type": "string"},
-                "email": {"type": "string"}
+                "email": {"type": "string"},
             },
-            "required": ["first_name", "last_name", "email"]
+            "required": ["first_name", "last_name", "email"],
         }
         prompt = "Extract contact information"
         routing_score = compute_routing_score(prompt, schema)
@@ -338,8 +336,8 @@ class TestReasoningContextIntegration:
                 "rationale": {"type": "string"},
                 "confidence": {"type": "number", "minimum": 0, "maximum": 1},
                 "tradeoffs": {"type": "array", "items": {"type": "string"}},
-                "constraints": {"type": "object", "properties": {}}
-            }
+                "constraints": {"type": "object", "properties": {}},
+            },
         }
         prompt = "Make a recommendation considering all factors"
         routing_score = compute_routing_score(prompt, schema)

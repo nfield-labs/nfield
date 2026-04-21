@@ -12,6 +12,7 @@ Tests the constraint_engine module's ability to:
 """
 
 import pytest
+
 from formatshield.oracle.routing_score import compute_routing_score
 from formatshield.reasoning import extract_constraints
 
@@ -23,9 +24,7 @@ class TestEnumConstraintExtraction:
         """Extract single enum constraint"""
         schema = {
             "type": "object",
-            "properties": {
-                "status": {"enum": ["pending", "approved", "rejected"]}
-            }
+            "properties": {"status": {"enum": ["pending", "approved", "rejected"]}},
         }
         routing_score = compute_routing_score("What is status?", schema)
         rules = extract_constraints(schema, "What is status?", routing_score)
@@ -41,8 +40,8 @@ class TestEnumConstraintExtraction:
             "type": "object",
             "properties": {
                 "status": {"enum": ["A", "B", "C"]},
-                "priority": {"enum": ["low", "high"]}
-            }
+                "priority": {"enum": ["low", "high"]},
+            },
         }
         routing_score = compute_routing_score("Status and priority?", schema)
         rules = extract_constraints(schema, "Status and priority?", routing_score)
@@ -52,12 +51,7 @@ class TestEnumConstraintExtraction:
 
     def test_enum_validator_works(self):
         """Enum validator correctly validates values"""
-        schema = {
-            "type": "object",
-            "properties": {
-                "status": {"enum": ["yes", "no"]}
-            }
-        }
+        schema = {"type": "object", "properties": {"status": {"enum": ["yes", "no"]}}}
         routing_score = compute_routing_score("Status?", schema)
         rules = extract_constraints(schema, "Status?", routing_score)
 
@@ -78,9 +72,7 @@ class TestRangeConstraintExtraction:
         """Extract numeric min/max constraints"""
         schema = {
             "type": "object",
-            "properties": {
-                "age": {"type": "integer", "minimum": 0, "maximum": 150}
-            }
+            "properties": {"age": {"type": "integer", "minimum": 0, "maximum": 150}},
         }
         routing_score = compute_routing_score("Age?", schema)
         rules = extract_constraints(schema, "Age?", routing_score)
@@ -94,13 +86,8 @@ class TestRangeConstraintExtraction:
         schema = {
             "type": "object",
             "properties": {
-                "tags": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "minItems": 1,
-                    "maxItems": 5
-                }
-            }
+                "tags": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 5}
+            },
         }
         routing_score = compute_routing_score("Tags?", schema)
         rules = extract_constraints(schema, "Tags?", routing_score)
@@ -112,9 +99,7 @@ class TestRangeConstraintExtraction:
         """Range validator correctly validates numeric values"""
         schema = {
             "type": "object",
-            "properties": {
-                "score": {"type": "number", "minimum": 0, "maximum": 100}
-            }
+            "properties": {"score": {"type": "number", "minimum": 0, "maximum": 100}},
         }
         routing_score = compute_routing_score("Score?", schema)
         rules = extract_constraints(schema, "Score?", routing_score)
@@ -139,8 +124,8 @@ class TestTypeConstraintExtraction:
             "properties": {
                 "name": {"type": "string"},
                 "age": {"type": "integer"},
-                "active": {"type": "boolean"}
-            }
+                "active": {"type": "boolean"},
+            },
         }
         routing_score = compute_routing_score("Extract all", schema)
         rules = extract_constraints(schema, "Extract all", routing_score)
@@ -151,16 +136,13 @@ class TestTypeConstraintExtraction:
 
     def test_type_validator_works(self):
         """Type validator correctly validates types"""
-        schema = {
-            "type": "object",
-            "properties": {
-                "count": {"type": "integer"}
-            }
-        }
+        schema = {"type": "object", "properties": {"count": {"type": "integer"}}}
         routing_score = compute_routing_score("Count?", schema)
         rules = extract_constraints(schema, "Count?", routing_score)
 
-        type_rules = [r for r in rules if "count" in r.schema_path and "type" in r.description.lower()]
+        type_rules = [
+            r for r in rules if "count" in r.schema_path and "type" in r.description.lower()
+        ]
         if len(type_rules) > 0 and type_rules[0].validator:
             rule = type_rules[0]
             assert rule.validator(42) is True
@@ -175,16 +157,15 @@ class TestPatternConstraintExtraction:
         schema = {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string",
-                    "pattern": "^[\\w\\.-]+@[\\w\\.-]+\\.\\w+$"
-                }
-            }
+                "email": {"type": "string", "pattern": "^[\\w\\.-]+@[\\w\\.-]+\\.\\w+$"}
+            },
         }
         routing_score = compute_routing_score("Email?", schema)
         rules = extract_constraints(schema, "Email?", routing_score)
 
-        pattern_rules = [r for r in rules if r.rule_type == "consistency" and "pattern" in r.description.lower()]
+        pattern_rules = [
+            r for r in rules if r.rule_type == "consistency" and "pattern" in r.description.lower()
+        ]
         # Should have at least the pattern constraint
         assert any("email" in r.schema_path for r in pattern_rules)
 
@@ -192,17 +173,14 @@ class TestPatternConstraintExtraction:
         """Pattern validator correctly matches regex"""
         schema = {
             "type": "object",
-            "properties": {
-                "zipcode": {
-                    "type": "string",
-                    "pattern": "^\\d{5}$"
-                }
-            }
+            "properties": {"zipcode": {"type": "string", "pattern": "^\\d{5}$"}},
         }
         routing_score = compute_routing_score("Zipcode?", schema)
         rules = extract_constraints(schema, "Zipcode?", routing_score)
 
-        pattern_rules = [r for r in rules if "zipcode" in r.schema_path and "pattern" in r.description.lower()]
+        pattern_rules = [
+            r for r in rules if "zipcode" in r.schema_path and "pattern" in r.description.lower()
+        ]
         if len(pattern_rules) > 0 and pattern_rules[0].validator:
             rule = pattern_rules[0]
             assert rule.validator("12345") is True
@@ -217,14 +195,11 @@ class TestConditionalConstraintExtraction:
         """Extract if-then conditional constraints"""
         schema = {
             "type": "object",
-            "properties": {
-                "use_custom": {"type": "boolean"},
-                "custom_value": {"type": "string"}
-            },
+            "properties": {"use_custom": {"type": "boolean"}, "custom_value": {"type": "string"}},
             "dependentSchemas": {
                 "if": {"properties": {"use_custom": {"const": True}}},
-                "then": {"required": ["custom_value"]}
-            }
+                "then": {"required": ["custom_value"]},
+            },
         }
         routing_score = compute_routing_score("Conditional check?", schema)
         rules = extract_constraints(schema, "Conditional check?", routing_score)
@@ -241,16 +216,15 @@ class TestDependencyConstraintExtraction:
         """Extract required fields constraints"""
         schema = {
             "type": "object",
-            "properties": {
-                "name": {"type": "string"},
-                "email": {"type": "string"}
-            },
-            "required": ["name", "email"]
+            "properties": {"name": {"type": "string"}, "email": {"type": "string"}},
+            "required": ["name", "email"],
         }
         routing_score = compute_routing_score("Required?", schema)
         rules = extract_constraints(schema, "Required?", routing_score)
 
-        dep_rules = [r for r in rules if r.rule_type == "dependency" and "required" in r.schema_path.lower()]
+        dep_rules = [
+            r for r in rules if r.rule_type == "dependency" and "required" in r.schema_path.lower()
+        ]
         assert len(dep_rules) >= 1
         assert any("name" in r.description for r in dep_rules)
         assert any("email" in r.description for r in dep_rules)
@@ -259,31 +233,32 @@ class TestDependencyConstraintExtraction:
         """Extract additionalProperties: false constraint"""
         schema = {
             "type": "object",
-            "properties": {
-                "allowed": {"type": "string"}
-            },
-            "additionalProperties": False
+            "properties": {"allowed": {"type": "string"}},
+            "additionalProperties": False,
         }
         routing_score = compute_routing_score("Additional props?", schema)
         rules = extract_constraints(schema, "Additional props?", routing_score)
 
-        dep_rules = [r for r in rules if r.rule_type == "dependency" and "additional" in r.description.lower()]
+        dep_rules = [
+            r
+            for r in rules
+            if r.rule_type == "dependency" and "additional" in r.description.lower()
+        ]
         assert len(dep_rules) >= 1
 
     def test_required_validator_works(self):
         """Required fields validator works correctly"""
         schema = {
             "type": "object",
-            "properties": {
-                "name": {"type": "string"},
-                "age": {"type": "integer"}
-            },
-            "required": ["name"]
+            "properties": {"name": {"type": "string"}, "age": {"type": "integer"}},
+            "required": ["name"],
         }
         routing_score = compute_routing_score("Required?", schema)
         rules = extract_constraints(schema, "Required?", routing_score)
 
-        dep_rules = [r for r in rules if r.rule_type == "dependency" and "required" in r.schema_path.lower()]
+        dep_rules = [
+            r for r in rules if r.rule_type == "dependency" and "required" in r.schema_path.lower()
+        ]
         if len(dep_rules) > 0 and dep_rules[0].validator:
             rule = dep_rules[0]
             assert rule.validator({"name": "John"}) is True
@@ -300,13 +275,14 @@ class TestVocabularyConstraintExtraction:
             "type": "object",
             "properties": {
                 "processing_basis": {"enum": ["consent", "contract", "legal"]},
-                "third_party_recipient": {"type": "string"}
-            }
+                "third_party_recipient": {"type": "string"},
+            },
         }
         # Very different wording to trigger high ΔK
         routing_score = compute_routing_score(
-            "Does the user give permission or is there a contract or legal mandate? Who receives data?",
-            schema
+            "Does the user give permission or is there a contract or legal mandate?"
+            " Who receives data?",
+            schema,
         )
         rules = extract_constraints(schema, "Does the user give permission...", routing_score)
 
@@ -319,10 +295,7 @@ class TestVocabularyConstraintExtraction:
         """Low ΔK ≤ 0.5: no vocabulary bridging rules needed"""
         schema = {
             "type": "object",
-            "properties": {
-                "status": {"type": "string"},
-                "priority": {"type": "string"}
-            }
+            "properties": {"status": {"type": "string"}, "priority": {"type": "string"}},
         }
         # Same terminology as schema
         routing_score = compute_routing_score("What is the status and priority?", schema)
@@ -343,9 +316,9 @@ class TestConstraintPriority:
             "type": "object",
             "properties": {
                 "status": {"enum": ["A", "B"]},
-                "count": {"type": "integer", "minimum": 0, "maximum": 100}
+                "count": {"type": "integer", "minimum": 0, "maximum": 100},
             },
-            "required": ["status"]
+            "required": ["status"],
         }
         routing_score = compute_routing_score("Status and count?", schema)
         rules = extract_constraints(schema, "Status and count?", routing_score)
@@ -363,12 +336,7 @@ class TestConstraintRuleDataContract:
 
     def test_constraint_rule_has_required_fields(self):
         """ConstraintRule includes all expected fields"""
-        schema = {
-            "type": "object",
-            "properties": {
-                "status": {"enum": ["A", "B"]}
-            }
-        }
+        schema = {"type": "object", "properties": {"status": {"enum": ["A", "B"]}}}
         routing_score = compute_routing_score("Status?", schema)
         rules = extract_constraints(schema, "Status?", routing_score)
 
@@ -387,8 +355,8 @@ class TestConstraintRuleDataContract:
             "properties": {
                 "status": {"enum": ["A", "B"]},
                 "count": {"type": "integer", "minimum": 0},
-                "name": {"type": "string", "pattern": "^[A-Z]"}
-            }
+                "name": {"type": "string", "pattern": "^[A-Z]"},
+            },
         }
         routing_score = compute_routing_score("All?", schema)
         rules = extract_constraints(schema, "All?", routing_score)
@@ -401,10 +369,7 @@ class TestConstraintRuleDataContract:
         """priority is either 'hard' or 'soft'"""
         schema = {
             "type": "object",
-            "properties": {
-                "status": {"enum": ["A"]},
-                "count": {"type": "integer", "minimum": 0}
-            }
+            "properties": {"status": {"enum": ["A"]}, "count": {"type": "integer", "minimum": 0}},
         }
         routing_score = compute_routing_score("All?", schema)
         rules = extract_constraints(schema, "All?", routing_score)

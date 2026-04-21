@@ -684,6 +684,9 @@ async def compare(req: CompareRequest) -> dict:
         phi=phi_info.get("phi"),
     )
 
+    # Format semantic metrics for UI (4-metric dashboard)
+    semantic_metrics = _format_semantic_metrics_for_ui(semantic_evaluation)
+
     # Fix 4: compute verdict
     verdict = _compute_verdict(fs_result, raw_result, semantic_evaluation)
 
@@ -697,6 +700,7 @@ async def compare(req: CompareRequest) -> dict:
         "verdict": verdict,
         "demo_score": demo_score,
         "semantic_evaluation": semantic_evaluation,
+        "semantic_metrics": semantic_metrics,  # NEW: 4-metric dashboard for UI
     }
 
 
@@ -881,3 +885,49 @@ def _safe_payload(obj: object) -> object:
         return str(obj)
     except Exception:
         return "<unserializable>"
+
+
+def _format_semantic_metrics_for_ui(semantic_evaluation: dict) -> dict:
+    """
+    Extract 4-metric semantic dashboard from semantic_evaluation for UI display.
+
+    Maps semantic evaluator metrics to 4-metric display:
+    - type_consistency → type_match%
+    - required_field_recall → recall%
+    - constraint_integrity → integrity%
+    - schema_validity → completeness%
+    """
+    formatshield_metrics = semantic_evaluation.get("formatshield", {}).get("metrics", [])
+    raw_metrics = semantic_evaluation.get("raw", {}).get("metrics", [])
+
+    # Build metric lookup
+    fs_metric_map = {m.get("name"): m for m in formatshield_metrics}
+    raw_metric_map = {m.get("name"): m for m in raw_metrics}
+
+    def _get_percentage(metric_dict: dict, metric_name: str) -> float:
+        """Extract score as percentage from metric dict."""
+        if not metric_dict:
+            return 0.0
+        m = metric_dict.get(metric_name, {})
+        score = m.get("score", 0)
+        max_score = m.get("max_score", 1)
+        if max_score == 0:
+            return 0.0
+        return round((score / max_score) * 100, 1)
+
+    return {
+        "formatshield": {
+            "type_match": _get_percentage(fs_metric_map, "type_consistency"),
+            "recall": _get_percentage(fs_metric_map, "required_field_recall"),
+            "integrity": _get_percentage(fs_metric_map, "constraint_integrity"),
+            "completeness": _get_percentage(fs_metric_map, "schema_validity"),
+        },
+        "raw": {
+            "type_match": _get_percentage(raw_metric_map, "type_consistency"),
+            "recall": _get_percentage(raw_metric_map, "required_field_recall"),
+            "integrity": _get_percentage(raw_metric_map, "constraint_integrity"),
+            "completeness": _get_percentage(raw_metric_map, "schema_validity"),
+        },
+        "winner": semantic_evaluation.get("winner", "tie"),
+        "delta": semantic_evaluation.get("delta", 0),
+    }
