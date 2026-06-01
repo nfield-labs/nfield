@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Invoice",
+  "properties": {
+    "invoice_number": {"type": "string"},
+    "invoice_date": {"type": "string", "format": "date"},
+    "due_date": {"type": "string", "format": "date"},
+    "currency": {"type": "string", "enum": ["USD", "EUR", "GBP", "JPY", "CAD"]},
+    "total_amount": {"type": "number"},
+    "tax_amount": {"type": "number"},
+    "discount_amount": {"type": "number"},
+    "notes": {"type": "string"},
+    "payment_terms": {"type": "string"},
+    "status": {"type": "string", "enum": ["draft", "sent", "paid", "overdue", "cancelled"]},
+    "vendor": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {"type": "string"},
+            "city": {"type": "string"},
+            "state": {"type": "string"},
+            "zip": {"type": "string", "pattern": "^[0-9]{5}(-[0-9]{4})?$"},
+            "country": {"type": "string"}
+          }
+        },
+        "tax_id": {"type": "string"},
+        "phone": {"type": "string"},
+        "email": {"type": "string", "format": "email"},
+        "website": {"type": "string", "format": "uri"}
+      }
+    },
+    "customer": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {"type": "string"},
+            "city": {"type": "string"},
+            "state": {"type": "string"},
+            "zip": {"type": "string", "pattern": "^[0-9]{5}(-[0-9]{4})?$"},
+            "country": {"type": "string"}
+          }
+        },
+        "tax_id": {"type": "string"},
+        "phone": {"type": "string"},
+        "email": {"type": "string", "format": "email"},
+        "website": {"type": "string", "format": "uri"}
+      }
+    },
+    "billing_address": {
+      "type": "object",
+      "properties": {
+        "street": {"type": "string"},
+        "city": {"type": "string"},
+        "state": {"type": "string"},
+        "zip": {"type": "string"},
+        "country": {"type": "string"}
+      }
+    },
+    "shipping_address": {
+      "type": "object",
+      "properties": {
+        "street": {"type": "string"},
+        "city": {"type": "string"},
+        "state": {"type": "string"},
+        "zip": {"type": "string"},
+        "country": {"type": "string"}
+      }
+    },
+    "line_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "description": {"type": "string"},
+          "quantity": {"type": "integer"},
+          "unit_price": {"type": "number"},
+          "total": {"type": "number"},
+          "tax_rate": {"type": "number"},
+          "discount": {"type": "number"},
+          "category": {"type": "string"},
+          "sku": {"type": "string"}
+        }
+      }
+    },
+    "payment": {
+      "type": "object",
+      "properties": {
+        "method": {"type": "string", "enum": ["cash", "credit_card", "bank_transfer", "paypal", "check"]},
+        "transaction_id": {"type": "string"},
+        "paid_date": {"type": "string", "format": "date"},
+        "amount_paid": {"type": "number"}
+      }
+    }
+  },
+  "required": ["invoice_number", "invoice_date", "total_amount", "vendor", "customer"]
+}

@@ -1,11 +1,29 @@
-# Environment & secrets — NEVER COMMIT
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Distribution
+dist/
+build/
+*.egg-info/
+
+# Virtual environment
+.venv/
+
+# Tools
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+
+# Packaging lockfile (keep uv.lock tracked — omit if you prefer not to)
+# uv.lock
+
+# Environment
 .env
 
- 
-# llms/
+# Project internals
 .claude/
-claude.md
-
-#data
-examples-repo/
 project-details/
+examples-repo/

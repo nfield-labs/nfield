@@ -1,0 +1,161 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "MedicalCRF",
+  "properties": {
+    "patient": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "dob": {"type": "string", "format": "date"},
+        "gender": {"type": "string", "enum": ["male", "female", "other", "unknown"]},
+        "ethnicity": {"type": "string"},
+        "race": {"type": "string"},
+        "weight_kg": {"type": "number"},
+        "height_cm": {"type": "number"},
+        "bmi": {"type": "number"},
+        "blood_type": {"type": "string", "enum": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "unknown"]},
+        "phone": {"type": "string"},
+        "email": {"type": "string", "format": "email"},
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {"type": "string"},
+            "city": {"type": "string"},
+            "state": {"type": "string"},
+            "zip": {"type": "string"},
+            "country": {"type": "string"}
+          }
+        }
+      }
+    },
+    "vitals": {
+      "type": "object",
+      "properties": {
+        "systolic_bp": {"type": "integer"},
+        "diastolic_bp": {"type": "integer"},
+        "heart_rate": {"type": "integer"},
+        "temperature_celsius": {"type": "number"},
+        "respiratory_rate": {"type": "integer"},
+        "oxygen_saturation": {"type": "number"},
+        "weight_kg": {"type": "number"},
+        "height_cm": {"type": "number"},
+        "bmi": {"type": "number"}
+      }
+    },
+    "diagnosis": {
+      "type": "object",
+      "properties": {
+        "primary_code": {"type": "string"},
+        "primary_name": {"type": "string"},
+        "secondary_codes": {"type": "array", "items": {"type": "string"}},
+        "comorbidities": {"type": "array", "items": {"type": "string"}},
+        "onset_date": {"type": "string", "format": "date"},
+        "severity": {"type": "string", "enum": ["mild", "moderate", "severe"]}
+      }
+    },
+    "medications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "dosage": {"type": "string"},
+          "unit": {"type": "string"},
+          "frequency": {"type": "string"},
+          "route": {"type": "string"},
+          "start_date": {"type": "string", "format": "date"},
+          "end_date": {"type": "string", "format": "date"},
+          "prescriber": {"type": "string"}
+        }
+      }
+    },
+    "lab_results": {
+      "type": "object",
+      "properties": {
+        "hemoglobin": {"type": "number"},
+        "hematocrit": {"type": "number"},
+        "wbc": {"type": "number"},
+        "rbc": {"type": "number"},
+        "platelets": {"type": "number"},
+        "glucose": {"type": "number"},
+        "bun": {"type": "number"},
+        "creatinine": {"type": "number"},
+        "sodium": {"type": "number"},
+        "potassium": {"type": "number"},
+        "chloride": {"type": "number"},
+        "co2": {"type": "number"},
+        "alt": {"type": "number"},
+        "ast": {"type": "number"},
+        "alkaline_phosphatase": {"type": "number"},
+        "total_bilirubin": {"type": "number"},
+        "albumin": {"type": "number"},
+        "total_protein": {"type": "number"},
+        "tsh": {"type": "number"},
+        "free_t4": {"type": "number"}
+      }
+    },
+    "procedure": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "code": {"type": "string"},
+        "date": {"type": "string", "format": "date"},
+        "surgeon": {"type": "string"},
+        "hospital": {"type": "string"},
+        "duration_minutes": {"type": "integer"},
+        "outcome": {"type": "string"}
+      }
+    },
+    "allergies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "allergen": {"type": "string"},
+          "reaction": {"type": "string"},
+          "severity": {"type": "string", "enum": ["mild", "moderate", "severe", "life-threatening"]}
+        }
+      }
+    },
+    "symptoms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "onset_date": {"type": "string", "format": "date"},
+          "severity": {"type": "string"},
+          "duration_days": {"type": "integer"}
+        }
+      }
+    },
+    "family_history": {
+      "type": "object",
+      "properties": {
+        "heart_disease": {"type": "boolean"},
+        "diabetes": {"type": "boolean"},
+        "cancer": {"type": "boolean"},
+        "hypertension": {"type": "boolean"}
+      }
+    },
+    "social_history": {
+      "type": "object",
+      "properties": {
+        "smoker": {"type": "boolean"},
+        "alcohol_use": {"type": "boolean"},
+        "exercise_frequency": {"type": "string"}
+      }
+    },
+    "insurance": {
+      "type": "object",
+      "properties": {
+        "provider": {"type": "string"},
+        "policy_number": {"type": "string"},
+        "group_number": {"type": "string"},
+        "coverage_type": {"type": "string"}
+      }
+    }
+  },
+  "required": ["patient", "diagnosis"]
+}

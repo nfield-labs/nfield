@@ -1,0 +1,335 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "SECFiling",
+  "properties": {
+    "filing_info": {
+      "type": "object",
+      "properties": {
+        "form_type": {"type": "string"},
+        "cik": {"type": "string"},
+        "company_name": {"type": "string"},
+        "filing_date": {"type": "string", "format": "date"},
+        "period_of_report": {"type": "string", "format": "date"},
+        "fiscal_year_end": {"type": "string"},
+        "sic_code": {"type": "string"},
+        "state_of_incorporation": {"type": "string"},
+        "ein": {"type": "string"},
+        "phone": {"type": "string"},
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": {"type": "string"},
+            "city": {"type": "string"},
+            "state": {"type": "string"},
+            "zip": {"type": "string"},
+            "country": {"type": "string"}
+          }
+        }
+      }
+    },
+    "income_statement": {
+      "type": "object",
+      "properties": {
+        "revenue": {"type": "number"},
+        "cost_of_goods_sold": {"type": "number"},
+        "gross_profit": {"type": "number"},
+        "research_development": {"type": "number"},
+        "selling_general_admin": {"type": "number"},
+        "depreciation_amortization": {"type": "number"},
+        "operating_income": {"type": "number"},
+        "interest_income": {"type": "number"},
+        "interest_expense": {"type": "number"},
+        "other_income": {"type": "number"},
+        "pretax_income": {"type": "number"},
+        "income_tax": {"type": "number"},
+        "net_income": {"type": "number"},
+        "eps_basic": {"type": "number"},
+        "eps_diluted": {"type": "number"},
+        "weighted_avg_shares_basic": {"type": "number"},
+        "weighted_avg_shares_diluted": {"type": "number"},
+        "dividends_per_share": {"type": "number"}
+      }
+    },
+    "balance_sheet": {
+      "type": "object",
+      "properties": {
+        "assets": {
+          "type": "object",
+          "properties": {
+            "cash_equivalents": {"type": "number"},
+            "short_term_investments": {"type": "number"},
+            "accounts_receivable": {"type": "number"},
+            "allowance_doubtful": {"type": "number"},
+            "net_receivables": {"type": "number"},
+            "inventory": {"type": "number"},
+            "prepaid_expenses": {"type": "number"},
+            "deferred_tax_current": {"type": "number"},
+            "other_current_assets": {"type": "number"},
+            "total_current_assets": {"type": "number"},
+            "property_plant_equipment_gross": {"type": "number"},
+            "accumulated_depreciation": {"type": "number"},
+            "net_ppe": {"type": "number"},
+            "goodwill": {"type": "number"},
+            "intangible_assets": {"type": "number"},
+            "deferred_tax_noncurrent": {"type": "number"},
+            "other_noncurrent_assets": {"type": "number"},
+            "total_assets": {"type": "number"}
+          }
+        },
+        "liabilities": {
+          "type": "object",
+          "properties": {
+            "accounts_payable": {"type": "number"},
+            "accrued_liabilities": {"type": "number"},
+            "short_term_debt": {"type": "number"},
+            "current_portion_lt_debt": {"type": "number"},
+            "deferred_revenue_current": {"type": "number"},
+            "other_current_liabilities": {"type": "number"},
+            "total_current_liabilities": {"type": "number"},
+            "long_term_debt": {"type": "number"},
+            "deferred_tax_noncurrent_liab": {"type": "number"},
+            "other_noncurrent_liabilities": {"type": "number"},
+            "total_liabilities": {"type": "number"}
+          }
+        },
+        "equity": {
+          "type": "object",
+          "properties": {
+            "common_stock": {"type": "number"},
+            "additional_paid_in_capital": {"type": "number"},
+            "retained_earnings": {"type": "number"},
+            "treasury_stock": {"type": "number"},
+            "accumulated_other_comprehensive_income": {"type": "number"},
+            "total_equity": {"type": "number"},
+            "total_liabilities_and_equity": {"type": "number"}
+          }
+        }
+      }
+    },
+    "cash_flow": {
+      "type": "object",
+      "properties": {
+        "operating": {
+          "type": "object",
+          "properties": {
+            "net_income": {"type": "number"},
+            "depreciation_amortization": {"type": "number"},
+            "stock_compensation": {"type": "number"},
+            "deferred_income_tax": {"type": "number"},
+            "change_accounts_receivable": {"type": "number"},
+            "change_inventory": {"type": "number"},
+            "change_accounts_payable": {"type": "number"},
+            "change_accrued_liabilities": {"type": "number"},
+            "change_deferred_revenue": {"type": "number"},
+            "change_prepaid_expenses": {"type": "number"},
+            "other_operating_adjustments": {"type": "number"},
+            "impairment_charges": {"type": "number"},
+            "gain_loss_asset_sales": {"type": "number"},
+            "change_other_assets": {"type": "number"},
+            "change_other_liabilities": {"type": "number"},
+            "amortization_debt_issuance": {"type": "number"},
+            "restructuring_charges": {"type": "number"},
+            "unrealized_fx_gain_loss": {"type": "number"},
+            "equity_earnings_losses": {"type": "number"},
+            "net_cash_from_operations": {"type": "number"}
+          }
+        },
+        "investing": {
+          "type": "object",
+          "properties": {
+            "capex": {"type": "number"},
+            "proceeds_asset_sales": {"type": "number"},
+            "acquisitions_net": {"type": "number"},
+            "purchases_investments": {"type": "number"},
+            "proceeds_investments": {"type": "number"},
+            "purchases_intangibles": {"type": "number"},
+            "proceeds_intangibles": {"type": "number"},
+            "loans_made": {"type": "number"},
+            "collections_loans": {"type": "number"},
+            "purchases_equity_investments": {"type": "number"},
+            "proceeds_equity_investments": {"type": "number"},
+            "change_restricted_cash": {"type": "number"},
+            "other_investing_activities": {"type": "number"},
+            "business_divestitures": {"type": "number"},
+            "net_cash_from_investing": {"type": "number"}
+          }
+        },
+        "financing": {
+          "type": "object",
+          "properties": {
+            "proceeds_long_term_debt": {"type": "number"},
+            "repayments_long_term_debt": {"type": "number"},
+            "proceeds_short_term_debt": {"type": "number"},
+            "repayments_short_term_debt": {"type": "number"},
+            "proceeds_stock_issuance": {"type": "number"},
+            "repurchases_stock": {"type": "number"},
+            "dividends_paid": {"type": "number"},
+            "payments_finance_leases": {"type": "number"},
+            "debt_issuance_costs": {"type": "number"},
+            "proceeds_employee_stock_plans": {"type": "number"},
+            "contingent_consideration_payments": {"type": "number"},
+            "distributions_noncontrolling": {"type": "number"},
+            "other_financing_activities": {"type": "number"},
+            "change_bank_overdraft": {"type": "number"},
+            "net_cash_from_financing": {"type": "number"}
+          }
+        }
+      }
+    },
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "revenue": {"type": "number"},
+          "operating_income": {"type": "number"},
+          "assets": {"type": "number"},
+          "capex": {"type": "number"},
+          "depreciation": {"type": "number"},
+          "employees": {"type": "integer"}
+        }
+      }
+    },
+    "subsidiaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "country": {"type": "string"},
+          "ownership_pct": {"type": "number"},
+          "revenue": {"type": "number"},
+          "assets": {"type": "number"}
+        }
+      }
+    },
+    "officers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "title": {"type": "string"},
+          "compensation_salary": {"type": "number"},
+          "compensation_bonus": {"type": "number"},
+          "compensation_stock": {"type": "number"},
+          "compensation_other": {"type": "number"},
+          "total_compensation": {"type": "number"},
+          "shares_owned": {"type": "number"}
+        }
+      }
+    },
+    "directors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "independent": {"type": "boolean"},
+          "committee_memberships": {"type": "array", "items": {"type": "string"}},
+          "compensation": {"type": "number"}
+        }
+      }
+    },
+    "risk_factors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {"type": "string"},
+          "description": {"type": "string"},
+          "materiality_level": {"type": "string", "enum": ["low", "medium", "high", "critical"]}
+        }
+      }
+    },
+    "legal_proceedings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "case_name": {"type": "string"},
+          "court": {"type": "string"},
+          "status": {"type": "string"},
+          "potential_liability": {"type": "number"},
+          "description": {"type": "string"}
+        }
+      }
+    },
+    "accounting_policies": {
+      "type": "object",
+      "properties": {
+        "revenue_recognition_asc606": {"type": "boolean"},
+        "lease_accounting_asc842": {"type": "boolean"},
+        "goodwill_impairment_asc350": {"type": "boolean"},
+        "stock_compensation_asc718": {"type": "boolean"},
+        "income_taxes_asc740": {"type": "boolean"},
+        "fair_value_asc820": {"type": "boolean"},
+        "financial_instruments_asc815": {"type": "boolean"},
+        "inventory_method": {"type": "string", "enum": ["FIFO", "LIFO", "weighted_average", "specific_identification"]},
+        "depreciation_method": {"type": "string", "enum": ["straight_line", "double_declining", "units_of_production", "sum_of_years"]},
+        "fiscal_year_basis": {"type": "string"},
+        "functional_currency": {"type": "string"},
+        "consolidation_method": {"type": "string"},
+        "segment_reporting_method": {"type": "string"},
+        "pension_accounting_method": {"type": "string"},
+        "business_combinations_asc805": {"type": "boolean"},
+        "variable_interest_entities_asc810": {"type": "boolean"},
+        "earnings_per_share_asc260": {"type": "boolean"},
+        "comprehensive_income_asc220": {"type": "boolean"},
+        "cash_flow_asc230": {"type": "boolean"},
+        "discontinued_operations_asc205": {"type": "boolean"},
+        "going_concern_assessed": {"type": "boolean"},
+        "internal_controls_sarbanes_oxley": {"type": "boolean"}
+      }
+    },
+    "auditor": {
+      "type": "object",
+      "properties": {
+        "firm_name": {"type": "string"},
+        "partner_name": {"type": "string"},
+        "opinion_type": {"type": "string", "enum": ["unqualified", "qualified", "adverse", "disclaimer"]},
+        "opinion_date": {"type": "string", "format": "date"},
+        "material_weaknesses": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "geographic_segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "region": {"type": "string"},
+          "revenue": {"type": "number"},
+          "assets": {"type": "number"},
+          "employees": {"type": "integer"}
+        }
+      }
+    },
+    "product_lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "revenue": {"type": "number"},
+          "gross_margin": {"type": "number"},
+          "units_sold": {"type": "number"}
+        }
+      }
+    },
+    "quarterly_data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "quarter": {"type": "string"},
+          "revenue": {"type": "number"},
+          "net_income": {"type": "number"},
+          "eps": {"type": "number"}
+        }
+      }
+    }
+  },
+  "required": ["filing_info", "income_statement", "balance_sheet"]
+}

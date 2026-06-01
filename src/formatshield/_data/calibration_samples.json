@@ -1,0 +1,21 @@
+{
+  "en": [
+    "The patient was admitted on January 15, 2024 with chief complaints of fever and cough lasting 3 days.",
+    "Invoice total: $1,234.56. Payment due: Net 30. Vendor: Acme Corporation. PO Number: 987654.",
+    "The agreement is entered into as of the 1st day of March, 2024, between Party A and Party B.",
+    "Revenue for fiscal year 2023 was $45.2 million, representing a 12.3% increase year-over-year.",
+    "Name: John Smith. Date of birth: 1985-03-22. Address: 123 Main St, Springfield, IL 62701."
+  ],
+  "cjk": [
+    "\u60a3\u8005\u4e8e2024\u5e741\u670815\u65e5\u5165\u9662\uff0c\u4e3b\u8bc9\u53d1\u70ed\u548c\u548c\u548c3\u5929\u3002",
+    "\u53d1\u7968\u603b\u989d\uff1a\u00a51,234.56\u3002\u4ed8\u6b3e\u671f\u9650\uff1a\u51803030\u5929\u3002\u4f9b\u5e94\u5546\uff1aABC\u516c\u53f8\u3002",
+    "\u672c\u534f\u8bae\u4e8e2024\u5e743\u67081\u65e5\u7531\u7532\u65b9\u548c\u4e59\u65b9\u7b7e\u8ba2\u3002",
+    "2023\u8d22\u5e74\u6536\u5165\u4e3a4520\u4e07\u5143\uff0c\u540c\u6bd4\u589e\u957f12.3%\u3002",
+    "\u59d3\u540d\uff1a\u5f20\u4e09\u3002\u51fa\u751f\u65e5\u671f\uff1a1985\u5e743\u670822\u65e5\u3002\u5730\u5740\uff1a\u5317\u4eac\u5e02\u671d\u9633\u533a\u5efa\u56fd\u8def123\u53f7\u3002"
+  ],
+  "mixed": [
+    "Patient ID: 12345. Diagnosis: Type 2 diabetes mellitus (ICD-10: E11.9). HbA1c: 7.2%.",
+    "Contract No: AGR-2024-001. Term: 12 months. Value: USD 50,000. Parties: Alpha Inc and Beta LLC.",
+    "Stock symbol: AAPL. Price: $182.50. P/E ratio: 28.5. Market cap: $2.85T."
+  ]
+}
