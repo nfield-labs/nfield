@@ -11,9 +11,7 @@ __all__ = ["flatten_schema"]
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
-_LEAF_TYPES: frozenset[str] = frozenset(
-    {"string", "integer", "number", "boolean", "null"}
-)
+_LEAF_TYPES: frozenset[str] = frozenset({"string", "integer", "number", "boolean", "null"})
 _ARRAY_SUFFIX: str = "[]"
 _WILDCARD_SUFFIX: str = ".*"
 MAX_SCHEMA_DEPTH: int = 32
@@ -136,9 +134,7 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
                         **chosen,
                         **{k: v for k, v in node.items() if k not in (combo_key, "$ref")},
                     }
-                    stack.append(
-                        (merged_chosen, path, parent_path, depth, required_set)
-                    )
+                    stack.append((merged_chosen, path, parent_path, depth, required_set))
                 break
         else:
             # Only process this node normally if no anyOf/oneOf handled it
@@ -189,9 +185,7 @@ def _process_node(
         if merged_props:
             synthetic = {**node, "properties": merged_props, "required": merged_req}
             del synthetic["allOf"]
-            stack.append(
-                (synthetic, path, parent_path, depth, frozenset(merged_req))
-            )
+            stack.append((synthetic, path, parent_path, depth, frozenset(merged_req)))
             return
 
     node_type = _determine_type(node)
@@ -203,9 +197,7 @@ def _process_node(
         # Push in reverse so DFS pops in definition order
         for prop_name, prop_node in reversed(list(properties.items())):
             child_path = f"{path}.{prop_name}" if path else prop_name
-            stack.append(
-                (prop_node, child_path, path, depth + 1, child_required)
-            )
+            stack.append((prop_node, child_path, path, depth + 1, child_required))
 
         # patternProperties → wildcard field
         for pat_node in node.get("patternProperties", {}).values():
@@ -266,17 +258,13 @@ def _process_node(
         if isinstance(prefix_items, list):
             for idx, item_node in enumerate(prefix_items):
                 indexed_path = f"{path}[{idx}]"
-                stack.append(
-                    (item_node, indexed_path, path, depth + 1, frozenset())
-                )
+                stack.append((item_node, indexed_path, path, depth + 1, frozenset()))
             return
 
         items_node = node.get("items")
         if isinstance(items_node, dict):
             array_path = f"{path}{_ARRAY_SUFFIX}"
-            stack.append(
-                (items_node, array_path, path, depth + 1, frozenset())
-            )
+            stack.append((items_node, array_path, path, depth + 1, frozenset()))
             return
 
         # Array with no items/prefixItems — emit array leaf

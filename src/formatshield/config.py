@@ -1,4 +1,3 @@
-
 """FormatShield extraction configuration.
 
 This module exposes two primary configuration objects:
@@ -138,9 +137,7 @@ def _load_domain_configs() -> dict[str, DomainConfig]:
         if the JSON file is missing or cannot be parsed.
     """
     if not _DOMAIN_CONFIGS_PATH.exists():
-        _logger.warning(
-            "Built-in domain config file not found: %s", _DOMAIN_CONFIGS_PATH
-        )
+        _logger.warning("Built-in domain config file not found: %s", _DOMAIN_CONFIGS_PATH)
         return {}
     try:
         raw: list[dict[str, Any]] = json.loads(_DOMAIN_CONFIGS_PATH.read_text(encoding="utf-8"))
@@ -215,9 +212,8 @@ def get_domain_config(domain: str) -> DomainConfig:
         return _builtin_domains[domain]
     available = sorted({*_builtin_domains, *_domain_registry})
     raise SchemaError(
-        f"No DomainConfig registered for domain {domain!r}. "
-        f"Available domains: {available}",
-        hint=f"Use one of: {', '.join(available)}"
+        f"No DomainConfig registered for domain {domain!r}. Available domains: {available}",
+        hint=f"Use one of: {', '.join(available)}",
     )
 
 

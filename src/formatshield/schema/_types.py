@@ -168,9 +168,7 @@ class Field:
             required=self.required,
         )
 
-    def with_deps(
-        self, *, dep_in: frozenset[str], dep_out: frozenset[str]
-    ) -> Field:
+    def with_deps(self, *, dep_in: frozenset[str], dep_out: frozenset[str]) -> Field:
         """Return a new Field with updated dependency sets.
 
         Args:

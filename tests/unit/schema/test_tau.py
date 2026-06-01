@@ -1,4 +1,5 @@
 """Tests for schema._tau — SOTP token predictor."""
+
 from __future__ import annotations
 
 import math
@@ -339,7 +340,9 @@ class TestComputeTauProperties:
         tau1, _ = compute_tau(f1, chars_per_token)
         tau2, _ = compute_tau(f2, chars_per_token)
 
-        assert tau2 >= tau1, f"tau not monotonic: τ({max_length})={tau1} > τ({max_length * 2})={tau2}"
+        assert tau2 >= tau1, (
+            f"tau not monotonic: τ({max_length})={tau1} > τ({max_length * 2})={tau2}"
+        )
 
     @given(
         expected_size=st.integers(min_value=1, max_value=100),

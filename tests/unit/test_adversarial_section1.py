@@ -5,6 +5,7 @@ that the original test suite did not cover.
 
 Test IDs follow: ADV-<module>-<nn>
 """
+
 from __future__ import annotations
 
 import math
@@ -104,9 +105,7 @@ class TestComputeTauAdversarial:
         # flatten_schema should create 'tags[]' with type='string'
         assert "tags[]" in paths, f"Expected 'tags[]' path, got: {sorted(paths)}"
         tags_item = paths["tags[]"]
-        assert tags_item.type == "string", (
-            f"Expected item type 'string', got '{tags_item.type}'"
-        )
+        assert tags_item.type == "string", f"Expected item type 'string', got '{tags_item.type}'"
         # The parent 'tags' should NOT appear as a field (it's descended into)
         assert "tags" not in paths, "Parent array path should not emit a Field when items exist"
 
@@ -329,7 +328,9 @@ class TestFlattenAdversarial:
             st.text(
                 min_size=1,
                 max_size=20,
-                alphabet=st.characters(whitelist_categories=("Ll", "Lu", "Nd"), whitelist_characters="_"),
+                alphabet=st.characters(
+                    whitelist_categories=("Ll", "Lu", "Nd"), whitelist_characters="_"
+                ),
             ),
             st.just({"type": "string"}),
             min_size=0,
@@ -357,12 +358,14 @@ class TestFlattenAdversarial:
                 max_size=15,
                 alphabet="abcdefghijklmnopqrstuvwxyz_",
             ),
-            st.sampled_from([
-                {"type": "string"},
-                {"type": "integer"},
-                {"type": "boolean"},
-                {"type": "number"},
-            ]),
+            st.sampled_from(
+                [
+                    {"type": "string"},
+                    {"type": "integer"},
+                    {"type": "boolean"},
+                    {"type": "number"},
+                ]
+            ),
             min_size=1,
             max_size=30,
         )
@@ -416,6 +419,7 @@ class TestDifficultyAdversarial:
             _D_WEIGHT_DEP,
             _D_WEIGHT_TYPE,
         )
+
         total = _D_WEIGHT_TYPE + _D_WEIGHT_CONSTRAINT + _D_WEIGHT_DEP
         assert abs(total - 1.0) < 1e-9, f"Weights sum to {total}, expected 1.0"
 
@@ -425,6 +429,7 @@ class TestDifficultyAdversarial:
         Test documents current value to detect drift.
         """
         from formatshield.schema._difficulty import _D_TYPE
+
         # Current code value — if this changes, the test will fail
         assert _D_TYPE["boolean"] == 0.05
         # Arch-engine DeepJSONEval Table 3 example: 1 - 0.98 = 0.02
@@ -530,9 +535,7 @@ class TestConfigAdversarial:
         except FormatShieldError:
             caught_as_formatshield = True
 
-        assert caught_as_formatshield, (
-            "get_domain_config must raise a FormatShieldError subclass"
-        )
+        assert caught_as_formatshield, "get_domain_config must raise a FormatShieldError subclass"
 
     # ADV-CONFIG-02: register_domain overwrites builtin
     def test_register_domain_overwrites_builtin(self) -> None:
@@ -698,7 +701,14 @@ class TestExceptionsAdversarial:
             SchemaError,
             ValidationError,
         )
-        for exc_cls in (SchemaError, ProviderError, ExtractionError, ValidationError, AssemblyError):
+
+        for exc_cls in (
+            SchemaError,
+            ProviderError,
+            ExtractionError,
+            ValidationError,
+            AssemblyError,
+        ):
             caught = False
             try:
                 raise exc_cls("test")
@@ -728,6 +738,7 @@ class TestExceptionsAdversarial:
     def test_validation_error_with_falsy_value(self) -> None:
         """ValidationError with value=0 should include value in __str__."""
         from formatshield.exceptions import ValidationError
+
         exc = ValidationError("Out of range", field="count", value=0)
         s = str(exc)
         assert "0" in s  # value=0 should appear

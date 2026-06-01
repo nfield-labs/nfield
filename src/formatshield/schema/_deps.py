@@ -77,9 +77,7 @@ def _extract_dependent_required(schema: dict[str, Any]) -> dict[str, set[str]]:
         return deps
     for field_name, required_fields in dependent_required.items():
         if isinstance(required_fields, list):
-            deps.setdefault(str(field_name), set()).update(
-                str(r) for r in required_fields
-            )
+            deps.setdefault(str(field_name), set()).update(str(r) for r in required_fields)
     return deps
 
 

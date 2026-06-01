@@ -1,4 +1,5 @@
 """Tests for schema._difficulty — D(f) difficulty scoring."""
+
 from __future__ import annotations
 
 import pytest
@@ -239,9 +240,7 @@ class TestDifficultyDepComponent:
         """D_dep is capped at 1.0 regardless of degree."""
         f = make_field("string", path="hub")
         # Create many deps to exceed _MAX_DEP_DEGREE
-        dep_dag: dict[str, set[str]] = {
-            f"field_{i}": {"hub"} for i in range(_MAX_DEP_DEGREE + 5)
-        }
+        dep_dag: dict[str, set[str]] = {f"field_{i}": {"hub"} for i in range(_MAX_DEP_DEGREE + 5)}
         d = compute_difficulty(f, dep_dag=dep_dag)
         assert d <= 1.0
 
@@ -279,9 +278,7 @@ class TestDifficultyWeights:
             "maxItems": 10,
         }
         f = make_field("object", constraints, path="x")
-        dep_dag: dict[str, set[str]] = {
-            f"field_{i}": {"x"} for i in range(_MAX_DEP_DEGREE + 5)
-        }
+        dep_dag: dict[str, set[str]] = {f"field_{i}": {"x"} for i in range(_MAX_DEP_DEGREE + 5)}
         d = compute_difficulty(f, dep_dag=dep_dag)
         assert 0.0 <= d <= 1.0
 

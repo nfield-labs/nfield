@@ -3,6 +3,7 @@
 Provides pure-function schema flattening, token prediction, difficulty scoring,
 and dependency extraction. Zero API calls, zero side effects.
 """
+
 from __future__ import annotations
 
 from ._deps import extract_dependencies as extract_dependencies

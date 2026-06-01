@@ -1,4 +1,5 @@
 """Tests for schema._deps — dependency extraction."""
+
 from __future__ import annotations
 
 from formatshield.schema._deps import (

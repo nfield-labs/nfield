@@ -105,9 +105,9 @@ def compute_tau(
             # Build a temporary Field to recurse tau computation for element type
             element_type = items_info.get("type", "string")
             element_constraints = {
-                k: v for k, v in items_info.items() if k in (
-                    "maxLength", "minimum", "maximum", "enum", "pattern", "format"
-                )
+                k: v
+                for k, v in items_info.items()
+                if k in ("maxLength", "minimum", "maximum", "enum", "pattern", "format")
             }
             element_field = Field(
                 path=field.path + "[]",

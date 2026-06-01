@@ -1,4 +1,5 @@
 """Tests for schema._flatten — Radix Trie Schema Flattener."""
+
 from __future__ import annotations
 
 import json
@@ -159,9 +160,7 @@ class TestFlattenNested:
                                     "properties": {
                                         "d": {
                                             "type": "object",
-                                            "properties": {
-                                                "e": {"type": "string"}
-                                            },
+                                            "properties": {"e": {"type": "string"}},
                                         }
                                     },
                                 }

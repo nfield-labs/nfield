@@ -96,11 +96,7 @@ def compute_difficulty(
     d_constraint = _compute_d_constraint(field)
     d_dep = _compute_d_dep(field, dep_dag, reverse_dep_dag)
 
-    score = (
-        _D_WEIGHT_TYPE * d_type
-        + _D_WEIGHT_CONSTRAINT * d_constraint
-        + _D_WEIGHT_DEP * d_dep
-    )
+    score = _D_WEIGHT_TYPE * d_type + _D_WEIGHT_CONSTRAINT * d_constraint + _D_WEIGHT_DEP * d_dep
     # Clamp to [0.0, 1.0] for safety
     return max(0.0, min(score, 1.0))
 
@@ -121,9 +117,7 @@ def _compute_d_type(field: Field) -> float:
     """
     if field.type == "string":
         constraints = field.constraints
-        is_constrained = any(
-            k in constraints for k in ("maxLength", "pattern", "format", "enum")
-        )
+        is_constrained = any(k in constraints for k in ("maxLength", "pattern", "format", "enum"))
         return _D_TYPE["string"] if is_constrained else _D_TYPE_STRING_UNCONSTRAINED
     return _D_TYPE.get(field.type, _D_TYPE_STRING_UNCONSTRAINED)
 
@@ -142,10 +136,7 @@ def _compute_d_constraint(field: Field) -> float:
     if not field.constraints:
         return 0.0
 
-    total = sum(
-        _CONSTRAINT_WEIGHTS.get(k, _UNKNOWN_CONSTRAINT_WEIGHT)
-        for k in field.constraints
-    )
+    total = sum(_CONSTRAINT_WEIGHTS.get(k, _UNKNOWN_CONSTRAINT_WEIGHT) for k in field.constraints)
     return min(total, 1.0)
 
 

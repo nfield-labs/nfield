@@ -12,6 +12,7 @@ show accuracy degradation without it.
 
 Reference: arXiv:2405.15434 (constraint-aware LLM extraction)
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
