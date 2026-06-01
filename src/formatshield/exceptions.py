@@ -50,10 +50,12 @@ class SchemaError(FormatShieldError):
         hint: Suggested fix or explanation, if available.
 
     Example:
-        >>> raise SchemaError("Missing 'type' key", field="properties.name", hint="Add type: string")
+        >>> raise SchemaError(
+        ...     "Missing 'type' key", field="properties.name", hint="Add type: string"
+        ... )
         Traceback (most recent call last):
             ...
-        formatshield.exceptions.SchemaError: Missing 'type' key [field=properties.name] hint: Add type: string
+        formatshield.exceptions.SchemaError: Missing 'type' key [field=properties.name]
     """
 
     def __init__(
@@ -99,6 +101,34 @@ class ProviderError(FormatShieldError):
     ) -> None:
         self.status_code = status_code
         super().__init__(message)
+
+    @property
+    def retryable(self) -> bool:
+        """Check if this error is retryable.
+
+        Classifies errors as transient (retryable) or permanent (non-retryable).
+
+        Retryable errors:
+        - 429 (rate limit) — temporary resource exhaustion
+        - 5xx (server errors) — temporary server-side failures
+
+        Non-retryable errors:
+        - 4xx (client errors) — permanent request/auth failures (except 429)
+        - None (unknown status) — CONSERVATIVE ASSUMPTION: treats unknown errors
+          as non-retryable to avoid retry loops on unexpected failures. Note:
+          network timeouts may return status_code=None; consider increasing
+          timeout or implementing custom retry logic for timeout-sensitive use cases.
+
+        Returns:
+            True if the error is transient and should be retried.
+        """
+        if self.status_code is None:
+            # Unknown status: conservative assumption is non-retryable
+            # This prevents retry loops on unexpected failures, but may miss
+            # transient errors like timeouts. Override in subclasses if needed.
+            return False
+        # 429 = rate limit (retryable), 5xx = server error (retryable)
+        return self.status_code == 429 or 500 <= self.status_code < 600
 
 
 class ExtractionError(FormatShieldError):
@@ -149,10 +179,12 @@ class ValidationError(FormatShieldError):
         hint: Suggested fix or constraint description, if available.
 
     Example:
-        >>> raise ValidationError("Expected positive number", field="total", value=-5.0, hint="Must be > 0")
+        >>> raise ValidationError(
+        ...     "Expected positive number", field="total", value=-5.0, hint="Must be > 0"
+        ... )
         Traceback (most recent call last):
             ...
-        formatshield.exceptions.ValidationError: Expected positive number [field=total, value=-5.0] hint: Must be > 0
+        formatshield.exceptions.ValidationError: Expected positive number [field=total]
     """
 
     def __init__(

@@ -21,7 +21,9 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
 ]
-dependencies = []
+dependencies = [
+    "rank-bm25>=0.2.2",
+]
 
 [project.optional-dependencies]
 groq = ["groq>=0.9"]
