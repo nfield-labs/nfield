@@ -241,7 +241,7 @@ class BaseProvider(ABC):
                 if attempt > 0:
                     logger.info(f"{operation_name} succeeded after {attempt} retries")
                 return result
-            except ProviderError as e:
+            except ProviderError as e:  # noqa: PERF203
                 last_error = e
                 if not e.retryable or attempt == self._max_retries - 1:
                     # Non-retryable or final attempt: raise

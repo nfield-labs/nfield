@@ -32,13 +32,6 @@ from formatshield.providers._token_count import measure_chars_per_token  # noqa:
 class TestGroqProviderLive:
     """Live API tests for GroqProvider."""
 
-    @pytest.fixture(autouse=True)
-    def check_api_key(self) -> None:
-        """Skip tests if Groq API key is not available."""
-        api_key = os.getenv("GROQ_API_KEY")
-        if not api_key:
-            pytest.skip("GROQ_API_KEY not set in environment")
-
     @pytest.mark.asyncio
     async def test_groq_provider_complete_basic(self) -> None:
         """Test basic completion with Groq API."""
@@ -139,13 +132,6 @@ class TestGroqProviderLive:
 
 class TestTokenCountingLive:
     """Live token counting tests."""
-
-    @pytest.fixture(autouse=True)
-    def check_api_key(self) -> None:
-        """Skip tests if Groq API key is not available."""
-        api_key = os.getenv("GROQ_API_KEY")
-        if not api_key:
-            pytest.skip("GROQ_API_KEY not set in environment")
 
     @pytest.mark.asyncio
     async def test_measure_chars_per_token_english(self) -> None:
