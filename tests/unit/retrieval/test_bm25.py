@@ -122,9 +122,7 @@ class TestBM25Rescore:
         results = bm25_rescore(index, "fever", top_k=0)
         assert results == []
 
-    def test_nonexistent_term_returns_low_scores(
-        self, sample_segments: list[Segment]
-    ) -> None:
+    def test_nonexistent_term_returns_low_scores(self, sample_segments: list[Segment]) -> None:
         """Querying non-existent term returns low/zero scores."""
         index = build_bm25_index(sample_segments)
         scores = bm25_rescore_single(index, "xyzuniqueneverappears")

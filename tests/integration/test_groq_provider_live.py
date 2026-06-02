@@ -37,9 +37,7 @@ class TestGroqProviderLive:
         """Test basic completion with Groq API."""
         provider = from_model("groq/llama-3.3-70b-versatile")
 
-        messages = [
-            {"role": "user", "content": "Say 'FormatShield' exactly."}
-        ]
+        messages = [{"role": "user", "content": "Say 'FormatShield' exactly."}]
 
         result = await provider.complete(messages, max_tokens=10)
 
@@ -91,9 +89,7 @@ class TestGroqProviderLive:
         """Test that max_tokens parameter is respected."""
         provider = from_model("groq/llama-3.3-70b-versatile")
 
-        messages = [
-            {"role": "user", "content": "Count to 10."}
-        ]
+        messages = [{"role": "user", "content": "Count to 10."}]
 
         # Request only 15 tokens
         result = await provider.complete(messages, max_tokens=15)
