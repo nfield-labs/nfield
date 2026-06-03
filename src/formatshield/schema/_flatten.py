@@ -89,17 +89,21 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
 
     fields: list[Field] = []
     seen_paths: set[str] = set()
-    visited_refs: set[str] = set()
 
-    # Stack items: (node, path, parent_path, depth, required_set)
-    # path="" means top-level; we push object children with their names
+    # Stack items: (node, path, parent_path, depth, required_set, ref_chain).
+    # ref_chain holds the $refs already expanded on the CURRENT branch — this
+    # detects cycles (a ref pointing back into its own ancestry) without
+    # suppressing diamonds (the same $def reused by two sibling fields, e.g. a
+    # Pydantic model with two Address fields). A global "seen refs" set would
+    # wrongly drop the second use; a per-branch set keeps both.
+    # path="" means top-level; we push object children with their names.
     initial_required: frozenset[str] = frozenset(schema.get("required", []))
-    stack: list[tuple[dict[str, Any], str, str, int, frozenset[str]]] = [
-        (schema, "", "", 0, initial_required)
+    stack: list[tuple[dict[str, Any], str, str, int, frozenset[str], frozenset[str]]] = [
+        (schema, "", "", 0, initial_required, frozenset())
     ]
 
     while stack:
-        node, path, parent_path, depth, required_set = stack.pop()
+        node, path, parent_path, depth, required_set, ref_chain = stack.pop()
 
         if depth > MAX_SCHEMA_DEPTH:
             raise SchemaError(
@@ -111,16 +115,17 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
         # ── $ref resolution ──────────────────────────────────────────────
         if "$ref" in node:
             ref_str = node["$ref"]
-            if ref_str in visited_refs:
+            # Cycle guard: only skip if this ref is already on the current
+            # branch. A ref reused elsewhere in the tree is expanded again.
+            if ref_str in ref_chain:
                 continue
-            visited_refs.add(ref_str)
             try:
                 resolved = _resolve_ref(schema, ref_str)
             except SchemaError:
                 continue
             # Merge sibling keys (e.g. description, required) with resolved node
             merged = {**resolved, **{k: v for k, v in node.items() if k != "$ref"}}
-            stack.append((merged, path, parent_path, depth, required_set))
+            stack.append((merged, path, parent_path, depth, required_set, ref_chain | {ref_str}))
             continue
 
         # ── anyOf / oneOf — pick first non-null option ───────────────────
@@ -134,7 +139,9 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
                         **chosen,
                         **{k: v for k, v in node.items() if k not in (combo_key, "$ref")},
                     }
-                    stack.append((merged_chosen, path, parent_path, depth, required_set))
+                    stack.append(
+                        (merged_chosen, path, parent_path, depth, required_set, ref_chain)
+                    )
                 break
         else:
             # Only process this node normally if no anyOf/oneOf handled it
@@ -144,10 +151,10 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
                 parent_path=parent_path,
                 depth=depth,
                 required_set=required_set,
+                ref_chain=ref_chain,
                 stack=stack,
                 fields=fields,
                 seen_paths=seen_paths,
-                root_schema=schema,
             )
 
     return fields
@@ -165,10 +172,10 @@ def _process_node(
     parent_path: str,
     depth: int,
     required_set: frozenset[str],
-    stack: list[tuple[dict[str, Any], str, str, int, frozenset[str]]],
+    ref_chain: frozenset[str],
+    stack: list[tuple[dict[str, Any], str, str, int, frozenset[str], frozenset[str]]],
     fields: list[Field],
     seen_paths: set[str],
-    root_schema: dict[str, Any],
 ) -> None:
     """Process one schema node and push children onto the stack or emit a Field."""
     # ── allOf — merge all sub-schema properties ───────────────────────────
@@ -185,7 +192,7 @@ def _process_node(
         if merged_props:
             synthetic = {**node, "properties": merged_props, "required": merged_req}
             del synthetic["allOf"]
-            stack.append((synthetic, path, parent_path, depth, frozenset(merged_req)))
+            stack.append((synthetic, path, parent_path, depth, frozenset(merged_req), ref_chain))
             return
 
     node_type = _determine_type(node)
@@ -197,7 +204,7 @@ def _process_node(
         # Push in reverse so DFS pops in definition order
         for prop_name, prop_node in reversed(list(properties.items())):
             child_path = f"{path}.{prop_name}" if path else prop_name
-            stack.append((prop_node, child_path, path, depth + 1, child_required))
+            stack.append((prop_node, child_path, path, depth + 1, child_required, ref_chain))
 
         # patternProperties → wildcard field
         for pat_node in node.get("patternProperties", {}).values():
@@ -258,13 +265,13 @@ def _process_node(
         if isinstance(prefix_items, list):
             for idx, item_node in enumerate(prefix_items):
                 indexed_path = f"{path}[{idx}]"
-                stack.append((item_node, indexed_path, path, depth + 1, frozenset()))
+                stack.append((item_node, indexed_path, path, depth + 1, frozenset(), ref_chain))
             return
 
         items_node = node.get("items")
         if isinstance(items_node, dict):
             array_path = f"{path}{_ARRAY_SUFFIX}"
-            stack.append((items_node, array_path, path, depth + 1, frozenset()))
+            stack.append((items_node, array_path, path, depth + 1, frozenset(), ref_chain))
             return
 
         # Array with no items/prefixItems — emit array leaf
