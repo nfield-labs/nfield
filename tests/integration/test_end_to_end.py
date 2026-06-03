@@ -30,12 +30,7 @@ if _env_file.exists():
 _GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 _MODEL = "groq/llama-3.1-8b-instant"
 
-_DOCUMENT = (
-    "INVOICE #4471\n"
-    "Vendor: Acme Corporation\n"
-    "Total Due: 1284.50 USD\n"
-    "Status: paid\n"
-)
+_DOCUMENT = "INVOICE #4471\nVendor: Acme Corporation\nTotal Due: 1284.50 USD\nStatus: paid\n"
 
 _SCHEMA = {
     "type": "object",
