@@ -11,7 +11,8 @@ __all__ = ["compute_difficulty"]
 # Constants
 # ---------------------------------------------------------------------------
 
-# D_type values from DeepJSONEval accuracy inversion (architecture engine §1.3)
+# Per-type difficulty: the inverse of measured extraction accuracy by JSON type
+# from DeepJSONEval (arXiv:2509.25922) — harder types extract less reliably.
 _D_TYPE: dict[str, float] = {
     "boolean": 0.05,
     "null": 0.05,
@@ -154,10 +155,10 @@ def _compute_reverse_dep_dag(dep_dag: dict[str, set[str]]) -> dict[str, set[str]
     Example:
         >>> dep_dag = {"b": {"a"}, "c": {"a", "b"}}
         >>> reverse = _compute_reverse_dep_dag(dep_dag)
-        >>> reverse["a"]
-        {'b', 'c'}
-        >>> reverse["b"]
-        {'c'}
+        >>> sorted(reverse["a"])
+        ['b', 'c']
+        >>> sorted(reverse["b"])
+        ['c']
     """
     reverse: dict[str, set[str]] = {}
     for field_path, deps in dep_dag.items():

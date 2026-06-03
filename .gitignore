@@ -7,7 +7,7 @@ __pycache__/
 dist/
 build/
 *.egg-info/
-
+.remember*
 # Virtual environment
 .venv/
 
@@ -16,6 +16,11 @@ build/
 .mypy_cache/
 .ruff_cache/
 .hypothesis/
+
+# Large downloaded test fixtures (fetched on-demand by integration tests)
+tests/fixtures/documents/_cache/
+.coverage
+htmlcov/
 
 # Packaging lockfile (keep uv.lock tracked — omit if you prefer not to)
 # uv.lock

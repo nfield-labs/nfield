@@ -55,7 +55,7 @@ class SchemaError(FormatShieldError):
         ... )
         Traceback (most recent call last):
             ...
-        formatshield.exceptions.SchemaError: Missing 'type' key [field=properties.name]
+        formatshield.exceptions.SchemaError: Missing 'type' key [field=properties.name] hint: Add type: string
     """
 
     def __init__(
@@ -184,7 +184,7 @@ class ValidationError(FormatShieldError):
         ... )
         Traceback (most recent call last):
             ...
-        formatshield.exceptions.ValidationError: Expected positive number [field=total]
+        formatshield.exceptions.ValidationError: Expected positive number [field=total, value=-5.0] hint: Must be > 0
     """
 
     def __init__(

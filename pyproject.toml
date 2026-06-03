@@ -100,3 +100,9 @@ exclude_also = [
     "\\.\\.\\.",
 ]
 fail_under = 80
+
+[dependency-groups]
+dev = [
+    "coverage>=7.14.1",
+    "pytest-cov>=7.1.0",
+]

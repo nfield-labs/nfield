@@ -61,6 +61,7 @@ def build_bm25_index(segments: list[Segment]) -> BM25Index:
         BM25Index containing the model and segment references.
 
     Example:
+        >>> from formatshield.schema._types import Segment
         >>> seg1 = Segment(text="apple banana", start=0, end=12, segment_type="unstructured")
         >>> seg2 = Segment(text="orange grape", start=12, end=24, segment_type="unstructured")
         >>> index = build_bm25_index([seg1, seg2])
@@ -98,15 +99,17 @@ def bm25_rescore_single(index: BM25Index, query: str) -> list[float]:
         (empty corpus) or query is empty.
 
     Example:
+        >>> from formatshield.schema._types import Segment
         >>> index = build_bm25_index([
         ...     Segment(text="apple pie", start=0, end=9, segment_type="unstructured"),
         ...     Segment(text="orange juice", start=9, end=21, segment_type="unstructured"),
+        ...     Segment(text="banana bread", start=21, end=33, segment_type="unstructured"),
         ... ])
         >>> scores = bm25_rescore_single(index, "apple")
-        >>> scores[0] > scores[1]  # apple should rank higher in first segment
+        >>> bool(scores[0] > scores[1])  # apple ranks higher in the first segment
         True
         >>> bm25_rescore_single(index, "")  # empty query
-        [0.0, 0.0]
+        [0.0, 0.0, 0.0]
     """
     if not query.strip() or index.model is None:
         # Empty query or empty index: all zeros
@@ -136,6 +139,7 @@ def bm25_rescore(
         index has no segments.
 
     Example:
+        >>> from formatshield.schema._types import Segment
         >>> segments = [
         ...     Segment(text="apple pie recipe", start=0, end=16, segment_type="unstructured"),
         ...     Segment(text="orange marmalade", start=16, end=32, segment_type="unstructured"),

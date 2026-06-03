@@ -117,6 +117,7 @@ def register_provider(
 
     Example:
         >>> register_provider("custom", "my_package.providers", "CustomProvider")
-        >>> provider = from_model("custom/my-model")
+        >>> _PROVIDER_REGISTRY["custom"]
+        ('my_package.providers', 'CustomProvider')
     """
     _PROVIDER_REGISTRY[provider_prefix.lower()] = (module_path, class_name)

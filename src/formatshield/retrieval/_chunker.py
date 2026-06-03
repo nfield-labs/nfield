@@ -24,6 +24,10 @@ from formatshield.schema._types import (
 _DEFAULT_CHUNK_SIZE: int = 512
 _DEFAULT_CHUNK_OVERLAP: int = 128
 _MIN_SEGMENT_CHARS: int = 50
+# Hard cap on a single segment (4x the base chunk). A heading/table section
+# larger than this is sub-split so no segment spans an unbounded region, which
+# would defeat BM25 ranking. Engineering guard, not paper-derived.
+_MAX_SEGMENT_CHARS: int = 4 * _DEFAULT_CHUNK_SIZE
 _HEADING_PATTERN: re.Pattern[str] = re.compile(
     r"^(#{1,6}|={3,}|-{3,}|\*{3,})\s+(.+)$", re.MULTILINE
 )
@@ -53,8 +57,9 @@ def segment_structured(text: str) -> list[Segment]:
         structured sections found, returns entire text as one segment.
 
     Example:
-        >>> text = "# Introduction\\nSome text\\n## Chapter 1\\nMore text"
-        >>> segs = segment_structured(text)
+        >>> intro = "# Introduction\\n" + "Background information about the topic. " * 2
+        >>> chapter = "## Chapter 1\\n" + "Detailed discussion of the first matter. " * 2
+        >>> segs = segment_structured(intro + "\\n" + chapter)
         >>> len(segs) >= 2
         True
         >>> segs[0].segment_type
@@ -299,6 +304,58 @@ def segment_unstructured(
 # ---------------------------------------------------------------------------
 
 
+def _enforce_max_segment_size(segments: list[Segment]) -> list[Segment]:
+    """Sub-split any segment longer than ``_MAX_SEGMENT_CHARS``.
+
+    Structured and tabular strategies can emit very large segments when a
+    single heading-delimited section (or table) spans a huge span of text.
+    Such segments are useless for BM25 retrieval and can overflow the model
+    context. This post-pass splits each oversized segment into fixed-size
+    sub-segments while preserving the global character-offset contract
+    (``text[seg.start:seg.end] == seg.text``) and reassigning ``segment_id``
+    sequentially across the whole result.
+
+    Args:
+        segments: Segments produced by a chunking strategy.
+
+    Returns:
+        Segments where every segment is at most ``_MAX_SEGMENT_CHARS`` chars,
+        with contiguous ``segment_id`` values starting at 0.
+    """
+    result: list[Segment] = []
+    next_id = 0
+    for seg in segments:
+        if len(seg.text) <= _MAX_SEGMENT_CHARS:
+            result.append(
+                Segment(
+                    text=seg.text,
+                    start=seg.start,
+                    end=seg.end,
+                    segment_type=seg.segment_type,
+                    segment_id=next_id,
+                )
+            )
+            next_id += 1
+            continue
+
+        # Oversized: sub-split the section text with fixed-size chunking,
+        # then re-map local offsets back to global document offsets.
+        sub_segments = segment_unstructured(seg.text)
+        for sub in sub_segments:
+            result.append(
+                Segment(
+                    text=sub.text,
+                    start=seg.start + sub.start,
+                    end=seg.start + sub.end,
+                    segment_type=seg.segment_type,
+                    segment_id=next_id,
+                )
+            )
+            next_id += 1
+
+    return result
+
+
 def _detect_document_type(text: str) -> str:
     """Auto-detect document type: structured, tabular, or unstructured.
 
@@ -366,17 +423,20 @@ def chunk_document(
         strategy = _detect_document_type(text)
 
     if strategy == "structured":
-        return segment_structured(text)
+        raw_segments = segment_structured(text)
     elif strategy == "tabular":
-        return segment_tabular(text)
+        raw_segments = segment_tabular(text)
     elif strategy == "unstructured":
-        return segment_unstructured(text, chunk_size=chunk_size, overlap=overlap)
+        raw_segments = segment_unstructured(text, chunk_size=chunk_size, overlap=overlap)
     else:
         raise SchemaError(
             f"Unknown chunking strategy: {strategy!r}. "
             f"Must be 'structured', 'tabular', 'unstructured', or 'auto'.",
             hint="Check strategy parameter in chunk_document() call",
         )
+
+    # Guarantee no segment exceeds the max size, regardless of strategy.
+    return _enforce_max_segment_size(raw_segments)
 
 
 # ---------------------------------------------------------------------------
