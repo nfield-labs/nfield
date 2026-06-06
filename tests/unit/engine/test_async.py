@@ -80,6 +80,18 @@ class TestAsyncEngine:
         engine = AsyncFormatShield("mock/echo", _SCHEMA)
         assert engine.model == "mock/echo"
 
+    def test_model_specs_reach_provider(self):
+        # No fixture: build a real Groq provider (no API call at construction)
+        # and confirm the engine forwarded the caller-supplied model specs.
+        engine = AsyncFormatShield(
+            "groq/llama-3.1-8b-instant",
+            _SCHEMA,
+            context_window=131_072,
+            max_output_tokens=32_768,
+        )
+        assert engine._provider.context_window == 131_072
+        assert engine._provider.max_output_tokens == 32_768
+
     async def test_calibration_runs_once_across_calls(self, install_provider):
         # Stage 0 calibration must be measured once and cached; reusing the
         # engine across documents must not re-measure chars_per_token.

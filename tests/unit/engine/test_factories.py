@@ -37,6 +37,23 @@ class TestFromModel:
         with pytest.raises(ValueError, match="provider/model-name"):
             from_model("no-slash-here")
 
+    def test_caller_supplies_model_specs(self):
+        # No specs → provider's conservative default.
+        default = from_model("groq/llama-3.1-8b-instant")
+        assert default.context_window == 8192
+
+        # The caller supplies the model's real window/output (per ModelSpec).
+        provider = from_model(
+            "groq/llama-3.1-8b-instant", context_window=131_072, max_output_tokens=32_768
+        )
+        assert provider.context_window == 131_072
+        assert provider.max_output_tokens == 32_768
+
+    def test_partial_spec_keeps_default_for_the_other(self):
+        provider = from_model("groq/llama-3.1-8b-instant", context_window=131_072)
+        assert provider.context_window == 131_072
+        assert provider.max_output_tokens == 8192  # untouched default
+
 
 class TestPublicImports:
     def test_mvp_surface_is_importable(self):

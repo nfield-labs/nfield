@@ -22,17 +22,25 @@ class MockProvider:
     should cover the field paths a test's schema produces.
     """
 
-    context_window = 8192
-    max_output_tokens = 8192
     model_name = "mock/echo"
 
-    def __init__(self, sfep_text: str) -> None:
+    def __init__(
+        self,
+        sfep_text: str,
+        *,
+        context_window: int = 8192,
+        max_output_tokens: int = 8192,
+    ) -> None:
         self._sfep = sfep_text
         self.calls = 0
         self.token_calls = 0
+        self.context_window = context_window
+        self.max_output_tokens = max_output_tokens
+        self.last_messages: list[dict[str, str]] = []
 
     async def complete(self, messages: list[dict[str, str]], *, max_tokens: int) -> str:
         self.calls += 1
+        self.last_messages = messages
         return self._sfep
 
     async def count_tokens(self, text: str) -> int:
@@ -54,7 +62,7 @@ def install_provider(monkeypatch: pytest.MonkeyPatch) -> Callable[[str], MockPro
         provider = MockProvider(sfep_text)
         monkeypatch.setattr(
             "formatshield.engine._async.from_model",
-            lambda _model: provider,
+            lambda _model, **_kwargs: provider,
         )
         return provider
 

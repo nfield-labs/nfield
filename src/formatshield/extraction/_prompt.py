@@ -23,12 +23,17 @@ Post-MVP stubs
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from formatshield.extraction._papt import ClusterType, TemplateType, describe_field
 
 if TYPE_CHECKING:
     from formatshield.schema._types import Field
+
+# Header that introduces injected upstream dependency values in the user message.
+_DEPENDENCY_BLOCK_HEADER: str = (
+    "[Resolved dependency values — use these when extracting the fields below]"
+)
 
 __all__ = [
     "build_extraction_prompt",
@@ -45,7 +50,7 @@ from the provided document.
 
 OUTPUT FORMAT — follow exactly:
 - Write one field per line using: field.path = value
-- Use NULL if a field is not found in the document
+{sourcing_rule}
 - Use NEEDS_REVALIDATION if you find the field but cannot determine its value confidently
 - For boolean fields: use true or false (lowercase)
 - For integer fields: write the number without quotes (e.g., 42)
@@ -57,6 +62,16 @@ OUTPUT FORMAT — follow exactly:
 
 --- BEGIN EXTRACTION ---"""
 
+# Default: the value must be in the document, else NULL.
+_SOURCING_RULE_STRICT: str = "- Use NULL if a field is not found in the document"
+# Opt-in: let the model use its own knowledge when the document is silent.
+_SOURCING_RULE_KNOWLEDGE: str = (
+    "- Prefer the value as stated in the document. If the document does not state "
+    "a field but you can determine it confidently from well-established knowledge "
+    "of the subject, provide that value. Use NULL only when you can neither find "
+    "it in the document nor infer it confidently"
+)
+
 _RETRY_SYSTEM_PROMPT_TEMPLATE: str = """\
 You are a structured data extraction assistant performing targeted re-extraction.
 
@@ -65,7 +80,7 @@ the listed fields, using the same output format as before.
 
 OUTPUT FORMAT:
 - Write one field per line using: field.path = value
-- Use NULL if the field is not present in the document
+{sourcing_rule}
 - Correct the specific error described for each field
 
 --- BEGIN RE-EXTRACTION ---"""
@@ -82,6 +97,10 @@ def build_extraction_prompt(
     template_type: TemplateType,
     *,
     cluster_type: ClusterType = ClusterType.STANDARD,
+    system_prompt: str = "",
+    user_prompt: str = "",
+    dependency_values: dict[str, Any] | None = None,
+    knowledge_fallback: bool = False,
 ) -> list[dict[str, str]]:
     """Build the messages list for a single SFEP extraction call.
 
@@ -98,6 +117,15 @@ def build_extraction_prompt(
             message. See :class:`~formatshield.extraction._papt.TemplateType`.
         cluster_type: Structural classification of the field group. Used for
             cluster-specific phrasing (no-op in MVP; TEP routing in post-MVP).
+        system_prompt: Optional caller system context, prepended before the
+            SFEP format contract (which is always kept so parsing stays valid).
+        user_prompt: Optional caller task context, prepended before the field
+            list in the user message.
+        dependency_values: Optional ``{path: value}`` of upstream dependency
+            fields resolved in earlier rounds, rendered as a labelled block
+            before the field list so the model reuses them.
+        knowledge_fallback: When ``True``, let the model use its own knowledge for
+            fields the document does not state. Default ``False`` (strict grounding).
 
     Returns:
         List of ``{"role": ..., "content": ...}`` dicts:
@@ -121,8 +149,12 @@ def build_extraction_prompt(
     if not fields:
         raise ValueError("fields must be non-empty — cannot build extraction prompt")
 
-    system_content = _build_system_message(cluster_type)
-    user_content = _build_user_message(fields, document_excerpt, template_type)
+    system_content = _prepend(
+        system_prompt, _build_system_message(cluster_type, knowledge_fallback=knowledge_fallback)
+    )
+    user_core = _build_user_message(fields, document_excerpt, template_type)
+    user_with_deps = _prepend(_format_dependency_block(dependency_values), user_core)
+    user_content = _prepend(user_prompt, user_with_deps)
 
     return [
         {"role": "system", "content": system_content},
@@ -134,6 +166,10 @@ def build_retry_system_message(
     failed_fields: list[Field],
     errors: dict[str, str],
     document_excerpt: str,
+    *,
+    system_prompt: str = "",
+    user_prompt: str = "",
+    knowledge_fallback: bool = False,
 ) -> list[dict[str, str]]:
     """Build the messages list for a surgical field retry (SFR) call.
 
@@ -144,6 +180,8 @@ def build_retry_system_message(
         failed_fields: Fields that failed validation in the previous pass.
         errors: Mapping of ``field.path -> error_message`` for each failed field.
         document_excerpt: Same document excerpt used in the original extraction.
+        knowledge_fallback: When ``True``, the retry may fall back to the model's
+            own knowledge for fields the document does not state. Default ``False``.
 
     Returns:
         List of ``{"role": ..., "content": ...}`` dicts for the retry call.
@@ -159,8 +197,13 @@ def build_retry_system_message(
         >>> "thirty" in msgs[1]["content"]
         True
     """
-    system_content = _RETRY_SYSTEM_PROMPT_TEMPLATE
-    user_content = _build_retry_user_message(failed_fields, errors, document_excerpt)
+    sourcing_rule = _SOURCING_RULE_KNOWLEDGE if knowledge_fallback else _SOURCING_RULE_STRICT
+    system_content = _prepend(
+        system_prompt, _RETRY_SYSTEM_PROMPT_TEMPLATE.format(sourcing_rule=sourcing_rule)
+    )
+    user_content = _prepend(
+        user_prompt, _build_retry_user_message(failed_fields, errors, document_excerpt)
+    )
 
     return [
         {"role": "system", "content": system_content},
@@ -173,18 +216,72 @@ def build_retry_system_message(
 # ---------------------------------------------------------------------------
 
 
-def _build_system_message(cluster_type: ClusterType) -> str:
+def _format_dependency_value(value: Any) -> str:
+    """Render a resolved dependency value in SFEP value style.
+
+    Args:
+        value: A typed Python value already extracted for the dependency field.
+
+    Returns:
+        SFEP-style string (``NULL`` / ``true`` / ``false`` / ``[a, b]`` / text).
+    """
+    if value is None:
+        return "NULL"
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, (list, tuple)):
+        return "[" + ", ".join(_format_dependency_value(v) for v in value) + "]"
+    return str(value)
+
+
+def _format_dependency_block(dependency_values: dict[str, Any] | None) -> str:
+    """Render the injected upstream-dependency block, or ``""`` if none.
+
+    Args:
+        dependency_values: ``{path: value}`` resolved upstream, or ``None``.
+
+    Returns:
+        A labelled block (header + ``  path = value`` lines), or empty string.
+    """
+    if not dependency_values:
+        return ""
+    lines = [f"  {path} = {_format_dependency_value(v)}" for path, v in dependency_values.items()]
+    return _DEPENDENCY_BLOCK_HEADER + "\n" + "\n".join(lines)
+
+
+def _prepend(extra: str, base: str) -> str:
+    """Prepend caller context to a built-in prompt, separated by a blank line.
+
+    Args:
+        extra: Caller-supplied context (may be empty).
+        base: The built-in prompt that must always be preserved.
+
+    Returns:
+        ``base`` unchanged when *extra* is empty, else ``extra`` + blank line + base.
+    """
+    extra = extra.strip()
+    return f"{extra}\n\n{base}" if extra else base
+
+
+def _build_system_message(
+    cluster_type: ClusterType,
+    *,
+    knowledge_fallback: bool = False,
+) -> str:
     """Build the system prompt for a given cluster type.
 
     Args:
         cluster_type: Structural classification; reserved for post-MVP TEP routing.
+        knowledge_fallback: Select the knowledge-fallback sourcing rule instead of
+            strict document grounding when ``True``.
 
     Returns:
         System prompt string with SFEP format contract.
     """
     # In MVP all cluster types use the same system prompt.
     # Post-MVP: COMPLEX cluster gets TEP two-phase instructions.
-    return _SFEP_SYSTEM_PROMPT_TEMPLATE
+    sourcing_rule = _SOURCING_RULE_KNOWLEDGE if knowledge_fallback else _SOURCING_RULE_STRICT
+    return _SFEP_SYSTEM_PROMPT_TEMPLATE.format(sourcing_rule=sourcing_rule)
 
 
 def _build_user_message(

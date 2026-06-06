@@ -100,6 +100,54 @@ class TestSegmentUnstructured:
             assert result[i + 1].start < result[i].end
 
 
+class TestBoundaryAwareChunking:
+    """Boundary-aware, token-budgeted splitting (Phase A chunker upgrade)."""
+
+    _PROSE = (
+        "Denisov rode forward with his hussars. Pierre watched from the hill. "
+        "Natasha danced at the ball while Andrei looked on. Kutuzov gave the order "
+        "and the army advanced toward Borodino under a grey winter sky. "
+    ) * 30
+
+    def test_no_word_split_on_prose(self) -> None:
+        """Every non-final chunk ends at a whitespace/punctuation boundary, not mid-word."""
+        segs = segment_unstructured(self._PROSE, chunk_size=200, overlap=40)
+        assert len(segs) > 1
+        for seg in segs[:-1]:
+            # The boundary char (space/newline/.,;?!) is kept with the left chunk.
+            assert seg.text[-1] in " \n.,;?!", f"chunk ended mid-token: ...{seg.text[-12:]!r}"
+
+    def test_no_content_dropped(self) -> None:
+        """Every character of the source is covered by at least one chunk."""
+        segs = segment_unstructured(self._PROSE, chunk_size=200, overlap=40)
+        covered = [False] * len(self._PROSE)
+        for seg in segs:
+            for i in range(seg.start, seg.end):
+                covered[i] = True
+        assert all(covered), "boundary-aware chunking must not drop characters"
+
+    def test_offset_contract_holds(self) -> None:
+        """text[start:end] == seg.text for every chunk, including boundary splits."""
+        segs = segment_unstructured(self._PROSE, chunk_size=180, overlap=30)
+        for seg in segs:
+            assert seg.text == self._PROSE[seg.start : seg.end]
+
+    def test_token_budget_default_reduces_chunk_count(self) -> None:
+        """The ~256-token default yields far fewer chunks than the old 512-char window."""
+        from formatshield.retrieval._chunker import _DEFAULT_CHUNK_SIZE
+
+        big = self._PROSE * 4
+        default_chunks = segment_unstructured(big)
+        old_style = segment_unstructured(big, chunk_size=512, overlap=128)
+        assert _DEFAULT_CHUNK_SIZE > 512
+        assert len(default_chunks) < len(old_style)
+
+    def test_hard_split_when_no_boundary(self) -> None:
+        """Text with no separators still splits (degrades to fixed-size)."""
+        segs = segment_unstructured("x" * 1000, chunk_size=250, overlap=50)
+        assert len(segs) > 1
+
+
 class TestChunkDocumentAuto:
     """Tests for automatic strategy detection."""
 

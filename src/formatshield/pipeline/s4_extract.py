@@ -66,11 +66,20 @@ async def run_stage_4(
     """
     assert state.blackboard is not None, "Blackboard must be initialised before Stage 4"
 
+    # Bound concurrency so a wide round does not fire every leaf at once and trip
+    # provider rate limits (429 storms). A semaphore caps in-flight calls; leaves
+    # within a round still run concurrently, just at most N at a time.
+    semaphore = asyncio.Semaphore(max(1, state.max_concurrent_calls))
+
+    async def _bounded(leaf: CapacityLeaf) -> None:
+        async with semaphore:
+            await _extract_leaf(leaf, provider, state)
+
     for round_leaves in state.execution_order:
         if not round_leaves:
             continue
         results = await asyncio.gather(
-            *[_extract_leaf(leaf, provider, state) for leaf in round_leaves],
+            *[_bounded(leaf) for leaf in round_leaves],
             return_exceptions=True,
         )
         for result in results:
@@ -102,7 +111,7 @@ async def _extract_leaf(
         state.blackboard.mark_pending(f.path)
 
     try:
-        raw_text = await _call_provider(leaf, provider)
+        raw_text = await _call_provider(leaf, provider, state)
     except Exception as exc:
         err_str = str(exc).lower()
         if any(kw in err_str for kw in _CONTEXT_ERROR_KEYWORDS):
@@ -120,19 +129,52 @@ async def _extract_leaf(
     state.K += 1
 
 
-async def _call_provider(leaf: CapacityLeaf, provider: LLMProvider) -> str:
+async def _call_provider(leaf: CapacityLeaf, provider: LLMProvider, state: PipelineState) -> str:
     """Build prompt and call provider for a single leaf.
 
     Args:
         leaf: Leaf to extract.
         provider: LLM provider.
+        state: Pipeline state (supplies caller system/user prompt context).
 
     Returns:
         Raw SFEP text from provider.
     """
     template = select_template(leaf.fields, budget_tokens=leaf.safe_output)
-    messages = build_extraction_prompt(leaf.fields, leaf.document_excerpt, template)
+    messages = build_extraction_prompt(
+        leaf.fields,
+        leaf.document_excerpt,
+        template,
+        system_prompt=state.system_prompt,
+        user_prompt=state.user_prompt,
+        dependency_values=_resolved_dependencies(leaf, state),
+        knowledge_fallback=state.knowledge_fallback,
+    )
     return await provider.complete(messages, max_tokens=leaf.safe_output)
+
+
+def _resolved_dependencies(leaf: CapacityLeaf, state: PipelineState) -> dict[str, object] | None:
+    """Collect upstream dependency values to inject into this leaf's prompt.
+
+    Returns the ``{path: value}`` of dependency fields that (a) this leaf's
+    fields depend on, (b) live in a different leaf, and (c) are already FILLED
+    on the blackboard from an earlier execution round. Returns ``None`` when
+    injection is disabled or there is nothing to inject.
+
+    Args:
+        leaf: The leaf about to be extracted.
+        state: Pipeline state (dep graph + blackboard).
+    """
+    if not state.inject_dependencies or state.blackboard is None:
+        return None
+    leaf_paths = {f.path for f in leaf.fields}
+    filled = state.blackboard.get_filled()
+    resolved: dict[str, object] = {}
+    for f in leaf.fields:
+        for dep_path in state.dep_dag.get(f.path, set()):
+            if dep_path not in leaf_paths and dep_path in filled:
+                resolved[dep_path] = filled[dep_path]
+    return resolved or None
 
 
 async def _emergency_split(
@@ -170,7 +212,7 @@ async def _emergency_split(
             leaf_id=leaf.leaf_id,
         )
         try:
-            raw_text = await _call_provider(split_leaf, provider)
+            raw_text = await _call_provider(split_leaf, provider, state)
             extracted = parse_sfep(raw_text, chunk_fields)
             _write_extracted_to_blackboard(extracted, state)
             state.K += 1

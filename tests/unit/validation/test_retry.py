@@ -313,3 +313,42 @@ class TestSurgicalFieldRetry:
 
         result = await surgical_field_retry([f], {"z": "error"}, provider, leaf)
         assert result == {}
+
+
+class TestRetryBatchCapacityPacking:
+    """Independent failed fields are packed into few batches, not one-per-field."""
+
+    def _fields(self, n: int):
+        from formatshield.schema._types import Field
+
+        return [
+            Field(f"f{i:03d}", "string", {}, "", {}).with_tau(tau=2.0, var_tau=0.5)
+            for i in range(n)
+        ]
+
+    def test_no_budget_is_one_batch_per_field(self):
+        # Legacy behaviour: without a budget, independent fields are singletons.
+        fields = self._fields(20)
+        batches = split_retry_batches(fields, {})
+        assert len(batches) == 20
+
+    def test_budget_packs_many_fields_into_few_batches(self):
+        # 100 independent absent fields must NOT become 100 retry calls.
+        fields = self._fields(100)
+        batches = split_retry_batches(fields, {}, max_output_tokens=2000)
+        assert len(batches) < 10  # packed, not one-per-field
+        # Every field still appears exactly once.
+        packed = [f.path for b in batches for f in b]
+        assert sorted(packed) == sorted(f.path for f in fields)
+
+    def test_dependency_closure_never_split(self):
+        # a<-b<-c chain stays in one batch even under a tiny budget.
+        from formatshield.schema._types import Field
+
+        a = Field("a", "string", {}, "", {}).with_tau(tau=5.0, var_tau=0.5)
+        b = Field("b", "string", {}, "", {}).with_tau(tau=5.0, var_tau=0.5)
+        c = Field("c", "string", {}, "", {}).with_tau(tau=5.0, var_tau=0.5)
+        dep_dag = {"b": {"a"}, "c": {"b"}}
+        batches = split_retry_batches([a, b, c], dep_dag, max_output_tokens=1)
+        closure = next(batch for batch in batches if any(f.path == "a" for f in batch))
+        assert {f.path for f in closure} == {"a", "b", "c"}

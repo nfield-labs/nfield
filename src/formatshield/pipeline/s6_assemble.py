@@ -59,10 +59,16 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
     report = compute_quality_score(bb, state.fields, state.K, state.K_min)
 
     # --- 4. Build Metadata ---
-    fields_missing = len(bb.get_missing()) + len(bb.get_failed())
+    # get_filled() returns only real (non-None) values, so a field the recovery
+    # pass confirmed absent (None) is NOT counted as extracted. Everything that is
+    # not a real value, a conflict, or pending revalidation is therefore missing —
+    # derived as the remainder so the four buckets always sum to fields_total.
     fields_extracted = len(filled)
     fields_conflicted = len(bb.get_conflicts())
     fields_needs_revalidation = len(bb.get_needs_revalidation())
+    fields_missing = max(
+        0, fields_total - fields_extracted - fields_conflicted - fields_needs_revalidation
+    )
 
     metadata = Metadata(
         K=state.K,

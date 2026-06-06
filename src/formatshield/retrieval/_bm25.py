@@ -7,6 +7,7 @@ Used for group-level document scoring in the pre-pass to estimate D_cost(g).
 from __future__ import annotations
 
 import re
+import unicodedata
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -20,8 +21,10 @@ if TYPE_CHECKING:
 # ---------------------------------------------------------------------------
 
 _DEFAULT_TOP_K: int = 5
-# Regex pattern for re.split(): matches non-word chars, splits on whitespace/punctuation
+# Split on runs of non-word characters.
 _TOKENIZATION_PATTERN: str = r"\W+"
+# Unicode category for accent marks; dropped so "Denísov" matches "Denisov".
+_COMBINING_MARK_CATEGORY: str = "Mn"
 
 
 # ---------------------------------------------------------------------------
@@ -177,28 +180,46 @@ def bm25_rescore(
 # ---------------------------------------------------------------------------
 
 
-def _tokenize(text: str) -> list[str]:
-    """Tokenize text into lowercase words.
+def _fold_diacritics(text: str) -> str:
+    """Strip accents so an accented spelling matches its plain form.
 
-    Simple whitespace and non-word tokenization. Called in hot path during
-    every BM25 query and corpus segment processing. Production systems
-    may use more sophisticated NLP tokenizers (post-MVP).
+    Args:
+        text: Text to fold.
+
+    Returns:
+        The text with accent marks removed; unchanged for plain ASCII.
+
+    Example:
+        >>> _fold_diacritics("Denísov")
+        'Denisov'
+        >>> _fold_diacritics("café résumé")
+        'cafe resume'
+    """
+    decomposed = unicodedata.normalize("NFKD", text)
+    return "".join(ch for ch in decomposed if unicodedata.category(ch) != _COMBINING_MARK_CATEGORY)
+
+
+def _tokenize(text: str) -> list[str]:
+    """Split text into lowercase, accent-folded words.
+
+    Folding both the document and the query lets "Denísov" and "Denisov" match.
 
     Args:
         text: Text to tokenize.
 
     Returns:
-        List of lowercase tokens (non-empty only).
+        Lowercase, accent-folded tokens (non-empty only).
 
     Example:
         >>> _tokenize("Hello, World!")
         ['hello', 'world']
-        >>> _tokenize("Don't email me@example.com")
-        ['don', 't', 'email', 'me', 'example', 'com']
+        >>> _tokenize("Denísov rode past Kutúzov")
+        ['denisov', 'rode', 'past', 'kutuzov']
         >>> _tokenize("")
         []
     """
-    tokens = re.split(_TOKENIZATION_PATTERN, text.lower())
+    folded = _fold_diacritics(text.lower())
+    tokens = re.split(_TOKENIZATION_PATTERN, folded)
     return [t for t in tokens if t]
 
 

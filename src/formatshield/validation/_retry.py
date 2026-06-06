@@ -29,6 +29,8 @@ Post-MVP stubs (not implemented)
 from __future__ import annotations
 
 import logging
+import math
+from collections import deque
 from enum import Enum
 from typing import TYPE_CHECKING, Any
 
@@ -36,6 +38,7 @@ from formatshield.extraction._prompt import build_retry_system_message
 from formatshield.extraction._sfep import parse_sfep
 
 if TYPE_CHECKING:
+    from formatshield.assembly._blackboard import Blackboard
     from formatshield.config import ExtractionConfig
     from formatshield.providers._protocol import LLMProvider
     from formatshield.schema._types import CapacityLeaf, Field
@@ -43,6 +46,7 @@ if TYPE_CHECKING:
 __all__ = [
     "FailureCause",
     "build_retry_prompt",
+    "cascade_invalidate",
     "classify_failure",
     "handle_missing_fields",
     "orchestrate_retry",
@@ -60,6 +64,9 @@ _DEFAULT_MAX_RETRY_ROUNDS: int = 2
 _FORMAT_ERROR_KEYWORDS: frozenset[str] = frozenset(
     {"parse", "format", "sfep", "malformed", "separator", "key=value"}
 )
+# Per-line allowance for a retry output line's " = " separator + newline, added
+# on top of the field's value (tau) and echoed path when packing retry batches.
+_RETRY_LINE_OVERHEAD_TOKENS: int = 8
 
 
 # ---------------------------------------------------------------------------
@@ -146,6 +153,10 @@ async def orchestrate_retry(
     dep_dag: dict[str, set[str]],
     config: ExtractionConfig,
     call_counter: list[int] | None = None,
+    system_prompt: str = "",
+    user_prompt: str = "",
+    knowledge_fallback: bool = False,
+    retry_excerpt: str | None = None,
 ) -> dict[str, Any]:
     """Orchestrate up to 2 rounds of surgical field retry.
 
@@ -196,7 +207,9 @@ async def orchestrate_retry(
             leaf.leaf_id,
         )
 
-        batches = split_retry_batches(still_failing, dep_dag)
+        batches = split_retry_batches(
+            still_failing, dep_dag, max_output_tokens=leaf.safe_output or None
+        )
         round_recovered: dict[str, Any] = {}
 
         for batch in batches:
@@ -206,6 +219,10 @@ async def orchestrate_retry(
                 provider,
                 leaf,
                 call_counter=call_counter,
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                knowledge_fallback=knowledge_fallback,
+                retry_excerpt=retry_excerpt,
             )
             round_recovered.update(batch_result)
 
@@ -234,6 +251,10 @@ async def surgical_field_retry(
     leaf: CapacityLeaf,
     *,
     call_counter: list[int] | None = None,
+    system_prompt: str = "",
+    user_prompt: str = "",
+    knowledge_fallback: bool = False,
+    retry_excerpt: str | None = None,
 ) -> dict[str, Any]:
     """Execute one surgical retry call for a batch of failed fields.
 
@@ -247,11 +268,22 @@ async def surgical_field_retry(
         leaf: Capacity leaf providing the document excerpt.
         call_counter: Optional single-element list; element 0 is incremented by
             one for the API call this function makes (for cost accounting).
+        retry_excerpt: Fresh, field-targeted excerpt from re-retrieval (GSGRF).
+            When given it replaces the leaf's original excerpt, so a field whose
+            evidence was trimmed away gets a different, relevant context. Falls
+            back to ``leaf.document_excerpt`` when ``None``.
 
     Returns:
         Dict of ``{path: value}`` for fields successfully re-extracted.
     """
-    messages = build_retry_prompt(fields, errors, leaf.document_excerpt)
+    messages = build_retry_prompt(
+        fields,
+        errors,
+        retry_excerpt or leaf.document_excerpt,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        knowledge_fallback=knowledge_fallback,
+    )
 
     # Estimate output tokens: sum of tau values + safety margin
     total_tau = sum(f.tau for f in fields)
@@ -278,6 +310,10 @@ def build_retry_prompt(
     fields: list[Field],
     errors: dict[str, str],
     document_excerpt: str,
+    *,
+    system_prompt: str = "",
+    user_prompt: str = "",
+    knowledge_fallback: bool = False,
 ) -> list[dict[str, str]]:
     """Build the messages list for a surgical retry call.
 
@@ -285,40 +321,79 @@ def build_retry_prompt(
         fields: Failed fields to retry.
         errors: Per-field error messages for targeted correction.
         document_excerpt: Document text from the original leaf.
+        system_prompt: Optional caller system context (prepended).
+        user_prompt: Optional caller task context (prepended).
+        knowledge_fallback: Allow the model to fall back to its own knowledge for
+            fields the document does not state. Default ``False``.
 
     Returns:
         Messages list for ``provider.complete()``.
     """
-    return build_retry_system_message(fields, errors, document_excerpt)
+    return build_retry_system_message(
+        fields,
+        errors,
+        document_excerpt,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        knowledge_fallback=knowledge_fallback,
+    )
+
+
+def _retry_output_tokens(field: Field) -> int:
+    """Rough output-token cost of retrying one field's ``path = value`` line.
+
+    Mirrors the packer's output model (echoed path + value + line overhead) so
+    retry batching uses the same notion of cost; kept self-contained here to
+    avoid a dependency on the packing module.
+
+    Args:
+        field: The field being retried.
+
+    Returns:
+        Estimated output tokens for this field's SFEP line.
+    """
+    return math.ceil(field.tau) + max(1, len(field.path) // 4) + _RETRY_LINE_OVERHEAD_TOKENS
 
 
 def split_retry_batches(
     failed_fields: list[Field],
     dep_dag: dict[str, set[str]],
+    *,
+    max_output_tokens: int | None = None,
 ) -> list[list[Field]]:
-    """Group failed fields by dependency closure for batched retry.
+    """Group failed fields into retry batches, preserving dependency closures.
 
-    Fields that share a dependency relationship must be retried together
-    so that dependency-aware validation works correctly. Fields with no
-    shared dependencies are grouped separately to minimise prompt size.
+    Two steps:
 
-    Algorithm: union-find over dependency edges between failed fields.
+    1. **Closures (indivisible units).** Union-find over dependency edges among
+       the failed fields keeps a field and its failed dependencies together, so
+       dependency-aware re-extraction stays correct.
+    2. **Capacity packing.** When ``max_output_tokens`` is given, those closures
+       are greedily packed into the fewest batches whose combined output fits the
+       budget — so many independent fields share one retry call instead of one
+       call each. Without a budget, each closure is its own batch (legacy
+       behaviour). A single closure that alone exceeds the budget still forms its
+       own batch (a closure is never split).
 
     Args:
         failed_fields: Fields to batch.
         dep_dag: Full dependency graph ``{path: set_of_paths_it_depends_on}``.
+        max_output_tokens: Per-call output budget for packing closures. ``None``
+            disables packing (one batch per closure).
 
     Returns:
-        List of batches. Each batch is a list of fields that should be
-        retried in a single API call.
+        List of batches; each batch is retried in a single API call.
 
     Example:
         >>> from formatshield.schema._types import Field
-        >>> f1 = Field("a", "string", {}, "", {})
-        >>> f2 = Field("b", "string", {}, "", {})
-        >>> batches = split_retry_batches([f1, f2], {})
-        >>> len(batches)
+        >>> f1 = Field("a", "string", {}, "", {}, tau=2.0)
+        >>> f2 = Field("b", "string", {}, "", {}, tau=2.0)
+        >>> # No budget → one batch per independent field (legacy).
+        >>> len(split_retry_batches([f1, f2], {}))
         2
+        >>> # With a budget the two independent fields share one retry call.
+        >>> len(split_retry_batches([f1, f2], {}, max_output_tokens=1000))
+        1
     """
     if not failed_fields:
         return []
@@ -351,13 +426,31 @@ def split_retry_batches(
         for neighbor in neighbors:
             _union(path, neighbor)
 
-    # Group by root
-    groups: dict[str, list[str]] = {}
+    # Group by root → dependency closures (indivisible units)
+    closures_by_root: dict[str, list[Field]] = {}
     for path in failed_paths:
-        root = _find(path)
-        groups.setdefault(root, []).append(path)
+        closures_by_root.setdefault(_find(path), []).append(path_to_field[path])
+    closures = list(closures_by_root.values())
 
-    return [[path_to_field[p] for p in group] for group in groups.values()]
+    if max_output_tokens is None or max_output_tokens <= 0:
+        return closures
+
+    # Capacity-pack closures into the fewest budget-bounded batches (heaviest
+    # first), so independent fields are retried together rather than one-per-call.
+    closures.sort(key=lambda c: sum(_retry_output_tokens(f) for f in c), reverse=True)
+    batches: list[list[Field]] = []
+    current: list[Field] = []
+    current_cost = 0
+    for closure in closures:
+        cost = sum(_retry_output_tokens(f) for f in closure)
+        if current and current_cost + cost > max_output_tokens:
+            batches.append(current)
+            current, current_cost = [], 0
+        current.extend(closure)
+        current_cost += cost
+    if current:
+        batches.append(current)
+    return batches
 
 
 def handle_missing_fields(
@@ -411,3 +504,56 @@ def handle_missing_fields(
             result[path] = None
 
     return result
+
+
+def cascade_invalidate(
+    blackboard: Blackboard,
+    dep_dag: dict[str, set[str]],
+    changed_paths: set[str],
+) -> list[str]:
+    """Invalidate fields downstream of a changed dependency value (CADTR).
+
+    When a retry round changes a value that other fields depend on, those
+    dependents may be stale. This walks the *reverse* dependency graph from
+    each changed path and marks every currently-FILLED dependent
+    ``NEEDS_REVALIDATION`` (which removes it from the assembled output and
+    surfaces it in metadata). Cascades transitively: a newly invalidated field
+    invalidates its own dependents in turn.
+
+    Args:
+        blackboard: The run's blackboard (mutated in place).
+        dep_dag: Field dependency graph ``{path: set_of_paths_it_depends_on}``.
+        changed_paths: Paths whose values changed during retry.
+
+    Returns:
+        Sorted list of paths flagged ``NEEDS_REVALIDATION`` by this call.
+
+    Example:
+        >>> from formatshield.assembly._blackboard import Blackboard
+        >>> bb = Blackboard(["total", "tax"])
+        >>> bb.write("total", 100); bb.write("tax", 9)
+        >>> cascade_invalidate(bb, {"tax": {"total"}}, {"total"})
+        ['tax']
+    """
+    from formatshield.assembly._blackboard import FieldState
+
+    # Reverse edges: dependents_of[d] = every field that depends on d.
+    dependents_of: dict[str, set[str]] = {}
+    for path, deps in dep_dag.items():
+        for dep in deps:
+            dependents_of.setdefault(dep, set()).add(path)
+
+    invalidated: list[str] = []
+    seen: set[str] = set(changed_paths)
+    queue: deque[str] = deque(changed_paths)
+    while queue:
+        changed = queue.popleft()
+        for dependent in dependents_of.get(changed, set()):
+            if dependent in seen:
+                continue
+            seen.add(dependent)
+            if blackboard.get_state(dependent) == FieldState.FILLED:
+                blackboard.mark_needs_revalidation(dependent)
+                invalidated.append(dependent)
+                queue.append(dependent)  # cascade further downstream
+    return sorted(invalidated)

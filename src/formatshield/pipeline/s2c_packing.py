@@ -25,6 +25,7 @@ import math
 from collections import deque
 from typing import TYPE_CHECKING
 
+from formatshield.extraction._papt import TemplateType, describe_field
 from formatshield.schema._types import CapacityLeaf
 
 if TYPE_CHECKING:
@@ -51,18 +52,53 @@ __all__ = [
 # tail (ProD, arXiv:2604.07931; TIE, arXiv:2604.00499).
 _Z_HEAVY_TAIL_FACTOR: float = 1.5
 _MIN_SAFE_OUTPUT_TOKENS: int = 50  # floor so every call can emit a few fields
-# Format Token Overhead: tokens spent on the system prompt, format instructions,
-# and per-field schema description before any value is produced. Fixed estimates
-# used for planning; the assembled prompt is the source of truth at call time.
+# Minimum document-excerpt room a leaf must retain after overhead + output. The
+# shared document is trimmed to the leftover budget by Stage 3, so a large
+# retrieval pool does not block packing — only this floor must remain.
+_MIN_EXCERPT_TOKENS: int = 256
+# Format Token Overhead: tokens spent on the system prompt and format
+# instructions before any field is described. The per-field schema-description
+# and output costs are computed dynamically from each field's actual path and
+# description length (see _field_schema_tokens / _field_output_tokens) — a fixed
+# per-field constant badly underestimates deeply-nested long paths and lets a
+# leaf overflow the real prompt.
 _SYSTEM_PROMPT_OVERHEAD_TOKENS: int = 100
-_PER_FIELD_SCHEMA_TOKENS: int = 15
+# Format-only wrapper around a field's dynamic schema-description text (the
+# "(type): " punctuation), added on top of the path/description token estimate.
+_SCHEMA_DESC_FORMAT_TOKENS: int = 4
 # SFEP emits one "path = value" line per field; tau(f) predicts only the value
-# length, so reserve a fixed allowance for the path, " = " separator, and newline
-# to avoid truncating the final lines of a large response.
+# length. The path is echoed in every line (computed dynamically), and this is a
+# small fixed allowance for the " = " separator and newline on top of it.
 _SFEP_LINE_OVERHEAD_TOKENS: int = 8
 # English-average characters per token; used only as a fallback before the
 # model-specific ratio measured at calibration is threaded into this estimate.
 _FALLBACK_CHARS_PER_TOKEN: float = 4.0
+# Tokens for the "[Resolved dependency values ...]" header when a leaf injects
+# upstream dependency values (Dependency Field Injection).
+_INJECTION_HEADER_TOKENS: int = 12
+# Difficulty penalty in the per-leaf reliability budget. A field's reliability
+# load is 1 + λ·D(f): a trivial field (D=0) costs 1 unit, a maximally-hard field
+# (D=1) costs 1+λ. Extraction reliability falls with field COUNT — and harder
+# fields consume more of the model's attention — so the budget is spent in
+# difficulty-weighted units, not raw counts (IFScale arXiv:2507.11538; instance-
+# count collapse arXiv:2603.22608; cluster-size x mean-difficulty, paper §4479).
+_DIFFICULTY_WEIGHT: float = 1.0
+
+
+def _reliability_load(fields: list[Field]) -> float:
+    """Difficulty-weighted reliability load of a field set: ``Σ (1 + λ·D(f))``.
+
+    Replaces a raw field count as the leaf-size limit, so a leaf can hold many
+    easy fields or fewer hard ones — the model's reliable capacity depends on both
+    how many fields and how hard they are, not the count alone.
+
+    Args:
+        fields: The fields to weigh.
+
+    Returns:
+        The summed reliability load (>= ``len(fields)``).
+    """
+    return sum(1.0 + _DIFFICULTY_WEIGHT * f.difficulty for f in fields)
 
 
 # ---------------------------------------------------------------------------
@@ -70,13 +106,57 @@ _FALLBACK_CHARS_PER_TOKEN: float = 4.0
 # ---------------------------------------------------------------------------
 
 
-def compute_K_min(fields: list[Field], safe_output: float) -> int:  # noqa: N802
+def _field_schema_tokens(field: Field, chars_per_token: float) -> int:
+    """Tokens to *describe* one field in the prompt — costed from the REAL line.
+
+    Renders the exact ``describe_field`` line the prompt will contain (path,
+    type, description, title, every constraint, array-item schema, examples) and
+    measures it, so the packing budget matches what is actually sent. A char
+    estimate over a subset of keys underestimated wide/rich schemas and let a
+    leaf overflow the real prompt.
+
+    Args:
+        field: The field to describe.
+        chars_per_token: Calibrated characters-per-token ratio (Stage 0).
+
+    Returns:
+        Estimated schema-description token count for this field.
+    """
+    cpt = chars_per_token or _FALLBACK_CHARS_PER_TOKEN
+    line = describe_field(field, TemplateType.STANDARD)
+    return math.ceil(len(line) / cpt) + _SCHEMA_DESC_FORMAT_TOKENS
+
+
+def _field_output_tokens(field: Field, chars_per_token: float) -> int:
+    """Tokens for one SFEP output line ``path = value`` (path echoed + value).
+
+    tau(f) predicts only the *value* length; the field's path is echoed in every
+    output line, so it must be counted too. Dynamic per field, so long nested
+    paths are charged their real output cost.
+
+    Args:
+        field: The field being extracted.
+        chars_per_token: Calibrated characters-per-token ratio (Stage 0).
+
+    Returns:
+        Estimated output token count for this field's SFEP line.
+    """
+    cpt = chars_per_token or _FALLBACK_CHARS_PER_TOKEN
+    return math.ceil(len(field.path) / cpt) + math.ceil(field.tau) + _SFEP_LINE_OVERHEAD_TOKENS
+
+
+def compute_K_min(  # noqa: N802
+    fields: list[Field],
+    safe_output: float,
+    chars_per_token: float,
+) -> int:
     """Lower bound on the number of LLM calls any packing can achieve.
 
     The bound is the larger of two independent constraints:
 
-    * **Volume bound** — total predicted output cannot exceed the per-call output
-      budget, so at least ``ceil(Στ(f) / safe_output)`` calls are required.
+    * **Volume bound** — total predicted output (value *and* echoed path per
+      field) cannot exceed the per-call output budget, so at least
+      ``ceil(Σ output(f) / safe_output)`` calls are required.
     * **Large-field bound** — any field whose own output would consume more than
       half a call's budget effectively monopolises a call, so the count of such
       fields is itself a lower bound.
@@ -86,6 +166,8 @@ def compute_K_min(fields: list[Field], safe_output: float) -> int:  # noqa: N802
     Args:
         fields: All schema fields, each carrying its predicted output size tau.
         safe_output: Per-call output budget (the model output ceiling).
+        chars_per_token: Calibrated characters-per-token ratio (Stage 0), used to
+            cost each field's echoed path in the output line.
 
     Returns:
         Minimum number of calls, at least 1.
@@ -93,15 +175,17 @@ def compute_K_min(fields: list[Field], safe_output: float) -> int:  # noqa: N802
     Example:
         >>> from formatshield.schema._types import Field
         >>> f = Field("x", "integer", {}, "", {}, tau=10.0)
-        >>> compute_K_min([f], safe_output=100.0)
+        >>> compute_K_min([f], safe_output=100.0, chars_per_token=4.0)
         1
     """
     if safe_output <= 0:
         return len(fields)
-    sum_tau = sum(f.tau for f in fields)
-    # Fields whose individual tau exceeds half the output budget need their own leaf
-    large_field_count = sum(1 for f in fields if f.tau > 0.5 * safe_output)
-    return max(1, math.ceil(sum_tau / safe_output), large_field_count)
+    sum_out = sum(_field_output_tokens(f, chars_per_token) for f in fields)
+    # Fields whose own output exceeds half the budget effectively need their own leaf
+    large_field_count = sum(
+        1 for f in fields if _field_output_tokens(f, chars_per_token) > 0.5 * safe_output
+    )
+    return max(1, math.ceil(sum_out / safe_output), large_field_count)
 
 
 def fits(
@@ -110,19 +194,25 @@ def fits(
     overhead: int,
     C_usable: float,  # noqa: N803
     output_ceiling: float,
+    chars_per_token: float,
 ) -> bool:
-    """Check whether a set of fields fits in a single leaf under dual constraints.
+    """Check whether a set of fields fits in a single leaf.
 
-    Capacity is computed from the model's real limits, not a fixed field count:
+    The binding per-call limit is OUTPUT, not the document. The document excerpt
+    is shared across all of a leaf's fields and is trimmed to the leftover budget
+    by Stage 3, so it never needs more than ``C_usable - overhead - output`` and
+    cannot, on its own, make a leaf infeasible. Two checks therefore apply:
 
-    * Context: ``overhead + D_cost + output_needed <= C_usable`` (C_usable is a
-      fraction of the model's real context window).
-    * Output:  ``output_needed <= output_ceiling`` (the model's real max-output
-      minus the heavy-tail margin).
+    * Output:  ``output_needed <= output_ceiling`` (model max-output minus margin).
+    * Context: after overhead and output, at least a minimal document excerpt
+      must still fit — ``overhead + output_needed + min(D_cost, MIN_EXCERPT)
+      <= C_usable`` (a small group needing little document uses its real D_cost;
+      a large retrieval pool is capped, since Stage 3 will trim it to fit).
 
     Args:
         leaf_fields: Fields to pack into this leaf.
-        D_cost: Token cost of document segments for these fields.
+        D_cost: Token cost of document segments matched for these fields (the
+            retrieval pool); only its small-group portion binds, as Stage 3 trims.
         overhead: Fixed token overhead (system prompt + schema description).
         C_usable: Usable slice of the context window. Held well below 100% of
             the window because extraction accuracy degrades as the context fills
@@ -130,6 +220,8 @@ def fits(
             arXiv:2509.21361; Sequential-NIAH arXiv:2504.04713).
         output_ceiling: Largest output a single call may safely emit, the model
             output limit minus the heavy-tail margin.
+        chars_per_token: Calibrated characters-per-token ratio (Stage 0), used to
+            cost each field's echoed path in the output line.
 
     Returns:
         ``True`` if both constraints are satisfied.
@@ -137,13 +229,87 @@ def fits(
     Example:
         >>> from formatshield.schema._types import Field
         >>> f = Field("x", "integer", {}, "", {}, tau=5.0)
-        >>> fits([f], D_cost=100, overhead=50, C_usable=500.0, output_ceiling=200.0)
+        >>> fits([f], D_cost=100, overhead=50, C_usable=500.0, output_ceiling=200.0,
+        ...      chars_per_token=4.0)
         True
     """
-    output_needed = math.ceil(sum(f.tau for f in leaf_fields))
+    output_needed = sum(_field_output_tokens(f, chars_per_token) for f in leaf_fields)
     if output_needed > output_ceiling:
         return False
-    return overhead + D_cost + output_needed <= C_usable
+    # The document is shared and trimmed to the leftover budget, so only its
+    # small-group portion binds; a large retrieval pool is capped at MIN_EXCERPT.
+    doc_needed = min(D_cost, _MIN_EXCERPT_TOKENS)
+    return overhead + doc_needed + output_needed <= C_usable
+
+
+def _coverage_floor_tokens(groups: list[FieldGroup], chars_per_token: float) -> int:
+    """Minimum document tokens a leaf must hold: the deduped union of each group's
+    single best segment.
+
+    This is the Set-Union Bin Packing element cost (bin packing with overlapping
+    items, arXiv:1908.06727): groups in one leaf share the document, so the floor is
+    the UNION of their must-have evidence (one top-scoring segment per group),
+    counted once per segment. It is the lower bound that guarantees every group
+    keeps at least one piece of evidence (coverage; Nemhauser-Wolsey-Fisher 1978) —
+    below it, a group would be starved and the leaf must split instead.
+
+    Args:
+        groups: The groups packed (or being packed) into one leaf.
+        chars_per_token: Calibrated characters-per-token ratio (Stage 0).
+
+    Returns:
+        Token cost of the deduplicated best-segment union; 0 when no group has any
+        matched segment (small-doc path or no retrieval hit).
+    """
+    seen: set[int] = set()
+    total_chars = 0
+    for g in groups:
+        if not g.matched_segments:
+            continue
+        best = max(zip(g.matched_segments, g.segment_scores, strict=False), key=lambda x: x[1])
+        seg = best[0]
+        if seg.segment_id not in seen:
+            seen.add(seg.segment_id)
+            total_chars += len(seg.text)
+    if not seen:
+        return 0
+    ratio = chars_per_token if chars_per_token > 0 else _FALLBACK_CHARS_PER_TOKEN
+    return max(1, math.ceil(total_chars / ratio))
+
+
+def _coverage_fits(
+    groups: list[FieldGroup],
+    leaf_fields: list[Field],
+    overhead: int,
+    c_usable: float,
+    output_ceiling: float,
+    chars_per_token: float,
+) -> bool:
+    """Evidence-aware feasibility (Set-Union Bin Packing): does the union of every
+    group's best segment fit alongside overhead and output?
+
+    Complements :func:`fits` (which bounds output + a minimal excerpt): here the
+    document term is the real coverage floor over the leaf's groups, deduplicated.
+    When it fails, the groups must split rather than have Stage 3 trim away a
+    group's only evidence — keeping each leaf small and focused, which also avoids
+    the accuracy loss of over-long context (Lost-in-the-Middle, arXiv:2307.03172).
+
+    Args:
+        groups: Candidate groups for the leaf.
+        leaf_fields: All fields those groups contribute (for output cost).
+        overhead: Fixed token overhead (system/user prompt + schema description).
+        c_usable: Usable slice of the context window.
+        output_ceiling: Largest output a single call may safely emit.
+        chars_per_token: Calibrated characters-per-token ratio (Stage 0).
+
+    Returns:
+        ``True`` if overhead + output + best-segment union fits ``c_usable``.
+    """
+    output_needed = sum(_field_output_tokens(f, chars_per_token) for f in leaf_fields)
+    if output_needed > output_ceiling:
+        return False
+    floor = _coverage_floor_tokens(groups, chars_per_token)
+    return overhead + output_needed + floor <= c_usable
 
 
 def tarjan_scc(graph: dict[str, set[str]]) -> list[list[str]]:
@@ -346,9 +512,28 @@ def run_stage_2c(state: PipelineState, config: ExtractionConfig) -> PipelineStat
         state.M_O - z_eff * math.sqrt(sum_var_all),
     )
 
-    state.K_min = compute_K_min(state.fields, output_ceiling)
+    cpt = state.chars_per_token or _FALLBACK_CHARS_PER_TOKEN
+    # K_min also respects the reliability budget: no packing can use fewer than
+    # ceil(total reliability load / budget) calls, however generous the token
+    # budget is. The load is difficulty-weighted, so a hard schema needs more calls.
+    cap = max(1, config.max_fields_per_call)
+    token_k_min = compute_K_min(state.fields, output_ceiling, cpt)
+    reliability_k_min = math.ceil(_reliability_load(state.fields) / cap) if state.fields else 1
+    state.K_min = max(token_k_min, reliability_k_min)
 
-    leaves = _greedy_ffd(state.groups, state, z_eff=z_eff, output_ceiling=output_ceiling)
+    # Caller system/user prompts (S, P) are constant across leaves; charge their
+    # token cost to every leaf's overhead so the document budget shrinks to match.
+    prompt_overhead = math.ceil((len(state.system_prompt) + len(state.user_prompt)) / cpt)
+
+    leaves = _greedy_ffd(
+        state.groups,
+        state,
+        z_eff=z_eff,
+        output_ceiling=output_ceiling,
+        prompt_overhead=prompt_overhead,
+        inject_dependencies=config.inject_dependencies,
+        max_fields_per_call=cap,
+    )
     state.leaves = leaves
     state.execution_order = compute_execution_order(leaves, state.dep_dag)
     return state
@@ -359,36 +544,98 @@ def run_stage_2c(state: PipelineState, config: ExtractionConfig) -> PipelineStat
 # ---------------------------------------------------------------------------
 
 
-def _compute_leaf_overhead(fields: list[Field]) -> int:
+def _compute_leaf_overhead(
+    fields: list[Field],
+    chars_per_token: float,
+    prompt_overhead: int = 0,
+) -> int:
     """Estimate FTO (Format Token Overhead) for a leaf's fields.
+
+    The per-field schema-description cost is computed dynamically from each
+    field's actual path + description length, not a fixed per-field constant, so
+    a leaf of long nested paths is charged its real prompt cost and never
+    silently overflows the context window.
 
     Args:
         fields: Fields in the leaf.
+        chars_per_token: Calibrated characters-per-token ratio (Stage 0).
+        prompt_overhead: Tokens for the caller-supplied system/user prompts,
+            constant across leaves. Counted here so they shrink the per-leaf
+            document budget; total overhead = system prompt + user prompt +
+            format instructions + per-field schema description.
 
     Returns:
         Token overhead estimate.
     """
-    return _SYSTEM_PROMPT_OVERHEAD_TOKENS + _PER_FIELD_SCHEMA_TOKENS * len(fields)
+    schema_tokens = sum(_field_schema_tokens(f, chars_per_token) for f in fields)
+    return _SYSTEM_PROMPT_OVERHEAD_TOKENS + schema_tokens + prompt_overhead
 
 
-def _leaf_safe_output(fields: list[Field], z_eff: float) -> int:
+def _injection_cost(
+    fields: list[Field],
+    dep_dag: dict[str, set[str]],
+    field_by_path: dict[str, Field],
+    chars_per_token: float,
+) -> int:
+    """Estimate tokens to inject this leaf's *cross-leaf* dependency values.
+
+    A dependency field that lands in the SAME leaf costs nothing (the value is
+    already present). A dependency in another leaf must be injected as a
+    ``path = value`` line, so its tokens are charged to this leaf's overhead —
+    this is what can push a leaf over budget and force a split.
+
+    Depends only on the leaf's own field set and the dep graph (not the global
+    partition), so it is well-defined during First-Fit packing.
+
+    Args:
+        fields: Candidate fields for the leaf.
+        dep_dag: Field dependency graph (path -> set of paths it depends on).
+        field_by_path: Lookup for predicted token cost (tau) of a dep field.
+        chars_per_token: Calibrated ratio for path-string token estimation.
+
+    Returns:
+        Estimated injected-block token count (0 if no cross-leaf dependencies).
+    """
+    cpt = chars_per_token or _FALLBACK_CHARS_PER_TOKEN
+    leaf_paths = {f.path for f in fields}
+    cross_deps: set[str] = set()
+    for f in fields:
+        for dep_path in dep_dag.get(f.path, set()):
+            if dep_path not in leaf_paths and dep_path in field_by_path:
+                cross_deps.add(dep_path)
+    if not cross_deps:
+        return 0
+    total = _INJECTION_HEADER_TOKENS
+    for dep_path in cross_deps:
+        total += _field_output_tokens(field_by_path[dep_path], cpt)
+    return total
+
+
+def _leaf_safe_output(fields: list[Field], z_eff: float, m_o: int, chars_per_token: float) -> int:
     """Output tokens to reserve for one leaf: predicted output + safety margin.
 
-    This is the per-leaf reservation, distinct from the model-wide output
-    ceiling. It sets ``max_tokens`` for the call, so it is deliberately small —
-    only what this leaf's fields need — leaving the remainder of the input
-    budget for the document excerpt.
+    This is the per-leaf reservation that sets ``max_tokens`` for the call —
+    only what this leaf's fields need (predicted output plus a heavy-tail margin),
+    leaving the remainder of the input budget for the document excerpt. It is
+    capped at the model's output ceiling ``m_o``: a call can never be allowed to
+    emit more than the model itself permits, and ``fits()`` already guarantees a
+    leaf's predicted output stays under ``m_o`` minus the margin.
 
     Args:
         fields: Fields packed into the leaf.
         z_eff: Heavy-tail-inflated z-score (z_target * 1.5).
+        m_o: The model's maximum output tokens (upper bound on the reservation).
+        chars_per_token: Calibrated characters-per-token ratio (Stage 0), used to
+            cost each field's echoed path in the output line.
 
     Returns:
-        Reserved output token count (>= _MIN_SAFE_OUTPUT_TOKENS).
+        Reserved output token count, in ``[_MIN_SAFE_OUTPUT_TOKENS, m_o]``.
     """
-    output_needed = sum(f.tau for f in fields) + len(fields) * _SFEP_LINE_OVERHEAD_TOKENS
+    output_needed = sum(_field_output_tokens(f, chars_per_token) for f in fields)
     margin = z_eff * math.sqrt(sum(f.var_tau for f in fields))
-    return max(_MIN_SAFE_OUTPUT_TOKENS, math.ceil(output_needed + margin))
+    reservation = math.ceil(output_needed + margin)
+    capped = min(reservation, m_o) if m_o > 0 else reservation
+    return max(_MIN_SAFE_OUTPUT_TOKENS, capped)
 
 
 def _greedy_ffd(
@@ -397,6 +644,9 @@ def _greedy_ffd(
     *,
     z_eff: float,
     output_ceiling: float,
+    prompt_overhead: int = 0,
+    inject_dependencies: bool = False,
+    max_fields_per_call: int = 50,
 ) -> list[CapacityLeaf]:
     """First-Fit Decreasing bin packing of groups (with per-field split) into leaves.
 
@@ -422,29 +672,52 @@ def _greedy_ffd(
 
     leaves: list[CapacityLeaf] = []
 
+    cpt = state.chars_per_token
+
+    def _overhead(fields: list[Field]) -> int:
+        total = _compute_leaf_overhead(fields, cpt, prompt_overhead)
+        if inject_dependencies:
+            total += _injection_cost(fields, state.dep_dag, state.field_by_path, cpt)
+        return total
+
     def _new_leaf(fields: list[Field], group: FieldGroup) -> None:
         leaves.append(
             CapacityLeaf(
                 fields=list(fields),
                 groups=[group],
-                overhead=_compute_leaf_overhead(fields),
-                safe_output=_leaf_safe_output(fields, z_eff),
+                overhead=_overhead(fields),
+                safe_output=_leaf_safe_output(fields, z_eff, state.M_O, cpt),
                 leaf_id=len(leaves),
             )
         )
 
     for group in sorted_groups:
-        # 1. Try to place the whole group into an existing leaf.
+        # 1. Try to place the whole group into an existing leaf. The leaf must pass
+        #    BOTH the output/minimal-excerpt test (fits) AND the evidence-coverage
+        #    test (_coverage_fits): the deduped union of every group's best segment
+        #    must still fit. When coverage fails the group starts a new leaf — the
+        #    Set-Union Bin Packing split, locality-aware because groups sharing
+        #    segments have a small union and pack together.
         placed = False
         for leaf in leaves:
             candidate_fields = leaf.fields + group.fields
-            candidate_dcost = _aggregate_dcost([*leaf.groups, group], state.chars_per_token)
-            overhead = _compute_leaf_overhead(candidate_fields)
-            if fits(candidate_fields, candidate_dcost, overhead, state.C_usable, output_ceiling):
+            # Reliability cap: keep the difficulty-weighted load within budget, even
+            # when the token budget would allow more — many easy fields or fewer
+            # hard ones, never a raw count that ignores difficulty.
+            if _reliability_load(candidate_fields) > max_fields_per_call:
+                continue
+            candidate_groups = [*leaf.groups, group]
+            candidate_dcost = _aggregate_dcost(candidate_groups, state.chars_per_token)
+            overhead = _overhead(candidate_fields)
+            if fits(
+                candidate_fields, candidate_dcost, overhead, state.C_usable, output_ceiling, cpt
+            ) and _coverage_fits(
+                candidate_groups, candidate_fields, overhead, state.C_usable, output_ceiling, cpt
+            ):
                 leaf.fields.extend(group.fields)
                 leaf.groups.append(group)
                 leaf.overhead = overhead
-                leaf.safe_output = _leaf_safe_output(leaf.fields, z_eff)
+                leaf.safe_output = _leaf_safe_output(leaf.fields, z_eff, state.M_O, cpt)
                 placed = True
                 break
         if placed:
@@ -457,9 +730,13 @@ def _greedy_ffd(
         current: list[Field] = []
         for f in group.fields:
             candidate = [*current, f]
-            overhead = _compute_leaf_overhead(candidate)
-            if current and not fits(
-                candidate, group.D_cost, overhead, state.C_usable, output_ceiling
+            overhead = _overhead(candidate)
+            # Split when the token budget is exceeded OR the difficulty-weighted
+            # reliability budget is hit.
+            over_cap = _reliability_load(candidate) > max_fields_per_call
+            if current and (
+                over_cap
+                or not fits(candidate, group.D_cost, overhead, state.C_usable, output_ceiling, cpt)
             ):
                 _new_leaf(current, group)
                 current = [f]
@@ -475,8 +752,8 @@ def _greedy_ffd(
             CapacityLeaf(
                 fields=list(state.fields),
                 groups=list(state.groups),
-                overhead=_compute_leaf_overhead(state.fields),
-                safe_output=_leaf_safe_output(state.fields, z_eff),
+                overhead=_overhead(state.fields),
+                safe_output=_leaf_safe_output(state.fields, z_eff, state.M_O, cpt),
                 leaf_id=0,
             )
         ]
@@ -505,8 +782,11 @@ def _aggregate_dcost(groups: list[FieldGroup], chars_per_token: float) -> int:
             if seg.segment_id not in seen_ids:
                 seen_ids.add(seg.segment_id)
                 total += len(seg.text)
-    # If no matched_segments (small-doc fast path), use D_cost directly.
+    # Small-doc fast path: groups carry no matched_segments and every group's
+    # D_cost is the same shared full document, which appears in the leaf prompt
+    # exactly once. Count it once (max), not once per group (sum) — summing would
+    # phantom-inflate the leaf's document cost and force needless extra leaves.
     if not seen_ids:
-        return sum(g.D_cost for g in groups)
+        return max((g.D_cost for g in groups), default=0)
     ratio = chars_per_token if chars_per_token > 0 else _FALLBACK_CHARS_PER_TOKEN
     return max(1, math.ceil(total / ratio))

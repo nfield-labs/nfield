@@ -39,54 +39,102 @@ SIMPLE_SCHEMA = {
 }
 
 
+_CPT = 4.0  # chars-per-token for these unit tests (short paths → ~1 path token)
+
+
 class TestComputeKMin:
     def test_single_field(self):
         fields = [_make_field("x", tau=10.0)]
-        k = compute_K_min(fields, safe_output=100.0)
+        # output(f) = path(1) + tau(10) + line_overhead(8) = 19; 19/100 → 1
+        k = compute_K_min(fields, safe_output=100.0, chars_per_token=_CPT)
         assert k == 1
 
     def test_many_small_fields(self):
         fields = [_make_field(str(i), tau=1.0) for i in range(50)]
-        # sum_tau = 50, safe_output = 100 → ceil(50/100) = 1
-        k = compute_K_min(fields, safe_output=100.0)
-        assert k == 1
+        # each line ~10 output tokens (path + value + line overhead); 50*10=500;
+        # ceil(500/100) = 5 — the echoed path + line overhead are real output cost.
+        k = compute_K_min(fields, safe_output=100.0, chars_per_token=_CPT)
+        assert k == 5
 
     def test_large_single_field_forces_own_leaf(self):
         fields = [_make_field("big", tau=60.0)]
-        # tau > 0.5 * safe_output=100, so at least 1 large field
-        k = compute_K_min(fields, safe_output=100.0)
+        # output > 0.5 * safe_output=100, so at least 1 large field
+        k = compute_K_min(fields, safe_output=100.0, chars_per_token=_CPT)
         assert k >= 1
 
     def test_zero_safe_output_returns_field_count(self):
         fields = [_make_field("x"), _make_field("y")]
-        k = compute_K_min(fields, safe_output=0.0)
+        k = compute_K_min(fields, safe_output=0.0, chars_per_token=_CPT)
         assert k == len(fields)
 
     def test_k_min_at_least_1(self):
-        k = compute_K_min([], safe_output=100.0)
+        k = compute_K_min([], safe_output=100.0, chars_per_token=_CPT)
         assert k >= 1
 
 
 class TestFits:
     def test_fits_within_budget(self):
         f = _make_field("x", tau=5.0)
-        assert fits([f], D_cost=100, overhead=50, C_usable=500.0, output_ceiling=200.0)
+        assert fits(
+            [f],
+            D_cost=100,
+            overhead=50,
+            C_usable=500.0,
+            output_ceiling=200.0,
+            chars_per_token=_CPT,
+        )
 
     def test_output_constraint_exceeded(self):
         f = _make_field("x", tau=300.0)
-        assert not fits([f], D_cost=0, overhead=0, C_usable=10000.0, output_ceiling=200.0)
+        assert not fits(
+            [f], D_cost=0, overhead=0, C_usable=10000.0, output_ceiling=200.0, chars_per_token=_CPT
+        )
 
     def test_context_constraint_exceeded(self):
+        # The document is shared + trimmed, so a large D_cost alone does NOT make
+        # a leaf infeasible. Context fails only when overhead + output leave no
+        # room for even a minimal excerpt. Here overhead (480) + output (~14)
+        # leaves < MIN_EXCERPT (256) of the 500 budget → does not fit.
         f = _make_field("x", tau=5.0)
-        assert not fits([f], D_cost=1000, overhead=50, C_usable=500.0, output_ceiling=200.0)
+        assert not fits(
+            [f],
+            D_cost=1000,
+            overhead=480,
+            C_usable=500.0,
+            output_ceiling=200.0,
+            chars_per_token=_CPT,
+        )
+
+    def test_large_doc_pool_does_not_block_packing(self):
+        # A huge retrieval pool (D_cost) must NOT block a leaf — Stage 3 trims it.
+        f = _make_field("x", tau=5.0)
+        assert fits(
+            [f],
+            D_cost=100_000,  # enormous pool
+            overhead=50,
+            C_usable=5000.0,
+            output_ceiling=200.0,
+            chars_per_token=_CPT,
+        )
 
     def test_empty_fields_fits(self):
-        assert fits([], D_cost=0, overhead=50, C_usable=500.0, output_ceiling=200.0)
+        assert fits(
+            [], D_cost=0, overhead=50, C_usable=500.0, output_ceiling=200.0, chars_per_token=_CPT
+        )
 
     def test_exact_budget(self):
-        # overhead=100, D_cost=100, output=100 → total=300 == C_usable=300
+        # output(f) = path(1) + tau(100) + line_overhead(8) = 109;
+        # doc_needed = min(D_cost=100, MIN_EXCERPT=256) = 100;
+        # overhead(100) + 100 + 109 = 309 == C_usable → fits (boundary).
         f = _make_field("x", tau=100.0)
-        assert fits([f], D_cost=100, overhead=100, C_usable=300.0, output_ceiling=200.0)
+        assert fits(
+            [f],
+            D_cost=100,
+            overhead=100,
+            C_usable=309.0,
+            output_ceiling=200.0,
+            chars_per_token=_CPT,
+        )
 
 
 class TestTarjanSCC:
@@ -315,3 +363,217 @@ class TestAggressiveScale:
         big = [c for c in sccs if len(c) > 1]
         assert len(big) == 1
         assert len(big[0]) == n
+
+
+class TestSmallDocSharedDocumentCost:
+    """The shared small-doc is counted once per leaf, not once per group."""
+
+    def test_multi_group_small_doc_packs_to_k_min(self):
+        # 20 records x 10 string fields = 200 fields in 20 groups, on a small
+        # shared document. Each group's D_cost is the same full doc; the packer
+        # must count it once per leaf (max), not sum it per group — otherwise the
+        # phantom-inflated document cost forces far more leaves than K_min.
+        props = {
+            f"rec_{r:02d}": {
+                "type": "object",
+                "properties": {f"f_{i:02d}": {"type": "string"} for i in range(10)},
+            }
+            for r in range(20)
+        }
+        schema = {"type": "object", "properties": props}
+        doc = "\n".join(f"rec {r} f {i} = v{r}_{i}" for r in range(20) for i in range(10))
+
+        state = PipelineState(chars_per_token=4.0, C_eff=50_000, M_O=10_000, C_usable=25_000.0)
+        state = run_stage_1(state, schema)
+        state = run_stage_2a(state)
+        state = run_stage_2b(state, doc, ExtractionConfig())
+        # Sanity: this is the small-doc fast path (no per-group segments).
+        assert all(not g.matched_segments for g in state.groups)
+        # Raise the reliability budget so the field cap does not bind here — this
+        # test isolates the shared-document cost behaviour (the field cap is its
+        # own test, TestMaxFieldsPerCall).
+        state = run_stage_2c(state, ExtractionConfig(max_fields_per_call=1000))
+
+        # With the shared doc counted once, packing reaches the theoretical
+        # minimum number of leaves (no phantom-document inflation).
+        assert len(state.leaves) == state.K_min
+
+
+class TestSafeOutputCappedAtMO:
+    """A leaf's max_tokens reservation never exceeds the model's M_O."""
+
+    def test_large_leaf_safe_output_capped_at_m_o(self):
+        # One group of 200 heavy fields on a generous context but a modest M_O:
+        # the raw reservation (Stau + line overhead + margin) would exceed M_O,
+        # so it must be capped at M_O (never request more than the model allows).
+        props = {f"f_{i:03d}": {"type": "string"} for i in range(200)}
+        schema = {"type": "object", "properties": props}
+        m_o = 4000
+        state = PipelineState(chars_per_token=4.0, C_eff=200_000, M_O=m_o, C_usable=100_000.0)
+        state = run_stage_1(state, schema)
+        state = run_stage_2a(state)
+        state = run_stage_2b(state, "small doc", ExtractionConfig())
+        state = run_stage_2c(state, ExtractionConfig())
+        assert state.leaves
+        for leaf in state.leaves:
+            assert leaf.safe_output <= m_o, f"safe_output {leaf.safe_output} exceeds M_O {m_o}"
+
+
+# ---------------------------------------------------------------------------
+# Evidence-aware split (Set-Union Bin Packing) — Phase A.2
+# ---------------------------------------------------------------------------
+from formatshield.pipeline.s2c_packing import _coverage_fits, _coverage_floor_tokens  # noqa: E402
+from formatshield.schema._types import FieldGroup, Segment  # noqa: E402
+
+
+def _field_in(path: str, parent: str, tau: float = 5.0) -> Field:
+    f = Field(path=path, type="string", constraints={}, parent_path=parent, schema_node={})
+    return f.with_tau(tau=tau, var_tau=0.5)
+
+
+def _seg(seg_id: int, n_chars: int) -> Segment:
+    return Segment(
+        text="x" * n_chars, start=0, end=n_chars, segment_type="unstructured", segment_id=seg_id
+    )
+
+
+def _group_with(parent: str, seg_ids: list[int], n_chars: int) -> FieldGroup:
+    segs = [_seg(i, n_chars) for i in seg_ids]
+    return FieldGroup(
+        parent_path=parent,
+        fields=[_field_in(f"{parent}.f", parent)],
+        matched_segments=segs,
+        segment_scores=[1.0] * len(segs),
+        D_cost=0,
+    )
+
+
+class TestCoverageFloor:
+    def test_disjoint_segments_sum(self):
+        g1 = _group_with("a", [0], 400)
+        g2 = _group_with("b", [1], 400)
+        assert _coverage_floor_tokens([g1, g2], chars_per_token=4.0) == 200
+
+    def test_shared_segment_counted_once(self):
+        g1 = _group_with("a", [0], 400)
+        g2 = _group_with("b", [0], 400)
+        assert _coverage_floor_tokens([g1, g2], chars_per_token=4.0) == 100
+
+    def test_no_segments_is_zero(self):
+        g = FieldGroup(parent_path="a", fields=[_field_in("a.f", "a")])
+        assert _coverage_floor_tokens([g], chars_per_token=4.0) == 0
+
+    def test_best_segment_is_highest_score(self):
+        g = FieldGroup(
+            parent_path="a",
+            fields=[_field_in("a.f", "a")],
+            matched_segments=[_seg(0, 4000), _seg(1, 400)],
+            segment_scores=[0.1, 9.0],
+        )
+        assert _coverage_floor_tokens([g], chars_per_token=4.0) == 100
+
+
+class TestCoverageFits:
+    def test_fits_when_union_small(self):
+        g = _group_with("a", [0], 400)
+        assert _coverage_fits(
+            [g], g.fields, overhead=50, c_usable=1000.0, output_ceiling=500.0, chars_per_token=4.0
+        )
+
+    def test_rejects_when_union_exceeds_budget(self):
+        g = _group_with("a", [0], 8000)
+        assert not _coverage_fits(
+            [g], g.fields, overhead=50, c_usable=1000.0, output_ceiling=500.0, chars_per_token=4.0
+        )
+
+
+class TestEvidenceAwareSplit:
+    @staticmethod
+    def _state_with_groups(groups: list[FieldGroup], c_usable: float) -> PipelineState:
+        fields = [f for g in groups for f in g.fields]
+        state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=c_usable)
+        state.fields = fields
+        state.field_by_path = {f.path: f for f in fields}
+        state.groups = groups
+        state.dep_dag = {}
+        return state
+
+    def test_disjoint_evidence_forces_split(self):
+        groups = [_group_with(p, [i], 2000) for i, p in enumerate(("a", "b", "c"))]
+        state = self._state_with_groups(groups, c_usable=1300.0)
+        run_stage_2c(state, ExtractionConfig())
+        assert len(state.leaves) >= 2
+
+    def test_shared_evidence_packs_together(self):
+        groups = [_group_with(p, [0], 2000) for p in ("a", "b", "c")]
+        state = self._state_with_groups(groups, c_usable=1300.0)
+        run_stage_2c(state, ExtractionConfig())
+        assert len(state.leaves) == 1
+
+
+# ---------------------------------------------------------------------------
+# Field-count reliability cap (max_fields_per_call)
+# ---------------------------------------------------------------------------
+class TestMaxFieldsPerCall:
+    """No leaf exceeds the field cap, even when the token budget would allow it."""
+
+    @staticmethod
+    def _wide_schema(n: int) -> dict:
+        return {"type": "object", "properties": {f"f{i}": {"type": "string"} for i in range(n)}}
+
+    def test_cap_forces_multiple_leaves_on_huge_budget(self):
+        # Huge context + output → token budget alone would pack all 200 in one leaf.
+        state = PipelineState(
+            chars_per_token=4.0, C_eff=1_000_000, M_O=1_000_000, C_usable=500_000.0
+        )
+        state = run_stage_1(state, self._wide_schema(200))
+        state = run_stage_2a(state)
+        state = run_stage_2b(state, "tiny doc", ExtractionConfig())
+        run_stage_2c(state, ExtractionConfig(max_fields_per_call=50))
+        assert len(state.leaves) >= 4, "200 fields / cap 50 → at least 4 leaves"
+        for leaf in state.leaves:
+            assert len(leaf.fields) <= 50, f"leaf has {len(leaf.fields)} fields > cap 50"
+
+    def test_every_field_still_placed(self):
+        state = PipelineState(
+            chars_per_token=4.0, C_eff=1_000_000, M_O=1_000_000, C_usable=500_000.0
+        )
+        state = run_stage_1(state, self._wide_schema(130))
+        state = run_stage_2a(state)
+        state = run_stage_2b(state, "tiny doc", ExtractionConfig())
+        run_stage_2c(state, ExtractionConfig(max_fields_per_call=40))
+        placed = {f.path for leaf in state.leaves for f in leaf.fields}
+        assert placed == {f.path for f in state.fields}
+
+    def test_k_min_respects_cap(self):
+        state = PipelineState(
+            chars_per_token=4.0, C_eff=1_000_000, M_O=1_000_000, C_usable=500_000.0
+        )
+        state = run_stage_1(state, self._wide_schema(100))
+        state = run_stage_2a(state)
+        state = run_stage_2b(state, "tiny doc", ExtractionConfig())
+        run_stage_2c(state, ExtractionConfig(max_fields_per_call=25))
+        assert state.K_min >= 4  # 100 fields, difficulty-weighted load / budget 25
+
+    def test_harder_fields_yield_smaller_leaves(self):
+        # Same field count + budget: a harder schema must use >= as many leaves as
+        # an easy one (difficulty-weighted budget, not a raw count).
+        def _typed(n: int, ftype: str, desc: str) -> dict:
+            return {
+                "type": "object",
+                "properties": {f"f{i}": {"type": ftype, "description": desc} for i in range(n)},
+            }
+
+        def _leaves_for(schema: dict) -> int:
+            st = PipelineState(
+                chars_per_token=4.0, C_eff=1_000_000, M_O=1_000_000, C_usable=500_000.0
+            )
+            st = run_stage_1(st, schema)
+            st = run_stage_2a(st)
+            st = run_stage_2b(st, "tiny doc", ExtractionConfig())
+            run_stage_2c(st, ExtractionConfig(max_fields_per_call=40))
+            return len(st.leaves)
+
+        easy = _leaves_for(_typed(120, "boolean", ""))
+        hard = _leaves_for(_typed(120, "string", "a long nuanced free-text clinical note"))
+        assert hard >= easy, "harder fields pack fewer per leaf -> more leaves"

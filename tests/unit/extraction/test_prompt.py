@@ -28,6 +28,44 @@ def make_field(path: str, ftype: str, description: str = "") -> Field:
     )
 
 
+class TestPromptContextPrepend:
+    """Caller system/user prompts are prepended, SFEP contract preserved."""
+
+    def test_extraction_prompt_prepends_system_and_user(self):
+        f = make_field("name", "string")
+        msgs = build_extraction_prompt(
+            [f],
+            "doc",
+            TemplateType.STANDARD,
+            system_prompt="DOMAIN: clinical notes.",
+            user_prompt="Be precise about dosages.",
+        )
+        system, user = msgs[0]["content"], msgs[1]["content"]
+        # Caller context appears...
+        assert system.startswith("DOMAIN: clinical notes.")
+        assert "Be precise about dosages." in user
+        # ...and the built-in SFEP contract is still there (parsing stays valid).
+        assert "OUTPUT FORMAT" in system
+        assert "field.path = value" in system
+
+    def test_empty_context_leaves_prompt_unchanged(self):
+        f = make_field("name", "string")
+        base = build_extraction_prompt([f], "doc", TemplateType.STANDARD)
+        with_empty = build_extraction_prompt(
+            [f], "doc", TemplateType.STANDARD, system_prompt="", user_prompt="  "
+        )
+        assert base[0]["content"] == with_empty[0]["content"]
+        assert base[1]["content"] == with_empty[1]["content"]
+
+    def test_retry_prompt_prepends_system(self):
+        f = make_field("age", "integer")
+        msgs = build_retry_system_message(
+            [f], {"age": "bad"}, "doc", system_prompt="DOMAIN: finance."
+        )
+        assert msgs[0]["content"].startswith("DOMAIN: finance.")
+        assert "RE-EXTRACTION" in msgs[0]["content"]
+
+
 # ---------------------------------------------------------------------------
 # build_extraction_prompt
 # ---------------------------------------------------------------------------
@@ -76,11 +114,11 @@ class TestBuildExtractionPrompt:
         msgs = build_extraction_prompt([f], "doc", TemplateType.STANDARD)
         assert "Patient age in years" in msgs[1]["content"]
 
-    def test_user_no_descriptions_in_concise(self):
+    def test_descriptions_always_sent_even_in_concise(self):
         f = make_field("age", "integer", description="Patient age")
         msgs = build_extraction_prompt([f], "doc", TemplateType.CONCISE)
-        # CONCISE: field name + type only, no description
-        assert "Patient age" not in msgs[1]["content"]
+        # Description is never dropped — the model needs it to understand the field.
+        assert "Patient age" in msgs[1]["content"]
         assert "age (integer)" in msgs[1]["content"]
 
     def test_empty_fields_raises_value_error(self):
@@ -141,6 +179,34 @@ class TestBuildRetrySystemMessage:
         f = make_field("x", "string")
         msgs = build_retry_system_message([f], {"x": "error"}, "Patient: Bob Jones")
         assert "Bob Jones" in msgs[1]["content"]
+
+
+class TestKnowledgeFallback:
+    """The knowledge_fallback flag swaps the sourcing rule in the system message."""
+
+    def test_strict_grounding_is_default(self):
+        f = make_field("name", "string")
+        msgs = build_extraction_prompt([f], "doc", TemplateType.STANDARD)
+        system = msgs[0]["content"]
+        assert "Use NULL if a field is not found in the document" in system
+        assert "well-established knowledge" not in system
+
+    def test_knowledge_fallback_changes_sourcing_rule(self):
+        f = make_field("name", "string")
+        msgs = build_extraction_prompt([f], "doc", TemplateType.STANDARD, knowledge_fallback=True)
+        system = msgs[0]["content"]
+        assert "well-established knowledge" in system
+        # The SFEP format contract is otherwise intact.
+        assert "field.path = value" in system
+
+    def test_retry_message_honours_knowledge_fallback(self):
+        f = make_field("notable_trait", "string")
+        strict = build_retry_system_message([f], {"notable_trait": "err"}, "doc")
+        loose = build_retry_system_message(
+            [f], {"notable_trait": "err"}, "doc", knowledge_fallback=True
+        )
+        assert "well-established knowledge" not in strict[0]["content"]
+        assert "well-established knowledge" in loose[0]["content"]
 
 
 # ---------------------------------------------------------------------------

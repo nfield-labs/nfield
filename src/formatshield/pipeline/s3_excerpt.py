@@ -63,10 +63,9 @@ def _finalize_excerpt(leaf: CapacityLeaf, state: PipelineState) -> str:
     Returns:
         Document excerpt string for this leaf.
     """
-    # Collect and deduplicate segments from all groups in this leaf
+    # Collect and deduplicate all matched segments from the leaf's groups.
     seen_ids: set[int] = set()
     seg_score: list[tuple[Segment, float]] = []
-
     for g in leaf.groups:
         for seg, score in zip(g.matched_segments, g.segment_scores, strict=False):
             if seg.segment_id not in seen_ids:
@@ -76,30 +75,64 @@ def _finalize_excerpt(leaf: CapacityLeaf, state: PipelineState) -> str:
     # Small-doc fast path: no matched segments → use full document (first segment)
     if not seg_score and state.segments:
         return state.segments[0].text
-
     if not seg_score:
         return ""
 
-    # Compute excerpt budget: B_excerpt = C_usable - overhead - safe_output
+    # Excerpt budget: B_excerpt = C_usable - overhead - safe_output
     b_excerpt = max(0.0, state.C_usable - leaf.overhead - leaf.safe_output)
     budget_chars = int(b_excerpt * max(state.chars_per_token, 1.0))
 
-    # Sort by relevance descending, trim to budget
-    seg_score.sort(key=lambda x: x[1], reverse=True)
+    # --- Coverage-first selection (CFCS) -------------------------------------
+    # Phase 1 (coverage): guarantee each group its single best segment FIRST, so
+    # a group's only supporting chunk is never crowded out by globally-higher but
+    # redundant chunks. A segment covering several groups is counted once (dedup).
+    # Phase 2 (fill): spend the remaining budget on the next best segments.
+    cover_ids = _coverage_segment_ids(leaf)
+    covering = [(s, sc) for (s, sc) in seg_score if s.segment_id in cover_ids]
+    rest = [(s, sc) for (s, sc) in seg_score if s.segment_id not in cover_ids]
+    covering.sort(key=lambda x: x[1], reverse=True)
+    rest.sort(key=lambda x: x[1], reverse=True)
+
     selected: list[Segment] = []
     used_chars = 0
-    for seg, _ in seg_score:
+    for seg, _ in covering + rest:
         seg_len = len(seg.text)
         if budget_chars > 0 and used_chars + seg_len > budget_chars:
             continue
         selected.append(seg)
         used_chars += seg_len
 
-    if not selected and seg_score:
-        # Always include at least the best segment even if over budget
-        selected = [seg_score[0][0]]
+    if not selected:
+        # Always include at least the single best segment, even if over budget.
+        best = max(seg_score, key=lambda x: x[1])[0]
+        selected = [best]
 
-    # Reorder by document position for coherent reading order
+    # Reorder by document position for coherent reading order.
     selected.sort(key=lambda s: s.start)
-
     return _EXCERPT_SEPARATOR.join(s.text for s in selected)
+
+
+def _coverage_segment_ids(leaf: CapacityLeaf) -> set[int]:
+    """Segment ids that each provide some group its single best evidence.
+
+    The set-cover / budgeted-maximum-coverage core of CFCS: for every group in
+    the leaf, the highest-scoring matched segment is part of the covering set, so
+    each group (and thus its fields) retains supporting evidence before the
+    remaining budget is spent on extra segments. Deduplicated by construction —
+    a segment that is the best for several groups appears once.
+
+    Args:
+        leaf: The leaf whose groups' best segments to collect.
+
+    Returns:
+        Set of ``segment_id`` values forming the per-group coverage set.
+    """
+    ids: set[int] = set()
+    for g in leaf.groups:
+        if not g.matched_segments:
+            continue
+        pairs = zip(g.matched_segments, g.segment_scores, strict=False)
+        best = max(pairs, key=lambda x: x[1], default=None)
+        if best is not None:
+            ids.add(best[0].segment_id)
+    return ids

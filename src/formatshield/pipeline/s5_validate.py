@@ -11,7 +11,8 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from formatshield.validation._retry import orchestrate_retry
+from formatshield.retrieval._retarget import targeted_excerpt
+from formatshield.validation._retry import cascade_invalidate, orchestrate_retry
 from formatshield.validation._type_check import validate_field
 
 if TYPE_CHECKING:
@@ -23,6 +24,10 @@ if TYPE_CHECKING:
 __all__ = ["run_stage_5"]
 
 logger = logging.getLogger(__name__)
+
+# Floor on the targeted-retry excerpt budget so re-retrieval always has room for
+# a few segments even when a leaf's overhead + output nearly fill C_usable.
+_MIN_RETRY_EXCERPT_TOKENS: float = 256.0
 
 
 async def run_stage_5(
@@ -102,9 +107,36 @@ async def _validate_leaf(
             # Treat the same as EMPTY — needs retry.
             failed_fields.append(f)
             errors[f.path] = "field not extracted"
+        elif field_state == FieldState.FAILED:
+            # Stage 4 already marked this FAILED — most commonly because the model
+            # emitted NULL ("not found in this excerpt"). Previously these were
+            # skipped here, so SFR never ran for them (flaw A). Route them into
+            # retry: with targeted re-retrieval below they get a fresh excerpt, so
+            # a real retrieval miss can be recovered instead of silently dropped.
+            failed_fields.append(f)
+            errors[f.path] = bb.get_error(f.path) or "field not found in document"
 
     if not failed_fields:
         return
+
+    # Flaw B — targeted re-retrieval (GSGRF). Re-query the full segment set with
+    # only the failed fields' terms and build a fresh excerpt, so the retry sees
+    # different, field-relevant text instead of the same trimmed context that
+    # already missed. No-op on the small-doc path (no BMX index) — there the whole
+    # document was already in context, so the original excerpt is reused.
+    retry_excerpt: str | None = None
+    if state.bm25_index is not None and state.segments:
+        budget = max(_MIN_RETRY_EXCERPT_TOKENS, state.C_usable - leaf.overhead - leaf.safe_output)
+        retry_excerpt = (
+            targeted_excerpt(
+                failed_fields,
+                state.bm25_index,
+                state.segments,
+                budget_tokens=budget,
+                chars_per_token=state.chars_per_token,
+            )
+            or None
+        )
 
     # --- Step 2: SFR retry ---
     # call_counter folds the retry API calls into the run's total K so the
@@ -118,6 +150,10 @@ async def _validate_leaf(
         dep_dag=state.dep_dag,
         config=config,
         call_counter=retry_calls,
+        system_prompt=state.system_prompt,
+        user_prompt=state.user_prompt,
+        knowledge_fallback=state.knowledge_fallback,
+        retry_excerpt=retry_excerpt,
     )
     state.K += retry_calls[0]
     # Record that a retry phase ran (bounded by config.max_retry_rounds; the
@@ -125,6 +161,7 @@ async def _validate_leaf(
     state.retry_rounds = max(state.retry_rounds, 1)
 
     # --- Step 3: write recovered values; re-validate ---
+    recovered_valid: list[str] = []
     for path, value in recovered.items():
         field = state.field_by_path.get(path)
         if field is None:
@@ -132,9 +169,20 @@ async def _validate_leaf(
         valid, err = validate_field(value, field)
         if valid:
             bb.write(path, value)
+            recovered_valid.append(path)
         else:
             bb.mark_failed(path, err or "retry value still invalid")
             logger.debug("Field %r still invalid after retry: %s", path, err)
+
+    # --- Step 3b: CADTR — a recovered upstream value may make dependents stale ---
+    # Only meaningful when injection is also on: a dependent is stale only if it
+    # actually consumed the upstream value, which happens via dependency injection.
+    # Without injection, dependents were extracted independently, so cascading
+    # would wrongly discard good values.
+    if config.cascade_dependency_invalidation and config.inject_dependencies and recovered_valid:
+        invalidated = cascade_invalidate(bb, state.dep_dag, set(recovered_valid))
+        if invalidated:
+            logger.debug("CADTR flagged %d dependent field(s) for revalidation", len(invalidated))
 
     # --- Step 4: mark fields still EMPTY or PENDING after retry as FAILED ---
     for f in failed_fields:

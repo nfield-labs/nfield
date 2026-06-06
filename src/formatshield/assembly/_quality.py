@@ -126,18 +126,22 @@ def compute_quality_score(
     total = len(fields)
     field_paths = [f.path for f in fields]
 
-    # Count fields by state
+    # Count fields by state. get_filled() returns only real (non-None) values, so a
+    # confirmed-absent field (recovery writes None) is not counted as extracted.
+    # Missing is the remainder, so extracted + missing + conflicted + needs_reval
+    # always equals total (and None "confirmed-absent" fields fall into missing).
     filled = blackboard.get_filled()
-    missing_paths = blackboard.get_missing()
     conflict_paths = blackboard.get_conflicts()
     needs_rev_paths = blackboard.get_needs_revalidation()
 
     fields_extracted = len(filled)
-    fields_missing = len(missing_paths)
     fields_conflicted = len(conflict_paths)
     fields_needs_revalidation = len(needs_rev_paths)
+    fields_missing = max(
+        0, total - fields_extracted - fields_conflicted - fields_needs_revalidation
+    )
 
-    # Quality score: fill rate
+    # Quality score: fill rate (real values only)
     quality_score = fields_extracted / total if total > 0 else 0.0
 
     # Optimality gap: (K - K_min) / K, clamped to [0, 1]

@@ -75,3 +75,55 @@ class TestRunStage2b:
         state, doc = _prepare_state(SHORT_DOC)
         returned = run_stage_2b(state, doc, ExtractionConfig())
         assert returned is state
+
+
+# ---------------------------------------------------------------------------
+# Per-group dynamic retrieval depth (Phase A.2) — no fixed global top-k
+# ---------------------------------------------------------------------------
+
+
+class TestGroupTopK:
+    """Retrieval depth scales with a group's field count, not a global cap."""
+
+    @staticmethod
+    def _segs(n: int):
+        from formatshield.schema._types import Segment
+
+        return [
+            Segment(text="word " * 80, start=0, end=400, segment_type="unstructured", segment_id=i)
+            for i in range(n)
+        ]
+
+    @staticmethod
+    def _group(n_fields: int):
+        from formatshield.schema._types import Field, FieldGroup
+
+        fields = [
+            Field(path=f"g.f{i}", type="string", constraints={}, parent_path="g", schema_node={})
+            for i in range(n_fields)
+        ]
+        return FieldGroup(parent_path="g", fields=fields)
+
+    def test_larger_group_retrieves_more(self):
+        from formatshield.pipeline.s2b_prepass import _group_top_k
+
+        # Small budget so the per-group field scaling (not the budget pool) binds:
+        # a large group must then retrieve more than a small one.
+        segs = self._segs(200)
+        small = _group_top_k(self._group(1), segs, c_usable=2000.0, chars_per_token=4.0)
+        large = _group_top_k(self._group(20), segs, c_usable=2000.0, chars_per_token=4.0)
+        assert large > small, "a group with more fields must retrieve more segments"
+
+    def test_floored_at_minimum(self):
+        from formatshield.pipeline.s2b_prepass import _MIN_TOP_K_SEGMENTS, _group_top_k
+
+        segs = self._segs(200)
+        depth = _group_top_k(self._group(1), segs, c_usable=100_000.0, chars_per_token=4.0)
+        assert depth >= _MIN_TOP_K_SEGMENTS
+
+    def test_capped_by_segment_count(self):
+        from formatshield.pipeline.s2b_prepass import _group_top_k
+
+        segs = self._segs(3)
+        depth = _group_top_k(self._group(50), segs, c_usable=100_000.0, chars_per_token=4.0)
+        assert depth <= 3, "cannot retrieve more segments than exist"

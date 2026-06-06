@@ -21,6 +21,7 @@ from formatshield.config import ExtractionConfig
 from formatshield.exceptions import SchemaError
 from formatshield.pipeline._state import PipelineState
 from formatshield.pipeline.s0_resources import run_stage_0
+from formatshield.pipeline.s0b_reliability import calibrate_field_cap
 from formatshield.pipeline.s1_schema import run_stage_1
 from formatshield.pipeline.s2a_structure import run_stage_2a
 from formatshield.pipeline.s2b_prepass import run_stage_2b
@@ -28,6 +29,7 @@ from formatshield.pipeline.s2c_packing import run_stage_2c
 from formatshield.pipeline.s3_excerpt import run_stage_3
 from formatshield.pipeline.s4_extract import run_stage_4
 from formatshield.pipeline.s5_validate import run_stage_5
+from formatshield.pipeline.s5b_recover import run_recovery_pass
 from formatshield.pipeline.s6_assemble import run_stage_6
 from formatshield.providers import from_model
 
@@ -219,6 +221,12 @@ class AsyncFormatShield:
             from ``FORMATSHIELD_MODEL`` or ``config.default_model`` at init.
         schema: Optional reusable schema (dict / Pydantic model / dataclass).
         config: Optional :class:`~formatshield.config.ExtractionConfig`.
+        context_window: The model's real context window in tokens (C_eff).
+            Defaults to the provider's conservative default when omitted.
+        max_output_tokens: The model's real output ceiling in tokens (M_O).
+        system_prompt: Optional caller system context, prepended to the built-in
+            SFEP system prompt and counted in leaf overhead.
+        user_prompt: Optional caller task context, prepended to the user message.
 
     Example:
         >>> # async with AsyncFormatShield("groq/llama-3.1-8b", schema=S) as fs:
@@ -233,10 +241,20 @@ class AsyncFormatShield:
         schema: object | None = None,
         *,
         config: ExtractionConfig | None = None,
+        context_window: int | None = None,
+        max_output_tokens: int | None = None,
+        system_prompt: str = "",
+        user_prompt: str = "",
     ) -> None:
         self._config: ExtractionConfig = config or ExtractionConfig()
         self._model: str = _resolve_model(model, self._config)
-        self._provider: LLMProvider = from_model(self._model)
+        self._provider: LLMProvider = from_model(
+            self._model,
+            context_window=context_window,
+            max_output_tokens=max_output_tokens,
+        )
+        self._system_prompt = system_prompt
+        self._user_prompt = user_prompt
         self._schema: dict[str, Any] | None = (
             _normalize_schema(schema) if schema is not None else None
         )
@@ -248,6 +266,10 @@ class AsyncFormatShield:
         self._c_eff: int = 0
         self._m_o: int = 0
         self._c_usable: float = 0.0
+        # Measured per-call field cap from the Stage 0.5 reliability probe, cached
+        # so a reused engine calibrates only once. None until calibrated (or when
+        # config.calibrate_field_cap is False — then the static cap is used).
+        self._field_cap: int | None = None
 
     @property
     def model(self) -> str:
@@ -280,6 +302,17 @@ class AsyncFormatShield:
         provider = self._provider
 
         state = await self._calibrated_state()
+        state.system_prompt = self._system_prompt
+        state.user_prompt = self._user_prompt
+        state.inject_dependencies = config.inject_dependencies
+        state.knowledge_fallback = config.knowledge_fallback
+        state.max_concurrent_calls = config.max_concurrent_calls
+        # Opt-in dynamic field cap: measure it once per engine, then run with a
+        # config whose max_fields_per_call is the measured value.
+        if config.calibrate_field_cap:
+            config = dataclasses.replace(
+                config, max_fields_per_call=await self._calibrated_field_cap(config)
+            )
         state = run_stage_1(state, schema_dict)
         state = run_stage_2a(state)
         state = run_stage_2b(state, document, config)
@@ -287,6 +320,7 @@ class AsyncFormatShield:
         state = run_stage_3(state)
         state = await run_stage_4(state, provider)
         state = await run_stage_5(state, provider, config)
+        state = await run_recovery_pass(state, provider, config)
         return run_stage_6(state)
 
     def _resolve_schema(self, schema: object | None) -> dict[str, Any]:
@@ -322,6 +356,30 @@ class AsyncFormatShield:
             C_usable=self._c_usable,
         )
 
+    async def _calibrated_field_cap(self, config: ExtractionConfig) -> int:
+        """Return the measured per-call field cap, probing once then caching it.
+
+        Runs the Stage 0.5 reliability probe on first use and caches the result on
+        the engine, so a reused engine probes only once. The probe needs the
+        calibrated ``chars_per_token``, which Stage 0 has already set by the time
+        this is called.
+
+        Args:
+            config: Active extraction configuration (supplies the target SLA and
+                the static fallback cap).
+
+        Returns:
+            The per-call field cap to use for this run.
+        """
+        if self._field_cap is None:
+            self._field_cap = await calibrate_field_cap(
+                self._provider,
+                target_reliability=config.target_field_reliability,
+                chars_per_token=self._chars_per_token or 0.0,
+                static_default=config.max_fields_per_call,
+            )
+        return self._field_cap
+
     async def __call__(self, document: str, schema: object | None = None) -> ExtractionResult:
         """Alias for :meth:`extract` so ``await engine(document)`` works."""
         return await self.extract(document, schema)
@@ -350,6 +408,10 @@ async def nfield_async(
     model: str | None = None,
     *,
     config: ExtractionConfig | None = None,
+    context_window: int | None = None,
+    max_output_tokens: int | None = None,
+    system_prompt: str = "",
+    user_prompt: str = "",
 ) -> ExtractionResult:
     """Extract N structured fields from a document (async, one-shot).
 
@@ -363,6 +425,8 @@ async def nfield_async(
         model: Model string ``"provider/model-name"``. If ``None``, resolved
             from ``FORMATSHIELD_MODEL`` or ``config.default_model``.
         config: Optional extraction configuration.
+        context_window: The model's real context window in tokens (C_eff).
+        max_output_tokens: The model's real output ceiling in tokens (M_O).
 
     Returns:
         The :class:`~formatshield.types.ExtractionResult`.
@@ -375,5 +439,13 @@ async def nfield_async(
         >>> callable(nfield_async)
         True
     """
-    engine = AsyncFormatShield(model, schema, config=config)
+    engine = AsyncFormatShield(
+        model,
+        schema,
+        config=config,
+        context_window=context_window,
+        max_output_tokens=max_output_tokens,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+    )
     return await engine.extract(document)

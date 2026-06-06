@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 from formatshield.exceptions import ProviderError
 
 if TYPE_CHECKING:
-    from collections.abc import Awaitable
+    from collections.abc import Awaitable, Callable
 
 T = TypeVar("T")
 
@@ -170,7 +170,7 @@ class BaseProvider(ABC):
             ProviderError: After max retries or on non-transient failure.
         """
         result: str = await self._retry_with_backoff(
-            self._raw_complete(messages, max_tokens=max_tokens),
+            lambda: self._raw_complete(messages, max_tokens=max_tokens),
             operation_name="complete",
         )
         return result
@@ -188,7 +188,7 @@ class BaseProvider(ABC):
             ProviderError: After max retries or on non-transient failure.
         """
         result: int = await self._retry_with_backoff(
-            self._raw_count_tokens(text),
+            lambda: self._raw_count_tokens(text),
             operation_name="count_tokens",
         )
         return result
@@ -217,27 +217,33 @@ class BaseProvider(ABC):
 
     async def _retry_with_backoff(
         self,
-        awaitable: Awaitable[T],
+        factory: Callable[[], Awaitable[T]],
         *,
         operation_name: str = "operation",
     ) -> T:
-        """Execute with exponential backoff retry.
+        """Execute with exponential backoff retry on transient (retryable) errors.
+
+        Takes a *factory* that produces a fresh awaitable per attempt — a coroutine
+        can only be awaited once, so each retry must call the API anew. Retries only
+        ``ProviderError.retryable`` failures (429, 5xx, timeouts) with exponential
+        backoff + full jitter; permanent errors raise immediately (Retry Strategies
+        for LLM APIs; transient-vs-permanent classification, AWS/Google guidance).
 
         Args:
-            awaitable: Awaitable to retry.
+            factory: Zero-arg callable returning a fresh awaitable for each attempt.
             operation_name: Name for logging.
 
         Returns:
             Result of the awaitable.
 
         Raises:
-            ProviderError: After max retries.
+            ProviderError: On a non-retryable error or after max retries.
         """
         last_error: ProviderError | None = None
 
         for attempt in range(self._max_retries):
             try:
-                result = await awaitable
+                result = await factory()
                 if attempt > 0:
                     logger.info(f"{operation_name} succeeded after {attempt} retries")
                 return result

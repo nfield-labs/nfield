@@ -33,7 +33,7 @@ def _full_sfep(n: int) -> str:
 
 def _install(monkeypatch, n: int) -> MockProvider:
     provider = MockProvider(_full_sfep(n))
-    monkeypatch.setattr("formatshield.engine._async.from_model", lambda _m: provider)
+    monkeypatch.setattr("formatshield.engine._async.from_model", lambda _m, **_kw: provider)
     return provider
 
 
@@ -75,3 +75,87 @@ class TestPublicApiScale:
         )
         assert result.metadata.fields_total == 200
         assert len(result.data) == 200
+
+    async def test_context_window_drives_leaf_count(self, monkeypatch):
+        # The public context_window / max_output_tokens must reach capacity
+        # planning: a bigger window packs the same schema into fewer calls.
+        sfep = _full_sfep(300)
+
+        def factory(_model, *, context_window=None, max_output_tokens=None):
+            return MockProvider(
+                sfep,
+                context_window=context_window or 8192,
+                max_output_tokens=max_output_tokens or 8192,
+            )
+
+        monkeypatch.setattr("formatshield.engine._async.from_model", factory)
+        # Raise the field cap so the CONTEXT WINDOW is the binding constraint here
+        # (this test isolates context-window → leaf-count; the field cap is its own
+        # test, TestMaxFieldsPerCall).
+        cfg = ExtractionConfig(max_retry_rounds=0, max_fields_per_call=1000)
+
+        small = await AsyncFormatShield(
+            "groq/x", _wide_schema(300), context_window=8192, max_output_tokens=8192, config=cfg
+        ).extract("doc")
+        big = await AsyncFormatShield(
+            "groq/x",
+            _wide_schema(300),
+            context_window=131_072,
+            max_output_tokens=131_072,
+            config=cfg,
+        ).extract("doc")
+
+        assert big.metadata.fields_total == small.metadata.fields_total == 300
+        assert big.metadata.K < small.metadata.K  # bigger window → fewer calls
+        assert len(big.data) == len(small.data) == 300
+
+
+class TestSystemUserPrompt:
+    """Caller S/P reach the provider and are charged to leaf overhead."""
+
+    async def test_system_prompt_reaches_provider(self, install_provider):
+        provider = install_provider("name = Alice\nage = 30")
+        engine = AsyncFormatShield(
+            "mock/echo",
+            {"type": "object", "properties": {"name": {"type": "string"}}},
+            system_prompt="DOMAIN: clinical trial records.",
+            user_prompt="Prefer ISO dates.",
+            config=ExtractionConfig(max_retry_rounds=0),
+        )
+        await engine.extract("doc")
+        system_msg = provider.last_messages[0]["content"]
+        user_msg = provider.last_messages[1]["content"]
+        assert "DOMAIN: clinical trial records." in system_msg
+        assert "OUTPUT FORMAT" in system_msg  # SFEP contract preserved
+        assert "Prefer ISO dates." in user_msg
+
+    async def test_large_system_prompt_increases_leaf_count(self, monkeypatch):
+        # A big caller prompt eats the per-leaf budget, so the same schema must
+        # split into more calls — proof S/P is counted in overhead, not ignored.
+        sfep = _full_sfep(50)
+
+        def factory(_model, *, context_window=None, max_output_tokens=None):
+            return MockProvider(
+                sfep,
+                context_window=context_window or 8192,
+                max_output_tokens=max_output_tokens or 8192,
+            )
+
+        monkeypatch.setattr("formatshield.engine._async.from_model", factory)
+        cfg = ExtractionConfig(max_retry_rounds=0)
+        schema = _wide_schema(50)
+
+        empty = await AsyncFormatShield(
+            "groq/x", schema, context_window=8192, max_output_tokens=8192, config=cfg
+        ).extract("doc")
+        huge = await AsyncFormatShield(
+            "groq/x",
+            schema,
+            context_window=8192,
+            max_output_tokens=8192,
+            system_prompt="X" * 20_000,  # ~5000 tokens of caller context
+            config=cfg,
+        ).extract("doc")
+
+        assert huge.metadata.K > empty.metadata.K
+        assert huge.metadata.fields_total == empty.metadata.fields_total == 50

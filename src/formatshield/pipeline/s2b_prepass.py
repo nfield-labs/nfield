@@ -16,7 +16,7 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
-from formatshield.retrieval._bm25 import bm25_rescore, build_bm25_index
+from formatshield.retrieval._bmx import bmx_rescore, build_bmx_index
 from formatshield.retrieval._chunker import chunk_document
 
 if TYPE_CHECKING:
@@ -26,13 +26,21 @@ if TYPE_CHECKING:
 
 __all__ = ["run_stage_2b"]
 
-# Top-scoring document segments kept per field group after BM25 ranking
-# (Robertson & Zaragoza, "The Probabilistic Relevance Framework: BM25 and
-# Beyond", 2009). Five balances recall against context budget.
-_DEFAULT_TOP_K_SEGMENTS: int = 5
+# Floor on segments kept per group after BM25 ranking, so even a single-field
+# group retrieves a few candidates (Robertson & Zaragoza, "The Probabilistic
+# Relevance Framework: BM25 and Beyond", 2009). Depth is computed PER GROUP from
+# its field count (see _group_top_k) — never a fixed global top-k, which would
+# under-serve large groups and over-serve small ones.
+_MIN_TOP_K_SEGMENTS: int = 5
+# Candidate segments retrieved per field in a group. A group with more fields can
+# need evidence from more places, so its retrieval depth scales with field count.
+_SEGMENTS_PER_FIELD: int = 3
 # Words taken from each field's description to enrich its group's retrieval
 # query (field names alone are often too sparse for BM25 term matching).
 _GROUP_QUERY_MAX_DESC_WORDS: int = 5
+# English-average characters per token; used only if the calibrated ratio is
+# missing when sizing the dynamic retrieval depth.
+_FALLBACK_CHARS_PER_TOKEN: float = 4.0
 
 
 def run_stage_2b(
@@ -92,17 +100,55 @@ def run_stage_2b(
             g.D_cost = 0
         return state
 
-    bm25_index = build_bm25_index(segments)
-    state.bm25_index = bm25_index
+    # BMX (entropy-weighted lexical) — a drop-in BM25 successor at the same
+    # inverted-index cost, no per-document embedding (arXiv:2408.06643).
+    lexical_index = build_bmx_index(segments)
+    state.bm25_index = lexical_index
 
+    # Retrieve a per-group number of top-ranked segments — depth scales with the
+    # group's field count, not a global cap — then Stage 3 trims each leaf's pooled
+    # segments to its own B_excerpt.
     for g in state.groups:
         query = _build_group_query(g)
-        ranked = bm25_rescore(bm25_index, query, top_k=_DEFAULT_TOP_K_SEGMENTS)
+        g_top_k = _group_top_k(g, segments, state.C_usable, state.chars_per_token)
+        ranked = bmx_rescore(lexical_index, query, top_k=g_top_k)
         g.matched_segments = [seg for seg, _ in ranked]
         g.segment_scores = [score for _, score in ranked]
         g.D_cost = _compute_dcost(g.matched_segments, state.chars_per_token)
 
     return state
+
+
+def _group_top_k(
+    group: FieldGroup,
+    segments: list[Segment],
+    c_usable: float,
+    chars_per_token: float,
+) -> int:
+    """Retrieval depth for ONE group, scaled to its field count.
+
+    A group with more fields can need evidence from more places, so it retrieves
+    more candidates (``field_count * _SEGMENTS_PER_FIELD``); a single-field group
+    retrieves at least the budget-fill baseline. Never below the baseline pool the
+    usable budget can hold, then capped by the segments that actually exist.
+
+    Args:
+        group: The group whose retrieval depth to size.
+        segments: All document segments from chunking.
+        c_usable: Usable context budget in tokens.
+        chars_per_token: Calibrated characters-per-token ratio (Stage 0).
+
+    Returns:
+        Per-group retrieval depth in ``[_MIN_TOP_K_SEGMENTS, len(segments)]``.
+    """
+    if not segments:
+        return _MIN_TOP_K_SEGMENTS
+    cpt = chars_per_token if chars_per_token > 0 else _FALLBACK_CHARS_PER_TOKEN
+    avg_seg_tokens = max(1.0, (sum(len(s.text) for s in segments) / len(segments)) / cpt)
+    budget_pool = math.ceil(c_usable / avg_seg_tokens)
+    want = max(1, len(group.fields)) * _SEGMENTS_PER_FIELD
+    depth = max(_MIN_TOP_K_SEGMENTS, budget_pool, want)
+    return min(len(segments), depth)
 
 
 # ---------------------------------------------------------------------------

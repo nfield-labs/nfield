@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from formatshield.assembly._blackboard import Blackboard
-    from formatshield.retrieval._bm25 import BM25Index
+    from formatshield.retrieval._bmx import BMXIndex
     from formatshield.schema._types import CapacityLeaf, Field, FieldGroup, Segment
 
 __all__ = ["PipelineState"]
@@ -32,6 +32,24 @@ class PipelineState:
     M_O: int = 0
     C_usable: float = 0.0
 
+    # Optional caller-supplied prompt context: a system prompt and a user/task
+    # prompt. Constant across all leaves, prepended to the built-in SFEP prompts,
+    # and counted in leaf overhead so they shrink the per-leaf document budget.
+    system_prompt: str = ""
+    user_prompt: str = ""
+
+    # When True, Stage 4 injects resolved upstream dependency values into a
+    # dependent leaf's prompt (set by the engine from ExtractionConfig).
+    inject_dependencies: bool = False
+
+    # When True, the prompt lets the model use its own knowledge for fields the
+    # document does not state (from ExtractionConfig).
+    knowledge_fallback: bool = False
+
+    # Max leaf extraction calls in flight at once (from ExtractionConfig); bounds
+    # Stage 4 concurrency so wide schemas do not trip provider rate limits.
+    max_concurrent_calls: int = 4
+
     # Stage 1: schema analysis
     fields: list[Field] = field(default_factory=list)
     field_by_path: dict[str, Field] = field(default_factory=dict)
@@ -43,7 +61,7 @@ class PipelineState:
 
     # Stage 2.5: document pre-pass
     segments: list[Segment] = field(default_factory=list)
-    bm25_index: BM25Index | None = None
+    bm25_index: BMXIndex | None = None
 
     # Stage 2C: capacity packing
     leaves: list[CapacityLeaf] = field(default_factory=list)

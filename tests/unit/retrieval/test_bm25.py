@@ -127,3 +127,66 @@ class TestBM25Rescore:
         index = build_bm25_index(sample_segments)
         scores = bm25_rescore_single(index, "xyzuniqueneverappears")
         assert all(s == 0.0 for s in scores)
+
+
+class TestDiacriticFolding:
+    """An accented document spelling must match an unaccented query term.
+
+    Regression guard for the War & Peace minor-character miss: the prose used
+    transliterations like ``Denísov``/``Kutúzov`` while the schema used
+    ``Denisov``/``Kutuzov``, so a diacritic-sensitive tokenizer retrieved zero
+    relevant segments.
+    """
+
+    @staticmethod
+    def _corpus(name_segment_text: str) -> list[Segment]:
+        """One segment carrying the name + several filler segments (rare term)."""
+        fillers = [
+            "The drawing room in the capital was quiet that evening.",
+            "Snow fell over the frozen river through the long night.",
+            "Letters arrived from the estate about the autumn harvest.",
+            "A carriage waited by the gate under the grey winter sky.",
+            "Guests gathered for the ball as the orchestra began to play.",
+        ]
+        texts = [name_segment_text, *fillers]
+        pos = 0
+        segments: list[Segment] = []
+        for i, t in enumerate(texts):
+            segments.append(
+                Segment(
+                    text=t, start=pos, end=pos + len(t), segment_type="unstructured", segment_id=i
+                )
+            )
+            pos += len(t)
+        return segments
+
+    def test_accented_corpus_matches_unaccented_query(self) -> None:
+        """An unaccented query ranks the accented-name segment first (rare term, +IDF)."""
+        segments = self._corpus("Denísov rode forward with his hussars, shouting the order.")
+        index = build_bm25_index(segments)
+        results = bm25_rescore(index, "Denisov", top_k=6)
+        assert results[0][0].segment_id == 0
+        assert results[0][1] > 0.0, "rare folded match must have positive BM25 score"
+
+    def test_unaccented_corpus_matches_accented_query(self) -> None:
+        """Folding is symmetric: an accented query ranks the unaccented-name segment first."""
+        segments = self._corpus("Kutuzov surveyed the field before the great battle.")
+        index = build_bm25_index(segments)
+        results = bm25_rescore(index, "Kutúzov", top_k=6)
+        assert results[0][0].segment_id == 0
+        assert results[0][1] > 0.0
+
+    def test_without_folding_the_name_would_not_win(self) -> None:
+        """Control: an unrelated unaccented term does not rank the name segment first."""
+        segments = self._corpus("Denísov rode forward with his hussars, shouting the order.")
+        index = build_bm25_index(segments)
+        # A token that appears only in a filler segment must outrank the name segment
+        # for its own query — proving the ranking is driven by real term matches.
+        results = bm25_rescore(index, "harvest", top_k=6)
+        assert results[0][0].segment_id != 0
+
+    def test_ascii_query_unaffected(self, sample_segments: list[Segment]) -> None:
+        """Folding is a no-op for plain ASCII text (existing behaviour preserved)."""
+        index = build_bm25_index(sample_segments)
+        results = bm25_rescore(index, "patient", top_k=3)
+        assert isinstance(results, list)

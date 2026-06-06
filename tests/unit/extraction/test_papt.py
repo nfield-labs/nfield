@@ -129,11 +129,13 @@ class TestClassifyCluster:
 
 
 class TestDescribeField:
-    def test_concise_no_description(self):
+    def test_no_description_or_constraints_is_path_and_type(self):
         f = make_field("age", "integer")
+        # No description and no constraints in the schema → just path (type).
         assert describe_field(f, TemplateType.CONCISE) == "age (integer)"
 
-    def test_standard_with_description(self):
+    def test_description_always_sent_even_in_concise(self):
+        # Description is never dropped — the model needs it to understand the field.
         f = Field(
             path="age",
             type="integer",
@@ -141,8 +143,21 @@ class TestDescribeField:
             parent_path="",
             schema_node={"description": "Patient age in years"},
         )
-        result = describe_field(f, TemplateType.STANDARD)
-        assert result == "age (integer): Patient age in years"
+        for tier in (TemplateType.CONCISE, TemplateType.STANDARD, TemplateType.VERBOSE):
+            assert describe_field(f, tier) == "age (integer): Patient age in years"
+
+    def test_constraints_always_sent_with_description(self):
+        # type + constraints + description all travel with the field at every tier.
+        f = Field(
+            path="year_first_elected",
+            type="integer",
+            constraints={"minimum": 1950},
+            parent_path="",
+            schema_node={"description": "Year joined board"},
+        )
+        for tier in (TemplateType.CONCISE, TemplateType.STANDARD, TemplateType.VERBOSE):
+            result = describe_field(f, tier)
+            assert result == "year_first_elected (integer): Year joined board — >= 1950"
 
     def test_standard_no_description_falls_back(self):
         f = make_field("age", "integer")

@@ -68,6 +68,8 @@ class FormatShield:
             from ``FORMATSHIELD_MODEL`` or ``config.default_model`` at init.
         schema: Optional reusable schema (dict / Pydantic model / dataclass).
         config: Optional :class:`~formatshield.config.ExtractionConfig`.
+        context_window: The model's real context window in tokens (C_eff).
+        max_output_tokens: The model's real output ceiling in tokens (M_O).
 
     Example:
         >>> # fs = FormatShield("groq/llama-3.1-8b", schema=Invoice)
@@ -82,8 +84,20 @@ class FormatShield:
         schema: object | None = None,
         *,
         config: ExtractionConfig | None = None,
+        context_window: int | None = None,
+        max_output_tokens: int | None = None,
+        system_prompt: str = "",
+        user_prompt: str = "",
     ) -> None:
-        self._engine = AsyncFormatShield(model, schema, config=config)
+        self._engine = AsyncFormatShield(
+            model,
+            schema,
+            config=config,
+            context_window=context_window,
+            max_output_tokens=max_output_tokens,
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+        )
 
     @property
     def model(self) -> str:
@@ -127,6 +141,10 @@ def nfield(
     model: str | None = None,
     *,
     config: ExtractionConfig | None = None,
+    context_window: int | None = None,
+    max_output_tokens: int | None = None,
+    system_prompt: str = "",
+    user_prompt: str = "",
 ) -> ExtractionResult:
     """Extract N structured fields from a document (synchronous, one-shot).
 
@@ -140,6 +158,8 @@ def nfield(
         model: Model string ``"provider/model-name"``. If ``None``, resolved
             from ``FORMATSHIELD_MODEL`` or ``config.default_model``.
         config: Optional extraction configuration.
+        context_window: The model's real context window in tokens (C_eff).
+        max_output_tokens: The model's real output ceiling in tokens (M_O).
 
     Returns:
         The :class:`~formatshield.types.ExtractionResult`.
@@ -152,4 +172,12 @@ def nfield(
         >>> callable(nfield)
         True
     """
-    return FormatShield(model, schema, config=config).extract(document)
+    return FormatShield(
+        model,
+        schema,
+        config=config,
+        context_window=context_window,
+        max_output_tokens=max_output_tokens,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+    ).extract(document)

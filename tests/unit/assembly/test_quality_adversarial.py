@@ -84,13 +84,13 @@ class TestFailedFieldsNotTracked:
 
         report = compute_quality_score(bb, fields, K=1, K_min=1)
 
-        # a=FILLED → extracted. b=FAILED → not extracted. c=EMPTY → missing.
+        # a=FILLED → extracted. b=FAILED and c=EMPTY → both missing.
         assert report.fields_extracted == 1
         # quality_score = 1/3
         assert report.quality_score == pytest.approx(1 / 3)
-        # fields_missing only counts EMPTY state (c), not FAILED (b)
-        assert report.fields_missing == 1  # only c is EMPTY
-        # There's no fields_failed in the report — this is a gap
+        # fields_missing is the remainder (total - extracted - conflicted -
+        # needs_reval), so a FAILED field now correctly counts as missing too.
+        assert report.fields_missing == 2  # b (FAILED) + c (EMPTY)
 
     def test_failed_fields_reduce_quality_score(self):
         """FAILED fields do reduce quality_score (they're not in FILLED)."""

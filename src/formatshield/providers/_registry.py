@@ -30,17 +30,30 @@ _PROVIDER_REGISTRY: dict[str, tuple[str, str]] = {
 # ---------------------------------------------------------------------------
 
 
-def from_model(model_string: str) -> LLMProvider:
+def from_model(
+    model_string: str,
+    *,
+    context_window: int | None = None,
+    max_output_tokens: int | None = None,
+) -> LLMProvider:
     """Create an LLM provider from a model string identifier.
 
     Supports model strings of the form "provider/model-name", where the
-    provider prefix is used to route to the correct provider class.
-    The model name after "/" is passed directly to the provider — any
-    model supported by the provider's API can be used.
+    provider prefix routes to the correct provider class (``groq/`` today;
+    ``openai/``, ``anthropic/`` and others as they are added). The model name
+    after "/" is passed straight to the provider.
+
+    The model's real context window and output ceiling are caller-supplied —
+    pass ``context_window`` and ``max_output_tokens`` so capacity planning uses
+    the true numbers. When omitted, the provider's conservative defaults apply.
 
     Args:
-        model_string: Model identifier in format "provider/model-name",
-            e.g., "groq/llama-3.1-8b".
+        model_string: Model identifier "provider/model-name",
+            e.g., "groq/llama-3.1-8b-instant".
+        context_window: Total context window in tokens (C_eff). ``None`` keeps
+            the provider default.
+        max_output_tokens: Maximum output tokens per call (M_O). ``None`` keeps
+            the provider default.
 
     Returns:
         Instantiated provider object.
@@ -90,8 +103,16 @@ def from_model(model_string: str) -> LLMProvider:
     except (ImportError, AttributeError) as e:
         raise ProviderError(f"Failed to import {provider_name} provider: {e}") from e
 
+    # Forward only the specs the caller actually set, so providers keep their
+    # own defaults otherwise.
+    kwargs: dict[str, int] = {}
+    if context_window is not None:
+        kwargs["context_window"] = context_window
+    if max_output_tokens is not None:
+        kwargs["max_output_tokens"] = max_output_tokens
+
     # Instantiate and return
-    return provider_class(model_name)  # type: ignore[no-any-return]
+    return provider_class(model_name, **kwargs)  # type: ignore[no-any-return]
 
 
 # ---------------------------------------------------------------------------

@@ -37,6 +37,35 @@ _logger = logging.getLogger(__name__)
 
 DEFAULT_CONTEXT_UTILIZATION_RATIO: float = 0.50
 DEFAULT_MAX_RETRY_ROUNDS: int = 2
+# Max leaf extraction calls in flight at once. Firing every leaf of a round
+# simultaneously overwhelms provider rate limits (429 storms) and, with retries,
+# spirals into far more calls. A bounded concurrency window smooths the burst —
+# the standard token-bucket / max-concurrency control for batched LLM calls
+# (rate-limiting systems, arXiv:2602.11741; LLM batching guidance). Conservative
+# default for free tiers; raise it on higher-throughput plans.
+DEFAULT_MAX_CONCURRENT_CALLS: int = 4
+# Recovery re-decomposes finer than the primary pass: fields that failed the first
+# attempt are re-packed at this fraction of the reliability budget, so the retry
+# leaves are smaller and more reliable. Closed-loop "smallest subtask + error
+# correction" (MAKER, arXiv:2511.09030; adaptive granularity, arXiv:2510.17922).
+DEFAULT_RECOVERY_BUDGET_SHRINK: float = 0.5
+# Floor on the shrunk recovery budget (in difficulty-weighted units), so finer
+# decomposition never collapses to absurdly tiny single-field calls.
+MIN_RECOVERY_FIELDS_PER_CALL: int = 10
+# Hard cap on fields per leaf (one API call). Token budgets alone do not bound a
+# call: each field's output is tiny (~a dozen tokens), so a generous context window
+# would otherwise cram hundreds of fields into one call — exactly the regime that
+# degrades to unreliable output. Production teams cap schemas at ~50 fields because
+# beyond it results become unreliable regardless of model (the paper's survival
+# heuristic; arXiv:2604.* §"50 fields"). This enforces K = O(N / cap) small,
+# reliably-extractable leaves — the core N-field decomposition guarantee.
+DEFAULT_MAX_FIELDS_PER_CALL: int = 50
+# Opt-in dynamic cap (Stage 0.5): when enabled, the static 50 above is replaced by
+# a per-model value MEASURED from a 2-point reliability probe (IFScale-style decay
+# fit). target_field_reliability is the single meaningful knob — the per-field
+# accuracy SLA the cap is solved for, not a tuned constant.
+DEFAULT_CALIBRATE_FIELD_CAP: bool = False
+DEFAULT_TARGET_FIELD_RELIABILITY: float = 0.95
 DEFAULT_Z_TARGET: float = 1.645
 DEFAULT_THINK_PHASE_BUDGET_MIN: int = 100
 DEFAULT_THINK_PHASE_BUDGET_MAX: int = 150
@@ -250,6 +279,47 @@ class ExtractionConfig:
             for a chunk to be included in extraction context. Default 0.3.
         use_advanced_sfr: Enable advanced Semantic Field Routing (SFR)
             for improved precision on large schemas. Default ``False``.
+        inject_dependencies: When ``True`` (the default), a dependent leaf's
+            prompt receives a ``[Resolved dependency values]`` block with the
+            values its upstream dependency fields produced in earlier rounds, and
+            capacity packing reserves the tokens for that block. It is a no-op for
+            schemas without cross-leaf dependencies. Set ``False`` to restore
+            ordering-only dependency handling. Default ``True``.
+        cascade_dependency_invalidation: When ``True`` **and**
+            ``inject_dependencies`` is also ``True``, if a retry round changes a
+            value that other fields depend on, those dependents are flagged
+            ``NEEDS_REVALIDATION`` (CADTR). It is a no-op without
+            ``inject_dependencies`` — a dependent is only stale if it consumed
+            the upstream value via injection. Default ``False``.
+        knowledge_fallback: When ``True``, fields the document does not state may
+            be filled from the model's own knowledge instead of left ``NULL``. Best
+            for well-known subject matter; risks unsourced values on private
+            documents. Default ``False``.
+        max_fields_per_call: Per-leaf reliability budget in difficulty-weighted
+            units. A leaf grows while ``Σ (1 + λ·D(f)) <= max_fields_per_call``,
+            where ``D(f)`` is each field's difficulty: a trivial field costs ~1
+            unit, a hard one more. So a leaf holds up to ~``max_fields_per_call``
+            easy fields, or fewer hard ones — bounding by reliability, not raw
+            count or token budget alone (a large window cannot cram hundreds of
+            fields into one unreliable call). Default 50 (the production
+            reliability heuristic); forces K = O(load / budget) small leaves.
+        calibrate_field_cap: When ``True``, run a one-time per-model reliability
+            probe (Stage 0.5) and REPLACE the static ``max_fields_per_call`` with a
+            measured value — the largest field count that still meets
+            ``target_field_reliability``. Costs two small probe calls per engine
+            (cached). Default ``False`` (use the static cap, no extra calls).
+        target_field_reliability: The per-field accuracy SLA the dynamic cap is
+            solved for (only used when ``calibrate_field_cap`` is ``True``). Higher
+            → smaller, safer leaves. Range (0, 1). Default 0.95.
+        recovery_budget_shrink: Fraction of the reliability budget used when the
+            recovery pass re-packs fields that failed the first attempt. < 1 makes
+            recovery decompose FINER (smaller, more reliable leaves) where the
+            primary pass struggled — closed-loop "smallest subtask + error
+            correction". Default 0.5; floored at ``MIN_RECOVERY_FIELDS_PER_CALL``.
+        max_concurrent_calls: Maximum leaf extraction calls in flight at once.
+            Bounds the concurrency of each execution round so a wide schema does
+            not fire dozens of calls simultaneously and trip provider rate limits.
+            Default 4 (safe for free tiers); raise for higher-throughput plans.
 
     Example:
         >>> cfg = ExtractionConfig(default_model="groq/llama-3.1-8b")
@@ -273,3 +343,11 @@ class ExtractionConfig:
     )
     evidence_score_threshold: float = DEFAULT_EVIDENCE_SCORE_THRESHOLD
     use_advanced_sfr: bool = False
+    inject_dependencies: bool = True
+    cascade_dependency_invalidation: bool = False
+    knowledge_fallback: bool = False
+    max_fields_per_call: int = DEFAULT_MAX_FIELDS_PER_CALL
+    calibrate_field_cap: bool = DEFAULT_CALIBRATE_FIELD_CAP
+    target_field_reliability: float = DEFAULT_TARGET_FIELD_RELIABILITY
+    recovery_budget_shrink: float = DEFAULT_RECOVERY_BUDGET_SHRINK
+    max_concurrent_calls: int = DEFAULT_MAX_CONCURRENT_CALLS

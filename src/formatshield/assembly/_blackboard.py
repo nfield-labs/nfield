@@ -313,18 +313,29 @@ class Blackboard:
         return sorted(p for p, s in self._states.items() if s == FieldState.FAILED)
 
     def get_filled(self) -> dict[str, Any]:
-        """Return all successfully extracted field values.
+        """Return fields that hold a real (non-``None``) extracted value.
+
+        ``None`` is excluded on purpose: the recovery pass marks tree-backtracked
+        "confirmed absent" fields ``FILLED`` with ``None`` (:meth:`write_raw`), but
+        such a field has no value — it was confirmed missing, not extracted. Counting
+        it as filled would overstate the extraction rate, so it is omitted here and
+        therefore counted as missing by the quality metrics.
 
         Returns:
-            Dict of ``{path: value}`` for all ``FILLED`` fields.
+            Dict of ``{path: value}`` for ``FILLED`` fields whose value is not ``None``.
 
         Example:
-            >>> bb = Blackboard(["name"])
+            >>> bb = Blackboard(["name", "nickname"])
             >>> bb.write("name", "Alice")
+            >>> bb.write_raw("nickname", None)  # confirmed absent
             >>> bb.get_filled()
             {'name': 'Alice'}
         """
-        return {p: self._values[p] for p, s in self._states.items() if s == FieldState.FILLED}
+        return {
+            p: self._values[p]
+            for p, s in self._states.items()
+            if s == FieldState.FILLED and self._values.get(p) is not None
+        }
 
     def get_conflict_values(self, path: str) -> list[Any]:
         """Return all conflicting values seen for a field.

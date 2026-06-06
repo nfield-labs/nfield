@@ -229,3 +229,26 @@ class TestGetState:
     def test_known_path_returns_state(self):
         bb = Blackboard(["x"])
         assert bb.get_state("x") == FieldState.EMPTY
+
+
+# ---------------------------------------------------------------------------
+# Honest counting: a None ("confirmed absent") value is NOT a fill
+# ---------------------------------------------------------------------------
+class TestNoneIsNotFilled:
+    def test_none_excluded_from_get_filled(self):
+        bb = Blackboard(["name", "nickname"])
+        bb.write("name", "Alice")
+        bb.write_raw("nickname", None)  # recovery: confirmed absent
+        filled = bb.get_filled()
+        assert filled == {"name": "Alice"}, "None confirmed-absent must not count as filled"
+
+    def test_real_value_still_filled(self):
+        bb = Blackboard(["x"])
+        bb.write("x", 0)  # 0 / False are real values, not None
+        assert bb.get_filled() == {"x": 0}
+
+    def test_false_and_empty_string_are_real(self):
+        bb = Blackboard(["flag", "note"])
+        bb.write("flag", False)
+        bb.write("note", "")
+        assert bb.get_filled() == {"flag": False, "note": ""}

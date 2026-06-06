@@ -21,13 +21,28 @@ from formatshield.schema._types import (
 # Constants
 # ---------------------------------------------------------------------------
 
-_DEFAULT_CHUNK_SIZE: int = 512
-_DEFAULT_CHUNK_OVERLAP: int = 128
+# Chunking targets a token budget, not a raw char count. Real frameworks
+# (LangChain ~1k chars, LlamaIndex 1024 tokens) and the chunking literature
+# converge on recursive, boundary-aware splitting around ~256 tokens rather than
+# tiny fixed windows: semantic chunking is not worth the cost (arXiv:2410.13070),
+# while structure/boundary awareness beats blind fixed-size (arXiv:2603.06976).
+# The budget is approximated in chars via an average chars-per-token ratio so the
+# chunker stays dependency-free (no tokenizer import in the hot path).
+_APPROX_CHARS_PER_TOKEN: int = 4
+_DEFAULT_TARGET_TOKENS: int = 256
+_DEFAULT_OVERLAP_TOKENS: int = 32
+_DEFAULT_CHUNK_SIZE: int = _DEFAULT_TARGET_TOKENS * _APPROX_CHARS_PER_TOKEN  # ~1024 chars
+_DEFAULT_CHUNK_OVERLAP: int = _DEFAULT_OVERLAP_TOKENS * _APPROX_CHARS_PER_TOKEN  # ~128 chars
 _MIN_SEGMENT_CHARS: int = 50
 # Hard cap on a single segment (4x the base chunk). A heading/table section
 # larger than this is sub-split so no segment spans an unbounded region, which
 # would defeat BM25 ranking. Engineering guard, not paper-derived.
 _MAX_SEGMENT_CHARS: int = 4 * _DEFAULT_CHUNK_SIZE
+# Split boundaries in descending priority: paragraph, line, sentence, clause,
+# word. A chunk ends at the best available boundary at or before the size budget
+# so a word/name is never cut across chunks (which previously hid tokens like
+# "Denísov" from retrieval). If none is found, fall back to a hard split.
+_BOUNDARY_SEPARATORS: tuple[str, ...] = ("\n\n", "\n", ". ", "? ", "! ", "; ", ", ", " ")
 _HEADING_PATTERN: re.Pattern[str] = re.compile(
     r"^(#{1,6}|={3,}|-{3,}|\*{3,})\s+(.+)$", re.MULTILINE
 )
@@ -219,29 +234,35 @@ def segment_unstructured(
     chunk_size: int = _DEFAULT_CHUNK_SIZE,
     overlap: int = _DEFAULT_CHUNK_OVERLAP,
 ) -> list[Segment]:
-    """Split text into fixed-size overlapping chunks (MVP strategy).
+    """Split text into boundary-aware, overlapping chunks of about ``chunk_size``.
 
-    Implements simple fixed-size chunking with character-based overlap.
-    Post-MVP: cosine-dissimilarity based splitting.
+    Each chunk ends at the best available boundary (paragraph -> line -> sentence
+    -> clause -> word) at or before ``chunk_size`` characters, so a word or name
+    is never cut across two chunks. If no boundary is found within the budget the
+    chunk is hard-split at ``chunk_size``. Consecutive chunks overlap by
+    ``overlap`` characters. Every character of *text* is covered by at least one
+    chunk (no content is dropped), and the offset contract
+    ``text[seg.start:seg.end] == seg.text`` always holds.
 
     Args:
         text: Document text to segment.
-        chunk_size: Target characters per chunk (must be > 0).
-        overlap: Characters to repeat at chunk boundaries (must be >= 0 and < chunk_size).
+        chunk_size: Target characters per chunk (must be > 0). The default is a
+            token budget (~256 tokens) approximated in characters.
+        overlap: Characters shared between consecutive chunks (>= 0 and < chunk_size).
 
     Returns:
         List of Segment objects with segment_type="unstructured".
 
     Raises:
-        ValueError: If chunk_size <= 0, overlap < 0, or overlap >= chunk_size.
+        SchemaError: If chunk_size <= 0, overlap < 0, or overlap >= chunk_size.
 
     Example:
-        >>> text = "a" * 1000
-        >>> segs = segment_unstructured(text, chunk_size=250, overlap=50)
+        >>> text = "The cat sat on the mat. " * 100
+        >>> segs = segment_unstructured(text, chunk_size=100, overlap=20)
         >>> len(segs) > 1
         True
-        >>> segs[0].segment_type
-        'unstructured'
+        >>> all(s.text == text[s.start:s.end] for s in segs)  # offset contract holds
+        True
     """
     # Validate parameters
     if chunk_size <= 0:
@@ -260,12 +281,13 @@ def segment_unstructured(
             hint="overlap must be less than chunk_size to avoid infinite loops",
         )
 
-    if len(text) <= chunk_size:
+    n = len(text)
+    if n <= chunk_size:
         return [
             Segment(
                 text=text,
                 start=0,
-                end=len(text),
+                end=n,
                 segment_type=SEGMENT_TYPE_UNSTRUCTURED,
                 segment_id=0,
             )
@@ -275,28 +297,62 @@ def segment_unstructured(
     segment_id = 0
     pos = 0
 
-    while pos < len(text):
-        chunk_end = min(pos + chunk_size, len(text))
-        chunk_text = text[pos:chunk_end]
+    while pos < n:
+        target_end = min(pos + chunk_size, n)
+        split_at = n if target_end >= n else _find_split_point(text, pos, target_end)
 
-        if len(chunk_text) >= _MIN_SEGMENT_CHARS:
+        chunk_text = text[pos:split_at]
+        if chunk_text:
             segments.append(
                 Segment(
                     text=chunk_text,
                     start=pos,
-                    end=chunk_end,
+                    end=split_at,
                     segment_type=SEGMENT_TYPE_UNSTRUCTURED,
                     segment_id=segment_id,
                 )
             )
             segment_id += 1
 
-        # Advance by stride (chunk_size - overlap) from chunk start.
-        # Always use original pos + stride, not chunk_end - overlap,
-        # to avoid getting stuck when chunk_end == len(text).
-        pos += chunk_size - overlap
+        if split_at >= n:
+            break
+        # Step back by overlap from the chosen boundary; +1 floor guarantees progress.
+        pos = max(split_at - overlap, pos + 1)
 
     return segments
+
+
+def _find_split_point(text: str, start: int, target_end: int) -> int:
+    """Return the chunk end aligned to the boundary closest to the size budget.
+
+    Considers every separator and splits just after the occurrence whose end is
+    nearest ``target_end`` (the largest valid chunk that still ends on a boundary),
+    keeping the separator with the left chunk so no character is lost. Taking the
+    boundary closest to the budget — rather than the highest-priority separator —
+    avoids tiny chunks when a paragraph/line break happens to fall early in the
+    window (common in hard-wrapped text). Falls back to ``target_end`` (a hard
+    split) when no boundary is found.
+
+    Args:
+        text: The full document text.
+        start: Start offset of the current chunk (exclusive lower bound).
+        target_end: Upper bound for the chunk end (the size budget).
+
+    Returns:
+        A split offset in ``(start, target_end]``.
+
+    Example:
+        >>> _find_split_point("the quick brown fox", 0, 12)
+        10
+    """
+    best = -1
+    for sep in _BOUNDARY_SEPARATORS:
+        idx = text.rfind(sep, start, target_end)
+        if idx != -1:
+            candidate = idx + len(sep)
+            if candidate > start:
+                best = max(best, candidate)
+    return best if best != -1 else target_end
 
 
 # ---------------------------------------------------------------------------

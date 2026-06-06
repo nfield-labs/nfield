@@ -247,3 +247,16 @@ class TestFieldCounts:
         bb.mark_needs_revalidation("a")
         report = compute_quality_score(bb, fields, K=1, K_min=1)
         assert report.fields_needs_revalidation == 1
+
+
+class TestNoneNotCountedAsExtracted:
+    def test_none_counts_as_missing_not_extracted(self):
+        f_real = Field("name", "string", {}, "", {})
+        f_absent = Field("nickname", "string", {}, "", {})
+        bb = Blackboard(["name", "nickname"])
+        bb.write("name", "Alice")
+        bb.write_raw("nickname", None)  # confirmed absent
+        report = compute_quality_score(bb, [f_real, f_absent], K=1, K_min=1)
+        assert report.fields_extracted == 1, "only the real value is extracted"
+        assert report.fields_missing == 1, "the None confirmed-absent field is missing"
+        assert report.quality_score == 0.5
