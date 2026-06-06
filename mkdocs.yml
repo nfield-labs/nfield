@@ -1,0 +1,42 @@
+site_name: FormatShield
+site_description: N-field structured extraction from documents with LLMs.
+repo_url: https://github.com/nfield-labs/formatshield
+repo_name: nfield-labs/formatshield
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+  palette:
+    - scheme: default
+      primary: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Concepts:
+      - Pipeline: concepts/pipeline.md
+      - SFEP: concepts/sfep.md
+  - API:
+      - nfield: api/nfield.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+
+plugins:
+  - search

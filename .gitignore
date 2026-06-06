@@ -32,3 +32,16 @@ htmlcov/
 .claude/
 project-details/
 examples-repo/
+
+# MkDocs build output
+site/
+
+# Live Groq hard-test results (numbered, not committed)
+test-results/
+
+# Large downloaded real 10-K text (live tests fetch on demand)
+tests/fixtures/documents/*.txt
+
+# Downloaded medical dataset + extracted note (live test fetches on demand)
+tests/fixtures/documents/_mtsamples.csv
+tests/fixtures/documents/clinical_note.txt

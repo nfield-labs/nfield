@@ -1,0 +1,33 @@
+name: Bug report
+description: Report a problem with FormatShield
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, including the error message.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproduction
+      description: The smallest schema + document + call that reproduces it.
+      render: python
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: FormatShield version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.12"
+    validations:
+      required: true
