@@ -22,13 +22,13 @@ import json
 from pathlib import Path
 
 from formatshield.config import ExtractionConfig
-from formatshield.retrieval._bm25 import _fold_diacritics
 from formatshield.pipeline._state import PipelineState
 from formatshield.pipeline.s1_schema import run_stage_1
 from formatshield.pipeline.s2a_structure import run_stage_2a
 from formatshield.pipeline.s2b_prepass import run_stage_2b
 from formatshield.pipeline.s2c_packing import run_stage_2c
 from formatshield.pipeline.s3_excerpt import run_stage_3
+from formatshield.retrieval._bm25 import _fold_diacritics
 
 # Same model limits as the live test; chars_per_token is the English average
 # (the live run measures it via Stage 0, ~3.5-4.5 for llama — 4.0 is faithful
@@ -120,9 +120,7 @@ def main() -> None:
         matched = len(group.matched_segments)  # type: ignore[attr-defined]
         in_excerpt = sum(1 for seg in group.matched_segments if seg.text in excerpt)  # type: ignore[attr-defined]
         name_hits = folded_excerpt.count(folded_probe)
-        print(
-            f"  {parent_path:28} {leaf_id:>4} {matched:>8} {in_excerpt:>11} {name_hits:>10}"
-        )
+        print(f"  {parent_path:28} {leaf_id:>4} {matched:>8} {in_excerpt:>11} {name_hits:>10}")
 
     print(
         "\nReading: name_hits is how many times the character's name appears in the\n"

@@ -99,8 +99,7 @@ def _field_row(f: Field) -> str:
     cons = f" constraints={f.constraints}" if f.constraints else ""
     deps = f" dep_in={sorted(f.dep_in)}" if f.dep_in else ""
     return (
-        f"  D={f.difficulty:.3f} tau={f.tau:>4.0f} [{f.type:<7}] "
-        f"{f.path:<46} {desc!r}{cons}{deps}"
+        f"  D={f.difficulty:.3f} tau={f.tau:>4.0f} [{f.type:<7}] {f.path:<46} {desc!r}{cons}{deps}"
     )
 
 
@@ -166,9 +165,13 @@ async def main() -> None:
     t(f"  chars_per_token (NSL)   = {state.chars_per_token:.3f}")
     t(f"  C_eff  (context window) = {state.C_eff:,} tokens")
     t(f"  M_O    (max output)     = {state.M_O:,} tokens")
-    t(f"  C_usable (input budget) = {state.C_usable:,.0f} tokens   <- per-leaf document+schema budget")
+    t(
+        f"  C_usable (input budget) = {state.C_usable:,.0f} tokens   <- per-leaf document+schema budget"
+    )
     need = _toks(len(document), state.chars_per_token)
-    t(f"  document needs ~{need:,} tokens => {need/max(1,state.C_usable):.0f}x C_usable => MUST chunk + retrieve")
+    t(
+        f"  document needs ~{need:,} tokens => {need / max(1, state.C_usable):.0f}x C_usable => MUST chunk + retrieve"
+    )
 
     state.system_prompt = ""
     state.user_prompt = ""
@@ -182,7 +185,9 @@ async def main() -> None:
     t("D(f) = 0.5*D_type + 0.3*D_constraint + 0.2*D_dep; build dependency DAG.")
     state = run_stage_1(state, schema)
     t.sub("1.1 totals")
-    t(f"  total leaf fields = {len(state.fields)}   by type: {dict(Counter(f.type for f in state.fields))}")
+    t(
+        f"  total leaf fields = {len(state.fields)}   by type: {dict(Counter(f.type for f in state.fields))}"
+    )
     ds = [f.difficulty for f in state.fields]
     t(f"  D: min={min(ds):.3f} mean={statistics.mean(ds):.3f} max={max(ds):.3f}")
     t.sub("1.2 EVERY field  (D, tau, type, path, description, constraints, deps)")
@@ -201,8 +206,10 @@ async def main() -> None:
     state = run_stage_2a(state)
     t(f"  total groups = {len(state.groups)}")
     for g in sorted(state.groups, key=lambda x: len(x.fields), reverse=True):
-        t(f"  [{len(g.fields):>2} fields] {g.parent_path or '<root>'}: "
-          f"{[f.path.split('.')[-1] for f in g.fields]}")
+        t(
+            f"  [{len(g.fields):>2} fields] {g.parent_path or '<root>'}: "
+            f"{[f.path.split('.')[-1] for f in g.fields]}"
+        )
 
     # ---------------------------------------------------------------- S2B
     t.head("STAGE 2B  -  Document pre-pass (REAL chunking + BMX retrieval)")
@@ -215,17 +222,23 @@ async def main() -> None:
     t.sub("2B.1 segmentation")
     t(f"  segments produced = {len(state.segments):,}")
     if seg_lens:
-        t(f"  size(chars): min={min(seg_lens)} median={statistics.median(seg_lens):.0f} "
-          f"max={max(seg_lens)} mean={statistics.mean(seg_lens):.0f}")
-        t(f"  ~tokens/segment(median) = {_toks(int(statistics.median(seg_lens)), state.chars_per_token)}"
-          f"   types: {dict(Counter(seg.segment_type for seg in state.segments))}")
-    t(f"  BMX index built: {state.bm25_index is not None}   [{time.time()-s:.1f}s]")
+        t(
+            f"  size(chars): min={min(seg_lens)} median={statistics.median(seg_lens):.0f} "
+            f"max={max(seg_lens)} mean={statistics.mean(seg_lens):.0f}"
+        )
+        t(
+            f"  ~tokens/segment(median) = {_toks(int(statistics.median(seg_lens)), state.chars_per_token)}"
+            f"   types: {dict(Counter(seg.segment_type for seg in state.segments))}"
+        )
+    t(f"  BMX index built: {state.bm25_index is not None}   [{time.time() - s:.1f}s]")
     t.sub("2B.2 retrieval per group  (matched count, top score, segment ids kept)")
     for g in sorted(state.groups, key=lambda x: len(x.fields), reverse=True):
         ids = [seg.segment_id for seg in g.matched_segments]
         top = max(g.segment_scores) if g.segment_scores else 0.0
-        t(f"  {g.parent_path or '<root>':<34} matched={len(ids):>3} top={top:6.2f} "
-          f"D_cost={g.D_cost} tok  seg_ids={ids}")
+        t(
+            f"  {g.parent_path or '<root>':<34} matched={len(ids):>3} top={top:6.2f} "
+            f"D_cost={g.D_cost} tok  seg_ids={ids}"
+        )
 
     # ---------------------------------------------------------------- S2C
     t.head("STAGE 2C  -  Capacity packing (K, and EVERY field in EVERY leaf)")
@@ -233,20 +246,26 @@ async def main() -> None:
     t("output-token budget AND reliability load = sum(1 + D(f)) <= max_fields_per_call.")
     state = run_stage_2c(state, config)
     t.sub("2C.1 bounds")
-    t(f"  max_fields_per_call = {config.max_fields_per_call}   K_min = {state.K_min}   "
-      f"K = {len(state.leaves)}   total load = {sum(_leaf_load(l) for l in state.leaves):.1f}")
+    t(
+        f"  max_fields_per_call = {config.max_fields_per_call}   K_min = {state.K_min}   "
+        f"K = {len(state.leaves)}   total load = {sum(_leaf_load(lf) for lf in state.leaves):.1f}"
+    )
     t.sub("2C.2 every leaf, every field")
     for leaf in state.leaves:
         t("")
-        t(f"  LEAF #{leaf.leaf_id}: {len(leaf.fields)} fields  load={_leaf_load(leaf):.1f}  "
-          f"overhead={leaf.overhead} tok  safe_output={leaf.safe_output} tok")
+        t(
+            f"  LEAF #{leaf.leaf_id}: {len(leaf.fields)} fields  load={_leaf_load(leaf):.1f}  "
+            f"overhead={leaf.overhead} tok  safe_output={leaf.safe_output} tok"
+        )
         t(f"     groups: {sorted({g.parent_path or '<root>' for g in leaf.groups})}")
         for f in leaf.fields:
             t(f"       - D={f.difficulty:.3f} [{f.type:<7}] {f.path}")
     t.sub("2C.3 execution order")
     t(f"  rounds = {len(state.execution_order)}")
     for i, rnd in enumerate(state.execution_order):
-        t(f"  round {i}: leaves {[l.leaf_id for l in rnd]}  (concurrent, cap={state.max_concurrent_calls})")
+        t(
+            f"  round {i}: leaves {[lf.leaf_id for lf in rnd]}  (concurrent, cap={state.max_concurrent_calls})"
+        )
 
     # ---------------------------------------------------------------- S3
     t.head("STAGE 3  -  Excerpt build (size of the document D each leaf gets)")
@@ -255,7 +274,9 @@ async def main() -> None:
     state = run_stage_3(state)
     for leaf in state.leaves:
         ex = leaf.document_excerpt
-        t(f"  LEAF #{leaf.leaf_id}: excerpt = {len(ex):,} chars (~{_toks(len(ex), state.chars_per_token):,} tok)")
+        t(
+            f"  LEAF #{leaf.leaf_id}: excerpt = {len(ex):,} chars (~{_toks(len(ex), state.chars_per_token):,} tok)"
+        )
 
     # ---------------------------------------------------------------- S4
     t.head("STAGE 4  -  Extraction: the FULL prompt + reply for EVERY leaf")
@@ -297,7 +318,7 @@ async def main() -> None:
     t(f"  K (calls) = {state.K}   states: {state.blackboard.summary()}")
     miss = state.blackboard.get_missing() + state.blackboard.get_failed()
     t(f"  not-yet-extracted: {sorted(set(miss))}")
-    t(f"  [{time.time()-s:.1f}s]")
+    t(f"  [{time.time() - s:.1f}s]")
 
     # ---------------------------------------------------------------- S5
     t.head("STAGE 5  -  Validation + retry")
@@ -307,7 +328,9 @@ async def main() -> None:
     before5 = state.blackboard.summary()
     state = await run_stage_5(state, provider, config)
     t(f"  before: {before5}")
-    t(f"  after : {state.blackboard.summary()}   retry_rounds={state.retry_rounds}   [{time.time()-s:.1f}s]")
+    t(
+        f"  after : {state.blackboard.summary()}   retry_rounds={state.retry_rounds}   [{time.time() - s:.1f}s]"
+    )
 
     # ---------------------------------------------------------------- S5b
     t.head("STAGE 5b  -  Recovery pass (missing-field re-pack)")
@@ -317,8 +340,10 @@ async def main() -> None:
     before = state.blackboard.summary()
     state = await run_recovery_pass(state, provider, config)
     t(f"  before: {before}")
-    t(f"  after : {state.blackboard.summary()}   [{time.time()-s:.1f}s]")
-    t(f"  still missing/failed: {sorted(set(state.blackboard.get_missing() + state.blackboard.get_failed()))}")
+    t(f"  after : {state.blackboard.summary()}   [{time.time() - s:.1f}s]")
+    t(
+        f"  still missing/failed: {sorted(set(state.blackboard.get_missing() + state.blackboard.get_failed()))}"
+    )
 
     # ---------------------------------------------------------------- S6
     t.head("STAGE 6  -  Assembly / merge (full nested JSON)")
@@ -326,15 +351,19 @@ async def main() -> None:
     result = run_stage_6(state)
     m = result.metadata
     t.sub("6.1 final metrics")
-    t(f"  fields_total={m.fields_total}  fields_extracted={m.fields_extracted}  "
-      f"fields_missing={m.fields_missing}")
+    t(
+        f"  fields_total={m.fields_total}  fields_extracted={m.fields_extracted}  "
+        f"fields_missing={m.fields_missing}"
+    )
     t(f"  K/K_min={m.K}/{m.K_min}  quality={m.quality_score:.3f}  status={result.status.value}")
     t.sub("6.2 full result JSON (merged)")
     t.block(json.dumps(result.data, ensure_ascii=False, indent=2))
 
     t.head("END OF TRACE")
     t.flush(_OUT_PATH)
-    print(f"\n  full trace written -> {_OUT_PATH}  ({_OUT_PATH.stat().st_size if _OUT_PATH.exists() else 0} bytes pending flush)")
+    print(
+        f"\n  full trace written -> {_OUT_PATH}  ({_OUT_PATH.stat().st_size if _OUT_PATH.exists() else 0} bytes pending flush)"
+    )
 
 
 if __name__ == "__main__":

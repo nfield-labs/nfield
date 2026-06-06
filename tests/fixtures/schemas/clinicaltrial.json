@@ -1,0 +1,1911 @@
+{
+  "type": "object",
+  "properties": {
+    "identificationModule": {
+      "type": "object",
+      "properties": {
+        "nctId": {
+          "type": "string",
+          "description": "Identification module - Nct id"
+        },
+        "orgStudyIdInfo": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Identification module - Org study id info - Id"
+            }
+          }
+        },
+        "secondaryIdInfos": {
+          "type": "object",
+          "properties": {
+            "item_0": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Identification module - Secondary id infos - #1 - Id"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Identification module - Secondary id infos - #1 - Type"
+                }
+              }
+            }
+          }
+        },
+        "organization": {
+          "type": "object",
+          "properties": {
+            "fullName": {
+              "type": "string",
+              "description": "Identification module - Organization - Full name"
+            },
+            "class": {
+              "type": "string",
+              "description": "Identification module - Organization - Class"
+            }
+          }
+        },
+        "briefTitle": {
+          "type": "string",
+          "description": "Identification module - Brief title"
+        },
+        "officialTitle": {
+          "type": "string",
+          "description": "Identification module - Official title"
+        }
+      }
+    },
+    "statusModule": {
+      "type": "object",
+      "properties": {
+        "statusVerifiedDate": {
+          "type": "string",
+          "description": "Status module - Status verified date"
+        },
+        "overallStatus": {
+          "type": "string",
+          "description": "Status module - Overall status",
+          "enum": [
+            "RECRUITING",
+            "COMPLETED",
+            "ACTIVE_NOT_RECRUITING",
+            "TERMINATED",
+            "NOT_YET_RECRUITING",
+            "WITHDRAWN",
+            "SUSPENDED",
+            "ENROLLING_BY_INVITATION"
+          ]
+        },
+        "expandedAccessInfo": {
+          "type": "object",
+          "properties": {
+            "hasExpandedAccess": {
+              "type": "boolean",
+              "description": "Status module - Expanded access info - Has expanded access"
+            }
+          }
+        },
+        "startDateStruct": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "Status module - Start date struct - Date"
+            },
+            "type": {
+              "type": "string",
+              "description": "Status module - Start date struct - Type"
+            }
+          }
+        },
+        "primaryCompletionDateStruct": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "Status module - Primary completion date struct - Date"
+            },
+            "type": {
+              "type": "string",
+              "description": "Status module - Primary completion date struct - Type"
+            }
+          }
+        },
+        "completionDateStruct": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "Status module - Completion date struct - Date"
+            },
+            "type": {
+              "type": "string",
+              "description": "Status module - Completion date struct - Type"
+            }
+          }
+        },
+        "studyFirstSubmitDate": {
+          "type": "string",
+          "description": "Status module - Study first submit date"
+        },
+        "studyFirstSubmitQcDate": {
+          "type": "string",
+          "description": "Status module - Study first submit qc date"
+        },
+        "studyFirstPostDateStruct": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "Status module - Study first post date struct - Date"
+            },
+            "type": {
+              "type": "string",
+              "description": "Status module - Study first post date struct - Type"
+            }
+          }
+        },
+        "resultsFirstSubmitDate": {
+          "type": "string",
+          "description": "Status module - Results first submit date"
+        },
+        "resultsFirstSubmitQcDate": {
+          "type": "string",
+          "description": "Status module - Results first submit qc date"
+        },
+        "resultsFirstPostDateStruct": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "Status module - Results first post date struct - Date"
+            },
+            "type": {
+              "type": "string",
+              "description": "Status module - Results first post date struct - Type"
+            }
+          }
+        },
+        "lastUpdateSubmitDate": {
+          "type": "string",
+          "description": "Status module - Last update submit date"
+        },
+        "lastUpdatePostDateStruct": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "Status module - Last update post date struct - Date"
+            },
+            "type": {
+              "type": "string",
+              "description": "Status module - Last update post date struct - Type"
+            }
+          }
+        }
+      }
+    },
+    "sponsorCollaboratorsModule": {
+      "type": "object",
+      "properties": {
+        "responsibleParty": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Sponsor collaborators module - Responsible party - Type"
+            }
+          }
+        },
+        "leadSponsor": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Sponsor collaborators module - Lead sponsor - Name"
+            },
+            "class": {
+              "type": "string",
+              "description": "Sponsor collaborators module - Lead sponsor - Class"
+            }
+          }
+        },
+        "collaborators": {
+          "type": "object",
+          "properties": {
+            "item_0": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Sponsor collaborators module - Collaborators - #1 - Name"
+                },
+                "class": {
+                  "type": "string",
+                  "description": "Sponsor collaborators module - Collaborators - #1 - Class"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "oversightModule": {
+      "type": "object",
+      "properties": {
+        "oversightHasDmc": {
+          "type": "boolean",
+          "description": "Oversight module - Oversight has dmc"
+        },
+        "isFdaRegulatedDrug": {
+          "type": "boolean",
+          "description": "Oversight module - Is fda regulated drug"
+        },
+        "isFdaRegulatedDevice": {
+          "type": "boolean",
+          "description": "Oversight module - Is fda regulated device"
+        }
+      }
+    },
+    "descriptionModule": {
+      "type": "object",
+      "properties": {
+        "briefSummary": {
+          "type": "string",
+          "description": "Description module - Brief summary"
+        }
+      }
+    },
+    "conditionsModule": {
+      "type": "object",
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Conditions module - Conditions"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Conditions module - Keywords"
+        }
+      }
+    },
+    "designModule": {
+      "type": "object",
+      "properties": {
+        "studyType": {
+          "type": "string",
+          "description": "Design module - Study type",
+          "enum": [
+            "INTERVENTIONAL",
+            "OBSERVATIONAL",
+            "EXPANDED_ACCESS"
+          ]
+        },
+        "phases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Design module - Phases"
+        },
+        "designInfo": {
+          "type": "object",
+          "properties": {
+            "allocation": {
+              "type": "string",
+              "description": "Design module - Design info - Allocation",
+              "enum": [
+                "RANDOMIZED",
+                "NON_RANDOMIZED",
+                "NA"
+              ]
+            },
+            "interventionModel": {
+              "type": "string",
+              "description": "Design module - Design info - Intervention model"
+            },
+            "primaryPurpose": {
+              "type": "string",
+              "description": "Design module - Design info - Primary purpose",
+              "enum": [
+                "TREATMENT",
+                "PREVENTION",
+                "DIAGNOSTIC",
+                "SUPPORTIVE_CARE",
+                "SCREENING",
+                "HEALTH_SERVICES_RESEARCH",
+                "BASIC_SCIENCE",
+                "OTHER"
+              ]
+            },
+            "maskingInfo": {
+              "type": "object",
+              "properties": {
+                "masking": {
+                  "type": "string",
+                  "description": "Design module - Design info - Masking info - Masking",
+                  "enum": [
+                    "NONE",
+                    "SINGLE",
+                    "DOUBLE",
+                    "TRIPLE",
+                    "QUADRUPLE"
+                  ]
+                },
+                "whoMasked": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Design module - Design info - Masking info - Who masked"
+                }
+              }
+            }
+          }
+        },
+        "enrollmentInfo": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Design module - Enrollment info - Count"
+            },
+            "type": {
+              "type": "string",
+              "description": "Design module - Enrollment info - Type"
+            }
+          }
+        }
+      }
+    },
+    "armsInterventionsModule": {
+      "type": "object",
+      "properties": {
+        "armGroups": {
+          "type": "object",
+          "properties": {
+            "item_0": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #1 - Label"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #1 - Type"
+                },
+                "interventionNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Arm groups - #1 - Intervention names"
+                }
+              }
+            },
+            "item_1": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #2 - Label"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #2 - Type"
+                },
+                "interventionNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Arm groups - #2 - Intervention names"
+                }
+              }
+            },
+            "item_2": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #3 - Label"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #3 - Type"
+                },
+                "interventionNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Arm groups - #3 - Intervention names"
+                }
+              }
+            },
+            "item_3": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #4 - Label"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #4 - Type"
+                },
+                "interventionNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Arm groups - #4 - Intervention names"
+                }
+              }
+            },
+            "item_4": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #5 - Label"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #5 - Type"
+                },
+                "interventionNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Arm groups - #5 - Intervention names"
+                }
+              }
+            },
+            "item_5": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #6 - Label"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #6 - Type"
+                },
+                "interventionNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Arm groups - #6 - Intervention names"
+                }
+              }
+            },
+            "item_6": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #7 - Label"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #7 - Type"
+                },
+                "interventionNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Arm groups - #7 - Intervention names"
+                }
+              }
+            },
+            "item_7": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #8 - Label"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #8 - Type"
+                },
+                "interventionNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Arm groups - #8 - Intervention names"
+                }
+              }
+            },
+            "item_8": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #9 - Label"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #9 - Type"
+                },
+                "interventionNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Arm groups - #9 - Intervention names"
+                }
+              }
+            },
+            "item_9": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #10 - Label"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #10 - Type"
+                },
+                "interventionNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Arm groups - #10 - Intervention names"
+                }
+              }
+            },
+            "item_10": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #11 - Label"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #11 - Type"
+                },
+                "interventionNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Arm groups - #11 - Intervention names"
+                }
+              }
+            },
+            "item_11": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #12 - Label"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #12 - Type"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Arms interventions module - Arm groups - #12 - Description"
+                },
+                "interventionNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Arm groups - #12 - Intervention names"
+                }
+              }
+            }
+          }
+        },
+        "interventions": {
+          "type": "object",
+          "properties": {
+            "item_0": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Interventions - #1 - Type"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Arms interventions module - Interventions - #1 - Name"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Arms interventions module - Interventions - #1 - Description"
+                },
+                "armGroupLabels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Interventions - #1 - Arm group labels"
+                }
+              }
+            },
+            "item_1": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Interventions - #2 - Type"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Arms interventions module - Interventions - #2 - Name"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Arms interventions module - Interventions - #2 - Description"
+                },
+                "armGroupLabels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Interventions - #2 - Arm group labels"
+                }
+              }
+            },
+            "item_2": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Interventions - #3 - Type"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Arms interventions module - Interventions - #3 - Name"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Arms interventions module - Interventions - #3 - Description"
+                },
+                "armGroupLabels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Interventions - #3 - Arm group labels"
+                }
+              }
+            },
+            "item_3": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Arms interventions module - Interventions - #4 - Type"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Arms interventions module - Interventions - #4 - Name"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Arms interventions module - Interventions - #4 - Description"
+                },
+                "armGroupLabels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Arms interventions module - Interventions - #4 - Arm group labels"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "outcomesModule": {
+      "type": "object",
+      "properties": {
+        "primaryOutcomes": {
+          "type": "object",
+          "properties": {
+            "item_0": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #1 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #1 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #1 - Time frame"
+                }
+              }
+            },
+            "item_1": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #2 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #2 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #2 - Time frame"
+                }
+              }
+            },
+            "item_2": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #3 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #3 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #3 - Time frame"
+                }
+              }
+            },
+            "item_3": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #4 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #4 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #4 - Time frame"
+                }
+              }
+            },
+            "item_4": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #5 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #5 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #5 - Time frame"
+                }
+              }
+            },
+            "item_5": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #6 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #6 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #6 - Time frame"
+                }
+              }
+            },
+            "item_6": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #7 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #7 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #7 - Time frame"
+                }
+              }
+            },
+            "item_7": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #8 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #8 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #8 - Time frame"
+                }
+              }
+            },
+            "item_8": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #9 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #9 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #9 - Time frame"
+                }
+              }
+            },
+            "item_9": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #10 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #10 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #10 - Time frame"
+                }
+              }
+            },
+            "item_10": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #11 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #11 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #11 - Time frame"
+                }
+              }
+            },
+            "item_11": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #12 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #12 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Primary outcomes - #12 - Time frame"
+                }
+              }
+            }
+          }
+        },
+        "secondaryOutcomes": {
+          "type": "object",
+          "properties": {
+            "item_0": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #1 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #1 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #1 - Time frame"
+                }
+              }
+            },
+            "item_1": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #2 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #2 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #2 - Time frame"
+                }
+              }
+            },
+            "item_2": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #3 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #3 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #3 - Time frame"
+                }
+              }
+            },
+            "item_3": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #4 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #4 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #4 - Time frame"
+                }
+              }
+            },
+            "item_4": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #5 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #5 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #5 - Time frame"
+                }
+              }
+            },
+            "item_5": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #6 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #6 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #6 - Time frame"
+                }
+              }
+            },
+            "item_6": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #7 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #7 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #7 - Time frame"
+                }
+              }
+            },
+            "item_7": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #8 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #8 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #8 - Time frame"
+                }
+              }
+            },
+            "item_8": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #9 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #9 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #9 - Time frame"
+                }
+              }
+            },
+            "item_9": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #10 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #10 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #10 - Time frame"
+                }
+              }
+            },
+            "item_10": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #11 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #11 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #11 - Time frame"
+                }
+              }
+            },
+            "item_11": {
+              "type": "object",
+              "properties": {
+                "measure": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #12 - Measure"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #12 - Description"
+                },
+                "timeFrame": {
+                  "type": "string",
+                  "description": "Outcomes module - Secondary outcomes - #12 - Time frame"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "eligibilityModule": {
+      "type": "object",
+      "properties": {
+        "eligibilityCriteria": {
+          "type": "string",
+          "description": "Eligibility module - Eligibility criteria"
+        },
+        "healthyVolunteers": {
+          "type": "boolean",
+          "description": "Eligibility module - Healthy volunteers"
+        },
+        "sex": {
+          "type": "string",
+          "description": "Eligibility module - Sex",
+          "enum": [
+            "ALL",
+            "FEMALE",
+            "MALE"
+          ]
+        },
+        "minimumAge": {
+          "type": "string",
+          "description": "Eligibility module - Minimum age"
+        },
+        "stdAges": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Eligibility module - Std ages"
+        }
+      }
+    },
+    "contactsLocationsModule": {
+      "type": "object",
+      "properties": {
+        "overallOfficials": {
+          "type": "object",
+          "properties": {
+            "item_0": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Contacts locations module - Overall officials - #1 - Name"
+                },
+                "affiliation": {
+                  "type": "string",
+                  "description": "Contacts locations module - Overall officials - #1 - Affiliation"
+                },
+                "role": {
+                  "type": "string",
+                  "description": "Contacts locations module - Overall officials - #1 - Role"
+                }
+              }
+            }
+          }
+        },
+        "locations": {
+          "type": "object",
+          "properties": {
+            "item_0": {
+              "type": "object",
+              "properties": {
+                "facility": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #1 - Facility"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #1 - City"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #1 - State"
+                },
+                "zip": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #1 - Zip"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #1 - Country"
+                },
+                "geoPoint": {
+                  "type": "object",
+                  "properties": {
+                    "lat": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #1 - Geo point - Lat"
+                    },
+                    "lon": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #1 - Geo point - Lon"
+                    }
+                  }
+                }
+              }
+            },
+            "item_1": {
+              "type": "object",
+              "properties": {
+                "facility": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #2 - Facility"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #2 - City"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #2 - State"
+                },
+                "zip": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #2 - Zip"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #2 - Country"
+                },
+                "geoPoint": {
+                  "type": "object",
+                  "properties": {
+                    "lat": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #2 - Geo point - Lat"
+                    },
+                    "lon": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #2 - Geo point - Lon"
+                    }
+                  }
+                }
+              }
+            },
+            "item_2": {
+              "type": "object",
+              "properties": {
+                "facility": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #3 - Facility"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #3 - City"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #3 - State"
+                },
+                "zip": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #3 - Zip"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #3 - Country"
+                },
+                "geoPoint": {
+                  "type": "object",
+                  "properties": {
+                    "lat": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #3 - Geo point - Lat"
+                    },
+                    "lon": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #3 - Geo point - Lon"
+                    }
+                  }
+                }
+              }
+            },
+            "item_3": {
+              "type": "object",
+              "properties": {
+                "facility": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #4 - Facility"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #4 - City"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #4 - State"
+                },
+                "zip": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #4 - Zip"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #4 - Country"
+                },
+                "geoPoint": {
+                  "type": "object",
+                  "properties": {
+                    "lat": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #4 - Geo point - Lat"
+                    },
+                    "lon": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #4 - Geo point - Lon"
+                    }
+                  }
+                }
+              }
+            },
+            "item_4": {
+              "type": "object",
+              "properties": {
+                "facility": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #5 - Facility"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #5 - City"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #5 - State"
+                },
+                "zip": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #5 - Zip"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #5 - Country"
+                },
+                "geoPoint": {
+                  "type": "object",
+                  "properties": {
+                    "lat": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #5 - Geo point - Lat"
+                    },
+                    "lon": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #5 - Geo point - Lon"
+                    }
+                  }
+                }
+              }
+            },
+            "item_5": {
+              "type": "object",
+              "properties": {
+                "facility": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #6 - Facility"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #6 - City"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #6 - State"
+                },
+                "zip": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #6 - Zip"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #6 - Country"
+                },
+                "geoPoint": {
+                  "type": "object",
+                  "properties": {
+                    "lat": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #6 - Geo point - Lat"
+                    },
+                    "lon": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #6 - Geo point - Lon"
+                    }
+                  }
+                }
+              }
+            },
+            "item_6": {
+              "type": "object",
+              "properties": {
+                "facility": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #7 - Facility"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #7 - City"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #7 - State"
+                },
+                "zip": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #7 - Zip"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #7 - Country"
+                },
+                "geoPoint": {
+                  "type": "object",
+                  "properties": {
+                    "lat": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #7 - Geo point - Lat"
+                    },
+                    "lon": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #7 - Geo point - Lon"
+                    }
+                  }
+                }
+              }
+            },
+            "item_7": {
+              "type": "object",
+              "properties": {
+                "facility": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #8 - Facility"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #8 - City"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #8 - State"
+                },
+                "zip": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #8 - Zip"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #8 - Country"
+                },
+                "geoPoint": {
+                  "type": "object",
+                  "properties": {
+                    "lat": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #8 - Geo point - Lat"
+                    },
+                    "lon": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #8 - Geo point - Lon"
+                    }
+                  }
+                }
+              }
+            },
+            "item_8": {
+              "type": "object",
+              "properties": {
+                "facility": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #9 - Facility"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #9 - City"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #9 - State"
+                },
+                "zip": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #9 - Zip"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #9 - Country"
+                },
+                "geoPoint": {
+                  "type": "object",
+                  "properties": {
+                    "lat": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #9 - Geo point - Lat"
+                    },
+                    "lon": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #9 - Geo point - Lon"
+                    }
+                  }
+                }
+              }
+            },
+            "item_9": {
+              "type": "object",
+              "properties": {
+                "facility": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #10 - Facility"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #10 - City"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #10 - State"
+                },
+                "zip": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #10 - Zip"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #10 - Country"
+                },
+                "geoPoint": {
+                  "type": "object",
+                  "properties": {
+                    "lat": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #10 - Geo point - Lat"
+                    },
+                    "lon": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #10 - Geo point - Lon"
+                    }
+                  }
+                }
+              }
+            },
+            "item_10": {
+              "type": "object",
+              "properties": {
+                "facility": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #11 - Facility"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #11 - City"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #11 - State"
+                },
+                "zip": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #11 - Zip"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #11 - Country"
+                },
+                "geoPoint": {
+                  "type": "object",
+                  "properties": {
+                    "lat": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #11 - Geo point - Lat"
+                    },
+                    "lon": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #11 - Geo point - Lon"
+                    }
+                  }
+                }
+              }
+            },
+            "item_11": {
+              "type": "object",
+              "properties": {
+                "facility": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #12 - Facility"
+                },
+                "city": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #12 - City"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #12 - State"
+                },
+                "zip": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #12 - Zip"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Contacts locations module - Locations - #12 - Country"
+                },
+                "geoPoint": {
+                  "type": "object",
+                  "properties": {
+                    "lat": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #12 - Geo point - Lat"
+                    },
+                    "lon": {
+                      "type": "number",
+                      "description": "Contacts locations module - Locations - #12 - Geo point - Lon"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "referencesModule": {
+      "type": "object",
+      "properties": {
+        "references": {
+          "type": "object",
+          "properties": {
+            "item_0": {
+              "type": "object",
+              "properties": {
+                "pmid": {
+                  "type": "string",
+                  "description": "References module - References - #1 - Pmid"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "References module - References - #1 - Type"
+                },
+                "citation": {
+                  "type": "string",
+                  "description": "References module - References - #1 - Citation"
+                }
+              }
+            },
+            "item_1": {
+              "type": "object",
+              "properties": {
+                "pmid": {
+                  "type": "string",
+                  "description": "References module - References - #2 - Pmid"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "References module - References - #2 - Type"
+                },
+                "citation": {
+                  "type": "string",
+                  "description": "References module - References - #2 - Citation"
+                }
+              }
+            },
+            "item_2": {
+              "type": "object",
+              "properties": {
+                "pmid": {
+                  "type": "string",
+                  "description": "References module - References - #3 - Pmid"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "References module - References - #3 - Type"
+                },
+                "citation": {
+                  "type": "string",
+                  "description": "References module - References - #3 - Citation"
+                }
+              }
+            },
+            "item_3": {
+              "type": "object",
+              "properties": {
+                "pmid": {
+                  "type": "string",
+                  "description": "References module - References - #4 - Pmid"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "References module - References - #4 - Type"
+                },
+                "citation": {
+                  "type": "string",
+                  "description": "References module - References - #4 - Citation"
+                }
+              }
+            },
+            "item_4": {
+              "type": "object",
+              "properties": {
+                "pmid": {
+                  "type": "string",
+                  "description": "References module - References - #5 - Pmid"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "References module - References - #5 - Type"
+                },
+                "citation": {
+                  "type": "string",
+                  "description": "References module - References - #5 - Citation"
+                }
+              }
+            },
+            "item_5": {
+              "type": "object",
+              "properties": {
+                "pmid": {
+                  "type": "string",
+                  "description": "References module - References - #6 - Pmid"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "References module - References - #6 - Type"
+                },
+                "citation": {
+                  "type": "string",
+                  "description": "References module - References - #6 - Citation"
+                }
+              }
+            },
+            "item_6": {
+              "type": "object",
+              "properties": {
+                "pmid": {
+                  "type": "string",
+                  "description": "References module - References - #7 - Pmid"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "References module - References - #7 - Type"
+                },
+                "citation": {
+                  "type": "string",
+                  "description": "References module - References - #7 - Citation"
+                }
+              }
+            },
+            "item_7": {
+              "type": "object",
+              "properties": {
+                "pmid": {
+                  "type": "string",
+                  "description": "References module - References - #8 - Pmid"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "References module - References - #8 - Type"
+                },
+                "citation": {
+                  "type": "string",
+                  "description": "References module - References - #8 - Citation"
+                }
+              }
+            },
+            "item_8": {
+              "type": "object",
+              "properties": {
+                "pmid": {
+                  "type": "string",
+                  "description": "References module - References - #9 - Pmid"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "References module - References - #9 - Type"
+                },
+                "citation": {
+                  "type": "string",
+                  "description": "References module - References - #9 - Citation"
+                }
+              }
+            },
+            "item_9": {
+              "type": "object",
+              "properties": {
+                "pmid": {
+                  "type": "string",
+                  "description": "References module - References - #10 - Pmid"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "References module - References - #10 - Type"
+                },
+                "citation": {
+                  "type": "string",
+                  "description": "References module - References - #10 - Citation"
+                }
+              }
+            },
+            "item_10": {
+              "type": "object",
+              "properties": {
+                "pmid": {
+                  "type": "string",
+                  "description": "References module - References - #11 - Pmid"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "References module - References - #11 - Type"
+                },
+                "citation": {
+                  "type": "string",
+                  "description": "References module - References - #11 - Citation"
+                }
+              }
+            },
+            "item_11": {
+              "type": "object",
+              "properties": {
+                "pmid": {
+                  "type": "string",
+                  "description": "References module - References - #12 - Pmid"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "References module - References - #12 - Type"
+                },
+                "citation": {
+                  "type": "string",
+                  "description": "References module - References - #12 - Citation"
+                }
+              }
+            }
+          }
+        },
+        "seeAlsoLinks": {
+          "type": "object",
+          "properties": {
+            "item_0": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "References module - See also links - #1 - Label"
+                },
+                "url": {
+                  "type": "string",
+                  "description": "References module - See also links - #1 - Url"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "ipdSharingStatementModule": {
+      "type": "object",
+      "properties": {
+        "ipdSharing": {
+          "type": "string",
+          "description": "Ipd sharing statement module - Ipd sharing"
+        }
+      }
+    }
+  }
+}

@@ -63,7 +63,9 @@ def main() -> None:
     out.mkdir(exist_ok=True)
     n = len(list(out.glob("bench_financial_*.json"))) + 1
     path = out / f"bench_financial_{n}.json"
-    path.write_text(json.dumps({"summary": summary, "data": result.data}, indent=2), encoding="utf-8")
+    path.write_text(
+        json.dumps({"summary": summary, "data": result.data}, indent=2), encoding="utf-8"
+    )
     print(json.dumps(summary, indent=2))
     print(f"saved -> {path}")
 

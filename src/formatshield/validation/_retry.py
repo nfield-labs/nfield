@@ -153,6 +153,8 @@ async def orchestrate_retry(
     dep_dag: dict[str, set[str]],
     config: ExtractionConfig,
     call_counter: list[int] | None = None,
+    rounds_counter: list[int] | None = None,
+    call_failures: dict[str, str] | None = None,
     system_prompt: str = "",
     user_prompt: str = "",
     knowledge_fallback: bool = False,
@@ -164,10 +166,9 @@ async def orchestrate_retry(
     context. Max rounds is bounded by ``config.max_retry_rounds`` (default 2).
     Returns a dict of recovered ``{path: value}`` pairs.
 
-    In MVP, all four failure causes (FORMAT, TYPE_CONSTRAINT, FIELD_MISSING,
-    DEPENDENCY_VALUE_CHANGED) route to the same handler: same-excerpt retry
-    with the error message as context. Post-MVP will add cause-specific
-    handlers (PFTEN, GSGRF, CADTR).
+    The per-field error message carries the cause-specific guidance (e.g. the
+    candidate values for a conflict). When ``retry_excerpt`` is supplied the retry
+    reads a fresh, field-targeted excerpt (GSGRF) instead of the leaf's original.
 
     Args:
         failed_fields: Fields that failed validation in Stage 4.
@@ -179,6 +180,14 @@ async def orchestrate_retry(
         call_counter: Optional single-element list; when given, element 0 is
             incremented once per provider call made, so callers can fold retry
             cost into the run's total API-call count.
+        rounds_counter: Optional single-element list; when given, element 0 is set
+            to the number of retry rounds that actually ran (flaw C — the real
+            count, not a 0/1 flag), so callers report it faithfully.
+        call_failures: Optional dict; populated ``{path: reason}`` for fields whose
+            retry call itself raised (flaw E), so the caller can record a real
+            "retry call failed" error instead of mislabelling the field "absent".
+        retry_excerpt: Fresh, field-targeted excerpt (GSGRF) to use instead of the
+            leaf's original; ``None`` keeps the leaf excerpt.
 
     Returns:
         Dict of ``{path: value}`` for fields that recovered in retry rounds.
@@ -198,6 +207,8 @@ async def orchestrate_retry(
     for round_idx in range(max_rounds):
         if not still_failing:
             break
+        if rounds_counter is not None:
+            rounds_counter[0] = round_idx + 1
 
         logger.debug(
             "SFR round %d/%d: retrying %d field(s) in leaf %d",
@@ -213,12 +224,19 @@ async def orchestrate_retry(
         round_recovered: dict[str, Any] = {}
 
         for batch in batches:
+            # Clear this batch's stale failure notes first, so call_failures only
+            # ever reflects the LATEST attempt: surgical_field_retry re-adds them
+            # only if THIS call raises.
+            if call_failures:
+                for f in batch:
+                    call_failures.pop(f.path, None)
             batch_result = await surgical_field_retry(
                 batch,
                 {p: current_errors.get(p, "validation failed") for p in (f.path for f in batch)},
                 provider,
                 leaf,
                 call_counter=call_counter,
+                call_failures=call_failures,
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
                 knowledge_fallback=knowledge_fallback,
@@ -251,6 +269,7 @@ async def surgical_field_retry(
     leaf: CapacityLeaf,
     *,
     call_counter: list[int] | None = None,
+    call_failures: dict[str, str] | None = None,
     system_prompt: str = "",
     user_prompt: str = "",
     knowledge_fallback: bool = False,
@@ -268,6 +287,9 @@ async def surgical_field_retry(
         leaf: Capacity leaf providing the document excerpt.
         call_counter: Optional single-element list; element 0 is incremented by
             one for the API call this function makes (for cost accounting).
+        call_failures: Optional dict; on a provider exception each field's path is
+            recorded with the failure reason, so the caller can tell a failed call
+            apart from a genuinely absent field (flaw E).
         retry_excerpt: Fresh, field-targeted excerpt from re-retrieval (GSGRF).
             When given it replaces the leaf's original excerpt, so a field whose
             evidence was trimmed away gets a different, relevant context. Falls
@@ -295,11 +317,15 @@ async def surgical_field_retry(
     try:
         raw_output = await provider.complete(messages, max_tokens=max_tokens)
     except Exception as exc:
-        logger.warning(
-            "SFR API call failed for leaf %d: %s",
-            leaf.leaf_id,
-            exc,
-        )
+        # Flaw E: do NOT silently drop. The provider already retried transient
+        # errors (429/5xx) with backoff before raising, so this is exhausted or
+        # permanent. Record the real reason per field so the caller marks them
+        # "retry call failed" rather than mislabelling them "absent from document".
+        logger.warning("SFR API call failed for leaf %d: %s", leaf.leaf_id, exc)
+        if call_failures is not None:
+            reason = f"retry call failed: {exc}"
+            for f in fields:
+                call_failures[f.path] = reason
         return {}
 
     result = parse_sfep(raw_output, fields)

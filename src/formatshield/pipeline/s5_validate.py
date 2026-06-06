@@ -42,7 +42,8 @@ async def run_stage_5(
     2. Collect failures (invalid values + EMPTY fields).
     3. If failures: call orchestrate_retry (max config.max_retry_rounds).
     4. Write recovered values back to blackboard; re-validate each one.
-    5. Any field still invalid after retry → mark_failed on blackboard.
+    5. Settle the rest: retry-call failure → real reason; reopened conflict/reval
+       → needs-revalidation (human review); otherwise → failed (absent).
 
     Args:
         state: Pipeline state from Stage 4 (blackboard has extracted values).
@@ -93,6 +94,10 @@ async def _validate_leaf(
     filled = bb.get_filled()
     failed_fields: list[Field] = []
     errors: dict[str, str] = {}
+    # Paths reopened from a settled/terminal state (FAILED is write-able again, but
+    # CONFLICT/NEEDS_REVALIDATION are not) — tracked so that if they still do not
+    # recover, we surface them for human review instead of a bare "absent".
+    reopened: set[str] = set()
 
     for f in leaf.fields:
         field_state = bb.get_state(f.path)
@@ -108,22 +113,33 @@ async def _validate_leaf(
             failed_fields.append(f)
             errors[f.path] = "field not extracted"
         elif field_state == FieldState.FAILED:
-            # Stage 4 already marked this FAILED — most commonly because the model
-            # emitted NULL ("not found in this excerpt"). Previously these were
-            # skipped here, so SFR never ran for them (flaw A). Route them into
-            # retry: with targeted re-retrieval below they get a fresh excerpt, so
-            # a real retrieval miss can be recovered instead of silently dropped.
+            # Flaw A: Stage 4 marked this FAILED (usually NULL). Retry it — with
+            # fresh re-retrieval below it can still be recovered.
             failed_fields.append(f)
             errors[f.path] = bb.get_error(f.path) or "field not found in document"
+        elif field_state == FieldState.CONFLICT:
+            # Flaw D: leaves disagreed — adjudicate (show candidates, model picks the
+            # grounded one; self-consistency, Wang arXiv:2203.11171). Reopen for write.
+            cand_text = " | ".join(str(c) for c in bb.get_conflict_values(f.path))
+            errors[f.path] = (
+                f"conflicting values were extracted ({cand_text}); choose the one "
+                "the document supports, or NULL if none is"
+            )
+            bb.reopen_for_retry(f.path)
+            reopened.add(f.path)
+            failed_fields.append(f)
+        elif field_state == FieldState.NEEDS_REVALIDATION:
+            # Flaw D: model was uncertain — re-extract with fresh evidence.
+            errors[f.path] = "previously uncertain — re-extract the exact value, or NULL"
+            bb.reopen_for_retry(f.path)
+            reopened.add(f.path)
+            failed_fields.append(f)
 
     if not failed_fields:
         return
 
-    # Flaw B — targeted re-retrieval (GSGRF). Re-query the full segment set with
-    # only the failed fields' terms and build a fresh excerpt, so the retry sees
-    # different, field-relevant text instead of the same trimmed context that
-    # already missed. No-op on the small-doc path (no BMX index) — there the whole
-    # document was already in context, so the original excerpt is reused.
+    # Flaw B: re-retrieve a fresh excerpt for the failed fields, so the retry sees
+    # different text than the trimmed context that already missed. No-op for small docs.
     retry_excerpt: str | None = None
     if state.bm25_index is not None and state.segments:
         budget = max(_MIN_RETRY_EXCERPT_TOKENS, state.C_usable - leaf.overhead - leaf.safe_output)
@@ -140,8 +156,12 @@ async def _validate_leaf(
 
     # --- Step 2: SFR retry ---
     # call_counter folds the retry API calls into the run's total K so the
-    # reported cost includes retries, not just first-pass extraction.
+    # reported cost includes retries, not just first-pass extraction. rounds_counter
+    # reports the true number of rounds run (flaw C); call_failures records fields
+    # whose retry call itself errored (flaw E).
     retry_calls = [0]
+    rounds_used = [0]
+    call_failures: dict[str, str] = {}
     recovered = await orchestrate_retry(
         failed_fields=failed_fields,
         errors=errors,
@@ -150,15 +170,15 @@ async def _validate_leaf(
         dep_dag=state.dep_dag,
         config=config,
         call_counter=retry_calls,
+        rounds_counter=rounds_used,
+        call_failures=call_failures,
         system_prompt=state.system_prompt,
         user_prompt=state.user_prompt,
         knowledge_fallback=state.knowledge_fallback,
         retry_excerpt=retry_excerpt,
     )
     state.K += retry_calls[0]
-    # Record that a retry phase ran (bounded by config.max_retry_rounds; the
-    # exact per-round count is not surfaced by orchestrate_retry).
-    state.retry_rounds = max(state.retry_rounds, 1)
+    state.retry_rounds = max(state.retry_rounds, rounds_used[0])
 
     # --- Step 3: write recovered values; re-validate ---
     recovered_valid: list[str] = []
@@ -184,9 +204,17 @@ async def _validate_leaf(
         if invalidated:
             logger.debug("CADTR flagged %d dependent field(s) for revalidation", len(invalidated))
 
-    # --- Step 4: mark fields still EMPTY or PENDING after retry as FAILED ---
+    # --- Step 4: settle fields that did not recover ---
+    # call failed → real reason; was conflict/reval → human review; else → absent.
     for f in failed_fields:
-        if f.path not in recovered:
-            current = bb.get_state(f.path)
-            if current in (FieldState.EMPTY, FieldState.PENDING):
-                bb.mark_failed(f.path, "field absent after retry")
+        if f.path in recovered:
+            continue
+        current = bb.get_state(f.path)
+        if current not in (FieldState.EMPTY, FieldState.PENDING):
+            continue
+        if f.path in call_failures:
+            bb.mark_failed(f.path, call_failures[f.path])
+        elif f.path in reopened:
+            bb.mark_needs_revalidation(f.path)
+        else:
+            bb.mark_failed(f.path, "field absent after retry")

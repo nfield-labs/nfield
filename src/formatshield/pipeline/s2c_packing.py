@@ -26,6 +26,8 @@ from collections import deque
 from typing import TYPE_CHECKING
 
 from formatshield.extraction._papt import TemplateType, describe_field
+from formatshield.extraction._prompt import builtin_system_message
+from formatshield.retrieval._chunker import _DEFAULT_TARGET_TOKENS
 from formatshield.schema._types import CapacityLeaf
 
 if TYPE_CHECKING:
@@ -51,18 +53,10 @@ __all__ = [
 # margin under-reserves. Inflating the z-score by 1.5x compensates for the fat
 # tail (ProD, arXiv:2604.07931; TIE, arXiv:2604.00499).
 _Z_HEAVY_TAIL_FACTOR: float = 1.5
-_MIN_SAFE_OUTPUT_TOKENS: int = 50  # floor so every call can emit a few fields
-# Minimum document-excerpt room a leaf must retain after overhead + output. The
-# shared document is trimmed to the leftover budget by Stage 3, so a large
-# retrieval pool does not block packing — only this floor must remain.
-_MIN_EXCERPT_TOKENS: int = 256
-# Format Token Overhead: tokens spent on the system prompt and format
-# instructions before any field is described. The per-field schema-description
-# and output costs are computed dynamically from each field's actual path and
-# description length (see _field_schema_tokens / _field_output_tokens) — a fixed
-# per-field constant badly underestimates deeply-nested long paths and lets a
-# leaf overflow the real prompt.
-_SYSTEM_PROMPT_OVERHEAD_TOKENS: int = 100
+# Floor so a call's output budget never collapses to zero.
+_MIN_SAFE_OUTPUT_TOKENS: int = 50
+# Min document room per leaf = one chunk (chunker target). Stage 3 trims larger pools.
+_MIN_EXCERPT_TOKENS: int = _DEFAULT_TARGET_TOKENS
 # Format-only wrapper around a field's dynamic schema-description text (the
 # "(type): " punctuation), added on top of the path/description token estimate.
 _SCHEMA_DESC_FORMAT_TOKENS: int = 4
@@ -521,9 +515,10 @@ def run_stage_2c(state: PipelineState, config: ExtractionConfig) -> PipelineStat
     reliability_k_min = math.ceil(_reliability_load(state.fields) / cap) if state.fields else 1
     state.K_min = max(token_k_min, reliability_k_min)
 
-    # Caller system/user prompts (S, P) are constant across leaves; charge their
-    # token cost to every leaf's overhead so the document budget shrinks to match.
-    prompt_overhead = math.ceil((len(state.system_prompt) + len(state.user_prompt)) / cpt)
+    # Fixed prompt cost (real SFEP system message + caller prompts), measured not guessed.
+    builtin_sys = builtin_system_message(knowledge_fallback=state.knowledge_fallback)
+    fixed_prompt_chars = len(builtin_sys) + len(state.system_prompt) + len(state.user_prompt)
+    prompt_overhead = math.ceil(fixed_prompt_chars / cpt)
 
     leaves = _greedy_ffd(
         state.groups,
@@ -551,24 +546,23 @@ def _compute_leaf_overhead(
 ) -> int:
     """Estimate FTO (Format Token Overhead) for a leaf's fields.
 
-    The per-field schema-description cost is computed dynamically from each
-    field's actual path + description length, not a fixed per-field constant, so
-    a leaf of long nested paths is charged its real prompt cost and never
-    silently overflows the context window.
+    Both parts are measured, not guessed: the per-field schema-description cost is
+    the real rendered ``describe_field`` line (see ``_field_schema_tokens``), and
+    the fixed prompt cost (built-in SFEP system message + caller prompts) is passed
+    in via ``prompt_overhead`` already measured from the real strings.
 
     Args:
         fields: Fields in the leaf.
         chars_per_token: Calibrated characters-per-token ratio (Stage 0).
-        prompt_overhead: Tokens for the caller-supplied system/user prompts,
-            constant across leaves. Counted here so they shrink the per-leaf
-            document budget; total overhead = system prompt + user prompt +
-            format instructions + per-field schema description.
+        prompt_overhead: Tokens for the fixed prompt text constant across leaves
+            (built-in SFEP system message + caller system/user prompts), measured
+            in ``run_stage_2c``. Total overhead = this + per-field schema lines.
 
     Returns:
         Token overhead estimate.
     """
     schema_tokens = sum(_field_schema_tokens(f, chars_per_token) for f in fields)
-    return _SYSTEM_PROMPT_OVERHEAD_TOKENS + schema_tokens + prompt_overhead
+    return schema_tokens + prompt_overhead
 
 
 def _injection_cost(

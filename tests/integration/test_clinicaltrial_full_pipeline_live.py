@@ -1,12 +1,13 @@
-"""Live full-pipeline test: a 1045-field schema over a 3-country Factbook profile.
+"""Live full-pipeline test: a STRONG typed, deeply-nested clinical-trial schema.
 
-The >800-field stress test. Three public-domain country profiles (US, China, India)
-merged into one namespaced schema and one ~141 KB document, generated from the same
-data so every field's value genuinely appears in the text. The document exceeds the
-context window, so this also exercises chunked retrieval at scale. Ground truth lets
-us score real value accuracy.
+The toughest fixture so far — not all-string like the factbooks. A real
+ClinicalTrials.gov study (public domain) flattened into 300+ leaves spanning
+strings, integers, numbers, booleans, enums (with constraints), and arrays, nested
+many levels deep (indexed arms / outcomes / locations). The document is rendered
+from the same data so every value is genuinely present, and a ground-truth map
+allows real, type-aware accuracy scoring.
 
-Generate the fixture with scripts/gen_factbook_multi.py. Requires GROQ_API_KEY.
+Generate the fixture with scripts/gen_clinicaltrial_fixture.py. Requires GROQ_API_KEY.
 """
 
 from __future__ import annotations
@@ -29,12 +30,12 @@ if _env.exists():
             os.environ.setdefault(_k.strip(), _v.strip())
 
 _MODEL = "groq/llama-3.3-70b-versatile"
-_CONTEXT_WINDOW = 40_000  # smaller than the doc → forces chunked retrieval
+_CONTEXT_WINDOW = 40_000  # sweet spot from the budget matrix
 _MAX_OUTPUT = 8_000
 
-_SCHEMA_PATH = _ROOT / "tests" / "fixtures" / "schemas" / "factbook_multi.json"
-_DOC_PATH = _ROOT / "tests" / "fixtures" / "documents" / "_cache" / "factbook_multi.txt"
-_TRUTH_PATH = _ROOT / "tests" / "fixtures" / "schemas" / "factbook_multi_truth.json"
+_SCHEMA_PATH = _ROOT / "tests" / "fixtures" / "schemas" / "clinicaltrial.json"
+_DOC_PATH = _ROOT / "tests" / "fixtures" / "documents" / "_cache" / "clinicaltrial.txt"
+_TRUTH_PATH = _ROOT / "tests" / "fixtures" / "schemas" / "clinicaltrial_truth.json"
 _RESULTS_DIR = _ROOT / "test-results"
 
 
@@ -43,7 +44,7 @@ def _require_inputs() -> tuple[dict, str, dict]:
         pytest.skip("GROQ_API_KEY not set")
     for p in (_SCHEMA_PATH, _DOC_PATH, _TRUTH_PATH):
         if not p.exists():
-            pytest.skip(f"{p.name} not generated (run scripts/gen_factbook_multi.py)")
+            pytest.skip(f"{p.name} not generated (run scripts/gen_clinicaltrial_fixture.py)")
     return (
         json.loads(_SCHEMA_PATH.read_text(encoding="utf-8")),
         _DOC_PATH.read_text(encoding="utf-8"),
@@ -60,9 +61,32 @@ def _flat(obj: object, prefix: str = "") -> dict[str, object]:
     if isinstance(obj, dict):
         for k, v in obj.items():
             out.update(_flat(v, f"{prefix}.{k}" if prefix else k))
-    elif obj not in (None, ""):
+    elif obj is not None and obj != "":
         out[prefix] = obj
     return out
+
+
+def _values_match(got: object, truth: object) -> bool:
+    """Type-aware comparison: bools/numbers exact, lists by set, strings by containment."""
+    if isinstance(truth, bool):
+        return bool(got) == truth if isinstance(got, (bool, int, str)) else False
+    if isinstance(truth, (int, float)) and not isinstance(truth, bool):
+        try:
+            return abs(float(got) - float(truth)) < 1e-6  # type: ignore[arg-type]
+        except (TypeError, ValueError):
+            return _norm(got) == _norm(truth)
+    if isinstance(truth, list):
+        # Credit captured content even when the model returns the items joined into
+        # one element (a representation difference, not data loss): split any joined
+        # string on comma/semicolon before comparing item sets.
+        raw = got if isinstance(got, list) else [got]
+        got_items: set[str] = set()
+        for x in raw:
+            got_items.update(_norm(part) for part in re.split(r"[;,]", str(x)) if part.strip())
+        truth_set = {_norm(t) for t in truth}
+        return len(got_items & truth_set) >= max(1, len(truth_set) // 2)
+    g, t = _norm(got), _norm(truth)
+    return bool(g) and bool(t) and (g == t or t in g or g in t)
 
 
 def _save(name: str, payload: dict) -> Path:
@@ -77,8 +101,8 @@ def _save(name: str, payload: dict) -> Path:
     return path
 
 
-def test_factbook_multi_full_pipeline() -> None:
-    """Run nfield on a 1045-field, 3-country schema and score accuracy vs truth."""
+def test_clinicaltrial_full_pipeline() -> None:
+    """Run nfield on a 300+ field typed, nested clinical-trial schema."""
     from formatshield import nfield
     from formatshield.config import ExtractionConfig
     from formatshield.types import ExtractionStatus
@@ -99,11 +123,7 @@ def test_factbook_multi_full_pipeline() -> None:
 
     extracted = _flat(result.data)
     correct = sum(
-        1
-        for path, true_val in truth.items()
-        if (g := _norm(extracted.get(path)))
-        and (t := _norm(true_val))
-        and (g == t or t in g or g in t)
+        1 for p, tv in truth.items() if p in extracted and _values_match(extracted[p], tv)
     )
     accuracy = round(100 * correct / len(truth), 1)
     summary = {
@@ -120,13 +140,13 @@ def test_factbook_multi_full_pipeline() -> None:
         "status": result.status.value,
         "elapsed_seconds": elapsed,
     }
-    saved = _save("groq_factbook_multi", {"summary": summary, "data": result.data})
-    print(f"\n[factbook multi full pipeline] {summary}\nsaved -> {saved}")
+    saved = _save("groq_clinicaltrial", {"summary": summary, "data": result.data})
+    print(f"\n[clinicaltrial strong typed pipeline] {summary}\nsaved -> {saved}")
 
-    assert m.fields_total >= 800, "this is the >800-field stress test"
+    assert m.fields_total >= 250, "this is the >250-field strong-schema test"
     assert isinstance(result.data, dict) and result.data
     assert isinstance(result.status, ExtractionStatus)
-    assert m.K < 120, f"K={m.K} indicates a retry/recovery storm regression"
-    assert correct >= 300, f"only {correct} values matched ground truth across 3 countries"
+    assert m.K < 60, f"K={m.K} indicates a retry/recovery storm regression"
+    assert correct >= 120, f"only {correct} typed values matched ground truth"
     blob = " ".join(_norm(v) for v in extracted.values())
-    assert "washington" in blob or "beijing" in blob, "a capital should be extracted"
+    assert "interventional" in blob or "vaccine" in blob or "phase" in blob

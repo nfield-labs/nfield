@@ -263,6 +263,37 @@ class Blackboard:
         if self._states[path] == FieldState.EMPTY:
             self._states[path] = FieldState.PENDING
 
+    def reopen_for_retry(self, path: str) -> bool:
+        """Reopen a FAILED / CONFLICT / NEEDS_REVALIDATION field for re-extraction.
+
+        A controlled escape hatch for the retry orchestrator: it moves a field
+        that the normal FSM treats as settled (or terminal) back to ``PENDING`` so
+        a subsequent :meth:`write` can record a fresh value. Clears the field's
+        prior error and any stored conflicting values, since the retry supersedes
+        them. Fields in ``EMPTY``/``PENDING``/``FILLED`` are left unchanged.
+
+        Args:
+            path: Dot-notation field path.
+
+        Returns:
+            ``True`` if the field was reopened, ``False`` if its state was not
+            eligible (so the caller knows whether a retry will be applied).
+
+        Raises:
+            AssemblyError: If the path is not registered.
+        """
+        self._require_path(path)
+        if self._states[path] in (
+            FieldState.FAILED,
+            FieldState.CONFLICT,
+            FieldState.NEEDS_REVALIDATION,
+        ):
+            self._states[path] = FieldState.PENDING
+            self._errors.pop(path, None)
+            self._conflict_values.pop(path, None)
+            return True
+        return False
+
     # ------------------------------------------------------------------
     # Read operations
     # ------------------------------------------------------------------

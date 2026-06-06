@@ -38,6 +38,7 @@ _DEPENDENCY_BLOCK_HEADER: str = (
 __all__ = [
     "build_extraction_prompt",
     "build_retry_system_message",
+    "builtin_system_message",
 ]
 
 # ---------------------------------------------------------------------------
@@ -160,6 +161,27 @@ def build_extraction_prompt(
         {"role": "system", "content": system_content},
         {"role": "user", "content": user_content},
     ]
+
+
+def builtin_system_message(*, knowledge_fallback: bool = False) -> str:
+    """Return the built-in SFEP system message text (without any caller prefix).
+
+    Exposed so capacity planning can charge the EXACT token cost of the format
+    contract (measured from this string) instead of a fixed guess.
+
+    Args:
+        knowledge_fallback: Select the knowledge-fallback sourcing rule, which is
+            longer than the strict rule — so the overhead estimate matches the
+            prompt that will actually be sent.
+
+    Returns:
+        The system message string the extraction prompt will use.
+
+    Example:
+        >>> "OUTPUT FORMAT" in builtin_system_message()
+        True
+    """
+    return _build_system_message(ClusterType.STANDARD, knowledge_fallback=knowledge_fallback)
 
 
 def build_retry_system_message(
