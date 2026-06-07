@@ -16,8 +16,8 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
-from formatshield.retrieval._bmx import bmx_rescore, build_bmx_index
 from formatshield.retrieval._chunker import chunk_document
+from formatshield.retrieval._glean import build_glean_index, glean_rescore
 
 if TYPE_CHECKING:
     from formatshield.config import ExtractionConfig
@@ -100,23 +100,37 @@ def run_stage_2b(
             g.D_cost = 0
         return state
 
-    # BMX (entropy-weighted lexical) — a drop-in BM25 successor at the same
-    # inverted-index cost, no per-document embedding (arXiv:2408.06643).
-    lexical_index = build_bmx_index(segments)
-    state.lexical_index = lexical_index
+    # GLEAN keeps a BMX index internally; expose it so Stage 5 re-retrieval reuses
+    # the same lexical index.
+    glean_index = build_glean_index(segments)
+    state.lexical_index = glean_index.lexical
 
-    # Retrieve a per-group number of top-ranked segments — depth scales with the
-    # group's field count, not a global cap — then Stage 3 trims each leaf's pooled
-    # segments to its own B_excerpt.
+    # Per-group retrieval depth scales with the group's field count (not a global
+    # cap); Stage 3 then trims each leaf's pooled segments to its own B_excerpt.
     for g in state.groups:
         query = _build_group_query(g)
         g_top_k = _group_top_k(g, segments, state.C_usable, state.chars_per_token)
-        ranked = bmx_rescore(lexical_index, query, top_k=g_top_k)
-        g.matched_segments = [seg for seg, _ in ranked]
-        g.segment_scores = [score for _, score in ranked]
-        g.D_cost = _compute_dcost(g.matched_segments, state.chars_per_token)
+        ranked = glean_rescore(glean_index, g.fields, query, top_k=g_top_k)
+        _apply_ranking(g, ranked, state.chars_per_token)
 
     return state
+
+
+def _apply_ranking(
+    group: FieldGroup,
+    ranked: list[tuple[Segment, float]],
+    chars_per_token: float,
+) -> None:
+    """Store a group's ranked segments, scores, and document-cost estimate.
+
+    Args:
+        group: The group to populate (mutated in place).
+        ranked: ``(segment, score)`` pairs from the retriever, best first.
+        chars_per_token: Calibrated characters-per-token ratio (Stage 0).
+    """
+    group.matched_segments = [seg for seg, _ in ranked]
+    group.segment_scores = [score for _, score in ranked]
+    group.D_cost = _compute_dcost(group.matched_segments, chars_per_token)
 
 
 def _group_top_k(

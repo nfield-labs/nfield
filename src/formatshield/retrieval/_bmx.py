@@ -38,7 +38,7 @@ from formatshield.retrieval._tokenize import tokenize
 if TYPE_CHECKING:
     from formatshield.schema._types import Segment
 
-__all__ = ["BMXIndex", "bmx_rescore", "build_bmx_index"]
+__all__ = ["BMXIndex", "bmx_rescore", "bmx_scores", "build_bmx_index"]
 
 # Hyperparameter bounds from the paper's English defaults; alpha is data-adaptive
 # (avgdl/100, clamped) and beta decays with corpus size -- both computed at query
@@ -118,40 +118,36 @@ def _term_entropy(term_frequencies: list[int]) -> float:
     return entropy
 
 
-def bmx_rescore(
-    index: BMXIndex,
-    query: str,
-    *,
-    top_k: int,
-) -> list[tuple[Segment, float]]:
-    """Score segments against *query* with BMX and return the top-k.
+def bmx_scores(index: BMXIndex, query: str) -> dict[int, float]:
+    """Score every matching segment against *query*, keyed by doc index.
+
+    The raw scoring core shared by :func:`bmx_rescore` and the GLEAN fusion
+    scorer, which needs per-doc-index scores to fuse with the morphological rank.
 
     Args:
         index: A :class:`BMXIndex` from :func:`build_bmx_index`.
         query: The group's retrieval query.
-        top_k: Maximum number of results.
 
     Returns:
-        ``(segment, score)`` pairs sorted by score descending; empty when the query
-        is blank, the index is empty, ``top_k <= 0``, or no query term is indexed.
+        ``doc_index -> BMX score`` for every segment with at least one query-term
+        hit; empty when the query is blank, the index is empty, or no query term
+        is indexed.
 
     Example:
         >>> from formatshield.schema._types import Segment
-        >>> segs = [
-        ...     Segment(text="net sales total revenue", start=0, end=23, segment_type="unstructured", segment_id=0),
-        ...     Segment(text="the weather was sunny", start=23, end=44, segment_type="unstructured", segment_id=1),
-        ... ]
-        >>> idx = build_bmx_index(segs)
-        >>> bmx_rescore(idx, "revenue", top_k=1)[0][0].segment_id
-        0
+        >>> idx = build_bmx_index([
+        ...     Segment(text="total revenue", start=0, end=13, segment_type="unstructured", segment_id=0),
+        ... ])
+        >>> sorted(bmx_scores(idx, "revenue"))
+        [0]
     """
-    if not query.strip() or index.n == 0 or top_k <= 0:
-        return []
+    if not query.strip() or index.n == 0:
+        return {}
 
     # Unique query terms (order-preserving) that actually occur in the corpus.
     query_terms = [t for t in dict.fromkeys(tokenize(query)) if t in index.postings]
     if not query_terms:
-        return []
+        return {}
 
     m = len(query_terms)
     avgdl = index.avgdl or 1.0
@@ -180,5 +176,38 @@ def bmx_rescore(
     for doc, hits in overlap.items():
         scores[doc] += beta * (hits / m) * sum_entropy
 
+    return scores
+
+
+def bmx_rescore(
+    index: BMXIndex,
+    query: str,
+    *,
+    top_k: int,
+) -> list[tuple[Segment, float]]:
+    """Score segments against *query* with BMX and return the top-k.
+
+    Args:
+        index: A :class:`BMXIndex` from :func:`build_bmx_index`.
+        query: The group's retrieval query.
+        top_k: Maximum number of results.
+
+    Returns:
+        ``(segment, score)`` pairs sorted by score descending; empty when the query
+        is blank, the index is empty, ``top_k <= 0``, or no query term is indexed.
+
+    Example:
+        >>> from formatshield.schema._types import Segment
+        >>> segs = [
+        ...     Segment(text="net sales total revenue", start=0, end=23, segment_type="unstructured", segment_id=0),
+        ...     Segment(text="the weather was sunny", start=23, end=44, segment_type="unstructured", segment_id=1),
+        ... ]
+        >>> idx = build_bmx_index(segs)
+        >>> bmx_rescore(idx, "revenue", top_k=1)[0][0].segment_id
+        0
+    """
+    if top_k <= 0:
+        return []
+    scores = bmx_scores(index, query)
     ranked = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)[:top_k]
     return [(index.segments[doc], score) for doc, score in ranked]
