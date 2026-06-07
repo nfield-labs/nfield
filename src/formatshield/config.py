@@ -275,7 +275,7 @@ class ExtractionConfig:
             Default ``"en"``.
         think_phase_budget: ``(min, max)`` token budget for the thinking
             phase. Default ``(100, 150)``.
-        evidence_score_threshold: Minimum BM25/semantic evidence score
+        evidence_score_threshold: Minimum lexical/semantic evidence score
             for a chunk to be included in extraction context. Default 0.3.
         use_advanced_sfr: Enable advanced Semantic Field Routing (SFR)
             for improved precision on large schemas. Default ``False``.

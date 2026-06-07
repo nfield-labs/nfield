@@ -186,7 +186,7 @@ def _subgroups_for(fields: list[Field], state: PipelineState) -> list[FieldGroup
 
     Each original group is filtered to just its missed fields, keeping that
     group's ``matched_segments`` / ``segment_scores`` / ``D_cost`` so re-packing
-    (Stage 2C) and excerpt finalisation (Stage 3) reuse the existing BM25 results
+    (Stage 2C) and excerpt finalisation (Stage 3) reuse the existing BMX results
     without a new retrieval index. Re-packing these sub-groups produces correctly
     sized recovery leaves instead of one oversized leaf.
 

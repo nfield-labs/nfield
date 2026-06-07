@@ -36,7 +36,7 @@ _DEFAULT_CHUNK_OVERLAP: int = _DEFAULT_OVERLAP_TOKENS * _APPROX_CHARS_PER_TOKEN 
 _MIN_SEGMENT_CHARS: int = 50
 # Hard cap on a single segment (4x the base chunk). A heading/table section
 # larger than this is sub-split so no segment spans an unbounded region, which
-# would defeat BM25 ranking. Engineering guard, not paper-derived.
+# would defeat lexical ranking. Engineering guard, not paper-derived.
 _MAX_SEGMENT_CHARS: int = 4 * _DEFAULT_CHUNK_SIZE
 # Split boundaries in descending priority: paragraph, line, sentence, clause,
 # word. A chunk ends at the best available boundary at or before the size budget
@@ -365,7 +365,7 @@ def _enforce_max_segment_size(segments: list[Segment]) -> list[Segment]:
 
     Structured and tabular strategies can emit very large segments when a
     single heading-delimited section (or table) spans a huge span of text.
-    Such segments are useless for BM25 retrieval and can overflow the model
+    Such segments are useless for lexical retrieval and can overflow the model
     context. This post-pass splits each oversized segment into fixed-size
     sub-segments while preserving the global character-offset contract
     (``text[seg.start:seg.end] == seg.text``) and reassigning ``segment_id``

@@ -86,7 +86,7 @@ be filled from the model's own well-established knowledge instead of left `NULL`
 use only for documents about well-known subject matter, as it can produce
 confident-but-unsourced values on private documents).
 
-Retrieval note: BM25 indexing folds diacritics (Unicode NFKD; Lucene-style ASCII
+Retrieval note: BMX lexical indexing folds diacritics (Unicode NFKD; Lucene-style ASCII
 folding), so an accented document spelling (`Denísov`, `café`) matches an
 unaccented query term (`Denisov`, `cafe`) and vice-versa.
 

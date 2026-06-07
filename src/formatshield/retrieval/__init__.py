@@ -1,22 +1,20 @@
-"""Document retrieval module for Stage 2.5 pre-pass.
+"""Document retrieval for the Stage 2.5 pre-pass.
 
-Exports public retrieval functions for document chunking and BM25 scoring.
+Chunking (`chunk_document`), a diacritic-folding lexical tokenizer, and the BMX
+entropy-weighted scorer used to rank chunks against each field group.
 """
 
 from __future__ import annotations
 
-from formatshield.retrieval._bm25 import (
-    BM25Index,
-    bm25_rescore,
-    bm25_rescore_single,
-    build_bm25_index,
-)
+from formatshield.retrieval._bmx import BMXIndex, bmx_rescore, build_bmx_index
 from formatshield.retrieval._chunker import chunk_document
+from formatshield.retrieval._tokenize import fold_diacritics, tokenize
 
 __all__ = [
-    "BM25Index",
-    "bm25_rescore",
-    "bm25_rescore_single",
-    "build_bm25_index",
+    "BMXIndex",
+    "bmx_rescore",
+    "build_bmx_index",
     "chunk_document",
+    "fold_diacritics",
+    "tokenize",
 ]

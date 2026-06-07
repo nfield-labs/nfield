@@ -141,7 +141,7 @@ class TestReal10KFullPipelineLive:
         # 2. Large-document path: the 9 MB filing far exceeds the usable context,
         #    so Stage 2.5 must chunk it (BM25), regardless of how few leaves the
         #    capacity math then needs.
-        assert state.bm25_index is not None
+        assert state.lexical_index is not None
         assert len(state.segments) > 100
 
         # 3. Capacity is dynamic: leaf count follows the model's real C_eff / M_O.

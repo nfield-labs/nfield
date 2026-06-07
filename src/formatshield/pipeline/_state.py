@@ -61,7 +61,7 @@ class PipelineState:
 
     # Stage 2.5: document pre-pass
     segments: list[Segment] = field(default_factory=list)
-    bm25_index: BMXIndex | None = None
+    lexical_index: BMXIndex | None = None
 
     # Stage 2C: capacity packing
     leaves: list[CapacityLeaf] = field(default_factory=list)

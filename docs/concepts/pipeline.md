@@ -8,7 +8,7 @@ Every extraction runs the same stages (S0–S6). Each is a pure step over a shar
 | S0 | Resource calibration | 1 (once per engine) | Measure `chars_per_token`; read context window / output ceiling. |
 | S1 | Schema analysis | 0 | Flatten schema to dot-notation fields; per-field token cost (τ), dependency graph, difficulty. |
 | S2A | Structural grouping | 0 | Group fields by their parent path in the schema tree. |
-| S2.5 | Document pre-pass | 0 | Chunk the document, build a BM25 index, score chunks per group (`D_cost`). |
+| S2.5 | Document pre-pass | 0 | Chunk the document, build a BMX index, score chunks per group (`D_cost`). |
 | S2C | Capacity packing | 0 | Pack groups into leaves that fit context + output budgets; order by dependencies. |
 | S3 | Excerpt finalisation | 0 | Per leaf: collect, dedup, trim, and order the matched document spans. |
 | S4 | Extraction | K (one per leaf) | Build the prompt, call the model, parse the SFEP response. |

@@ -1,6 +1,6 @@
 """Stage 2.5: Document Pre-Pass (DDF).
 
-Zero API calls. Chunks the document, builds a BM25 index, and scores each
+Zero API calls. Chunks the document, builds a BMX index, and scores each
 FieldGroup against the index to estimate D_cost(g) — the token cost of
 the document segments needed for that group.
 
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 __all__ = ["run_stage_2b"]
 
-# Floor on segments kept per group after BM25 ranking, so even a single-field
+# Floor on segments kept per group after BMX ranking, so even a single-field
 # group retrieves a few candidates (Robertson & Zaragoza, "The Probabilistic
 # Relevance Framework: BM25 and Beyond", 2009). Depth is computed PER GROUP from
 # its field count (see _group_top_k) — never a fixed global top-k, which would
@@ -36,7 +36,7 @@ _MIN_TOP_K_SEGMENTS: int = 5
 # need evidence from more places, so its retrieval depth scales with field count.
 _SEGMENTS_PER_FIELD: int = 3
 # Words taken from each field's description to enrich its group's retrieval
-# query (field names alone are often too sparse for BM25 term matching).
+# query (field names alone are often too sparse for lexical term matching).
 _GROUP_QUERY_MAX_DESC_WORDS: int = 5
 # English-average characters per token; used only if the calibrated ratio is
 # missing when sizing the dynamic retrieval depth.
@@ -52,9 +52,9 @@ def run_stage_2b(
 
     Populates:
     - ``state.segments`` — all document segments
-    - ``state.bm25_index`` — BM25 index over segments (None for small docs)
+    - ``state.lexical_index`` — BMX index over segments (None for small docs)
     - ``group.matched_segments`` — top-k segments for each group
-    - ``group.segment_scores`` — BM25 scores parallel to matched_segments
+    - ``group.segment_scores`` — BMX scores parallel to matched_segments
     - ``group.D_cost`` — token cost estimate for group's segments
 
     Args:
@@ -72,11 +72,11 @@ def run_stage_2b(
     total_doc_tokens = _estimate_tokens(document, state.chars_per_token)
 
     # Small-doc fast path: entire document fits in the usable context window.
-    # Skip BM25 entirely — every group gets the full document.
+    # Skip retrieval entirely — every group gets the full document.
     if total_doc_tokens <= state.C_usable:
         for g in state.groups:
             g.D_cost = total_doc_tokens
-        state.bm25_index = None
+        state.lexical_index = None
         # Create a single segment covering the full document
         from formatshield.schema._types import Segment
 
@@ -103,7 +103,7 @@ def run_stage_2b(
     # BMX (entropy-weighted lexical) — a drop-in BM25 successor at the same
     # inverted-index cost, no per-document embedding (arXiv:2408.06643).
     lexical_index = build_bmx_index(segments)
-    state.bm25_index = lexical_index
+    state.lexical_index = lexical_index
 
     # Retrieve a per-group number of top-ranked segments — depth scales with the
     # group's field count, not a global cap — then Stage 3 trims each leaf's pooled

@@ -205,7 +205,7 @@ class TestHugeSchemaHugeDoc:
         provider = _make_provider(ctx=8192, max_out=8192)
         result, state = await _run_pipeline(schema, doc, provider, return_state=True)
         _assert_mechanically_sound(result, state)
-        assert state.bm25_index is not None, "large doc must take chunking path"
+        assert state.lexical_index is not None, "large doc must take chunking path"
         assert len(state.leaves) > 1
 
     @pytest.mark.asyncio

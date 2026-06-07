@@ -218,7 +218,7 @@ class FieldGroup:
         parent_path: Common dot-notation path prefix for all fields in the group.
         fields: Ordered list of Field objects in this group.
         matched_segments: Document segments matched to this group in Stage 2.5.
-        segment_scores: BM25 relevance scores parallel to matched_segments.
+        segment_scores: BMX relevance scores parallel to matched_segments.
         D_cost: Estimated token cost of the matched_segments concatenated.
 
     Example:

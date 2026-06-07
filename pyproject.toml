@@ -21,9 +21,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
 ]
-dependencies = [
-    "rank-bm25>=0.2.2",
-]
+dependencies = []
 
 [project.optional-dependencies]
 groq = ["groq>=0.9"]
@@ -83,7 +81,7 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
-module = ["groq.*", "rank_bm25.*"]
+module = ["groq.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

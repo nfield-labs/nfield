@@ -40,7 +40,7 @@ class TestRunStage2b:
         # All groups get the full doc cost in fast path
         for g in state.groups:
             assert g.D_cost > 0
-        assert state.bm25_index is None
+        assert state.lexical_index is None
 
     def test_short_doc_segments_created(self):
         state, doc = _prepare_state(SHORT_DOC)
@@ -48,13 +48,13 @@ class TestRunStage2b:
         state = run_stage_2b(state, doc, config)
         assert len(state.segments) >= 1
 
-    def test_long_doc_uses_bm25(self):
+    def test_long_doc_uses_bmx(self):
         state, doc = _prepare_state(LONG_DOC)
         # Small C_usable forces chunking path
         state.C_usable = 50.0
         config = ExtractionConfig()
         state = run_stage_2b(state, doc, config)
-        assert state.bm25_index is not None
+        assert state.lexical_index is not None
 
     def test_long_doc_d_cost_positive(self):
         state, doc = _prepare_state(LONG_DOC)

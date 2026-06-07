@@ -22,7 +22,7 @@ Post-MVP stubs (not implemented)
 * ``LOW_GROUNDING_EVIDENCE_PRESENT`` — GSV grounding score below threshold.
 * ``LOW_GROUNDING_NO_EVIDENCE``      — No supporting evidence found in document.
 * PFTEN (pool-first narrowed excerpt) — targeted context narrowing per field.
-* GSGRF (targeted retrieval)         — per-field BM25 re-query.
+* GSGRF (targeted retrieval)         — per-field lexical re-query.
 * CADTR (cascade dep invalidation)   — dependency-aware invalidation tree.
 """
 

@@ -9,7 +9,7 @@ long-context LoCo benchmark, while staying purely lexical. That is exactly what
 FormatShield's re-index-per-document constraint needs: a better lexical core that
 costs no more to build than BM25.
 
-Reuses the diacritic-folding tokenizer (see ``_bm25._tokenize``) so accented
+Reuses the diacritic-folding tokenizer (see ``_tokenize.tokenize``) so accented
 spellings still match their plain forms.
 
 Scoring (arXiv:2408.06643, sec.3), all symbols in ASCII:
@@ -33,7 +33,7 @@ import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from formatshield.retrieval._bm25 import _tokenize
+from formatshield.retrieval._tokenize import tokenize
 
 if TYPE_CHECKING:
     from formatshield.schema._types import Segment
@@ -87,7 +87,7 @@ def build_bmx_index(segments: list[Segment]) -> BMXIndex:
     postings: dict[str, list[tuple[int, int]]] = {}
     doc_len: list[int] = []
     for i, seg in enumerate(segments):
-        tokens = _tokenize(seg.text)
+        tokens = tokenize(seg.text)
         doc_len.append(len(tokens))
         counts: dict[str, int] = {}
         for tok in tokens:
@@ -149,7 +149,7 @@ def bmx_rescore(
         return []
 
     # Unique query terms (order-preserving) that actually occur in the corpus.
-    query_terms = [t for t in dict.fromkeys(_tokenize(query)) if t in index.postings]
+    query_terms = [t for t in dict.fromkeys(tokenize(query)) if t in index.postings]
     if not query_terms:
         return []
 

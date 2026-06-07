@@ -141,12 +141,12 @@ async def _validate_leaf(
     # Flaw B: re-retrieve a fresh excerpt for the failed fields, so the retry sees
     # different text than the trimmed context that already missed. No-op for small docs.
     retry_excerpt: str | None = None
-    if state.bm25_index is not None and state.segments:
+    if state.lexical_index is not None and state.segments:
         budget = max(_MIN_RETRY_EXCERPT_TOKENS, state.C_usable - leaf.overhead - leaf.safe_output)
         retry_excerpt = (
             targeted_excerpt(
                 failed_fields,
-                state.bm25_index,
+                state.lexical_index,
                 state.segments,
                 budget_tokens=budget,
                 chars_per_token=state.chars_per_token,

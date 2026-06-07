@@ -220,11 +220,11 @@ class TestLargeDocumentChunkingPath:
 
     @pytest.mark.asyncio
     async def test_moby_dick_takes_chunking_path(self):
-        """Large doc → bm25_index is built (NOT the small-doc fast path)."""
+        """Large doc → lexical_index is built (NOT the small-doc fast path)."""
         doc = _load_book("moby_dick.txt")
         provider = _make_provider(_MODEL_8B, 8192, 8192)
         _, state = await _run_pipeline(_SCHEMA_BOOK_META, doc, provider, return_state=True)
-        assert state.bm25_index is not None, "Expected chunking path, got small-doc fast path"
+        assert state.lexical_index is not None, "Expected chunking path, got small-doc fast path"
 
     @pytest.mark.asyncio
     async def test_moby_dick_many_segments(self):
@@ -431,7 +431,7 @@ class TestFullDocumentHeavySend:
         doc = _load_book("moby_dick.txt")[: self._SLICE_CHARS]
         provider = _make_provider(_MODEL_8B, _CTX_8B, _MAX_OUT_8B)
         _, state = await _run_pipeline(_SCHEMA_BOOK_META, doc, provider, return_state=True)
-        assert state.bm25_index is None, "Doc under C_usable should use fast path"
+        assert state.lexical_index is None, "Doc under C_usable should use fast path"
 
     @pytest.mark.asyncio
     async def test_full_document_sent_as_excerpt(self):
@@ -475,22 +475,22 @@ class TestSmallVsLargePathConsistency:
 
     @pytest.mark.asyncio
     async def test_small_doc_uses_fast_path(self):
-        """A tiny doc skips BM25 (fast path → bm25_index is None)."""
+        """A tiny doc skips BM25 (fast path → lexical_index is None)."""
         if not _GROQ_API_KEY:
             pytest.skip("GROQ_API_KEY not set")
         provider = _make_provider(_MODEL_8B, _CTX_8B, _MAX_OUT_8B)
         _, state = await _run_pipeline(
             _SCHEMA_BOOK_META, self._SMALL_DOC, provider, return_state=True
         )
-        assert state.bm25_index is None, "Small doc should use the fast path"
+        assert state.lexical_index is None, "Small doc should use the fast path"
 
     @pytest.mark.asyncio
     async def test_large_doc_uses_chunking_path(self):
-        """A large doc takes the chunking path (bm25_index is not None)."""
+        """A large doc takes the chunking path (lexical_index is not None)."""
         doc = _load_book("moby_dick.txt")
         provider = _make_provider(_MODEL_8B, 8192, 8192)
         _, state = await _run_pipeline(_SCHEMA_BOOK_META, doc, provider, return_state=True)
-        assert state.bm25_index is not None
+        assert state.lexical_index is not None
 
     @pytest.mark.asyncio
     async def test_both_paths_return_valid_status(self):
