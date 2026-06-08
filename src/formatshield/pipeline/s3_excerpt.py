@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from formatshield.pipeline._coverage import coverage_segment_ids
+
 if TYPE_CHECKING:
     from formatshield.pipeline._state import PipelineState
     from formatshield.schema._types import CapacityLeaf, Segment
@@ -114,19 +116,12 @@ def _finalize_excerpt(leaf: CapacityLeaf, state: PipelineState) -> str:
 
 
 def _coverage_segment_ids(leaf: CapacityLeaf) -> set[int]:
-    """Segment ids that each provide some field its best evidence.
+    """Segment ids that must stay in the excerpt to cover the leaf's fields.
 
-    Strictly additive over per-group CFCS: every group contributes its single best
-    matched segment (the proven base), and each *typed* field additionally
-    contributes its own best segment (``group.field_best_segment`` from Stage 2.5),
-    so a typed field's evidence is retained even when the group's best segment
-    serves a different field. Plain-string fields rely on the group base alone, so
-    an all-string leaf behaves exactly as before. Deduplicated by construction.
-
-    Scoped to ``leaf.fields``: a wide group split across several leaves attaches
-    the whole group object to each one, so the per-field union is restricted to the
-    fields actually extracted in this leaf — a split leaf never reserves budget for
-    a sibling leaf's fields.
+    Delegates to the shared coverage definition (see :mod:`_coverage`) so Stage 3's
+    excerpt and Stage 2C's split decision use the identical must-have set: each
+    group's best segment plus each typed field's own best segment, scoped to the
+    leaf's fields.
 
     Args:
         leaf: The leaf whose coverage segments to collect.
@@ -134,15 +129,4 @@ def _coverage_segment_ids(leaf: CapacityLeaf) -> set[int]:
     Returns:
         Set of ``segment_id`` values forming the coverage set.
     """
-    leaf_field_paths = {f.path for f in leaf.fields}
-    ids: set[int] = set()
-    for g in leaf.groups:
-        if g.matched_segments:
-            pairs = zip(g.matched_segments, g.segment_scores, strict=False)
-            best = max(pairs, key=lambda x: x[1], default=None)
-            if best is not None:
-                ids.add(best[0].segment_id)
-        for path, seg_id in g.field_best_segment.items():
-            if path in leaf_field_paths:
-                ids.add(seg_id)
-    return ids
+    return coverage_segment_ids(leaf.groups, {f.path for f in leaf.fields})

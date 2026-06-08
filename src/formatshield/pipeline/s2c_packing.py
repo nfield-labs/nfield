@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING
 
 from formatshield.extraction._papt import TemplateType, describe_field
 from formatshield.extraction._prompt import builtin_system_message
+from formatshield.pipeline._coverage import coverage_tokens
 from formatshield.retrieval._chunker import _DEFAULT_TARGET_TOKENS
 from formatshield.schema._types import CapacityLeaf
 
@@ -236,41 +237,6 @@ def fits(
     return overhead + doc_needed + output_needed <= C_usable
 
 
-def _coverage_floor_tokens(groups: list[FieldGroup], chars_per_token: float) -> int:
-    """Minimum document tokens a leaf must hold: the deduped union of each group's
-    single best segment.
-
-    This is the Set-Union Bin Packing element cost (bin packing with overlapping
-    items, arXiv:1908.06727): groups in one leaf share the document, so the floor is
-    the UNION of their must-have evidence (one top-scoring segment per group),
-    counted once per segment. It is the lower bound that guarantees every group
-    keeps at least one piece of evidence (coverage; Nemhauser-Wolsey-Fisher 1978) —
-    below it, a group would be starved and the leaf must split instead.
-
-    Args:
-        groups: The groups packed (or being packed) into one leaf.
-        chars_per_token: Calibrated characters-per-token ratio (Stage 0).
-
-    Returns:
-        Token cost of the deduplicated best-segment union; 0 when no group has any
-        matched segment (small-doc path or no retrieval hit).
-    """
-    seen: set[int] = set()
-    total_chars = 0
-    for g in groups:
-        if not g.matched_segments:
-            continue
-        best = max(zip(g.matched_segments, g.segment_scores, strict=False), key=lambda x: x[1])
-        seg = best[0]
-        if seg.segment_id not in seen:
-            seen.add(seg.segment_id)
-            total_chars += len(seg.text)
-    if not seen:
-        return 0
-    ratio = chars_per_token if chars_per_token > 0 else _FALLBACK_CHARS_PER_TOKEN
-    return max(1, math.ceil(total_chars / ratio))
-
-
 def _coverage_fits(
     groups: list[FieldGroup],
     leaf_fields: list[Field],
@@ -279,14 +245,16 @@ def _coverage_fits(
     output_ceiling: float,
     chars_per_token: float,
 ) -> bool:
-    """Evidence-aware feasibility (Set-Union Bin Packing): does the union of every
-    group's best segment fit alongside overhead and output?
+    """Evidence-aware feasibility (Set-Union Bin Packing): does the leaf's coverage
+    set — each group's best segment plus each typed field's own best segment — fit
+    alongside overhead and output?
 
     Complements :func:`fits` (which bounds output + a minimal excerpt): here the
-    document term is the real coverage floor over the leaf's groups, deduplicated.
-    When it fails, the groups must split rather than have Stage 3 trim away a
-    group's only evidence — keeping each leaf small and focused, which also avoids
-    the accuracy loss of over-long context (Lost-in-the-Middle, arXiv:2307.03172).
+    document term is the real coverage floor (the same set Stage 3 keeps, see
+    :mod:`_coverage`), deduplicated. When it fails, the leaf must split rather than
+    have Stage 3 trim away a field's only evidence — keeping each leaf small and
+    focused, which also avoids the accuracy loss of over-long context
+    (Lost-in-the-Middle, arXiv:2307.03172).
 
     Args:
         groups: Candidate groups for the leaf.
@@ -302,7 +270,7 @@ def _coverage_fits(
     output_needed = sum(_field_output_tokens(f, chars_per_token) for f in leaf_fields)
     if output_needed > output_ceiling:
         return False
-    floor = _coverage_floor_tokens(groups, chars_per_token)
+    floor = coverage_tokens(groups, {f.path for f in leaf_fields}, chars_per_token)
     return overhead + output_needed + floor <= c_usable
 
 
@@ -725,12 +693,16 @@ def _greedy_ffd(
         for f in group.fields:
             candidate = [*current, f]
             overhead = _overhead(candidate)
-            # Split when the token budget is exceeded OR the difficulty-weighted
-            # reliability budget is hit.
+            # Split when the reliability budget is hit, the token budget is exceeded,
+            # or the field-level coverage set would no longer fit (so a typed field's
+            # evidence is never trimmed away — same set Stage 3 keeps).
             over_cap = _reliability_load(candidate) > max_fields_per_call
             if current and (
                 over_cap
                 or not fits(candidate, group.D_cost, overhead, state.C_usable, output_ceiling, cpt)
+                or not _coverage_fits(
+                    [group], candidate, overhead, state.C_usable, output_ceiling, cpt
+                )
             ):
                 _new_leaf(current, group)
                 current = [f]

@@ -422,7 +422,7 @@ class TestSafeOutputCappedAtMO:
 # ---------------------------------------------------------------------------
 # Evidence-aware split (Set-Union Bin Packing) — Phase A.2
 # ---------------------------------------------------------------------------
-from formatshield.pipeline.s2c_packing import _coverage_fits, _coverage_floor_tokens  # noqa: E402
+from formatshield.pipeline.s2c_packing import _coverage_fits  # noqa: E402
 from formatshield.schema._types import FieldGroup, Segment  # noqa: E402
 
 
@@ -446,31 +446,6 @@ def _group_with(parent: str, seg_ids: list[int], n_chars: int) -> FieldGroup:
         segment_scores=[1.0] * len(segs),
         D_cost=0,
     )
-
-
-class TestCoverageFloor:
-    def test_disjoint_segments_sum(self):
-        g1 = _group_with("a", [0], 400)
-        g2 = _group_with("b", [1], 400)
-        assert _coverage_floor_tokens([g1, g2], chars_per_token=4.0) == 200
-
-    def test_shared_segment_counted_once(self):
-        g1 = _group_with("a", [0], 400)
-        g2 = _group_with("b", [0], 400)
-        assert _coverage_floor_tokens([g1, g2], chars_per_token=4.0) == 100
-
-    def test_no_segments_is_zero(self):
-        g = FieldGroup(parent_path="a", fields=[_field_in("a.f", "a")])
-        assert _coverage_floor_tokens([g], chars_per_token=4.0) == 0
-
-    def test_best_segment_is_highest_score(self):
-        g = FieldGroup(
-            parent_path="a",
-            fields=[_field_in("a.f", "a")],
-            matched_segments=[_seg(0, 4000), _seg(1, 400)],
-            segment_scores=[0.1, 9.0],
-        )
-        assert _coverage_floor_tokens([g], chars_per_token=4.0) == 100
 
 
 class TestCoverageFits:
@@ -509,6 +484,26 @@ class TestEvidenceAwareSplit:
         state = self._state_with_groups(groups, c_usable=1300.0)
         run_stage_2c(state, ExtractionConfig())
         assert len(state.leaves) == 1
+
+    def test_field_level_coverage_forces_split(self):
+        # One group, four typed fields, each needing a DIFFERENT large segment.
+        # Per-group coverage (one segment) fits the budget, but per-field coverage
+        # (four segments) does not — so the leaf must split rather than let Stage 3
+        # trim a field's only evidence. Every field must still be placed.
+        segs = [_seg(i, 2000) for i in range(4)]
+        fields = [_field_in(f"a.f{i}", "a") for i in range(4)]
+        g = FieldGroup(
+            parent_path="a",
+            fields=fields,
+            matched_segments=segs,
+            segment_scores=[4.0, 3.0, 2.0, 1.0],
+            field_best_segment={f"a.f{i}": i for i in range(4)},
+        )
+        state = self._state_with_groups([g], c_usable=1400.0)
+        run_stage_2c(state, ExtractionConfig())
+        assert len(state.leaves) >= 2
+        placed = {f.path for leaf in state.leaves for f in leaf.fields}
+        assert placed == {f.path for f in fields}
 
 
 # ---------------------------------------------------------------------------
