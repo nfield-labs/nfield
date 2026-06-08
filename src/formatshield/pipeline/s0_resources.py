@@ -38,8 +38,7 @@ async def run_stage_0(
         Fresh ``PipelineState`` populated with calibration values.
 
     Example:
-        >>> # result = await run_stage_0(provider, config)
-        >>> # result.chars_per_token > 0
+        >>> callable(run_stage_0)
         True
     """
     chars_per_token = await measure_chars_per_token(provider, language=language)

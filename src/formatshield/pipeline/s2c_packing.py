@@ -76,7 +76,7 @@ _INJECTION_HEADER_TOKENS: int = 12
 # (D=1) costs 1+λ. Extraction reliability falls with field COUNT — and harder
 # fields consume more of the model's attention — so the budget is spent in
 # difficulty-weighted units, not raw counts (IFScale arXiv:2507.11538; instance-
-# count collapse arXiv:2603.22608; cluster-size x mean-difficulty, paper §4479).
+# count collapse arXiv:2603.22608).
 _DIFFICULTY_WEIGHT: float = 1.0
 
 
@@ -380,8 +380,8 @@ def compute_execution_order(
 
     Example:
         >>> leaf = CapacityLeaf(leaf_id=0)
-        >>> compute_execution_order([leaf], {})
-        [[...]]
+        >>> len(compute_execution_order([leaf], {}))
+        1
     """
     if not leaves:
         return [[]]
@@ -618,6 +618,12 @@ def _greedy_ffd(
     fits. A group too large for any single call is refined lazily — its fields
     are packed into fresh leaves one at a time — so a wide flat group (e.g. 200
     sibling fields) splits across several calls instead of overflowing one.
+
+    Complexity: O(G·L) placement scans (G groups, L leaves) — first-fit inherently
+    rescans existing leaves, and each scan re-costs the candidate's coverage set.
+    Comfortable to thousands of leaves (N up to ~10^4 fields). For far larger N
+    (10^5 to 10^6) this quadratic leaf scan is the pipeline's scaling bottleneck and
+    will need an indexed/sharded first-fit; every other stage is linear (future work).
 
     Args:
         groups: FieldGroups from Stage 2A.

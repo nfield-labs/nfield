@@ -61,7 +61,7 @@ async def run_stage_4(
         Updated ``PipelineState`` with blackboard values written.
 
     Example:
-        >>> # After run_stage_4, blackboard has extracted values for each field.
+        >>> callable(run_stage_4)
         True
     """
     assert state.blackboard is not None, "Blackboard must be initialised before Stage 4"

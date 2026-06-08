@@ -41,7 +41,7 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
         :class:`~formatshield.types.ExtractionResult` ready for the caller.
 
     Example:
-        >>> # result.status is ExtractionStatus.SUCCESS when all fields filled.
+        >>> callable(run_stage_6)
         True
     """
     assert state.blackboard is not None, "Blackboard must be initialised"

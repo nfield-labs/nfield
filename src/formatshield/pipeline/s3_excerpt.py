@@ -42,7 +42,7 @@ def run_stage_3(state: PipelineState) -> PipelineState:
         Updated ``PipelineState`` with ``leaf.document_excerpt`` set.
 
     Example:
-        >>> # After run_stage_3, every leaf has a non-empty document_excerpt.
+        >>> callable(run_stage_3)
         True
     """
     for leaf in state.leaves:

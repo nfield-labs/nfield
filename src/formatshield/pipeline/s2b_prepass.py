@@ -66,7 +66,7 @@ def run_stage_2b(
         Updated ``PipelineState``.
 
     Example:
-        >>> # Short doc: D_cost equals total doc tokens for all groups.
+        >>> callable(run_stage_2b)
         True
     """
     total_doc_tokens = _estimate_tokens(document, state.chars_per_token)

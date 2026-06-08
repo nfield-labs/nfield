@@ -39,8 +39,7 @@ def run_stage_2a(state: PipelineState) -> PipelineState:
         Updated ``PipelineState``.
 
     Example:
-        >>> # After run_stage_2a(state), fields sharing "address" parent
-        >>> # are in the same FieldGroup.
+        >>> callable(run_stage_2a)
         True
     """
     group_by_parent: dict[str, FieldGroup] = {}

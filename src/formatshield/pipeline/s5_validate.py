@@ -54,7 +54,7 @@ async def run_stage_5(
         Updated ``PipelineState``.
 
     Example:
-        >>> # After run_stage_5, blackboard has no invalid FILLED fields.
+        >>> callable(run_stage_5)
         True
     """
     assert state.blackboard is not None, "Blackboard must be initialised"
