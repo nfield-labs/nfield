@@ -146,3 +146,61 @@ class TestExtract:
             ],
         )
         assert result.exit_code != 0
+
+
+class TestIOErrorHandling:
+    """Bad file inputs produce a clean message, never a raw Python traceback."""
+
+    def test_non_utf8_schema_is_clean_error(self, tmp_path):
+        bad = tmp_path / "s.json"
+        bad.write_bytes(b"\xff\xfe\x00not utf8")
+        result = runner.invoke(app, ["inspect", str(bad)])
+        assert result.exit_code != 0
+        # The fix turns the read failure into BadParameter; without it the raw
+        # UnicodeDecodeError would propagate as result.exception.
+        assert not isinstance(result.exception, (UnicodeDecodeError, OSError))
+
+    def test_non_utf8_document_is_clean_error(self, tmp_path):
+        schema_file = _write(tmp_path / "s.json", json.dumps(_SCHEMA))
+        doc = tmp_path / "doc.txt"
+        doc.write_bytes(b"\xff\xfe\x00not utf8")
+        result = runner.invoke(
+            app, ["extract", str(doc), "--schema", schema_file, "--model", "mock/echo"]
+        )
+        assert result.exit_code != 0
+        assert not isinstance(result.exception, (UnicodeDecodeError, OSError))
+
+    def test_schema_path_is_directory_is_clean_error(self, tmp_path):
+        d = tmp_path / "a_dir"
+        d.mkdir()
+        result = runner.invoke(app, ["inspect", str(d)])
+        assert result.exit_code != 0
+        assert not isinstance(result.exception, (UnicodeDecodeError, OSError))
+
+    def test_schema_not_json_object_is_clean_error(self, tmp_path):
+        arr = _write(tmp_path / "s.json", "[1, 2, 3]")
+        result = runner.invoke(app, ["inspect", arr])
+        assert result.exit_code != 0
+        assert not isinstance(result.exception, (UnicodeDecodeError, OSError))
+
+    def test_unwritable_output_is_clean_error(self, tmp_path, monkeypatch):
+        provider = _MockProvider("vendor = Acme")
+        monkeypatch.setattr("formatshield.engine._async.from_model", lambda _m, **_kw: provider)
+        doc = _write(tmp_path / "doc.txt", "Acme")
+        schema_file = _write(tmp_path / "s.json", json.dumps(_SCHEMA))
+        bad_out = tmp_path / "missing_dir" / "out.json"  # parent dir does not exist
+        result = runner.invoke(
+            app,
+            [
+                "extract",
+                doc,
+                "--schema",
+                schema_file,
+                "--model",
+                "mock/echo",
+                "--output",
+                str(bad_out),
+            ],
+        )
+        assert result.exit_code != 0
+        assert not isinstance(result.exception, OSError)

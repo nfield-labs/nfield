@@ -65,6 +65,39 @@ def _root(
     """FormatShield — extract N structured fields from any document."""
 
 
+def _read_text_file(path: Path, label: str) -> str:
+    """Read a UTF-8 text file, turning every I/O failure into a clean message.
+
+    Centralises the ways a user-supplied path can fail — missing, a directory,
+    permission-denied, or not UTF-8 — so the CLI reports a one-line
+    ``BadParameter`` instead of a Python traceback.
+
+    Args:
+        path: File to read.
+        label: Human label for the file (e.g. ``"Document"``, ``"Schema"``),
+            used in the error message.
+
+    Returns:
+        The file's decoded text.
+
+    Raises:
+        typer.BadParameter: If the path is missing, not UTF-8, or otherwise
+            unreadable (directory, permissions, ...).
+
+    Example:
+        >>> # _read_text_file(Path("missing.txt"), "Document")  # → BadParameter
+        True
+    """
+    if not path.exists():
+        raise typer.BadParameter(f"{label} file not found: {path}")
+    try:
+        return path.read_text(encoding="utf-8")
+    except UnicodeDecodeError as exc:
+        raise typer.BadParameter(f"{label} is not valid UTF-8 text: {path}") from exc
+    except OSError as exc:
+        raise typer.BadParameter(f"Could not read {label.lower()} file {path}: {exc}") from exc
+
+
 def _load_schema(schema_path: Path) -> dict[str, Any]:
     """Load and parse a JSON Schema file.
 
@@ -75,12 +108,11 @@ def _load_schema(schema_path: Path) -> dict[str, Any]:
         The parsed schema dict.
 
     Raises:
-        typer.BadParameter: If the file is missing or not valid JSON.
+        typer.BadParameter: If the file is missing, unreadable, not valid JSON,
+            or not a JSON object.
     """
-    if not schema_path.exists():
-        raise typer.BadParameter(f"Schema file not found: {schema_path}")
     try:
-        loaded: Any = json.loads(schema_path.read_text(encoding="utf-8"))
+        loaded: Any = json.loads(_read_text_file(schema_path, "Schema"))
     except json.JSONDecodeError as exc:
         raise typer.BadParameter(f"Schema is not valid JSON: {exc}") from exc
     if not isinstance(loaded, dict):
@@ -122,10 +154,8 @@ def extract(
     Reads the document and schema, runs the pipeline against *model*, and writes
     the extracted JSON to stdout (or ``--output``).
     """
-    if not document.exists():
-        raise typer.BadParameter(f"Document file not found: {document}")
     schema_dict = _load_schema(schema)
-    document_text = document.read_text(encoding="utf-8")
+    document_text = _read_text_file(document, "Document")
 
     config = ExtractionConfig(max_retry_rounds=max_retry_rounds)
     try:
@@ -145,7 +175,11 @@ def extract(
 
     payload = json.dumps(result.data, indent=2, ensure_ascii=False)
     if output is not None:
-        output.write_text(payload + "\n", encoding="utf-8")
+        try:
+            output.write_text(payload + "\n", encoding="utf-8")
+        except OSError as exc:
+            typer.echo(f"Could not write output to {output}: {exc}", err=True)
+            raise typer.Exit(code=1) from exc
         typer.echo(f"Wrote {result.metadata.fields_extracted} fields to {output}", err=True)
     else:
         typer.echo(payload)
@@ -176,6 +210,9 @@ def inspect(
         tau, var_tau = compute_tau(f, _INSPECT_CHARS_PER_TOKEN)
         enriched.append(f.with_tau(tau=tau, var_tau=var_tau))
     sum_var = sum(f.var_tau for f in enriched)
+    # Mirrors the safe-output reservation in pipeline/s2c_packing (M_O minus a
+    # heavy-tail margin); kept in sync by hand since this is an offline estimate,
+    # not the real packing run. compute_K_min treats safe_output <= 0 as len(fields).
     safe_output = max_output_tokens - _INSPECT_Z_EFF * math.sqrt(sum_var)
     k_min = compute_K_min(enriched, safe_output, _INSPECT_CHARS_PER_TOKEN)
 
