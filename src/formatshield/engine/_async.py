@@ -21,7 +21,6 @@ from formatshield.config import ExtractionConfig
 from formatshield.exceptions import SchemaError
 from formatshield.pipeline._state import PipelineState
 from formatshield.pipeline.s0_resources import run_stage_0
-from formatshield.pipeline.s0b_reliability import calibrate_field_cap
 from formatshield.pipeline.s1_schema import run_stage_1
 from formatshield.pipeline.s2a_structure import run_stage_2a
 from formatshield.pipeline.s2b_prepass import run_stage_2b
@@ -266,10 +265,6 @@ class AsyncFormatShield:
         self._c_eff: int = 0
         self._m_o: int = 0
         self._c_usable: float = 0.0
-        # Measured per-call field cap from the Stage 0.5 reliability probe, cached
-        # so a reused engine calibrates only once. None until calibrated (or when
-        # config.calibrate_field_cap is False — then the static cap is used).
-        self._field_cap: int | None = None
 
     @property
     def model(self) -> str:
@@ -307,12 +302,6 @@ class AsyncFormatShield:
         state.inject_dependencies = config.inject_dependencies
         state.knowledge_fallback = config.knowledge_fallback
         state.max_concurrent_calls = config.max_concurrent_calls
-        # Opt-in dynamic field cap: measure it once per engine, then run with a
-        # config whose max_fields_per_call is the measured value.
-        if config.calibrate_field_cap:
-            config = dataclasses.replace(
-                config, max_fields_per_call=await self._calibrated_field_cap(config)
-            )
         state = run_stage_1(state, schema_dict)
         state = run_stage_2a(state)
         state = run_stage_2b(state, document, config)
@@ -355,30 +344,6 @@ class AsyncFormatShield:
             M_O=self._m_o,
             C_usable=self._c_usable,
         )
-
-    async def _calibrated_field_cap(self, config: ExtractionConfig) -> int:
-        """Return the measured per-call field cap, probing once then caching it.
-
-        Runs the Stage 0.5 reliability probe on first use and caches the result on
-        the engine, so a reused engine probes only once. The probe needs the
-        calibrated ``chars_per_token``, which Stage 0 has already set by the time
-        this is called.
-
-        Args:
-            config: Active extraction configuration (supplies the target SLA and
-                the static fallback cap).
-
-        Returns:
-            The per-call field cap to use for this run.
-        """
-        if self._field_cap is None:
-            self._field_cap = await calibrate_field_cap(
-                self._provider,
-                target_reliability=config.target_field_reliability,
-                chars_per_token=self._chars_per_token or 0.0,
-                static_default=config.max_fields_per_call,
-            )
-        return self._field_cap
 
     async def __call__(self, document: str, schema: object | None = None) -> ExtractionResult:
         """Alias for :meth:`extract` so ``await engine(document)`` works."""
