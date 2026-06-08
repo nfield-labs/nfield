@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import json
 from importlib import resources
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from formatshield.exceptions import ProviderError
@@ -38,22 +37,14 @@ def _load_calibration_samples() -> dict[str, list[str]]:
         Dictionary mapping language code ("en", "cjk", "mixed") to list of sample strings.
     """
     try:
-        # Try using importlib.resources (Python 3.9+)
-        if hasattr(resources, "files"):
-            # Python 3.9+
-            data_dir = resources.files("formatshield") / "_data"
-            sample_file = data_dir / "calibration_samples.json"
-            content = sample_file.read_text(encoding="utf-8")
-        else:
-            # Fallback for older Python or when resources.files not available
-            base_dir = Path(__file__).parent.parent
-            sample_file = base_dir / "_data" / "calibration_samples.json"
-            content = sample_file.read_text(encoding="utf-8")
-
+        sample_file = resources.files("formatshield") / "_data" / "calibration_samples.json"
+        content = sample_file.read_text(encoding="utf-8")
         data: dict[str, list[str]] = json.loads(content)
         return data
-    except (FileNotFoundError, json.JSONDecodeError, IsADirectoryError):
-        # Fallback: return empty samples
+    except (OSError, json.JSONDecodeError):
+        # Missing/unreadable file or bad JSON → run with no samples (callers fall
+        # back to the per-language hardcoded ratio). OSError covers
+        # FileNotFoundError / IsADirectoryError / permission errors.
         return {"en": [], "cjk": [], "mixed": []}
 
 
@@ -72,9 +63,11 @@ async def measure_chars_per_token(
 ) -> float:
     """Measure chars-per-token ratio for a specific provider + model.
 
-    Calls the provider's token-counting API on a representative sample
-    in the requested language, and returns the ratio. Uses fallback
-    hardcoded values if the API is unavailable.
+    Calls the provider's token counter on a representative sample in the requested
+    language and returns chars / tokens. The counter is an API call only if the
+    provider supports one; providers without a token endpoint (e.g. Groq) return a
+    local estimate, in which case the ratio is an estimate, not a measurement. Falls
+    back to a hardcoded per-language ratio when no samples or the counter fails.
 
     Args:
         provider: LLMProvider instance (or compatible with count_tokens()).

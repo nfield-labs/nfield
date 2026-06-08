@@ -6,6 +6,7 @@ protocol with deferred imports (groq SDK only imported when needed).
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from formatshield.exceptions import ProviderError
@@ -178,7 +179,13 @@ class GroqProvider(BaseProvider):
         client = self._get_client()
 
         try:
-            response = client.chat.completions.create(
+            # The groq SDK client is synchronous, so run the blocking call in a
+            # worker thread. Without this, awaiting it would still block the event
+            # loop and serialize the concurrent leaf calls Stage 4/5 fire via
+            # asyncio.gather — defeating max_concurrent_calls. httpx.Client (under
+            # the SDK) is thread-safe, and the semaphore bounds the thread count.
+            response = await asyncio.to_thread(
+                client.chat.completions.create,
                 model=self.model_name,
                 messages=messages,
                 max_tokens=max_tokens,
@@ -194,26 +201,21 @@ class GroqProvider(BaseProvider):
             ) from e
 
     async def _raw_count_tokens(self, text: str) -> int:
-        """Count tokens using Groq's tokenization.
+        """Estimate token count locally — the Groq SDK exposes no token API.
 
-        Note: Groq SDK may not have a dedicated token-counting API.
-        This is a stub that will call the model's tokenizer if available,
-        or fall back to estimation.
+        IMPORTANT: this makes NO network call. Groq has no token-counting
+        endpoint, so this returns a ``len // 4`` character heuristic. As a result
+        Stage 0 calibration via this provider yields ~4.0 chars/token (a constant
+        estimate), not a tokenizer-measured value. A future upgrade would count
+        with the model's real tokenizer offline (e.g. tiktoken / transformers).
 
         Args:
-            text: Text to tokenize.
+            text: Text to estimate a token count for.
 
         Returns:
-            Estimated token count.
-
-        Raises:
-            ProviderError: On API failure.
+            Estimated token count (``len(text) // 4``, minimum 1).
         """
-        # Groq SDK doesn't expose a tokenization API in MVP.
-        # Use a simple heuristic: assume ~3.5 chars per token for English.
-        # In production, this could call a dedicated tokenizer endpoint.
-        estimated_tokens = max(1, len(text) // 4)
-        return estimated_tokens
+        return max(1, len(text) // 4)
 
     # --- Properties ---
 

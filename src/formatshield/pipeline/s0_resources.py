@@ -1,7 +1,8 @@
 """Stage 0: Resource Calibration.
 
-Makes one API call (measure_chars_per_token) and populates the context
-window parameters C_eff, M_O, and C_usable on the shared PipelineState.
+Measures chars_per_token for the model (an API call only if the provider exposes a
+token endpoint; providers without one, e.g. Groq, return a local estimate) and
+populates the context-window parameters C_eff, M_O, C_usable on the PipelineState.
 """
 
 from __future__ import annotations
@@ -26,8 +27,9 @@ async def run_stage_0(
 ) -> PipelineState:
     """Calibrate token ratios and compute context window parameters.
 
-    Makes one API call to measure ``chars_per_token`` for the current model,
-    then computes ``C_usable = C_eff * config.context_utilization_ratio``.
+    Measures ``chars_per_token`` for the current model (an API call only if the
+    provider has a token endpoint; otherwise a local estimate), then computes
+    ``C_usable = C_eff * config.context_utilization_ratio``.
 
     Args:
         provider: LLM provider used for the extraction run.
