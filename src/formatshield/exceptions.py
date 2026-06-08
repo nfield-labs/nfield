@@ -79,12 +79,23 @@ class SchemaError(FormatShieldError):
         return " ".join(parts)
 
 
+# HTTP status codes worth retrying (REST guidance): request timeout, rate limit,
+# and all server errors (5xx handled by range).
+_RETRYABLE_STATUS_CODES: frozenset[int] = frozenset({408, 429})
+
+
 class ProviderError(FormatShieldError):
     """Raised when an LLM provider request fails.
 
     Args:
         message: Human-readable description of the error.
         status_code: HTTP status code returned by the provider, if applicable.
+        retryable: Explicit transient/permanent override. Providers set this for
+            errors that carry no HTTP status — chiefly timeouts and connection
+            resets, which are transient but have ``status_code=None``. Left as
+            ``None`` (no override), retryability is inferred from ``status_code``.
+        retry_after: Seconds the server asked the caller to wait (the ``Retry-After``
+            header), if provided. Honoured by the backoff loop.
 
     Example:
         >>> raise ProviderError("Rate limit exceeded", status_code=429)
@@ -98,37 +109,32 @@ class ProviderError(FormatShieldError):
         message: str,
         *,
         status_code: int | None = None,
+        retryable: bool | None = None,
+        retry_after: float | None = None,
     ) -> None:
         self.status_code = status_code
+        self.retry_after = retry_after
+        self._retryable_override = retryable
         super().__init__(message)
 
     @property
     def retryable(self) -> bool:
-        """Check if this error is retryable.
+        """Whether this error is transient and should be retried.
 
-        Classifies errors as transient (retryable) or permanent (non-retryable).
-
-        Retryable errors:
-        - 429 (rate limit) — temporary resource exhaustion
-        - 5xx (server errors) — temporary server-side failures
-
-        Non-retryable errors:
-        - 4xx (client errors) — permanent request/auth failures (except 429)
-        - None (unknown status) — CONSERVATIVE ASSUMPTION: treats unknown errors
-          as non-retryable to avoid retry loops on unexpected failures. Note:
-          network timeouts may return status_code=None; consider increasing
-          timeout or implementing custom retry logic for timeout-sensitive use cases.
+        An explicit ``retryable`` override wins (providers use it to mark timeouts
+        and connection errors, which carry no status code, as transient). Otherwise
+        the HTTP status decides: ``408``/``429`` and any ``5xx`` are retryable; a
+        permanent ``4xx`` is not; an unknown status (``None``) is treated
+        conservatively as non-retryable so an unexpected bug is not retried blindly.
 
         Returns:
             True if the error is transient and should be retried.
         """
+        if self._retryable_override is not None:
+            return self._retryable_override
         if self.status_code is None:
-            # Unknown status: conservative assumption is non-retryable
-            # This prevents retry loops on unexpected failures, but may miss
-            # transient errors like timeouts. Override in subclasses if needed.
             return False
-        # 429 = rate limit (retryable), 5xx = server error (retryable)
-        return self.status_code == 429 or 500 <= self.status_code < 600
+        return self.status_code in _RETRYABLE_STATUS_CODES or 500 <= self.status_code < 600
 
 
 class ExtractionError(FormatShieldError):

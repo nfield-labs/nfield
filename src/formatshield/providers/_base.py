@@ -255,11 +255,15 @@ class BaseProvider(ABC):
                         f"{operation_name} failed (attempt {attempt + 1}/{self._max_retries}): {e}"
                     )
                     raise
-                # Retryable: backoff and retry
-                backoff = min(
-                    self._backoff_base**attempt + random.uniform(0, 1),
-                    self._backoff_max,
-                )
+                # Retryable: wait the server's Retry-After if given, else exponential
+                # backoff with full jitter — both capped at backoff_max.
+                if e.retry_after is not None:
+                    backoff = min(e.retry_after, self._backoff_max)
+                else:
+                    backoff = min(
+                        self._backoff_base**attempt + random.uniform(0, 1),
+                        self._backoff_max,
+                    )
                 logger.warning(
                     f"{operation_name} failed (attempt {attempt + 1}/{self._max_retries}), "
                     f"retrying in {backoff:.2f}s: {e}"

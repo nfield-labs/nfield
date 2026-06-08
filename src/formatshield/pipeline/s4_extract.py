@@ -119,9 +119,10 @@ async def _extract_leaf(
             logger.warning("Context overflow on leaf %d — emergency split", leaf.leaf_id)
             await _emergency_split(leaf, provider, state)
             return
-        # Non-context error: mark all fields as failed
+        # Non-context error: the call itself failed (after provider retries), so the
+        # fields are call-failures, not absent — mark transient for honest reporting.
         for f in leaf.fields:
-            state.blackboard.mark_failed(f.path, f"provider error: {exc}")
+            state.blackboard.mark_failed(f.path, f"provider error: {exc}", transient=True)
         return
 
     extracted = parse_sfep(raw_text, leaf.fields)
@@ -219,7 +220,9 @@ async def _emergency_split(
         except Exception as exc:
             logger.warning("Emergency split leaf failed: %s", exc)
             for f in chunk_fields:
-                state.blackboard.mark_failed(f.path, f"extraction failed after split: {exc}")
+                state.blackboard.mark_failed(
+                    f.path, f"extraction failed after split: {exc}", transient=True
+                )
 
 
 def _write_extracted_to_blackboard(

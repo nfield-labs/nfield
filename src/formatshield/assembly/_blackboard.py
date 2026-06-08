@@ -126,6 +126,9 @@ class Blackboard:
         self._values: dict[str, Any] = {}
         self._errors: dict[str, str] = {}
         self._conflict_values: dict[str, list[Any]] = {}
+        # Paths whose FAILED state is a transient API/call failure (the call never
+        # returned), tracked apart from a genuine "absent in document" failure.
+        self._call_failed: set[str] = set()
 
     # ------------------------------------------------------------------
     # Write operations
@@ -174,6 +177,7 @@ class Blackboard:
         # EMPTY / PENDING / FAILED → FILLED
         self._values[path] = value
         self._states[path] = FieldState.FILLED
+        self._call_failed.discard(path)
 
     def write_raw(self, path: str, value: Any) -> None:
         """Dependency-change-safe write: does not overwrite a FILLED field.
@@ -214,12 +218,16 @@ class Blackboard:
     # State transitions
     # ------------------------------------------------------------------
 
-    def mark_failed(self, path: str, error: str) -> None:
+    def mark_failed(self, path: str, error: str, *, transient: bool = False) -> None:
         """Transition a field to ``FAILED`` state with an error message.
 
         Args:
             path: Dot-notation field path.
             error: Human-readable description of the failure.
+            transient: ``True`` when the failure is a call/API error (the request
+                never returned) rather than the field being absent from the
+                document. Tracked separately so reporting and recovery can tell a
+                network blip from genuinely missing data.
 
         Raises:
             AssemblyError: If the path is not registered.
@@ -235,6 +243,10 @@ class Blackboard:
             return  # Cannot transition from CONFLICT or NEEDS_REVALIDATION to FAILED
         self._states[path] = FieldState.FAILED
         self._errors[path] = error
+        if transient:
+            self._call_failed.add(path)
+        else:
+            self._call_failed.discard(path)
 
     def mark_needs_revalidation(self, path: str) -> None:
         """Transition a field to ``NEEDS_REVALIDATION`` state.
@@ -342,6 +354,18 @@ class Blackboard:
             Sorted list of dot-notation paths that failed extraction.
         """
         return sorted(p for p, s in self._states.items() if s == FieldState.FAILED)
+
+    def get_call_failed(self) -> list[str]:
+        """Return paths whose ``FAILED`` state is a transient call/API failure.
+
+        These are fields the model never got a chance to answer (the request
+        failed), as opposed to fields it answered ``NULL`` (absent from the
+        document). Used to report API failures distinctly from missing data.
+
+        Returns:
+            Sorted list of dot-notation paths still FAILED due to a call error.
+        """
+        return sorted(p for p in self._call_failed if self._states.get(p) == FieldState.FAILED)
 
     def get_filled(self) -> dict[str, Any]:
         """Return fields that hold a real (non-``None``) extracted value.

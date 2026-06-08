@@ -21,6 +21,58 @@ from formatshield.providers._base import BaseProvider
 _DEFAULT_GROQ_CONTEXT_WINDOW: int = 8_192
 _DEFAULT_GROQ_MAX_OUTPUT_TOKENS: int = 8_192
 
+# Groq/OpenAI-SDK exception class names for transient network failures that carry
+# no HTTP status, plus message keywords as a fallback. These are retryable even
+# though status_code is None.
+_TRANSIENT_ERROR_NAMES: frozenset[str] = frozenset(
+    {"APITimeoutError", "APIConnectionError", "InternalServerError"}
+)
+_TRANSIENT_ERROR_KEYWORDS: tuple[str, ...] = ("timed out", "timeout", "connection")
+
+
+def _is_transient_error(exc: Exception) -> bool | None:
+    """Whether *exc* is a transient network failure that should be retried.
+
+    Returns ``True`` for timeout/connection errors (which carry no HTTP status),
+    or ``None`` to defer to status-code classification when undeterminable — never
+    ``False``, so a status-coded error is still judged by its code.
+
+    Args:
+        exc: The exception raised by the Groq SDK.
+
+    Returns:
+        ``True`` if clearly transient, else ``None``.
+    """
+    if type(exc).__name__ in _TRANSIENT_ERROR_NAMES:
+        return True
+    message = str(exc).lower()
+    if any(keyword in message for keyword in _TRANSIENT_ERROR_KEYWORDS):
+        return True
+    return None
+
+
+def _retry_after_seconds(exc: Exception) -> float | None:
+    """Extract the ``Retry-After`` delay (seconds) from a provider error, if present.
+
+    Args:
+        exc: The exception raised by the Groq SDK.
+
+    Returns:
+        The delay in seconds, or ``None`` when absent or not a plain number (an
+        HTTP-date form is ignored — the backoff loop falls back to its own timing).
+    """
+    response = getattr(exc, "response", None)
+    headers = getattr(response, "headers", None)
+    if not headers:
+        return None
+    value = headers.get("retry-after")
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
 
 # ---------------------------------------------------------------------------
 # GroqProvider class
@@ -133,9 +185,13 @@ class GroqProvider(BaseProvider):
             )
             return response.choices[0].message.content or ""
         except Exception as e:
-            # Extract status code if available (B009: use getattr with default)
             status_code = getattr(e, "status_code", None)
-            raise ProviderError(f"Groq API call failed: {e}", status_code=status_code) from e
+            raise ProviderError(
+                f"Groq API call failed: {e}",
+                status_code=status_code,
+                retryable=_is_transient_error(e),
+                retry_after=_retry_after_seconds(e),
+            ) from e
 
     async def _raw_count_tokens(self, text: str) -> int:
         """Count tokens using Groq's tokenization.

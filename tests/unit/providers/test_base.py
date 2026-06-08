@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import pytest
 
+from formatshield.exceptions import ProviderError
+from formatshield.providers import _base
 from formatshield.providers._base import BaseProvider
 
 
@@ -155,3 +157,92 @@ class TestBaseProvider:
             match=r"backoff_max.*must be >= backoff_base",
         ):
             MockProvider("test-model", backoff_base=2.0, backoff_max=1.0)
+
+
+class _FlakyProvider(MockProvider):
+    """Fails the first ``fail_times`` calls with ``error``, then returns 'ok'."""
+
+    def __init__(self, *, fail_times: int, error: ProviderError, max_retries: int = 3) -> None:
+        super().__init__("flaky", max_retries=max_retries, backoff_base=2.0, backoff_max=30.0)
+        self._fail_times = fail_times
+        self._error = error
+        self.calls = 0
+
+    async def _raw_complete(self, messages: list[dict[str, str]], *, max_tokens: int) -> str:
+        self.calls += 1
+        if self.calls <= self._fail_times:
+            raise self._error
+        return "ok"
+
+
+class TestProviderErrorClassification:
+    def test_408_429_5xx_are_retryable(self) -> None:
+        assert ProviderError("x", status_code=408).retryable
+        assert ProviderError("x", status_code=429).retryable
+        assert ProviderError("x", status_code=503).retryable
+
+    def test_permanent_4xx_not_retryable(self) -> None:
+        assert not ProviderError("x", status_code=404).retryable
+        assert not ProviderError("x", status_code=401).retryable
+
+    def test_unknown_status_not_retryable_by_default(self) -> None:
+        assert not ProviderError("x", status_code=None).retryable
+
+    def test_explicit_override_wins(self) -> None:
+        # A timeout: no status code, but explicitly transient.
+        assert ProviderError("timeout", status_code=None, retryable=True).retryable
+        assert not ProviderError("x", status_code=503, retryable=False).retryable
+
+    def test_retry_after_is_carried(self) -> None:
+        assert ProviderError("x", status_code=429, retry_after=7.5).retry_after == 7.5
+
+
+class TestRetryBehavior:
+    async def test_retries_retryable_then_succeeds(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr(_base.asyncio, "sleep", _no_sleep())
+        provider = _FlakyProvider(fail_times=2, error=ProviderError("rate", status_code=429))
+        result = await provider.complete([{"role": "user", "content": "hi"}], max_tokens=10)
+        assert result == "ok"
+        assert provider.calls == 3
+
+    async def test_timeout_override_is_retried(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr(_base.asyncio, "sleep", _no_sleep())
+        timeout = ProviderError("timed out", status_code=None, retryable=True)
+        provider = _FlakyProvider(fail_times=1, error=timeout)
+        assert await provider.complete([], max_tokens=10) == "ok"
+        assert provider.calls == 2
+
+    async def test_non_retryable_raises_immediately(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr(_base.asyncio, "sleep", _no_sleep())
+        provider = _FlakyProvider(fail_times=3, error=ProviderError("bad", status_code=400))
+        with pytest.raises(ProviderError):
+            await provider.complete([], max_tokens=10)
+        assert provider.calls == 1
+
+    async def test_gives_up_after_max_retries(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr(_base.asyncio, "sleep", _no_sleep())
+        provider = _FlakyProvider(
+            fail_times=99, error=ProviderError("rate", status_code=429), max_retries=3
+        )
+        with pytest.raises(ProviderError):
+            await provider.complete([], max_tokens=10)
+        assert provider.calls == 3
+
+    async def test_honors_retry_after(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        sleeps: list[float] = []
+
+        async def record(seconds: float) -> None:
+            sleeps.append(seconds)
+
+        monkeypatch.setattr(_base.asyncio, "sleep", record)
+        err = ProviderError("rate", status_code=429, retry_after=5.0)
+        provider = _FlakyProvider(fail_times=1, error=err)
+        await provider.complete([], max_tokens=10)
+        assert sleeps == [5.0]  # server's Retry-After used, not computed backoff
+
+
+def _no_sleep():
+    async def _sleep(_seconds: float) -> None:
+        return None
+
+    return _sleep

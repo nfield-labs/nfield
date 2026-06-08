@@ -252,3 +252,28 @@ class TestNoneIsNotFilled:
         bb.write("flag", False)
         bb.write("note", "")
         assert bb.get_filled() == {"flag": False, "note": ""}
+
+
+# ---------------------------------------------------------------------------
+# Call-failure (transient) tracked apart from a genuine absent FAILED
+# ---------------------------------------------------------------------------
+class TestCallFailedTracking:
+    def test_transient_failure_is_call_failed(self):
+        bb = Blackboard(["a", "b"])
+        bb.mark_failed("a", "provider error: timeout", transient=True)
+        bb.mark_failed("b", "field not found in document")  # genuine absence
+        assert bb.get_call_failed() == ["a"]
+        assert bb.get_failed() == ["a", "b"]  # both still FAILED
+
+    def test_recovered_call_failure_is_cleared(self):
+        bb = Blackboard(["a"])
+        bb.mark_failed("a", "provider error", transient=True)
+        assert bb.get_call_failed() == ["a"]
+        bb.write("a", "value")  # a retry succeeded
+        assert bb.get_call_failed() == []
+        assert bb.get_filled() == {"a": "value"}
+
+    def test_absent_then_not_call_failed(self):
+        bb = Blackboard(["a"])
+        bb.mark_failed("a", "absent")  # default transient=False
+        assert bb.get_call_failed() == []

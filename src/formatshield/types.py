@@ -67,6 +67,9 @@ class Metadata:
         per_field_confidence: Mapping of field path → confidence score [0, 1].
         retry_rounds: Number of retry rounds performed (0 = first pass only).
         cost: Estimated token cost in USD, or ``None`` if not tracked.
+        fields_call_failed: Number of fields left unextracted because an API/call
+            error never returned (transient), as distinct from fields genuinely
+            absent from the document. ``0`` when every call succeeded.
 
     Example:
         >>> meta = Metadata(
@@ -92,6 +95,7 @@ class Metadata:
     per_field_confidence: dict[str, float]
     retry_rounds: int
     cost: float | None = None
+    fields_call_failed: int = 0
 
 
 @dataclass(frozen=True, slots=True)
