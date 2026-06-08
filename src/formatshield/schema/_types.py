@@ -220,6 +220,9 @@ class FieldGroup:
         matched_segments: Document segments matched to this group in Stage 2.5.
         segment_scores: BMX relevance scores parallel to matched_segments.
         D_cost: Estimated token cost of the matched_segments concatenated.
+        field_best_segment: ``field_path -> segment_id`` of the matched segment
+            that best supports each field, used by Stage 3 field-level coverage.
+            Empty on the small-doc fast path.
 
     Example:
         >>> g = FieldGroup(parent_path="address")
@@ -232,6 +235,7 @@ class FieldGroup:
     matched_segments: list[Segment] = field(default_factory=list)
     segment_scores: list[float] = field(default_factory=list)
     D_cost: int = 0
+    field_best_segment: dict[str, int] = field(default_factory=dict)
 
 
 @dataclass

@@ -10,7 +10,12 @@ from __future__ import annotations
 
 from formatshield.retrieval._bmx import BMXIndex, bmx_rescore, bmx_scores, build_bmx_index
 from formatshield.retrieval._chunker import chunk_document
-from formatshield.retrieval._glean import GleanIndex, build_glean_index, glean_rescore
+from formatshield.retrieval._glean import (
+    GleanIndex,
+    build_glean_index,
+    field_best_segments,
+    glean_rescore,
+)
 from formatshield.retrieval._morphology import (
     MorphologyIndex,
     build_morphology_index,
@@ -28,6 +33,7 @@ __all__ = [
     "build_glean_index",
     "build_morphology_index",
     "chunk_document",
+    "field_best_segments",
     "field_type_classes",
     "fold_diacritics",
     "glean_rescore",

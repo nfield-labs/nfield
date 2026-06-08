@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from formatshield.retrieval._morphology import MorphologyIndex, MorphologySegment
     from formatshield.schema._types import Field, Segment
 
-__all__ = ["GleanIndex", "build_glean_index", "glean_rescore"]
+__all__ = ["GleanIndex", "build_glean_index", "field_best_segments", "glean_rescore"]
 
 # RRF damping (Cormack et al., SIGIR 2009 default).
 _RRF_K: float = 60.0
@@ -177,9 +177,87 @@ def glean_rescore(
     return [(index.segments[doc], score) for doc, score in ranked]
 
 
+def field_best_segments(
+    index: GleanIndex,
+    fields: list[Field],
+    candidates: list[Segment],
+) -> dict[str, int]:
+    """Map each field to the candidate segment that best supports *that field*.
+
+    Used by Stage 3 coverage to additionally guarantee each *typed* field its own
+    evidence on top of the group's single best segment. Only fields with a
+    morphological signal (enum / format / number / date / boolean) are scored —
+    plain-string fields are left to per-group coverage, since reserving a chunk per
+    string field merely fragments the excerpt budget without adding signal. Each
+    field is scored over its group's already-retrieved *candidates* only (bounded),
+    reading the existing morphology index — no BMX recompute.
+
+    Per-field score is label-term overlap plus the type-weighted morphological
+    evidence ``tau_d * M(D, f)``. A field with no evidence in *candidates* is
+    omitted (no arbitrary pick); ties resolve to the earlier candidate, which is
+    the higher GLEAN-ranked segment.
+
+    Args:
+        index: A :class:`GleanIndex` from :func:`build_glean_index`.
+        fields: The fields to locate evidence for (a group's fields).
+        candidates: The group's retrieved segments to choose among.
+
+    Returns:
+        ``field_path -> segment_id`` for every field with positive evidence.
+
+    Example:
+        >>> from formatshield.schema._types import Field, Segment
+        >>> segs = [
+        ...     Segment(text="enrollment was 4591 people", start=0, end=26,
+        ...             segment_type="unstructured", segment_id=0),
+        ...     Segment(text="eligibility criteria follow", start=26, end=53,
+        ...             segment_type="unstructured", segment_id=1),
+        ... ]
+        >>> idx = build_glean_index(segs)
+        >>> f = Field(path="count", type="integer", constraints={}, parent_path="",
+        ...           schema_node={"type": "integer", "description": "enrollment"})
+        >>> field_best_segments(idx, [f], segs)["count"]
+        0
+    """
+    if not candidates:
+        return {}
+    morphology = index.morphology.segments
+    best: dict[str, int] = {}
+    for field in fields:
+        probe = _build_probe(field)
+        if not _has_morphology(probe):
+            continue
+        best_id: int | None = None
+        best_score = 0.0
+        for seg in candidates:
+            if seg.segment_id < 0 or seg.segment_id >= len(morphology):
+                continue
+            score = _field_relevance(morphology[seg.segment_id], probe)
+            if score > best_score:
+                best_score = score
+                best_id = seg.segment_id
+        if best_id is not None:
+            best[field.path] = best_id
+    return best
+
+
 # ---------------------------------------------------------------------------
 # Private helpers
 # ---------------------------------------------------------------------------
+
+
+def _field_relevance(seg: MorphologySegment, probe: _FieldProbe) -> float:
+    """Per-field relevance of one segment: label overlap + typed evidence.
+
+    Args:
+        seg: The segment's morphological features.
+        probe: The field's pre-built artifacts.
+
+    Returns:
+        ``label_term_overlap + tau_d * M(seg, field)`` (``>= 0``).
+    """
+    overlap = sum(1 for term in probe.label_terms if term in seg.token_positions)
+    return overlap + probe.tau_d * _field_evidence(seg, probe)
 
 
 def _rank_map(scores: dict[int, float]) -> dict[int, int]:

@@ -83,10 +83,11 @@ def _finalize_excerpt(leaf: CapacityLeaf, state: PipelineState) -> str:
     budget_chars = int(b_excerpt * max(state.chars_per_token, 1.0))
 
     # --- Coverage-first selection (CFCS) -------------------------------------
-    # Phase 1 (coverage): guarantee each group its single best segment FIRST, so
-    # a group's only supporting chunk is never crowded out by globally-higher but
-    # redundant chunks. A segment covering several groups is counted once (dedup).
-    # Phase 2 (fill): spend the remaining budget on the next best segments.
+    # Coverage: guarantee each FIELD its best supporting segment FIRST, so a
+    # field's only supporting chunk is never crowded out by globally-higher but
+    # redundant chunks (mixed-type groups would otherwise drop a field's evidence).
+    # A segment covering several fields is counted once. Fill: spend the remaining
+    # budget on the next best segments.
     cover_ids = _coverage_segment_ids(leaf)
     covering = [(s, sc) for (s, sc) in seg_score if s.segment_id in cover_ids]
     rest = [(s, sc) for (s, sc) in seg_score if s.segment_id not in cover_ids]
@@ -113,26 +114,35 @@ def _finalize_excerpt(leaf: CapacityLeaf, state: PipelineState) -> str:
 
 
 def _coverage_segment_ids(leaf: CapacityLeaf) -> set[int]:
-    """Segment ids that each provide some group its single best evidence.
+    """Segment ids that each provide some field its best evidence.
 
-    The set-cover / budgeted-maximum-coverage core of CFCS: for every group in
-    the leaf, the highest-scoring matched segment is part of the covering set, so
-    each group (and thus its fields) retains supporting evidence before the
-    remaining budget is spent on extra segments. Deduplicated by construction —
-    a segment that is the best for several groups appears once.
+    Strictly additive over per-group CFCS: every group contributes its single best
+    matched segment (the proven base), and each *typed* field additionally
+    contributes its own best segment (``group.field_best_segment`` from Stage 2.5),
+    so a typed field's evidence is retained even when the group's best segment
+    serves a different field. Plain-string fields rely on the group base alone, so
+    an all-string leaf behaves exactly as before. Deduplicated by construction.
+
+    Scoped to ``leaf.fields``: a wide group split across several leaves attaches
+    the whole group object to each one, so the per-field union is restricted to the
+    fields actually extracted in this leaf — a split leaf never reserves budget for
+    a sibling leaf's fields.
 
     Args:
-        leaf: The leaf whose groups' best segments to collect.
+        leaf: The leaf whose coverage segments to collect.
 
     Returns:
-        Set of ``segment_id`` values forming the per-group coverage set.
+        Set of ``segment_id`` values forming the coverage set.
     """
+    leaf_field_paths = {f.path for f in leaf.fields}
     ids: set[int] = set()
     for g in leaf.groups:
-        if not g.matched_segments:
-            continue
-        pairs = zip(g.matched_segments, g.segment_scores, strict=False)
-        best = max(pairs, key=lambda x: x[1], default=None)
-        if best is not None:
-            ids.add(best[0].segment_id)
+        if g.matched_segments:
+            pairs = zip(g.matched_segments, g.segment_scores, strict=False)
+            best = max(pairs, key=lambda x: x[1], default=None)
+            if best is not None:
+                ids.add(best[0].segment_id)
+        for path, seg_id in g.field_best_segment.items():
+            if path in leaf_field_paths:
+                ids.add(seg_id)
     return ids

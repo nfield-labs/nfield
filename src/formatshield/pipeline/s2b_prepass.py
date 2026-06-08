@@ -17,7 +17,7 @@ import math
 from typing import TYPE_CHECKING
 
 from formatshield.retrieval._chunker import chunk_document
-from formatshield.retrieval._glean import build_glean_index, glean_rescore
+from formatshield.retrieval._glean import build_glean_index, field_best_segments, glean_rescore
 
 if TYPE_CHECKING:
     from formatshield.config import ExtractionConfig
@@ -112,6 +112,7 @@ def run_stage_2b(
         g_top_k = _group_top_k(g, segments, state.C_usable, state.chars_per_token)
         ranked = glean_rescore(glean_index, g.fields, query, top_k=g_top_k)
         _apply_ranking(g, ranked, state.chars_per_token)
+        g.field_best_segment = field_best_segments(glean_index, g.fields, g.matched_segments)
 
     return state
 

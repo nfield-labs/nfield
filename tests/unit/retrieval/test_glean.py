@@ -3,7 +3,11 @@
 from __future__ import annotations
 
 from formatshield.retrieval._bmx import bmx_rescore
-from formatshield.retrieval._glean import build_glean_index, glean_rescore
+from formatshield.retrieval._glean import (
+    build_glean_index,
+    field_best_segments,
+    glean_rescore,
+)
 from formatshield.schema._types import Field, Segment
 
 
@@ -77,6 +81,35 @@ class TestGleanRescore:
         f = _field("n", "integer")
         assert glean_rescore(idx, [f], "revenue", top_k=5) == []
 
+
+class TestFieldBestSegments:
+    def test_typed_field_maps_to_its_evidence(self) -> None:
+        # Typed field is located; the plain-string sibling is left to per-group
+        # coverage (gated out to avoid fragmenting the budget).
+        segs = [
+            _seg("study enrollment was 4591 participants", 0),
+            _seg("the eligibility criteria are listed below", 1),
+        ]
+        idx = build_glean_index(segs)
+        count = _field("count", "integer", description="enrollment")
+        crit = _field("criteria", "string", description="eligibility criteria")
+        best = field_best_segments(idx, [count, crit], segs)
+        assert best["count"] == 0
+        assert "criteria" not in best
+
+    def test_plain_string_field_is_omitted(self) -> None:
+        segs = [_seg("alpha beta gamma", 0)]
+        idx = build_glean_index(segs)
+        plain = _field("name", "string", description="alpha beta")  # has label match
+        assert field_best_segments(idx, [plain], segs) == {}
+
+    def test_empty_candidates_returns_empty(self) -> None:
+        idx = build_glean_index([_seg("anything", 0)])
+        f = _field("x", "integer")
+        assert field_best_segments(idx, [f], []) == {}
+
+
+class TestDateProximity:
     def test_date_near_label_outranks_date_with_no_label(self) -> None:
         # s0 has the label terms next to a date; s1 has a date but no label term,
         # so only s0 gets a co-location boost.
