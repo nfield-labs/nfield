@@ -14,12 +14,7 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from formatshield.config import (
-    DomainConfig,
-    ExtractionConfig,
-    get_domain_config,
-    register_domain,
-)
+from formatshield.config import ExtractionConfig
 from formatshield.exceptions import ExtractionError, SchemaError
 from formatshield.schema._deps import extract_dependencies
 from formatshield.schema._difficulty import compute_difficulty
@@ -517,55 +512,12 @@ class TestDepsAdversarial:
 
 
 class TestConfigAdversarial:
-    # ADV-CONFIG-01: get_domain_config raises SchemaError, catchable as FormatShieldError
-    def test_unknown_domain_raises_formatshield_error(self) -> None:
-        """get_domain_config raises SchemaError for unknown domains.
-
-        SchemaError is a FormatShieldError subclass — users catching
-        FormatShieldError will correctly handle unknown domain errors.
-        """
-        from formatshield.exceptions import FormatShieldError, SchemaError
-
-        with pytest.raises(SchemaError):
-            get_domain_config("nonexistent_domain_xyz123")
-
-        caught_as_formatshield = False
-        try:
-            get_domain_config("nonexistent_domain_xyz123")
-        except FormatShieldError:
-            caught_as_formatshield = True
-
-        assert caught_as_formatshield, "get_domain_config must raise a FormatShieldError subclass"
-
-    # ADV-CONFIG-02: register_domain overwrites builtin
-    def test_register_domain_overwrites_builtin(self) -> None:
-        """User-registered domain takes precedence over builtin with same name."""
-        original = get_domain_config("general")
-        custom = DomainConfig(
-            domain="general",
-            p90_string_tokens=999,
-            expected_array_size=99,
-            confidence_thresholds={"HIGH": 0.5, "MEDIUM": 0.3},
-        )
-        register_domain(custom)
-        overridden = get_domain_config("general")
-        assert overridden.p90_string_tokens == 999
-
-        # Restore original to not pollute other tests
-        register_domain(original)
-
     # ADV-CONFIG-03: ExtractionConfig is truly frozen (immutability)
     def test_extraction_config_frozen(self) -> None:
         """ExtractionConfig cannot be mutated after creation."""
         cfg = ExtractionConfig()
         with pytest.raises((AttributeError, TypeError)):
             cfg.max_retry_rounds = 99  # type: ignore[misc]
-
-    # ADV-CONFIG-04: DomainConfig.from_dict raises SchemaError (not KeyError)
-    def test_from_dict_missing_key_raises_schema_error(self) -> None:
-        """from_dict raises SchemaError when key is missing, not KeyError."""
-        with pytest.raises(SchemaError):
-            DomainConfig.from_dict({"domain": "test"})  # missing other keys
 
     # ADV-CONFIG-05: confidence_thresholds default factory creates fresh dict per instance
     def test_confidence_thresholds_independent_per_instance(self) -> None:

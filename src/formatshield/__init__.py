@@ -19,7 +19,7 @@ from typing import TYPE_CHECKING
 from ._version import __version__
 
 if TYPE_CHECKING:
-    from .config import DomainConfig, ExtractionConfig, register_domain
+    from .config import ExtractionConfig
     from .engine import AsyncFormatShield, FormatShield, nfield, nfield_async
     from .exceptions import (
         AssemblyError,
@@ -35,7 +35,6 @@ if TYPE_CHECKING:
 __all__ = [
     "AssemblyError",
     "AsyncFormatShield",
-    "DomainConfig",
     "ExtractionConfig",
     "ExtractionError",
     "ExtractionResult",
@@ -51,7 +50,6 @@ __all__ = [
     "from_model",
     "nfield",
     "nfield_async",
-    "register_domain",
 ]
 
 _dynamic_imports: dict[str, str] = {
@@ -64,8 +62,6 @@ _dynamic_imports: dict[str, str] = {
     "from_model": ".providers",
     # Config
     "ExtractionConfig": ".config",
-    "DomainConfig": ".config",
-    "register_domain": ".config",
     # Types
     "ExtractionResult": ".types",
     "FieldResult": ".types",
