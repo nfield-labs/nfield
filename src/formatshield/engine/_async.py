@@ -12,6 +12,7 @@ accepted and normalised to a JSON Schema dict before Stage 1.
 
 from __future__ import annotations
 
+import asyncio
 import dataclasses
 import os
 import types
@@ -48,6 +49,33 @@ _PRIMITIVE_JSON_TYPES: dict[type, str] = {
     float: "number",
     str: "string",
 }
+
+# Bound dataclass-schema recursion. A self-referential dataclass (e.g. a tree
+# node whose field type is its own class) would otherwise recurse forever and
+# crash with a RecursionError. The schema is caller-supplied, not untrusted
+# document content, so this is a robustness guard, not a DoS defense — it turns a
+# confusing stack overflow into a clean SchemaError. Real schemas nest a few
+# levels. Same value as assembly._trie._MAX_PATH_DEPTH for one consistent
+# nesting ceiling across the library; conversion adds ~2 frames per level, well
+# under CPython's ~1000-frame recursion limit.
+_MAX_SCHEMA_DEPTH: int = 256
+
+
+def _check_schema_depth(depth: int) -> None:
+    """Raise ``SchemaError`` once dataclass conversion nests past the cap.
+
+    Args:
+        depth: Current recursion depth in :func:`_python_type_to_node` /
+            :func:`_dataclass_to_json_schema`.
+
+    Raises:
+        SchemaError: If ``depth`` exceeds ``_MAX_SCHEMA_DEPTH``.
+    """
+    if depth > _MAX_SCHEMA_DEPTH:
+        raise SchemaError(
+            f"Schema nests deeper than the maximum {_MAX_SCHEMA_DEPTH} levels.",
+            hint="Check for a self-referential dataclass; flatten or break the cycle.",
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -96,7 +124,7 @@ def _resolve_model(model: str | None, config: ExtractionConfig) -> str:
 # ---------------------------------------------------------------------------
 
 
-def _python_type_to_node(annotation: Any) -> dict[str, Any]:
+def _python_type_to_node(annotation: Any, *, depth: int = 0) -> dict[str, Any]:
     """Map a Python type annotation to a JSON Schema node.
 
     Handles primitives, ``Optional[X]`` / ``X | None``, homogeneous ``list[X]``,
@@ -104,43 +132,59 @@ def _python_type_to_node(annotation: Any) -> dict[str, Any]:
 
     Args:
         annotation: A type annotation from a dataclass field.
+        depth: Current recursion depth, bounded by ``_MAX_SCHEMA_DEPTH``.
 
     Returns:
         A JSON Schema fragment describing the annotation.
+
+    Raises:
+        SchemaError: If conversion nests past ``_MAX_SCHEMA_DEPTH`` (e.g. a
+            self-referential dataclass).
     """
+    _check_schema_depth(depth)
     origin = get_origin(annotation)
 
     # Optional[X] (typing.Union) and X | None (types.UnionType) both unwrap here.
     if origin is Union or isinstance(annotation, types.UnionType):
         non_none = [arg for arg in get_args(annotation) if arg is not type(None)]
         if len(non_none) == 1:
-            return _python_type_to_node(non_none[0])
+            return _python_type_to_node(non_none[0], depth=depth + 1)
         return {"type": "string"}
 
     if origin in (list, tuple, set):
         item_args = get_args(annotation)
-        item_node = _python_type_to_node(item_args[0]) if item_args else {"type": "string"}
+        item_node = (
+            _python_type_to_node(item_args[0], depth=depth + 1)
+            if item_args
+            else {"type": "string"}
+        )
         return {"type": "array", "items": item_node}
 
     if isinstance(annotation, type):
         if annotation in _PRIMITIVE_JSON_TYPES:
             return {"type": _PRIMITIVE_JSON_TYPES[annotation]}
         if dataclasses.is_dataclass(annotation):
-            return _dataclass_to_json_schema(annotation)
+            return _dataclass_to_json_schema(annotation, depth=depth + 1)
 
     return {"type": "string"}
 
 
-def _dataclass_to_json_schema(cls: type) -> dict[str, Any]:
+def _dataclass_to_json_schema(cls: type, *, depth: int = 0) -> dict[str, Any]:
     """Convert a dataclass type to an equivalent JSON Schema object.
 
     Args:
         cls: A dataclass type.
+        depth: Current recursion depth, bounded by ``_MAX_SCHEMA_DEPTH``.
 
     Returns:
         A JSON Schema ``object`` with one property per dataclass field. Fields
         without a default (or default factory) are listed as ``required``.
+
+    Raises:
+        SchemaError: If type hints cannot be resolved or conversion nests past
+            ``_MAX_SCHEMA_DEPTH`` (e.g. a self-referential dataclass).
     """
+    _check_schema_depth(depth)
     try:
         hints = get_type_hints(cls)
     except (NameError, TypeError) as exc:
@@ -151,7 +195,7 @@ def _dataclass_to_json_schema(cls: type) -> dict[str, Any]:
     properties: dict[str, Any] = {}
     required: list[str] = []
     for f in dataclasses.fields(cls):
-        properties[f.name] = _python_type_to_node(hints.get(f.name, str))
+        properties[f.name] = _python_type_to_node(hints.get(f.name, str), depth=depth + 1)
         has_default = (
             f.default is not dataclasses.MISSING or f.default_factory is not dataclasses.MISSING
         )
@@ -265,6 +309,9 @@ class AsyncFormatShield:
         self._c_eff: int = 0
         self._m_o: int = 0
         self._c_usable: float = 0.0
+        # Serializes the one-time Stage 0 calibration so concurrent extract()
+        # calls on a shared engine measure chars_per_token once, not once each.
+        self._calibration_lock = asyncio.Lock()
 
     @property
     def model(self) -> str:
@@ -329,15 +376,19 @@ class AsyncFormatShield:
         The first call runs Stage 0 (one provider call to measure
         ``chars_per_token``) and caches the result on the engine. Later calls
         skip that round trip and build a fresh state from the cached values, so
-        a reused engine calibrates only once.
+        a reused engine calibrates only once. The lock + double-checked guard
+        keeps that "once" true even when extract() calls run concurrently.
         """
         if self._chars_per_token is None:
-            state = await run_stage_0(self._provider, self._config)
-            self._chars_per_token = state.chars_per_token
-            self._c_eff = state.C_eff
-            self._m_o = state.M_O
-            self._c_usable = state.C_usable
-            return state
+            async with self._calibration_lock:
+                # Re-check inside the lock: a racing call may have just filled it.
+                if self._chars_per_token is None:
+                    state = await run_stage_0(self._provider, self._config)
+                    self._chars_per_token = state.chars_per_token
+                    self._c_eff = state.C_eff
+                    self._m_o = state.M_O
+                    self._c_usable = state.C_usable
+                    return state
         return PipelineState(
             chars_per_token=self._chars_per_token,
             C_eff=self._c_eff,

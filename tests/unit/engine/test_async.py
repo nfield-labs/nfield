@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
 
 import pytest
 
 from formatshield import AsyncFormatShield, nfield_async
 from formatshield.config import ExtractionConfig
+from formatshield.engine._async import (
+    _MAX_SCHEMA_DEPTH,
+    _dataclass_to_json_schema,
+)
 from formatshield.exceptions import SchemaError
 
 
@@ -22,6 +27,14 @@ class _Addr:
 class _Person:
     home: _Addr
     work: _Addr
+
+
+# Self-referential dataclass: the converter must reject this with a clean
+# SchemaError instead of recursing into a RecursionError.
+@dataclass
+class _Tree:
+    value: int
+    children: list[_Tree]
 
 
 _DOC = "Name: Alice. Age: 30."
@@ -139,3 +152,45 @@ class TestNestedSchemaForms:
         assert result.metadata.fields_total == 2
         assert result.data["home"]["city"] == "Paris"
         assert result.data["work"]["city"] == "Lyon"
+
+
+class TestSchemaDepthGuard:
+    """A self-referential / pathologically deep dataclass fails cleanly."""
+
+    def test_self_referential_dataclass_raises_schema_error(self):
+        # Without the guard this recurses forever → RecursionError.
+        with pytest.raises(SchemaError, match="nests deeper"):
+            _dataclass_to_json_schema(_Tree)
+
+    def test_self_referential_via_engine_construction(self, install_provider):
+        install_provider(_ECHO)
+        with pytest.raises(SchemaError, match="nests deeper"):
+            AsyncFormatShield("mock/echo", _Tree)
+
+    def test_normal_nesting_still_converts(self):
+        # _Person nests one level (_Addr); well under the cap → no error.
+        node = _dataclass_to_json_schema(_Person)
+        assert node["properties"]["home"]["properties"]["city"]["type"] == "string"
+
+    def test_depth_cap_is_a_named_constant(self):
+        assert _MAX_SCHEMA_DEPTH > 0
+
+
+class TestConcurrentCalibration:
+    """Concurrent first-time extracts calibrate exactly once (LOW-1 lock)."""
+
+    async def test_concurrent_extracts_calibrate_once(self, install_provider):
+        provider = install_provider(_ECHO)
+        engine = AsyncFormatShield(
+            "mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0)
+        )
+        # Fire several extracts at once on a fresh engine: the calibration lock
+        # must keep Stage 0 (the single count_tokens probe) from running per call.
+        await asyncio.gather(
+            engine.extract("doc one"),
+            engine.extract("doc two"),
+            engine.extract("doc three"),
+        )
+        assert provider.token_calls == 1, (
+            f"calibration ran {provider.token_calls} times under concurrency; expected once (lock)"
+        )
