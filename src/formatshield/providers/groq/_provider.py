@@ -99,6 +99,8 @@ class GroqProvider(BaseProvider):
         *,
         context_window: int | None = None,
         max_output_tokens: int | None = None,
+        api_key: str | None = None,
+        base_url: str | None = None,
     ) -> None:
         """Initialize Groq provider.
 
@@ -109,16 +111,24 @@ class GroqProvider(BaseProvider):
                 for your model.
             max_output_tokens: Maximum output tokens. If None, uses default 8192.
                 Provide this if you know the actual limit for your model.
+            api_key: Groq API key. If None (default), the SDK reads ``GROQ_API_KEY``
+                from the environment — the recommended path. Pass it explicitly only
+                for secret-vault / multi-tenant setups. It is stored solely to build
+                the client and is never logged or echoed in errors.
+            base_url: Override the Groq API base URL (proxy, gateway, or
+                Groq-compatible self-hosted endpoint). If None, the SDK default.
 
         Example:
-            >>> # Use defaults for unknown model
+            >>> # Use defaults for unknown model (key from GROQ_API_KEY env)
             >>> provider = GroqProvider("llama-3.2-new")
             >>>
-            >>> # Override with known specs
+            >>> # Override specs, key, and endpoint explicitly
             >>> provider = GroqProvider(
             ...     "llama-3.1-70b",
             ...     context_window=131_072,
             ...     max_output_tokens=8_192,
+            ...     api_key="gsk_...",
+            ...     base_url="https://my-proxy.example/v1",
             ... )
         """
         super().__init__(
@@ -127,6 +137,11 @@ class GroqProvider(BaseProvider):
             max_output_tokens=max_output_tokens,
         )
         self._client: Any = None
+        # Stored only to construct the SDK client below. None for either means the
+        # groq SDK uses its own default (api_key from GROQ_API_KEY env; standard
+        # base URL). Never logged, never placed in an error message.
+        self._api_key = api_key
+        self._base_url = base_url
 
     def _get_client(self) -> Any:
         """Get or initialize the Groq client.
@@ -152,11 +167,13 @@ class GroqProvider(BaseProvider):
             ) from e
 
         try:
-            self._client = groq.Groq()
+            # Pass api_key/base_url through; None lets the SDK fall back to its
+            # defaults (GROQ_API_KEY env, standard base URL).
+            self._client = groq.Groq(api_key=self._api_key, base_url=self._base_url)
         except Exception as e:
             raise ProviderError(
                 f"Failed to initialize Groq client: {e}. "
-                "Make sure GROQ_API_KEY is set in environment variables."
+                "Set GROQ_API_KEY in the environment or pass api_key=..."
             ) from e
 
         return self._client

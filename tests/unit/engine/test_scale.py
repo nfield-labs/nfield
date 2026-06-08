@@ -81,7 +81,7 @@ class TestPublicApiScale:
         # planning: a bigger window packs the same schema into fewer calls.
         sfep = _full_sfep(300)
 
-        def factory(_model, *, context_window=None, max_output_tokens=None):
+        def factory(_model, *, context_window=None, max_output_tokens=None, **_kwargs):
             return MockProvider(
                 sfep,
                 context_window=context_window or 8192,
@@ -134,7 +134,7 @@ class TestSystemUserPrompt:
         # split into more calls — proof S/P is counted in overhead, not ignored.
         sfep = _full_sfep(50)
 
-        def factory(_model, *, context_window=None, max_output_tokens=None):
+        def factory(_model, *, context_window=None, max_output_tokens=None, **_kwargs):
             return MockProvider(
                 sfep,
                 context_window=context_window or 8192,

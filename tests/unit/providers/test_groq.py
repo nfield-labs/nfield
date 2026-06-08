@@ -2,7 +2,25 @@
 
 from __future__ import annotations
 
+import sys
+import types
+
 from formatshield.providers.groq import GroqProvider
+
+
+def _install_fake_groq(monkeypatch) -> dict:
+    """Replace the groq SDK with a fake whose Groq() records its kwargs."""
+    captured: dict = {}
+
+    class _FakeGroq:
+        def __init__(self, *, api_key=None, base_url=None) -> None:
+            captured["api_key"] = api_key
+            captured["base_url"] = base_url
+
+    fake_module = types.ModuleType("groq")
+    fake_module.Groq = _FakeGroq  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "groq", fake_module)
+    return captured
 
 
 class TestGroqProviderInitialization:
@@ -117,6 +135,36 @@ class TestGroqProviderBackendIntegration:
         assert hasattr(provider, "max_output_tokens")
         assert hasattr(provider, "complete")
         assert hasattr(provider, "count_tokens")
+
+
+class TestGroqProviderCredentials:
+    """api_key / base_url parity with Outlines / Instructor / Guidance."""
+
+    def test_credentials_stored(self) -> None:
+        provider = GroqProvider("llama-3.1-8b", api_key="gsk_secret", base_url="https://proxy/v1")
+        assert provider._api_key == "gsk_secret"
+        assert provider._base_url == "https://proxy/v1"
+
+    def test_credentials_default_none(self) -> None:
+        provider = GroqProvider("llama-3.1-8b")
+        assert provider._api_key is None
+        assert provider._base_url is None
+
+    def test_api_key_not_leaked_in_repr(self) -> None:
+        provider = GroqProvider("llama-3.1-8b", api_key="gsk_secret")
+        assert "gsk_secret" not in repr(provider)
+
+    def test_get_client_forwards_credentials(self, monkeypatch) -> None:
+        captured = _install_fake_groq(monkeypatch)
+        provider = GroqProvider("llama-3.1-8b", api_key="gsk_x", base_url="https://proxy/v1")
+        provider._get_client()
+        assert captured == {"api_key": "gsk_x", "base_url": "https://proxy/v1"}
+
+    def test_get_client_passes_none_for_env_fallback(self, monkeypatch) -> None:
+        captured = _install_fake_groq(monkeypatch)
+        GroqProvider("llama-3.1-8b")._get_client()
+        # None for both → the SDK falls back to GROQ_API_KEY env + default URL.
+        assert captured == {"api_key": None, "base_url": None}
 
 
 class TestGroqProviderMissingDependencies:

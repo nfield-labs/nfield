@@ -176,6 +176,22 @@ class TestSchemaDepthGuard:
         assert _MAX_SCHEMA_DEPTH > 0
 
 
+class TestCredentialForwarding:
+    """api_key / base_url thread from the engine down to from_model."""
+
+    def test_engine_forwards_api_key_and_base_url(self, monkeypatch):
+        captured: dict = {}
+
+        def fake_from_model(_model, **kwargs):
+            captured.update(kwargs)
+            return object()  # __init__ only stores the provider
+
+        monkeypatch.setattr("formatshield.engine._async.from_model", fake_from_model)
+        AsyncFormatShield("groq/x", _SCHEMA, api_key="gsk_x", base_url="https://p/v1")
+        assert captured["api_key"] == "gsk_x"
+        assert captured["base_url"] == "https://p/v1"
+
+
 class TestConcurrentCalibration:
     """Concurrent first-time extracts calibrate exactly once (LOW-1 lock)."""
 

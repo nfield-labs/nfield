@@ -70,6 +70,8 @@ class FormatShield:
         config: Optional :class:`~formatshield.config.ExtractionConfig`.
         context_window: The model's real context window in tokens (C_eff).
         max_output_tokens: The model's real output ceiling in tokens (M_O).
+        api_key: Provider API key. ``None`` reads it from the environment.
+        base_url: Override the provider API base URL. ``None`` uses the default.
 
     Example:
         >>> # fs = FormatShield("groq/llama-3.1-8b", schema=Invoice)
@@ -86,6 +88,8 @@ class FormatShield:
         config: ExtractionConfig | None = None,
         context_window: int | None = None,
         max_output_tokens: int | None = None,
+        api_key: str | None = None,
+        base_url: str | None = None,
         system_prompt: str = "",
         user_prompt: str = "",
     ) -> None:
@@ -95,6 +99,8 @@ class FormatShield:
             config=config,
             context_window=context_window,
             max_output_tokens=max_output_tokens,
+            api_key=api_key,
+            base_url=base_url,
             system_prompt=system_prompt,
             user_prompt=user_prompt,
         )
@@ -143,6 +149,8 @@ def nfield(
     config: ExtractionConfig | None = None,
     context_window: int | None = None,
     max_output_tokens: int | None = None,
+    api_key: str | None = None,
+    base_url: str | None = None,
     system_prompt: str = "",
     user_prompt: str = "",
 ) -> ExtractionResult:
@@ -160,6 +168,8 @@ def nfield(
         config: Optional extraction configuration.
         context_window: The model's real context window in tokens (C_eff).
         max_output_tokens: The model's real output ceiling in tokens (M_O).
+        api_key: Provider API key. ``None`` reads it from the environment.
+        base_url: Override the provider API base URL. ``None`` uses the default.
 
     Returns:
         The :class:`~formatshield.types.ExtractionResult`.
@@ -178,6 +188,8 @@ def nfield(
         config=config,
         context_window=context_window,
         max_output_tokens=max_output_tokens,
+        api_key=api_key,
+        base_url=base_url,
         system_prompt=system_prompt,
         user_prompt=user_prompt,
     ).extract(document)

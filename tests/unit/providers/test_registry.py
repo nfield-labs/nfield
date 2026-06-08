@@ -69,3 +69,17 @@ class TestRegisterProvider:
         register_provider("custom", "formatshield.providers.groq", "GroqProvider")
         # Can now use it (will fail at import if module doesn't exist, but registration works)
         assert True  # Registration succeeded
+
+
+class TestFromModelCredentials:
+    """from_model forwards api_key / base_url to the provider (only when set)."""
+
+    def test_api_key_and_base_url_forwarded(self) -> None:
+        provider = from_model("groq/llama-3.1-8b", api_key="gsk_x", base_url="https://proxy/v1")
+        assert provider._api_key == "gsk_x"  # type: ignore[attr-defined]
+        assert provider._base_url == "https://proxy/v1"  # type: ignore[attr-defined]
+
+    def test_credentials_default_none(self) -> None:
+        provider = from_model("groq/llama-3.1-8b")
+        assert provider._api_key is None  # type: ignore[attr-defined]
+        assert provider._base_url is None  # type: ignore[attr-defined]

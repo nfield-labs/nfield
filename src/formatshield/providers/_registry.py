@@ -7,7 +7,7 @@ only one line in the registry map.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from formatshield.exceptions import ProviderError
 
@@ -35,6 +35,8 @@ def from_model(
     *,
     context_window: int | None = None,
     max_output_tokens: int | None = None,
+    api_key: str | None = None,
+    base_url: str | None = None,
 ) -> LLMProvider:
     """Create an LLM provider from a model string identifier.
 
@@ -47,6 +49,12 @@ def from_model(
     pass ``context_window`` and ``max_output_tokens`` so capacity planning uses
     the true numbers. When omitted, the provider's conservative defaults apply.
 
+    Credentials follow the ecosystem convention: leave ``api_key`` ``None`` to
+    read it from the environment (the recommended path), or pass it explicitly
+    for secret-vault / multi-tenant use. ``base_url`` retargets the API at a
+    proxy, gateway, or self-hosted compatible endpoint. Only the arguments you
+    set are forwarded, so each provider keeps its own defaults for the rest.
+
     Args:
         model_string: Model identifier "provider/model-name",
             e.g., "groq/llama-3.1-8b-instant".
@@ -54,6 +62,9 @@ def from_model(
             the provider default.
         max_output_tokens: Maximum output tokens per call (M_O). ``None`` keeps
             the provider default.
+        api_key: Provider API key. ``None`` (default) → read from the
+            environment by the provider SDK. Never logged.
+        base_url: Override the provider API base URL. ``None`` → SDK default.
 
     Returns:
         Instantiated provider object.
@@ -104,12 +115,17 @@ def from_model(
         raise ProviderError(f"Failed to import {provider_name} provider: {e}") from e
 
     # Forward only the specs the caller actually set, so providers keep their
-    # own defaults otherwise.
-    kwargs: dict[str, int] = {}
+    # own defaults otherwise (and a provider that doesn't accept api_key/base_url
+    # is only handed them when the caller explicitly passes one).
+    kwargs: dict[str, Any] = {}
     if context_window is not None:
         kwargs["context_window"] = context_window
     if max_output_tokens is not None:
         kwargs["max_output_tokens"] = max_output_tokens
+    if api_key is not None:
+        kwargs["api_key"] = api_key
+    if base_url is not None:
+        kwargs["base_url"] = base_url
 
     # Instantiate and return
     return provider_class(model_name, **kwargs)  # type: ignore[no-any-return]

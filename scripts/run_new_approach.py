@@ -6,10 +6,14 @@ where a truth map exists (clinical, factbook US, factbook multi) and by extracti
 coverage otherwise (war & peace, medical). Saves every run to test-results/ with the
 same numbered scheme the integration tests use, then prints one combined table.
 
-Sequential by design. Requires GROQ_API_KEY.
+Sequential by design. Requires GROQ_API_KEY. Optionally set GROQ_BASE_URL to
+route through a proxy / gateway / self-hosted Groq-compatible endpoint — both the
+key and the base URL are passed through nfield(api_key=..., base_url=...), the
+same explicit-credential path the competitor libraries expose.
 
 Usage:
     python scripts/run_new_approach.py
+    GROQ_BASE_URL=https://my-proxy/v1 python scripts/run_new_approach.py
 """
 
 from __future__ import annotations
@@ -34,6 +38,11 @@ if _env.exists():
             os.environ.setdefault(_k.strip(), _v.strip())
 
 _MODEL = "groq/llama-3.3-70b-versatile"
+# Explicit credentials path (parity with Outlines/Instructor/Guidance): pass the
+# key and an optional base URL through nfield instead of relying only on env
+# pickup. api_key=None would still fall back to GROQ_API_KEY inside the SDK.
+_API_KEY = os.getenv("GROQ_API_KEY")
+_BASE_URL = os.getenv("GROQ_BASE_URL")  # None -> SDK default endpoint
 _FIX = _ROOT / "tests" / "fixtures"
 _SCHEMAS = _FIX / "schemas"
 _DOCS = _FIX / "documents"
@@ -139,7 +148,9 @@ def _typed_paths(schema: dict, truth: dict) -> set[str]:
 def _save(name: str, payload: dict) -> Path:
     _RESULTS.mkdir(exist_ok=True)
     existing = sorted(_RESULTS.glob(f"{name}_*.json"))
-    nums = [int(p.stem.rsplit("_", 1)[-1]) for p in existing if p.stem.rsplit("_", 1)[-1].isdigit()]
+    nums = [
+        int(p.stem.rsplit("_", 1)[-1]) for p in existing if p.stem.rsplit("_", 1)[-1].isdigit()
+    ]
     n = (max(nums) + 1) if nums else 1
     path = _RESULTS / f"{name}_{n}.json"
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -156,7 +167,11 @@ def _run_one(fx: Fixture) -> dict | None:
 
     schema = json.loads(fx.schema.read_text(encoding="utf-8"))
     document = fx.doc.read_text(encoding="utf-8")
-    truth = json.loads(fx.truth.read_text(encoding="utf-8")) if fx.truth and fx.truth.exists() else None
+    truth = (
+        json.loads(fx.truth.read_text(encoding="utf-8"))
+        if fx.truth and fx.truth.exists()
+        else None
+    )
 
     # GLEAN only engages when the doc exceeds the usable window (else fast path).
     est_doc_tokens = len(document) // 4
@@ -175,6 +190,8 @@ def _run_one(fx: Fixture) -> dict | None:
         _MODEL,
         context_window=fx.window,
         max_output_tokens=fx.max_output,
+        api_key=_API_KEY,
+        base_url=_BASE_URL,
         config=ExtractionConfig(max_retry_rounds=1),
     )
     elapsed = round(time.time() - t0, 1)
