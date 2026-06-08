@@ -210,3 +210,41 @@ class TestRadixTrie:
         trie = RadixTrie()
         trie.insert("count", 42)
         assert trie.build() == {"count": 42}
+
+
+# ---------------------------------------------------------------------------
+# Resource bounds on untrusted (LLM-produced) paths — DoS guards
+# ---------------------------------------------------------------------------
+from formatshield.assembly._trie import _MAX_ARRAY_INDEX, _MAX_PATH_DEPTH  # noqa: E402
+
+
+class TestResourceBounds:
+    def test_huge_array_index_raises_not_ooms(self):
+        # Without the cap this would grow a list to ~1e9 elements (memory blowup).
+        with pytest.raises(AssemblyError, match="exceeds the maximum"):
+            parse_path_segments("items[999999999].x")
+
+    def test_index_at_limit_is_allowed(self):
+        segs = parse_path_segments(f"items[{_MAX_ARRAY_INDEX}]")
+        assert segs == ["items", _MAX_ARRAY_INDEX]
+
+    def test_index_above_limit_rejected(self):
+        with pytest.raises(AssemblyError, match="exceeds the maximum"):
+            parse_path_segments(f"items[{_MAX_ARRAY_INDEX + 1}]")
+
+    def test_deep_path_raises_not_recursionerror(self):
+        # Without the cap this overflows the recursion stack during insertion.
+        deep = ".".join(["a"] * (_MAX_PATH_DEPTH + 1))
+        with pytest.raises(AssemblyError, match="depth"):
+            parse_path_segments(deep)
+
+    def test_depth_at_limit_is_allowed(self):
+        ok = ".".join(["a"] * _MAX_PATH_DEPTH)
+        assert len(parse_path_segments(ok)) == _MAX_PATH_DEPTH
+
+    def test_assemble_json_rejects_malicious_path_cleanly(self):
+        # The public entry point surfaces AssemblyError, never OOM/crash.
+        with pytest.raises(AssemblyError):
+            assemble_json({"items[999999999]": "x"})
+        with pytest.raises(AssemblyError):
+            assemble_json({".".join(["a"] * (_MAX_PATH_DEPTH + 1)): "x"})

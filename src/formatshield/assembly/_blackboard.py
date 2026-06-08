@@ -69,22 +69,19 @@ class FieldState(Enum):
 
 
 # ---------------------------------------------------------------------------
-# Valid state transitions
-# ---------------------------------------------------------------------------
-
-_VALID_TRANSITIONS: dict[FieldState, frozenset[FieldState]] = {
-    FieldState.EMPTY: frozenset({FieldState.PENDING, FieldState.FILLED, FieldState.FAILED}),
-    FieldState.PENDING: frozenset({FieldState.FILLED, FieldState.FAILED, FieldState.CONFLICT}),
-    FieldState.FILLED: frozenset({FieldState.CONFLICT, FieldState.NEEDS_REVALIDATION}),
-    FieldState.FAILED: frozenset({FieldState.FILLED, FieldState.NEEDS_REVALIDATION}),
-    FieldState.CONFLICT: frozenset({FieldState.NEEDS_REVALIDATION}),
-    FieldState.NEEDS_REVALIDATION: frozenset(),  # terminal
-}
-
-
-# ---------------------------------------------------------------------------
 # Blackboard
 # ---------------------------------------------------------------------------
+#
+# State transitions are enforced inline in each write/mark_* method below, not via
+# a transition table: the real rules are value-dependent (a same-value re-write is a
+# no-op, a different value escalates to CONFLICT, a transient flag tags a FAILED),
+# which a flat state->states table cannot express. The legal moves, for reference:
+#   EMPTY    -> PENDING | FILLED | FAILED
+#   PENDING  -> FILLED | FAILED | CONFLICT
+#   FILLED   -> CONFLICT | NEEDS_REVALIDATION   (+ reopen_for_retry -> PENDING)
+#   FAILED   -> FILLED | NEEDS_REVALIDATION     (+ reopen_for_retry -> PENDING)
+#   CONFLICT -> NEEDS_REVALIDATION              (+ reopen_for_retry -> PENDING)
+#   NEEDS_REVALIDATION -> (terminal)            (+ reopen_for_retry -> PENDING)
 
 
 class Blackboard:

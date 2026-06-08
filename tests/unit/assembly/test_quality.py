@@ -260,3 +260,19 @@ class TestNoneNotCountedAsExtracted:
         assert report.fields_extracted == 1, "only the real value is extracted"
         assert report.fields_missing == 1, "the None confirmed-absent field is missing"
         assert report.quality_score == 0.5
+
+
+# ---------------------------------------------------------------------------
+# Narrowed except: a field path absent from the blackboard scores 0.0
+# ---------------------------------------------------------------------------
+class TestUnknownFieldConfidence:
+    def test_field_not_on_blackboard_scores_zero(self):
+        # Blackboard knows only "a"; "b" is unregistered → get_state raises
+        # AssemblyError, which is caught and scored 0.0 (not a masked crash).
+        bb = Blackboard(["a"])
+        bb.write("a", "x")
+        f_a = Field(path="a", type="string", constraints={}, parent_path="", schema_node={})
+        f_b = Field(path="b", type="string", constraints={}, parent_path="", schema_node={})
+        report = compute_quality_score(bb, [f_a, f_b], K=1, K_min=1)
+        assert report.per_field_confidence["a"] == 1.0
+        assert report.per_field_confidence["b"] == 0.0

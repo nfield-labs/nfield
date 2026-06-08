@@ -7,9 +7,17 @@ nested JSON structure.
 Algorithm
 ---------
 1. :func:`parse_path_segments` splits ``"a.b[0].c"`` into ``["a", "b", 0, "c"]``.
-2. :class:`RadixTrie` inserts each path into a tree structure.
-3. :meth:`RadixTrie.build` performs an iterative DFS traversal to produce the
-   nested dict/list structure.
+2. :class:`RadixTrie` inserts each path into a tree structure via depth-bounded
+   recursive descent.
+3. :meth:`RadixTrie.build` returns the assembled nested dict/list structure.
+
+Resource bounds (paths come from LLM output, which the source document can
+influence, so they are untrusted): :func:`parse_path_segments` rejects a path
+deeper than ``_MAX_PATH_DEPTH`` segments or carrying an array index above
+``_MAX_ARRAY_INDEX``. Without these, a single crafted line like
+``items[999999999] = x`` would grow a list to a billion elements (memory
+exhaustion) and a path like ``a.a.a…`` (thousands deep) would overflow the
+recursion stack. Both now raise :class:`AssemblyError` instead.
 
 Invariant (Theorem 1 — SFEP Bijection)
 ---------------------------------------
@@ -55,6 +63,23 @@ _RE_KEY_WITH_INDICES: re.Pattern[str] = re.compile(r"^([^\[]+)((?:\[\d*\])*)$")
 # Matches individual bracket groups: "[0]", "[12]", or empty "[]"
 _RE_BRACKET_INDEX: re.Pattern[str] = re.compile(r"\[(\d*)\]")
 
+# Resource bounds on untrusted (LLM-produced) paths. An array index drives list
+# growth (``array.append`` per slot) and path depth drives recursion, so both must
+# be capped or a crafted path can exhaust memory or the stack. The limits are far
+# above any real schema — they only fire on adversarial input, where they raise
+# AssemblyError instead of crashing the process.
+#
+# _MAX_ARRAY_INDEX: a list grown to index N costs ~N*8 bytes of pointers, so the cap
+# bounds one array's worst case to ~800 KB (100k * 8B). Real arrays hold tens to a
+# few thousand elements; homogeneous arrays collapse to index 0.
+#
+# _MAX_PATH_DEPTH: insertion recurses once per segment, and CPython's recursion limit
+# is ~1000 frames (already partly used by the pipeline/asyncio stack), so the cap is
+# kept well below it. Real JSON nests ~5-15 deep. (A deeper need would call for an
+# iterative rewrite, not a higher cap.)
+_MAX_ARRAY_INDEX: int = 100_000
+_MAX_PATH_DEPTH: int = 256
+
 
 # ---------------------------------------------------------------------------
 # Path segment parser
@@ -74,7 +99,9 @@ def parse_path_segments(path: str) -> list[str | int]:
         integer elements are array indices.
 
     Raises:
-        AssemblyError: If the path is empty or malformed.
+        AssemblyError: If the path is empty, malformed, deeper than
+            ``_MAX_PATH_DEPTH`` segments, or carries an array index above
+            ``_MAX_ARRAY_INDEX`` (the resource bounds on untrusted input).
 
     Example:
         >>> parse_path_segments("address.city")
@@ -120,7 +147,21 @@ def parse_path_segments(path: str) -> list[str | int]:
         # homogeneous array) map to index 0 — a single representative element.
         for idx_match in _RE_BRACKET_INDEX.finditer(index_str):
             raw = idx_match.group(1)
-            segments.append(int(raw) if raw else 0)
+            idx = int(raw) if raw else 0
+            if idx > _MAX_ARRAY_INDEX:
+                raise AssemblyError(
+                    f"Array index {idx} exceeds the maximum {_MAX_ARRAY_INDEX} in path {path!r}",
+                    path=path,
+                )
+            segments.append(idx)
+
+    # Bound recursion depth: insertion recurses once per segment, so a very deep
+    # path would overflow the stack. Reject before any allocation happens.
+    if len(segments) > _MAX_PATH_DEPTH:
+        raise AssemblyError(
+            f"Path depth {len(segments)} exceeds the maximum {_MAX_PATH_DEPTH} in path {path!r}",
+            path=path,
+        )
 
     return segments
 

@@ -23,6 +23,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from formatshield.exceptions import AssemblyError
+
 if TYPE_CHECKING:
     from formatshield.assembly._blackboard import Blackboard
     from formatshield.schema._types import Field
@@ -217,7 +219,10 @@ def _compute_per_field_confidence(
     for path in field_paths:
         try:
             state = blackboard.get_state(path)
-        except Exception:
+        except AssemblyError:
+            # Path not registered on the blackboard (should not happen — field_paths
+            # come from the same fields it was built with) — score it 0, don't mask
+            # other bugs behind a bare except.
             confidence[path] = _CONFIDENCE_MISSING_OR_FAILED
             continue
 
