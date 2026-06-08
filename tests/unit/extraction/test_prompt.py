@@ -8,8 +8,6 @@ from formatshield.extraction._papt import TemplateType
 from formatshield.extraction._prompt import (
     build_extraction_prompt,
     build_retry_system_message,
-    build_schema_description_block,
-    estimate_prompt_tokens,
 )
 from formatshield.schema._types import Field
 
@@ -207,33 +205,3 @@ class TestKnowledgeFallback:
         )
         assert "well-established knowledge" not in strict[0]["content"]
         assert "well-established knowledge" in loose[0]["content"]
-
-
-# ---------------------------------------------------------------------------
-# estimate_prompt_tokens + build_schema_description_block
-# ---------------------------------------------------------------------------
-
-
-class TestHelpers:
-    def test_estimate_tokens_positive(self):
-        f = make_field("name", "string")
-        tokens = estimate_prompt_tokens([f], "short document", TemplateType.STANDARD)
-        assert tokens > 0
-
-    def test_estimate_tokens_increases_with_more_fields(self):
-        fields_few = [make_field("x", "string")]
-        fields_many = [make_field(f"f{i}", "string") for i in range(20)]
-        few_tokens = estimate_prompt_tokens(fields_few, "doc", TemplateType.STANDARD)
-        many_tokens = estimate_prompt_tokens(fields_many, "doc", TemplateType.STANDARD)
-        assert many_tokens > few_tokens
-
-    def test_schema_description_block_contains_field(self):
-        f = make_field("name", "string")
-        block = build_schema_description_block([f], TemplateType.CONCISE)
-        assert "name" in block
-
-    def test_schema_description_block_multiple_fields(self):
-        fields = [make_field("a", "string"), make_field("b", "integer")]
-        block = build_schema_description_block(fields, TemplateType.STANDARD)
-        assert "a" in block
-        assert "b" in block

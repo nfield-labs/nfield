@@ -1,13 +1,14 @@
 """SFEP (Schema-aware Field Extraction Protocol) parser.
 
-SFEP is the key innovation of FormatShield: instead of asking the LLM to
-output nested JSON (which wastes 46-51% of tokens on formatting overhead),
-the LLM outputs one field per line using the format::
+Instead of asking the LLM to output nested JSON — whose braces, quotes, commas,
+and repeated keys spend a large share of tokens on structure, and whose
+constrained decoding measurably degrades reasoning accuracy (arXiv:2408.02442;
+arXiv:2604.03616, "The Format Tax") — the LLM outputs one field per line::
 
     field.path = value
 
-This format eliminates format tax (arXiv:2604.17512) and preserves a
-bijective mapping to nested JSON (Theorem 1: SFEP Bijection).
+This sidesteps that format tax and preserves a bijective mapping to nested JSON
+(Theorem 1: SFEP Bijection).
 
 Parsing rules
 -------------
