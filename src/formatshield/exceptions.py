@@ -232,7 +232,7 @@ class AssemblyError(FormatShieldError):
         >>> raise AssemblyError("Cannot serialize circular reference", path="result.data.nested")
         Traceback (most recent call last):
             ...
-        formatshield.exceptions.AssemblyError: Cannot serialize circular reference
+        formatshield.exceptions.AssemblyError: Cannot serialize circular reference [path=result.data.nested]
     """
 
     def __init__(
@@ -243,3 +243,9 @@ class AssemblyError(FormatShieldError):
     ) -> None:
         self.path = path
         super().__init__(message)
+
+    def __str__(self) -> str:
+        base = super().__str__()
+        if self.path is not None:
+            return f"{base} [path={self.path}]"
+        return base

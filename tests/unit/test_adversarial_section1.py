@@ -693,3 +693,10 @@ class TestExceptionsAdversarial:
         exc = ValidationError("Out of range", field="count", value=0)
         s = str(exc)
         assert "0" in s  # value=0 should appear
+
+    # ADV-EXC-05: AssemblyError __str__ surfaces path (consistent with the others)
+    def test_assembly_error_str_contains_path(self) -> None:
+        from formatshield.exceptions import AssemblyError
+
+        assert "items[5]" in str(AssemblyError("bad path", path="items[5]"))
+        assert str(AssemblyError("bad path")) == "bad path"  # no path -> message only

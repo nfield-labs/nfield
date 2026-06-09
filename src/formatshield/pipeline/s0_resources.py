@@ -18,12 +18,38 @@ if TYPE_CHECKING:
 
 __all__ = ["run_stage_0"]
 
+# CJK primary subtags (ISO 639): map to the "cjk" calibration bucket.
+_CJK_PRIMARY_SUBTAGS: frozenset[str] = frozenset({"ja", "zh", "ko", "yue", "wuu", "cmn"})
+
+
+def _calibration_bucket(language: str) -> str:
+    """Map a BCP-47 tag to a calibration sample bucket (en / cjk / mixed).
+
+    measure_chars_per_token only knows the three buckets; any other tag maps to
+    ``mixed`` so a real language tag (e.g. ``"ja"``, ``"fr"``) never crashes it.
+
+    Args:
+        language: A BCP-47 tag or a bucket name.
+
+    Returns:
+        One of ``"en"``, ``"cjk"``, ``"mixed"``.
+    """
+    normalized = language.strip().lower()
+    if normalized in ("en", "cjk", "mixed"):
+        return normalized
+    primary = normalized.split("-", 1)[0]
+    if primary in _CJK_PRIMARY_SUBTAGS:
+        return "cjk"
+    if primary == "en":
+        return "en"
+    return "mixed"
+
 
 async def run_stage_0(
     provider: LLMProvider,
     config: ExtractionConfig,
     *,
-    language: str = "en",
+    language: str | None = None,
 ) -> PipelineState:
     """Calibrate token ratios and compute context window parameters.
 
@@ -33,8 +59,10 @@ async def run_stage_0(
 
     Args:
         provider: LLM provider used for the extraction run.
-        config: Extraction configuration with utilization ratio.
-        language: BCP-47 language code for calibration sample selection.
+        config: Extraction configuration; ``config.document_language`` selects the
+            calibration sample language unless ``language`` overrides it.
+        language: Optional explicit BCP-47 tag; ``None`` uses
+            ``config.document_language``. Either is mapped to a calibration bucket.
 
     Returns:
         Fresh ``PipelineState`` populated with calibration values.
@@ -43,7 +71,8 @@ async def run_stage_0(
         >>> callable(run_stage_0)
         True
     """
-    chars_per_token = await measure_chars_per_token(provider, language=language)
+    bucket = _calibration_bucket(language or config.document_language)
+    chars_per_token = await measure_chars_per_token(provider, language=bucket)
 
     c_eff = provider.context_window
     m_o = provider.max_output_tokens

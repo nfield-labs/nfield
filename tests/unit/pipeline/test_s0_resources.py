@@ -78,3 +78,33 @@ class TestRunStage0:
     async def test_fields_empty(self, mock_provider, default_config):
         state = await run_stage_0(mock_provider, default_config)
         assert state.fields == []
+
+
+# ---------------------------------------------------------------------------
+# document_language -> calibration bucket wiring
+# ---------------------------------------------------------------------------
+import formatshield.pipeline.s0_resources as _s0  # noqa: E402
+from formatshield.pipeline.s0_resources import _calibration_bucket  # noqa: E402
+
+
+class TestCalibrationLanguage:
+    def test_bucket_mapping(self):
+        assert _calibration_bucket("en") == "en"
+        assert _calibration_bucket("en-US") == "en"
+        assert _calibration_bucket("ja") == "cjk"
+        assert _calibration_bucket("zh-Hans") == "cjk"
+        assert _calibration_bucket("ko") == "cjk"
+        assert _calibration_bucket("fr") == "mixed"
+        assert _calibration_bucket("cjk") == "cjk"
+        assert _calibration_bucket("mixed") == "mixed"
+
+    async def test_document_language_drives_calibration(self, mock_provider, monkeypatch):
+        captured: dict = {}
+
+        async def fake_measure(provider, *, language):
+            captured["language"] = language
+            return 4.0
+
+        monkeypatch.setattr(_s0, "measure_chars_per_token", fake_measure)
+        await run_stage_0(mock_provider, ExtractionConfig(document_language="ja"))
+        assert captured["language"] == "cjk"  # was hardcoded "en" before wiring
