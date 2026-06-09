@@ -533,22 +533,21 @@ class TestConfigAdversarial:
 
 
 class TestTypesAdversarial:
-    # ADV-TYPES-01: Segment with invalid type_str is silently accepted (M2)
-    def test_segment_invalid_type_silently_accepted(self) -> None:
-        """M2: Segment accepts any segment_type string without validation.
-        _VALID_SEGMENT_TYPES exists but is NOT enforced at construction time.
+    # ADV-TYPES-01: Segment rejects an invalid segment_type at construction (M2 fixed)
+    def test_segment_invalid_type_rejected(self) -> None:
+        """M2 (fixed): Segment validates segment_type against _VALID_SEGMENT_TYPES.
+
+        Previously any string was silently accepted; construction now raises
+        ValueError for an unknown type.
         """
-        # This should ideally raise ValueError but currently does not
-        invalid_seg = Segment(
-            text="hello",
-            start=0,
-            end=5,
-            segment_type="INVALID_TYPE_XYZ",
-        )
-        # Documents current (broken) behavior — construction succeeds
-        assert invalid_seg.segment_type == "INVALID_TYPE_XYZ"
-        # This value is NOT in _VALID_SEGMENT_TYPES:
         assert "INVALID_TYPE_XYZ" not in _VALID_SEGMENT_TYPES
+        with pytest.raises(ValueError, match="Invalid segment_type"):
+            Segment(text="hello", start=0, end=5, segment_type="INVALID_TYPE_XYZ")
+
+    def test_segment_valid_type_accepted(self) -> None:
+        """A known segment_type still constructs normally."""
+        seg = Segment(text="hello", start=0, end=5, segment_type="unstructured")
+        assert seg.segment_type == "unstructured"
 
     # ADV-TYPES-02: Field.constraints is a mutable dict in a frozen dataclass (M7)
     def test_field_constraints_mutable_despite_frozen(self) -> None:

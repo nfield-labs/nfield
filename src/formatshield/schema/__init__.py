@@ -31,9 +31,6 @@ from ._types import (
 from ._types import (
     Segment as Segment,
 )
-from ._types import (
-    SuperNode as SuperNode,
-)
 
 __all__ = [
     "SEGMENT_TYPE_STRUCTURED",
@@ -43,7 +40,6 @@ __all__ = [
     "Field",
     "FieldGroup",
     "Segment",
-    "SuperNode",
     "compute_difficulty",
     "compute_tau",
     "extract_dependencies",

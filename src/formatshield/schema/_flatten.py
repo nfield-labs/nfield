@@ -15,6 +15,28 @@ _LEAF_TYPES: frozenset[str] = frozenset({"string", "integer", "number", "boolean
 _ARRAY_SUFFIX: str = "[]"
 _WILDCARD_SUFFIX: str = ".*"
 MAX_SCHEMA_DEPTH: int = 32
+# Ceiling on total node expansions T during the iterative DFS flatten.
+#
+# A "node expansion" = one stack pop = one schema fragment processed (the root,
+# every nested object/array, every $ref/anyOf/oneOf/allOf re-push, AND every leaf).
+# It is NOT the emitted-field count: a field requires a pop but most pops emit no
+# field, so |fields| ≤ T. We bound T (not |fields|) because a $ref fan-out inflates
+# the non-leaf pops exponentially even when zero leaves are emitted.
+#
+# Let D = MAX_SCHEMA_DEPTH and b = max $ref reuse per node (a $def referenced b
+# times per level). The per-branch cycle guard lets a node re-expand on each
+# distinct branch, so
+#     T = Σ_{i=0..D} b^i = (b^(D+1) - 1)/(b - 1) = Θ(b^D)      (b ≥ 2),
+# i.e. T is EXPONENTIAL in depth. MAX_SCHEMA_DEPTH bounds D, not T (e.g. b=2,
+# D=32 ⇒ T ≈ 2^32 ≈ 4.3e9 expansions ⇒ OOM/hang).
+#
+# This constant bounds T directly: the loop raises once pops > C, so work is O(C)
+# for any (b, D); and since |fields| ≤ pops, memory is O(T) ≤ O(C) too — one bound
+# covers both. Choose C by the constraint
+#     N_legit ≤ C ≪ b^D,
+# where N_legit = node count of the largest schema to admit (a flat schema of F
+# fields has N ≈ F, so C must exceed the max supported field count). Tunable.
+MAX_TOTAL_NODES: int = 5_000_000
 
 _CONSTRAINT_KEYS: frozenset[str] = frozenset(
     {
@@ -68,6 +90,8 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
     Raises:
         SchemaError: If schema is not a dict.
         SchemaError: If schema depth exceeds MAX_SCHEMA_DEPTH.
+        SchemaError: If total node expansions exceed MAX_TOTAL_NODES (guards
+            against $ref fan-out / pathological exponential blow-up).
 
     Example:
         >>> schema = {
@@ -102,7 +126,19 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
         (schema, "", "", 0, initial_required, frozenset())
     ]
 
+    nodes_processed = 0
+
     while stack:
+        nodes_processed += 1
+        if nodes_processed > MAX_TOTAL_NODES:
+            raise SchemaError(
+                f"Schema expansion exceeded MAX_TOTAL_NODES={MAX_TOTAL_NODES}",
+                hint=(
+                    "A $ref fan-out or pathological schema is expanding far beyond "
+                    "any real schema's size. Check for a $def referenced repeatedly."
+                ),
+            )
+
         node, path, parent_path, depth, required_set, ref_chain = stack.pop()
 
         if depth > MAX_SCHEMA_DEPTH:

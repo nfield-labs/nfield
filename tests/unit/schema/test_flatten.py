@@ -492,3 +492,44 @@ class TestFlattenConstraints:
         paths = {f.path for f in fields}
         assert "billing.city" in paths
         assert "billing.country" in paths
+
+
+# ---------------------------------------------------------------------------
+# Resource bound — $ref fan-out / pathological expansion (DoS guard)
+# ---------------------------------------------------------------------------
+import formatshield.schema._flatten as _flatten_mod  # noqa: E402
+
+
+class TestNodeBudget:
+    def _fanout_schema(self, levels: int) -> dict:
+        """A $ref diamond: each level references the next twice → 2^levels nodes."""
+        defs: dict = {}
+        for i in range(levels):
+            nxt = f"#/$defs/L{i + 1}"
+            defs[f"L{i}"] = {
+                "type": "object",
+                "properties": {"a": {"$ref": nxt}, "b": {"$ref": nxt}},
+            }
+        defs[f"L{levels}"] = {"type": "object", "properties": {"v": {"type": "string"}}}
+        return {"type": "object", "$defs": defs, "properties": {"root": {"$ref": "#/$defs/L0"}}}
+
+    def test_fanout_exceeds_budget_raises(self, monkeypatch):
+        # Tiny cap so the guard fires fast without building millions of nodes.
+        monkeypatch.setattr(_flatten_mod, "MAX_TOTAL_NODES", 50)
+        with pytest.raises(SchemaError, match="MAX_TOTAL_NODES"):
+            flatten_schema(self._fanout_schema(levels=20))
+
+    def test_normal_schema_under_budget(self, monkeypatch):
+        # A small real schema stays well under even a modest cap.
+        monkeypatch.setattr(_flatten_mod, "MAX_TOTAL_NODES", 1000)
+        schema = {
+            "type": "object",
+            "properties": {"name": {"type": "string"}, "age": {"type": "integer"}},
+        }
+        assert {f.path for f in flatten_schema(schema)} == {"name", "age"}
+
+    def test_default_budget_admits_large_schemas(self):
+        # Constraint N_legit ≤ C: the cap must exceed the node count of any schema
+        # we admit. A flat schema of F fields has N ≈ F, so C must clear a generous
+        # field-count floor (1e6) while staying ≪ the exponential blow-up b^D.
+        assert _flatten_mod.MAX_TOTAL_NODES >= 1_000_000

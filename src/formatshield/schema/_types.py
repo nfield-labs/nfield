@@ -12,7 +12,6 @@ __all__ = [
     "Field",
     "FieldGroup",
     "Segment",
-    "SuperNode",
 ]
 
 # ---------------------------------------------------------------------------
@@ -58,6 +57,19 @@ class Segment:
     end: int
     segment_type: str
     segment_id: int = 0
+
+    def __post_init__(self) -> None:
+        """Validate ``segment_type`` against the known set at the boundary.
+
+        Raises:
+            ValueError: If ``segment_type`` is not one of
+                ``_VALID_SEGMENT_TYPES``.
+        """
+        if self.segment_type not in _VALID_SEGMENT_TYPES:
+            raise ValueError(
+                f"Invalid segment_type {self.segment_type!r}; "
+                f"must be one of {sorted(_VALID_SEGMENT_TYPES)}"
+            )
 
 
 @dataclass(frozen=True, slots=True)
@@ -236,25 +248,6 @@ class FieldGroup:
     segment_scores: list[float] = field(default_factory=list)
     D_cost: int = 0
     field_best_segment: dict[str, int] = field(default_factory=dict)
-
-
-@dataclass
-class SuperNode:
-    """A collection of FieldGroups for hierarchical capacity planning.
-
-    SuperNodes aggregate related FieldGroups so the Stage 2C capacity
-    planner can reason about groups of groups when building CapacityLeafs.
-
-    Attributes:
-        groups: List of FieldGroup objects in this super-node.
-
-    Example:
-        >>> sn = SuperNode()
-        >>> sn.groups
-        []
-    """
-
-    groups: list[FieldGroup] = field(default_factory=list)
 
 
 @dataclass
