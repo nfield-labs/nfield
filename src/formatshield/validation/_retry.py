@@ -17,13 +17,14 @@ MVP failure causes (4)
 * ``DEPENDENCY_VALUE_CHANGED`` — A dependency's value changed during retry,
                                   invalidating this field's extracted value.
 
+Also implemented: GSGRF (fresh per-field excerpt via ``retry_excerpt``) and CADTR
+(:func:`cascade_invalidate`, run by Stage 5 when a dependency value changes).
+
 Post-MVP stubs (not implemented)
 ---------------------------------
 * ``LOW_GROUNDING_EVIDENCE_PRESENT`` — GSV grounding score below threshold.
 * ``LOW_GROUNDING_NO_EVIDENCE``      — No supporting evidence found in document.
 * PFTEN (pool-first narrowed excerpt) — targeted context narrowing per field.
-* GSGRF (targeted retrieval)         — per-field lexical re-query.
-* CADTR (cascade dep invalidation)   — dependency-aware invalidation tree.
 """
 
 from __future__ import annotations
@@ -111,6 +112,10 @@ def classify_failure(
     constraint violations. Both ``FIELD_MISSING`` and
     ``DEPENDENCY_VALUE_CHANGED`` require external context and must be set
     by the caller.
+
+    Note:
+        Public utility; Stage 5 classifies from the blackboard FieldState, not
+        from error strings, so it does not call this internally.
 
     Args:
         field: The field that failed extraction.

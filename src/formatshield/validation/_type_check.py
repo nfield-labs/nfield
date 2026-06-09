@@ -58,9 +58,6 @@ _FORMAT_VALIDATORS: dict[str, re.Pattern[str]] = {
     "uuid": _RE_UUID,
 }
 
-# Sentinel imported at runtime for identity check (no circular import: validation does not
-# import from assembly; extraction does not import from validation).
-
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -159,15 +156,19 @@ def constraint_check(value: Any, field: Field) -> list[str]:
                     f"{path}: maxLength constraint violated — length {len(value)} > {max_len}"
                 )
         if "pattern" in constraints:
-            pattern = str(constraints["pattern"])
-            try:
-                if not re.search(pattern, value):
-                    violations.append(
-                        f"{path}: pattern constraint violated — "
-                        f"{value!r} does not match /{pattern}/"
-                    )
-            except re.error:
-                violations.append(f"{path}: pattern constraint has invalid regex: {pattern!r}")
+            # already failed maxLength above -> don't run the pattern on an over-long value
+            declared_max = constraints.get("maxLength")
+            over_declared_max = declared_max is not None and len(value) > int(declared_max)
+            if not over_declared_max:
+                pattern = str(constraints["pattern"])
+                try:
+                    if not re.search(pattern, value):
+                        violations.append(
+                            f"{path}: pattern constraint violated — "
+                            f"{value!r} does not match /{pattern}/"
+                        )
+                except re.error:
+                    violations.append(f"{path}: pattern constraint has invalid regex: {pattern!r}")
         if "format" in constraints:
             fmt = str(constraints["format"])
             fmt_re = _FORMAT_VALIDATORS.get(fmt)
@@ -283,11 +284,12 @@ def _check_type(
             except ValueError:
                 try:
                     as_float = float(value)
-                    if as_float == int(as_float):
-                        return True, int(as_float), None
                 except ValueError:
-                    pass
-        if isinstance(value, float) and value == int(value):
+                    as_float = None
+                # float("9"*5000) is inf, and int(inf) raises OverflowError
+                if as_float is not None and math.isfinite(as_float) and as_float == int(as_float):
+                    return True, int(as_float), None
+        if isinstance(value, float) and math.isfinite(value) and value == int(value):
             return True, int(value), None
         return False, None, f"{path}: expected integer, got {type(value).__name__} {value!r}"
 
@@ -326,7 +328,11 @@ def _check_type(
         # Enum fields: any string value is type-valid; enum membership is a constraint
         if isinstance(value, str):
             return True, None, None
-        return False, None, f"{path}: expected enum string, got {type(value).__name__} {value!r}"
+        return (
+            False,
+            None,
+            f"{path}: expected enum string, got {type(value).__name__} {value!r}",
+        )
 
     # object / unknown type — accept any value (schema structure handled upstream)
     return True, None, None

@@ -224,3 +224,36 @@ class TestConstraintCheck:
     def test_no_constraints_returns_empty(self):
         f = make_field("x", "string")
         assert constraint_check("anything", f) == []
+
+
+# ---------------------------------------------------------------------------
+# pattern x maxLength gate (no magic bound) + numeric inf guard
+# ---------------------------------------------------------------------------
+
+
+class TestPatternMaxLengthGate:
+    def test_value_within_maxlength_runs_pattern(self):
+        f = make_field("code", "string", {"pattern": r"^[a-z]+$", "maxLength": 8})
+        assert validate_field("abc", f) == (True, None)
+        ok, err = validate_field("ABC", f)
+        assert not ok and "pattern constraint violated" in err
+
+    def test_value_over_maxlength_skips_pattern(self):
+        # over maxLength -> pattern skipped; "A"*8 would fail it, proving the skip
+        f = make_field("code", "string", {"pattern": r"^[a-z]+$", "maxLength": 4})
+        violations = constraint_check("A" * 8, f)
+        assert any("maxLength" in v for v in violations)
+        assert not any("pattern" in v for v in violations)
+
+    def test_no_maxlength_runs_pattern(self):
+        f = make_field("blob", "string", {"pattern": r"^[a-z]+$"})
+        assert constraint_check("abc", f) == []
+        assert any("pattern" in v for v in constraint_check("ABC", f))
+
+
+class TestNumericInfGuard:
+    def test_huge_digit_string_does_not_crash(self):
+        # regression: int(inf) OverflowError on "9"*5000
+        for ftype in ("integer", "number"):
+            ok, _ = validate_field("9" * 5000, make_field("n", ftype))
+            assert isinstance(ok, bool)
