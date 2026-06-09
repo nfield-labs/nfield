@@ -172,8 +172,7 @@ async def _validate_leaf(
         call_counter=retry_calls,
         rounds_counter=rounds_used,
         call_failures=call_failures,
-        system_prompt=state.system_prompt,
-        user_prompt=state.user_prompt,
+        instructions=state.instructions,
         knowledge_fallback=state.knowledge_fallback,
         retry_excerpt=retry_excerpt,
     )

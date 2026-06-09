@@ -32,11 +32,10 @@ class PipelineState:
     M_O: int = 0
     C_usable: float = 0.0
 
-    # Optional caller-supplied prompt context: a system prompt and a user/task
-    # prompt. Constant across all leaves, prepended to the built-in SFEP prompts,
-    # and counted in leaf overhead so they shrink the per-leaf document budget.
-    system_prompt: str = ""
-    user_prompt: str = ""
+    # Optional caller steering, constant across all leaves, prepended to the
+    # built-in SFEP prompt and counted in leaf overhead so it shrinks the
+    # per-leaf document budget.
+    instructions: str = ""
 
     # When True, Stage 4 injects resolved upstream dependency values into a
     # dependent leaf's prompt (set by the engine from ExtractionConfig).

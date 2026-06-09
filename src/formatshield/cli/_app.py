@@ -142,11 +142,8 @@ def extract(
         int | None,
         typer.Option("--max-output-tokens", help="Model's real max output tokens."),
     ] = None,
-    system_prompt: Annotated[
-        str, typer.Option("--system-prompt", help="Extra system context, prepended.")
-    ] = "",
-    user_prompt: Annotated[
-        str, typer.Option("--user-prompt", help="Extra task context, prepended.")
+    instructions: Annotated[
+        str, typer.Option("--instructions", help="Extra steering for the model, prepended.")
     ] = "",
 ) -> None:
     """Extract structured fields from a document into the given schema.
@@ -166,8 +163,7 @@ def extract(
             config=config,
             context_window=context_window,
             max_output_tokens=max_output_tokens,
-            system_prompt=system_prompt,
-            user_prompt=user_prompt,
+            instructions=instructions,
         )
     except FormatShieldError as exc:
         typer.echo(f"Extraction failed: {exc}", err=True)

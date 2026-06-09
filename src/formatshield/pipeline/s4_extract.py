@@ -146,8 +146,7 @@ async def _call_provider(leaf: CapacityLeaf, provider: LLMProvider, state: Pipel
         leaf.fields,
         leaf.document_excerpt,
         template,
-        system_prompt=state.system_prompt,
-        user_prompt=state.user_prompt,
+        instructions=state.instructions,
         dependency_values=_resolved_dependencies(leaf, state),
         knowledge_fallback=state.knowledge_fallback,
     )

@@ -108,7 +108,7 @@ class TestExtract:
         assert result.exit_code == 0
         assert "Globex" in result.stdout
 
-    def test_extract_with_prompt_flags(self, tmp_path, monkeypatch):
+    def test_extract_with_instructions_flag(self, tmp_path, monkeypatch):
         provider = _MockProvider("vendor = Acme")
         monkeypatch.setattr("formatshield.engine._async.from_model", lambda _m, **_kw: provider)
         doc = _write(tmp_path / "doc.txt", "Acme")
@@ -122,15 +122,12 @@ class TestExtract:
                 schema_file,
                 "--model",
                 "mock/echo",
-                "--system-prompt",
-                "DOMAIN: invoices.",
-                "--user-prompt",
-                "Be exact.",
+                "--instructions",
+                "DOMAIN: invoices. Be exact.",
             ],
         )
         assert result.exit_code == 0, result.stdout
-        assert "DOMAIN: invoices." in provider.last_messages[0]["content"]
-        assert "Be exact." in provider.last_messages[1]["content"]
+        assert "DOMAIN: invoices. Be exact." in provider.last_messages[0]["content"]
 
     def test_extract_missing_document(self, tmp_path):
         schema_file = _write(tmp_path / "s.json", json.dumps(_SCHEMA))

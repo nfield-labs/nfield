@@ -173,8 +173,7 @@ async def main() -> None:
         f"  document needs ~{need:,} tokens => {need / max(1, state.C_usable):.0f}x C_usable => MUST chunk + retrieve"
     )
 
-    state.system_prompt = ""
-    state.user_prompt = ""
+    state.instructions = ""
     state.inject_dependencies = config.inject_dependencies
     state.knowledge_fallback = config.knowledge_fallback
     state.max_concurrent_calls = config.max_concurrent_calls
@@ -293,8 +292,7 @@ async def main() -> None:
             leaf.fields,
             leaf.document_excerpt,
             template,
-            system_prompt=state.system_prompt,
-            user_prompt=state.user_prompt,
+            instructions=state.instructions,
             knowledge_fallback=state.knowledge_fallback,
         )
         t("")

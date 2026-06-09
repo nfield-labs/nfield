@@ -110,28 +110,25 @@ class TestPublicApiScale:
         assert len(big.data) == len(small.data) == 300
 
 
-class TestSystemUserPrompt:
-    """Caller S/P reach the provider and are charged to leaf overhead."""
+class TestInstructions:
+    """Caller instructions reach the provider and are charged to leaf overhead."""
 
-    async def test_system_prompt_reaches_provider(self, install_provider):
+    async def test_instructions_reach_provider(self, install_provider):
         provider = install_provider("name = Alice\nage = 30")
         engine = AsyncFormatShield(
             "mock/echo",
             {"type": "object", "properties": {"name": {"type": "string"}}},
-            system_prompt="DOMAIN: clinical trial records.",
-            user_prompt="Prefer ISO dates.",
+            instructions="DOMAIN: clinical trial records. Prefer ISO dates.",
             config=ExtractionConfig(max_retry_rounds=0),
         )
         await engine.extract("doc")
         system_msg = provider.last_messages[0]["content"]
-        user_msg = provider.last_messages[1]["content"]
-        assert "DOMAIN: clinical trial records." in system_msg
+        assert "DOMAIN: clinical trial records. Prefer ISO dates." in system_msg
         assert "OUTPUT FORMAT" in system_msg  # SFEP contract preserved
-        assert "Prefer ISO dates." in user_msg
 
-    async def test_large_system_prompt_increases_leaf_count(self, monkeypatch):
-        # A big caller prompt eats the per-leaf budget, so the same schema must
-        # split into more calls — proof S/P is counted in overhead, not ignored.
+    async def test_large_instructions_increases_leaf_count(self, monkeypatch):
+        # A big instructions string eats the per-leaf budget, so the same schema
+        # must split into more calls — proof it is counted in overhead, not ignored.
         sfep = _full_sfep(50)
 
         def factory(_model, *, context_window=None, max_output_tokens=None, **_kwargs):
@@ -153,7 +150,7 @@ class TestSystemUserPrompt:
             schema,
             context_window=8192,
             max_output_tokens=8192,
-            system_prompt="X" * 20_000,  # ~5000 tokens of caller context
+            instructions="X" * 20_000,  # ~5000 tokens of caller context
             config=cfg,
         ).extract("doc")
 

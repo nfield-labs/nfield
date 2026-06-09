@@ -6,7 +6,7 @@
 nfield(
     document, schema, model=None,
     *, context_window=None, max_output_tokens=None,
-    system_prompt="", user_prompt="", config=None,
+    instructions="", config=None,
 ) -> ExtractionResult
 ```
 
@@ -14,12 +14,11 @@ Synchronous one-shot extraction. `schema` may be a JSON Schema dict, a Pydantic
 model (class or instance), or a dataclass (class or instance). If `model` is
 omitted, it is resolved from `FORMATSHIELD_MODEL`, then `config.default_model`.
 
-`system_prompt` and `user_prompt` add caller context (domain, task instructions).
-They are **prepended** to FormatShield's built-in SFEP prompts — never replacing
-them — and are counted in each leaf's overhead, so a large prompt correctly
-shrinks the per-call document budget. The same kwargs exist on `FormatShield`,
-`AsyncFormatShield`, `nfield_async`, and as `--system-prompt` / `--user-prompt`
-on the CLI.
+`instructions` adds caller steering (domain, task hints). It is **prepended** to
+FormatShield's built-in SFEP prompt — never replacing it — and is counted in each
+leaf's overhead, so a large value correctly shrinks the per-call document budget.
+The same kwarg exists on `FormatShield`, `AsyncFormatShield`, `nfield_async`, and
+as `--instructions` on the CLI.
 
 `model` is a `"provider/model-name"` string (`groq/…` today; `openai/…`,
 `anthropic/…` as providers are added). `context_window` (C_eff) and

@@ -98,8 +98,7 @@ def build_extraction_prompt(
     template_type: TemplateType,
     *,
     cluster_type: ClusterType = ClusterType.STANDARD,
-    system_prompt: str = "",
-    user_prompt: str = "",
+    instructions: str = "",
     dependency_values: dict[str, Any] | None = None,
     knowledge_fallback: bool = False,
 ) -> list[dict[str, str]]:
@@ -118,10 +117,8 @@ def build_extraction_prompt(
             message. See :class:`~formatshield.extraction._papt.TemplateType`.
         cluster_type: Structural classification of the field group. Used for
             cluster-specific phrasing (no-op in MVP; TEP routing in post-MVP).
-        system_prompt: Optional caller system context, prepended before the
-            SFEP format contract (which is always kept so parsing stays valid).
-        user_prompt: Optional caller task context, prepended before the field
-            list in the user message.
+        instructions: Optional caller steering, prepended before the SFEP format
+            contract (which is always kept so parsing stays valid).
         dependency_values: Optional ``{path: value}`` of upstream dependency
             fields resolved in earlier rounds, rendered as a labelled block
             before the field list so the model reuses them.
@@ -151,11 +148,10 @@ def build_extraction_prompt(
         raise ValueError("fields must be non-empty — cannot build extraction prompt")
 
     system_content = _prepend(
-        system_prompt, _build_system_message(cluster_type, knowledge_fallback=knowledge_fallback)
+        instructions, _build_system_message(cluster_type, knowledge_fallback=knowledge_fallback)
     )
     user_core = _build_user_message(fields, document_excerpt, template_type)
-    user_with_deps = _prepend(_format_dependency_block(dependency_values), user_core)
-    user_content = _prepend(user_prompt, user_with_deps)
+    user_content = _prepend(_format_dependency_block(dependency_values), user_core)
 
     return [
         {"role": "system", "content": system_content},
@@ -189,8 +185,7 @@ def build_retry_system_message(
     errors: dict[str, str],
     document_excerpt: str,
     *,
-    system_prompt: str = "",
-    user_prompt: str = "",
+    instructions: str = "",
     knowledge_fallback: bool = False,
 ) -> list[dict[str, str]]:
     """Build the messages list for a surgical field retry (SFR) call.
@@ -202,6 +197,7 @@ def build_retry_system_message(
         failed_fields: Fields that failed validation in the previous pass.
         errors: Mapping of ``field.path -> error_message`` for each failed field.
         document_excerpt: Same document excerpt used in the original extraction.
+        instructions: Optional caller steering, prepended before the retry contract.
         knowledge_fallback: When ``True``, the retry may fall back to the model's
             own knowledge for fields the document does not state. Default ``False``.
 
@@ -221,11 +217,9 @@ def build_retry_system_message(
     """
     sourcing_rule = _SOURCING_RULE_KNOWLEDGE if knowledge_fallback else _SOURCING_RULE_STRICT
     system_content = _prepend(
-        system_prompt, _RETRY_SYSTEM_PROMPT_TEMPLATE.format(sourcing_rule=sourcing_rule)
+        instructions, _RETRY_SYSTEM_PROMPT_TEMPLATE.format(sourcing_rule=sourcing_rule)
     )
-    user_content = _prepend(
-        user_prompt, _build_retry_user_message(failed_fields, errors, document_excerpt)
-    )
+    user_content = _build_retry_user_message(failed_fields, errors, document_excerpt)
 
     return [
         {"role": "system", "content": system_content},

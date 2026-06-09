@@ -160,8 +160,7 @@ async def orchestrate_retry(
     call_counter: list[int] | None = None,
     rounds_counter: list[int] | None = None,
     call_failures: dict[str, str] | None = None,
-    system_prompt: str = "",
-    user_prompt: str = "",
+    instructions: str = "",
     knowledge_fallback: bool = False,
     retry_excerpt: str | None = None,
 ) -> dict[str, Any]:
@@ -242,8 +241,7 @@ async def orchestrate_retry(
                 leaf,
                 call_counter=call_counter,
                 call_failures=call_failures,
-                system_prompt=system_prompt,
-                user_prompt=user_prompt,
+                instructions=instructions,
                 knowledge_fallback=knowledge_fallback,
                 retry_excerpt=retry_excerpt,
             )
@@ -275,8 +273,7 @@ async def surgical_field_retry(
     *,
     call_counter: list[int] | None = None,
     call_failures: dict[str, str] | None = None,
-    system_prompt: str = "",
-    user_prompt: str = "",
+    instructions: str = "",
     knowledge_fallback: bool = False,
     retry_excerpt: str | None = None,
 ) -> dict[str, Any]:
@@ -307,8 +304,7 @@ async def surgical_field_retry(
         fields,
         errors,
         retry_excerpt or leaf.document_excerpt,
-        system_prompt=system_prompt,
-        user_prompt=user_prompt,
+        instructions=instructions,
         knowledge_fallback=knowledge_fallback,
     )
 
@@ -342,8 +338,7 @@ def build_retry_prompt(
     errors: dict[str, str],
     document_excerpt: str,
     *,
-    system_prompt: str = "",
-    user_prompt: str = "",
+    instructions: str = "",
     knowledge_fallback: bool = False,
 ) -> list[dict[str, str]]:
     """Build the messages list for a surgical retry call.
@@ -352,8 +347,7 @@ def build_retry_prompt(
         fields: Failed fields to retry.
         errors: Per-field error messages for targeted correction.
         document_excerpt: Document text from the original leaf.
-        system_prompt: Optional caller system context (prepended).
-        user_prompt: Optional caller task context (prepended).
+        instructions: Optional caller steering (prepended).
         knowledge_fallback: Allow the model to fall back to its own knowledge for
             fields the document does not state. Default ``False``.
 
@@ -364,8 +358,7 @@ def build_retry_prompt(
         fields,
         errors,
         document_excerpt,
-        system_prompt=system_prompt,
-        user_prompt=user_prompt,
+        instructions=instructions,
         knowledge_fallback=knowledge_fallback,
     )
 

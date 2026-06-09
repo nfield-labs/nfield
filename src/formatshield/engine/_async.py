@@ -272,9 +272,8 @@ class AsyncFormatShield:
             secret-vault / multi-tenant use; it is never logged.
         base_url: Override the provider API base URL (proxy / gateway /
             self-hosted compatible endpoint). ``None`` uses the SDK default.
-        system_prompt: Optional caller system context, prepended to the built-in
-            SFEP system prompt and counted in leaf overhead.
-        user_prompt: Optional caller task context, prepended to the user message.
+        instructions: Optional caller steering, prepended to the built-in SFEP
+            system prompt and counted in leaf overhead.
 
     Example:
         >>> # async with AsyncFormatShield("groq/llama-3.1-8b", schema=S) as fs:
@@ -293,8 +292,7 @@ class AsyncFormatShield:
         max_output_tokens: int | None = None,
         api_key: str | None = None,
         base_url: str | None = None,
-        system_prompt: str = "",
-        user_prompt: str = "",
+        instructions: str = "",
     ) -> None:
         self._config: ExtractionConfig = config or ExtractionConfig()
         self._model: str = _resolve_model(model, self._config)
@@ -305,8 +303,7 @@ class AsyncFormatShield:
             api_key=api_key,
             base_url=base_url,
         )
-        self._system_prompt = system_prompt
-        self._user_prompt = user_prompt
+        self._instructions = instructions
         self._schema: dict[str, Any] | None = (
             _normalize_schema(schema) if schema is not None else None
         )
@@ -353,8 +350,7 @@ class AsyncFormatShield:
         provider = self._provider
 
         state = await self._calibrated_state()
-        state.system_prompt = self._system_prompt
-        state.user_prompt = self._user_prompt
+        state.instructions = self._instructions
         state.inject_dependencies = config.inject_dependencies
         state.knowledge_fallback = config.knowledge_fallback
         state.max_concurrent_calls = config.max_concurrent_calls
@@ -437,8 +433,7 @@ async def nfield_async(
     max_output_tokens: int | None = None,
     api_key: str | None = None,
     base_url: str | None = None,
-    system_prompt: str = "",
-    user_prompt: str = "",
+    instructions: str = "",
 ) -> ExtractionResult:
     """Extract N structured fields from a document (async, one-shot).
 
@@ -456,6 +451,7 @@ async def nfield_async(
         max_output_tokens: The model's real output ceiling in tokens (M_O).
         api_key: Provider API key. ``None`` reads it from the environment.
         base_url: Override the provider API base URL. ``None`` uses the default.
+        instructions: Optional caller steering, prepended to the SFEP prompt.
 
     Returns:
         The :class:`~formatshield.types.ExtractionResult`.
@@ -476,7 +472,6 @@ async def nfield_async(
         max_output_tokens=max_output_tokens,
         api_key=api_key,
         base_url=base_url,
-        system_prompt=system_prompt,
-        user_prompt=user_prompt,
+        instructions=instructions,
     )
     return await engine.extract(document)

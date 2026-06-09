@@ -485,7 +485,7 @@ def run_stage_2c(state: PipelineState, config: ExtractionConfig) -> PipelineStat
 
     # Fixed prompt cost (real SFEP system message + caller prompts), measured not guessed.
     builtin_sys = builtin_system_message(knowledge_fallback=state.knowledge_fallback)
-    fixed_prompt_chars = len(builtin_sys) + len(state.system_prompt) + len(state.user_prompt)
+    fixed_prompt_chars = len(builtin_sys) + len(state.instructions)
     prompt_overhead = math.ceil(fixed_prompt_chars / cpt)
 
     leaves = _greedy_ffd(

@@ -101,12 +101,11 @@ Add your own framing without touching the extraction format:
 result = nfield(
     document_text, schema, "groq/llama-3.1-8b-instant",
     context_window=131_072, max_output_tokens=32_768,
-    system_prompt="You are extracting from clinical trial records.",
-    user_prompt="Prefer ISO-8601 dates; leave unknown fields NULL.",
+    instructions="Extracting from clinical trial records. Prefer ISO-8601 dates; "
+                 "leave unknown fields NULL.",
 )
 ```
 
-These are **prepended** to FormatShield's built-in SFEP prompts (which are always
-kept, so output parsing stays valid) and are counted in capacity planning — a long
-prompt correctly reduces the per-call document budget. CLI: `--system-prompt` /
-`--user-prompt`.
+`instructions` is **prepended** to FormatShield's built-in SFEP prompt (which is
+always kept, so output parsing stays valid) and is counted in capacity planning — a
+long value correctly reduces the per-call document budget. CLI: `--instructions`.

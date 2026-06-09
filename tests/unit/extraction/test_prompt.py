@@ -27,38 +27,34 @@ def make_field(path: str, ftype: str, description: str = "") -> Field:
 
 
 class TestPromptContextPrepend:
-    """Caller system/user prompts are prepended, SFEP contract preserved."""
+    """Caller instructions are prepended, SFEP contract preserved."""
 
-    def test_extraction_prompt_prepends_system_and_user(self):
+    def test_extraction_prompt_prepends_instructions(self):
         f = make_field("name", "string")
         msgs = build_extraction_prompt(
             [f],
             "doc",
             TemplateType.STANDARD,
-            system_prompt="DOMAIN: clinical notes.",
-            user_prompt="Be precise about dosages.",
+            instructions="DOMAIN: clinical notes. Be precise about dosages.",
         )
-        system, user = msgs[0]["content"], msgs[1]["content"]
-        # Caller context appears...
-        assert system.startswith("DOMAIN: clinical notes.")
-        assert "Be precise about dosages." in user
+        system = msgs[0]["content"]
+        # Caller instructions appear...
+        assert system.startswith("DOMAIN: clinical notes. Be precise about dosages.")
         # ...and the built-in SFEP contract is still there (parsing stays valid).
         assert "OUTPUT FORMAT" in system
         assert "field.path = value" in system
 
-    def test_empty_context_leaves_prompt_unchanged(self):
+    def test_empty_instructions_leaves_prompt_unchanged(self):
         f = make_field("name", "string")
         base = build_extraction_prompt([f], "doc", TemplateType.STANDARD)
-        with_empty = build_extraction_prompt(
-            [f], "doc", TemplateType.STANDARD, system_prompt="", user_prompt="  "
-        )
+        with_empty = build_extraction_prompt([f], "doc", TemplateType.STANDARD, instructions="  ")
         assert base[0]["content"] == with_empty[0]["content"]
         assert base[1]["content"] == with_empty[1]["content"]
 
-    def test_retry_prompt_prepends_system(self):
+    def test_retry_prompt_prepends_instructions(self):
         f = make_field("age", "integer")
         msgs = build_retry_system_message(
-            [f], {"age": "bad"}, "doc", system_prompt="DOMAIN: finance."
+            [f], {"age": "bad"}, "doc", instructions="DOMAIN: finance."
         )
         assert msgs[0]["content"].startswith("DOMAIN: finance.")
         assert "RE-EXTRACTION" in msgs[0]["content"]

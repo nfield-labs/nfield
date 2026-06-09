@@ -72,6 +72,7 @@ class FormatShield:
         max_output_tokens: The model's real output ceiling in tokens (M_O).
         api_key: Provider API key. ``None`` reads it from the environment.
         base_url: Override the provider API base URL. ``None`` uses the default.
+        instructions: Optional caller steering, prepended to the SFEP prompt.
 
     Example:
         >>> # fs = FormatShield("groq/llama-3.1-8b", schema=Invoice)
@@ -90,8 +91,7 @@ class FormatShield:
         max_output_tokens: int | None = None,
         api_key: str | None = None,
         base_url: str | None = None,
-        system_prompt: str = "",
-        user_prompt: str = "",
+        instructions: str = "",
     ) -> None:
         self._engine = AsyncFormatShield(
             model,
@@ -101,8 +101,7 @@ class FormatShield:
             max_output_tokens=max_output_tokens,
             api_key=api_key,
             base_url=base_url,
-            system_prompt=system_prompt,
-            user_prompt=user_prompt,
+            instructions=instructions,
         )
 
     @property
@@ -151,8 +150,7 @@ def nfield(
     max_output_tokens: int | None = None,
     api_key: str | None = None,
     base_url: str | None = None,
-    system_prompt: str = "",
-    user_prompt: str = "",
+    instructions: str = "",
 ) -> ExtractionResult:
     """Extract N structured fields from a document (synchronous, one-shot).
 
@@ -170,6 +168,7 @@ def nfield(
         max_output_tokens: The model's real output ceiling in tokens (M_O).
         api_key: Provider API key. ``None`` reads it from the environment.
         base_url: Override the provider API base URL. ``None`` uses the default.
+        instructions: Optional caller steering, prepended to the SFEP prompt.
 
     Returns:
         The :class:`~formatshield.types.ExtractionResult`.
@@ -190,6 +189,5 @@ def nfield(
         max_output_tokens=max_output_tokens,
         api_key=api_key,
         base_url=base_url,
-        system_prompt=system_prompt,
-        user_prompt=user_prompt,
+        instructions=instructions,
     ).extract(document)
