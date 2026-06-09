@@ -456,9 +456,9 @@ def chunk_document(
         strategy: Chunking strategy: "structured", "tabular", "unstructured",
             or "auto" to detect. Defaults to "auto".
         chunk_size: Target characters per segment (unstructured strategy only).
-            Defaults to 512.
+            Defaults to ``_DEFAULT_CHUNK_SIZE`` (~256 tokens ≈ 1024 chars).
         overlap: Character overlap between chunks (unstructured strategy only).
-            Defaults to 128.
+            Defaults to ``_DEFAULT_CHUNK_OVERLAP`` (~32 tokens ≈ 128 chars).
 
     Returns:
         List of Segment objects with boundaries and types set.
@@ -493,38 +493,3 @@ def chunk_document(
 
     # Guarantee no segment exceeds the max size, regardless of strategy.
     return _enforce_max_segment_size(raw_segments)
-
-
-# ---------------------------------------------------------------------------
-# Post-MVP stubs
-# ---------------------------------------------------------------------------
-
-
-def resolve_coreferences(_text: str) -> str:
-    """Resolve pronoun coreferences in text (post-MVP).
-
-    Args:
-        _text: Document text.
-
-    Returns:
-        Text with coreferences resolved (post-MVP feature).
-
-    Raises:
-        NotImplementedError: This is a post-MVP feature.
-    """
-    raise NotImplementedError("Coreference resolution is a post-MVP feature.")
-
-
-def mark_continuity(_segments: list[Segment]) -> list[Segment]:
-    """Mark cross-chunk continuity boundaries (post-MVP).
-
-    Args:
-        _segments: List of segments from chunking.
-
-    Returns:
-        Segments with continuity metadata (post-MVP feature).
-
-    Raises:
-        NotImplementedError: This is a post-MVP feature.
-    """
-    raise NotImplementedError("Continuity marking is a post-MVP feature.")
