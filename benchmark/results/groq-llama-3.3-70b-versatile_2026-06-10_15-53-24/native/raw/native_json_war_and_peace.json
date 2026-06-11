@@ -1,0 +1,276 @@
+[
+  {
+    "method": "native_json",
+    "fixture": "war_and_peace",
+    "budget": "native",
+    "seed": 0,
+    "fields_total": 200,
+    "fields_extracted": 178,
+    "coverage": 0.89,
+    "k": 1,
+    "k_min": 1,
+    "optimality_gap": 0.0,
+    "call_failed": 0,
+    "elapsed_seconds": 25.792,
+    "error": null,
+    "data": {
+      "book": {
+        "title": "War and Peace",
+        "author": "Leo Tolstoy",
+        "original_language": "Russian",
+        "genre": "Historical fiction",
+        "setting_country": "Russia",
+        "central_conflict": "Napoleonic Wars",
+        "time_period": "1805-1812",
+        "emperor_of_france": "Napoleon Bonaparte",
+        "russian_commander": "Mikhail Kutúzov",
+        "longest_battle_setting": "Borodino",
+        "narrative_style": "Realistic",
+        "number_of_main_families": 5,
+        "ends_with_epilogue": true
+      },
+      "characters": {
+        "pierre": {
+          "full_name": "Pierre Bezúkhov",
+          "family_name": "Bezúkhov",
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Main protagonist",
+          "notable_trait": "Introspective"
+        },
+        "natasha": {
+          "full_name": "Natasha Rostova",
+          "family_name": "Rostova",
+          "gender": "Female",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Main female protagonist",
+          "notable_trait": "Vivacious"
+        },
+        "andrei": {
+          "full_name": "Prince Andrei Bolkonsky",
+          "family_name": "Bolkonsky",
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Main male protagonist",
+          "notable_trait": "Ambitious"
+        },
+        "nikolai": {
+          "full_name": "Nikolai Rostov",
+          "family_name": "Rostov",
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Supporting character",
+          "notable_trait": "Youthful"
+        },
+        "marya": {
+          "full_name": "Princess Marya Bolkonskaya",
+          "family_name": "Bolkonskaya",
+          "gender": "Female",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Supporting character",
+          "notable_trait": "Pious"
+        },
+        "helene": {
+          "full_name": "Hélène Kuragina",
+          "family_name": "Kuragin",
+          "gender": "Female",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Supporting character",
+          "notable_trait": "Beautiful"
+        },
+        "anatole": {
+          "full_name": "Anatole Kuragin",
+          "family_name": "Kuragin",
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Supporting character",
+          "notable_trait": "Debonair"
+        },
+        "boris": {
+          "full_name": "Boris Drubetskoy",
+          "family_name": "Drubetskoy",
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Supporting character",
+          "notable_trait": "Ambitious"
+        },
+        "sonya": {
+          "full_name": "Sonya",
+          "family_name": null,
+          "gender": "Female",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Supporting character",
+          "notable_trait": "Kind"
+        },
+        "dolokhov": {
+          "full_name": "Dolokhov",
+          "family_name": null,
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Supporting character",
+          "notable_trait": "Brave"
+        },
+        "denisov": {
+          "full_name": "Váska Denísov",
+          "family_name": "Denísov",
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Supporting character",
+          "notable_trait": "Brave"
+        },
+        "nesvitski": {
+          "full_name": "Nesvítski",
+          "family_name": null,
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Supporting character",
+          "notable_trait": "Witty"
+        },
+        "zherkov": {
+          "full_name": "Zherkóv",
+          "family_name": null,
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Supporting character",
+          "notable_trait": "Witty"
+        },
+        "bogdanich": {
+          "full_name": "Karl Bogdánich Schubert",
+          "family_name": "Bogdánich",
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Supporting character",
+          "notable_trait": "Serious"
+        },
+        "kutuzov": {
+          "full_name": "Mikhail Kutúzov",
+          "family_name": "Kutúzov",
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Supporting character",
+          "notable_trait": "Experienced"
+        },
+        "bilibin": {
+          "full_name": "Bilíbin",
+          "family_name": null,
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Supporting character",
+          "notable_trait": "Diplomatic"
+        }
+      },
+      "locations": {
+        "location_00": {
+          "name": "Moscow",
+          "country": "Russia",
+          "significance": "Capital city of Russia"
+        },
+        "location_01": {
+          "name": "Saint Petersburg",
+          "country": "Russia",
+          "significance": "Second largest city in Russia"
+        },
+        "location_02": {
+          "name": "Bald Hills estate",
+          "country": "Russia",
+          "significance": "Prince Bolkonsky's estate"
+        },
+        "location_03": {
+          "name": "Borodino",
+          "country": "Russia",
+          "significance": "Site of a major battle"
+        },
+        "location_04": {
+          "name": "Austerlitz",
+          "country": "Austria",
+          "significance": "Site of a major battle"
+        },
+        "location_05": {
+          "name": "Smolensk",
+          "country": "Russia",
+          "significance": "City in western Russia"
+        },
+        "location_06": {
+          "name": "Otradnoe estate",
+          "country": "Russia",
+          "significance": "Prince Bolkonsky's estate"
+        },
+        "location_07": {
+          "name": "the Rostov home",
+          "country": "Russia",
+          "significance": "Rostov family home"
+        },
+        "location_08": {
+          "name": "the battlefield",
+          "country": "Russia",
+          "significance": "Site of battles"
+        },
+        "location_09": {
+          "name": "Russia",
+          "country": "Russia",
+          "significance": "Country where the story takes place"
+        }
+      },
+      "events": {
+        "event_00": {
+          "name": "Battle of Austerlitz",
+          "year": 1805,
+          "location": "Austria",
+          "outcome": "French victory"
+        },
+        "event_01": {
+          "name": "Battle of Borodino",
+          "year": 1812,
+          "location": "Russia",
+          "outcome": "Tactical draw"
+        },
+        "event_02": {
+          "name": "French invasion of Russia 1812",
+          "year": 1812,
+          "location": "Russia",
+          "outcome": "French defeat"
+        },
+        "event_03": {
+          "name": "Burning of Moscow",
+          "year": 1812,
+          "location": "Russia",
+          "outcome": "Destruction of Moscow"
+        },
+        "event_04": {
+          "name": "French retreat from Moscow",
+          "year": 1812,
+          "location": "Russia",
+          "outcome": "French defeat"
+        },
+        "event_05": {
+          "name": "Battle of Krasnoe",
+          "year": 1812,
+          "location": "Russia",
+          "outcome": "Russian victory"
+        },
+        "event_06": {
+          "name": "Battle of the Berezina",
+          "year": 1812,
+          "location": "Russia",
+          "outcome": "Russian victory"
+        }
+      }
+    }
+  }
+]

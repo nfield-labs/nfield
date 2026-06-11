@@ -1,0 +1,20 @@
+{
+  "method": "instructor",
+  "fixture": "clinicaltrial",
+  "n_fields": 304,
+  "runs": 1,
+  "coverage_mean": 0.0,
+  "fields_covered_mean": 0.0,
+  "value_accuracy_mean": 0.0,
+  "value_accuracy_std": 0.0,
+  "json_pass_all": true,
+  "by_type_mean": {
+    "boolean": 0.0,
+    "enum": 0.0,
+    "integer": 0.0,
+    "number": 0.0,
+    "short_string": 0.0,
+    "long_string": 0.0
+  },
+  "call_failed_mean": 0.0
+}

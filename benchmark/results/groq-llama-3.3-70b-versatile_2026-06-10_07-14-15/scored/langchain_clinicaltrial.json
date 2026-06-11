@@ -1,0 +1,20 @@
+{
+  "method": "langchain",
+  "fixture": "clinicaltrial",
+  "n_fields": 304,
+  "runs": 1,
+  "coverage_mean": 0.3256578947368421,
+  "fields_covered_mean": 99.0,
+  "value_accuracy_mean": 0.3223684210526316,
+  "value_accuracy_std": 0.0,
+  "json_pass_all": false,
+  "by_type_mean": {
+    "boolean": 0.8,
+    "enum": 0.8333333333333334,
+    "integer": 1.0,
+    "number": 0.0,
+    "short_string": 0.36683417085427134,
+    "long_string": 0.21739130434782608
+  },
+  "call_failed_mean": 0.0
+}

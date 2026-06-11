@@ -1,0 +1,16 @@
+{
+  "method": "nfield",
+  "fixture": "factbook_multi",
+  "n_fields": 1045,
+  "runs": 1,
+  "coverage_mean": 0.9971291866028709,
+  "fields_covered_mean": 1042.0,
+  "value_accuracy_mean": 0.8181818181818182,
+  "value_accuracy_std": 0.0,
+  "json_pass_all": true,
+  "by_type_mean": {
+    "short_string": 0.839677047289504,
+    "long_string": 0.7134831460674157
+  },
+  "call_failed_mean": 0.0
+}

@@ -1,0 +1,31 @@
+[
+  {
+    "method": "instructor",
+    "fixture": "factbook_us",
+    "budget": "constrained",
+    "seed": 0,
+    "fields_total": 335,
+    "fields_extracted": 0,
+    "coverage": 0.0,
+    "k": 0,
+    "k_min": 0,
+    "optimality_gap": 0.0,
+    "call_failed": 0,
+    "elapsed_seconds": 32.056,
+    "error": "output_truncated: output truncated at the token limit; the method returned no usable object",
+    "error_category": "output_truncated",
+    "data": {},
+    "value_accuracy": 0.0,
+    "by_type": {
+      "short_string": 0.0,
+      "long_string": 0.0
+    },
+    "outcomes": {
+      "correct": 0,
+      "accuracy": 0,
+      "omission": 335,
+      "hallucination": 0,
+      "structural": 0
+    }
+  }
+]

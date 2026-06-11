@@ -1,0 +1,16 @@
+{
+  "method": "langchain",
+  "fixture": "factbook_us",
+  "n_fields": 335,
+  "runs": 1,
+  "coverage_mean": 0.9432835820895522,
+  "fields_covered_mean": 316.0,
+  "value_accuracy_mean": 0.8656716417910447,
+  "value_accuracy_std": 0.0,
+  "json_pass_all": false,
+  "by_type_mean": {
+    "short_string": 0.864963503649635,
+    "long_string": 0.8688524590163934
+  },
+  "call_failed_mean": 0.0
+}

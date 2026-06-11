@@ -1,0 +1,38 @@
+[
+  {
+    "method": "instructor",
+    "fixture": "war_and_peace",
+    "budget": "native",
+    "seed": 0,
+    "fields_total": 200,
+    "fields_extracted": 1,
+    "coverage": 0.005,
+    "k": 1,
+    "k_min": 1,
+    "optimality_gap": 0.0,
+    "call_failed": 0,
+    "elapsed_seconds": 31.08,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "book": {
+        "title": "War and Peace",
+        "author": null,
+        "original_language": null,
+        "genre": null,
+        "setting_country": null,
+        "central_conflict": null,
+        "time_period": null,
+        "emperor_of_france": null,
+        "russian_commander": null,
+        "longest_battle_setting": null,
+        "narrative_style": null,
+        "number_of_main_families": null,
+        "ends_with_epilogue": null
+      },
+      "characters": null,
+      "locations": null,
+      "events": null
+    }
+  }
+]

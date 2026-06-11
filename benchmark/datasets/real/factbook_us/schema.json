@@ -1,0 +1,1790 @@
+{
+  "type": "object",
+  "properties": {
+    "introduction": {
+      "type": "object",
+      "properties": {
+        "background": {
+          "type": "string",
+          "description": "Introduction - Background"
+        }
+      }
+    },
+    "geography": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "string",
+          "description": "Geography - Location"
+        },
+        "geographic_coordinates": {
+          "type": "string",
+          "description": "Geography - Geographic coordinates"
+        },
+        "map_references": {
+          "type": "string",
+          "description": "Geography - Map references"
+        },
+        "area": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "string",
+              "description": "Geography - Area - total"
+            },
+            "land": {
+              "type": "string",
+              "description": "Geography - Area - land"
+            },
+            "water": {
+              "type": "string",
+              "description": "Geography - Area - water"
+            }
+          }
+        },
+        "area_comparative": {
+          "type": "string",
+          "description": "Geography - Area - comparative"
+        },
+        "land_boundaries": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "string",
+              "description": "Geography - Land boundaries - total"
+            },
+            "border_countries": {
+              "type": "string",
+              "description": "Geography - Land boundaries - border countries"
+            }
+          }
+        },
+        "coastline": {
+          "type": "string",
+          "description": "Geography - Coastline"
+        },
+        "maritime_claims": {
+          "type": "object",
+          "properties": {
+            "territorial_sea": {
+              "type": "string",
+              "description": "Geography - Maritime claims - territorial sea"
+            },
+            "contiguous_zone": {
+              "type": "string",
+              "description": "Geography - Maritime claims - contiguous zone"
+            },
+            "exclusive_economic_zone": {
+              "type": "string",
+              "description": "Geography - Maritime claims - exclusive economic zone"
+            },
+            "continental_shelf": {
+              "type": "string",
+              "description": "Geography - Maritime claims - continental shelf"
+            }
+          }
+        },
+        "climate": {
+          "type": "string",
+          "description": "Geography - Climate"
+        },
+        "terrain": {
+          "type": "string",
+          "description": "Geography - Terrain"
+        },
+        "elevation": {
+          "type": "object",
+          "properties": {
+            "highest_point": {
+              "type": "string",
+              "description": "Geography - Elevation - highest point"
+            },
+            "lowest_point": {
+              "type": "string",
+              "description": "Geography - Elevation - lowest point"
+            },
+            "mean_elevation": {
+              "type": "string",
+              "description": "Geography - Elevation - mean elevation"
+            }
+          }
+        },
+        "natural_resources": {
+          "type": "string",
+          "description": "Geography - Natural resources"
+        },
+        "land_use": {
+          "type": "object",
+          "properties": {
+            "agricultural_land": {
+              "type": "string",
+              "description": "Geography - Land use - agricultural land"
+            },
+            "agricultural_land_arable_land": {
+              "type": "string",
+              "description": "Geography - Land use - agricultural land: arable land"
+            },
+            "agricultural_land_permanent_crops": {
+              "type": "string",
+              "description": "Geography - Land use - agricultural land: permanent crops"
+            },
+            "agricultural_land_permanent_pasture": {
+              "type": "string",
+              "description": "Geography - Land use - agricultural land: permanent pasture"
+            },
+            "forest": {
+              "type": "string",
+              "description": "Geography - Land use - forest"
+            },
+            "other": {
+              "type": "string",
+              "description": "Geography - Land use - other"
+            }
+          }
+        },
+        "irrigated_land": {
+          "type": "string",
+          "description": "Geography - Irrigated land"
+        },
+        "major_lakes_area_sq_km": {
+          "type": "object",
+          "properties": {
+            "fresh_water_lake_s": {
+              "type": "string",
+              "description": "Geography - Major lakes (area sq km) - fresh water lake(s)"
+            },
+            "salt_water_lake_s": {
+              "type": "string",
+              "description": "Geography - Major lakes (area sq km) - salt water lake(s)"
+            }
+          }
+        },
+        "major_rivers_by_length_in_km": {
+          "type": "string",
+          "description": "Geography - Major rivers (by length in km)"
+        },
+        "major_watersheds_area_sq_km": {
+          "type": "object",
+          "properties": {
+            "atlantic_ocean_drainage": {
+              "type": "string",
+              "description": "Geography - Major watersheds (area sq km) - Atlantic Ocean drainage"
+            },
+            "pacific_ocean_drainage": {
+              "type": "string",
+              "description": "Geography - Major watersheds (area sq km) - Pacific Ocean drainage"
+            }
+          }
+        },
+        "major_aquifers": {
+          "type": "string",
+          "description": "Geography - Major aquifers"
+        },
+        "population_distribution": {
+          "type": "string",
+          "description": "Geography - Population distribution"
+        },
+        "natural_hazards": {
+          "type": "string",
+          "description": "Geography - Natural hazards"
+        },
+        "geography_note": {
+          "type": "string",
+          "description": "Geography - Geography - note"
+        }
+      }
+    },
+    "people_and_society": {
+      "type": "object",
+      "properties": {
+        "population": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "string",
+              "description": "People and Society - Population - total"
+            },
+            "male": {
+              "type": "string",
+              "description": "People and Society - Population - male"
+            },
+            "female": {
+              "type": "string",
+              "description": "People and Society - Population - female"
+            }
+          }
+        },
+        "nationality": {
+          "type": "object",
+          "properties": {
+            "noun": {
+              "type": "string",
+              "description": "People and Society - Nationality - noun"
+            },
+            "adjective": {
+              "type": "string",
+              "description": "People and Society - Nationality - adjective"
+            }
+          }
+        },
+        "ethnic_groups": {
+          "type": "string",
+          "description": "People and Society - Ethnic groups"
+        },
+        "languages": {
+          "type": "string",
+          "description": "People and Society - Languages"
+        },
+        "religions": {
+          "type": "string",
+          "description": "People and Society - Religions"
+        },
+        "age_structure": {
+          "type": "object",
+          "properties": {
+            "0_14_years": {
+              "type": "string",
+              "description": "People and Society - Age structure - 0-14 years"
+            },
+            "15_64_years": {
+              "type": "string",
+              "description": "People and Society - Age structure - 15-64 years"
+            },
+            "65_years_and_over": {
+              "type": "string",
+              "description": "People and Society - Age structure - 65 years and over"
+            }
+          }
+        },
+        "dependency_ratios": {
+          "type": "object",
+          "properties": {
+            "total_dependency_ratio": {
+              "type": "string",
+              "description": "People and Society - Dependency ratios - total dependency ratio"
+            },
+            "youth_dependency_ratio": {
+              "type": "string",
+              "description": "People and Society - Dependency ratios - youth dependency ratio"
+            },
+            "elderly_dependency_ratio": {
+              "type": "string",
+              "description": "People and Society - Dependency ratios - elderly dependency ratio"
+            },
+            "potential_support_ratio": {
+              "type": "string",
+              "description": "People and Society - Dependency ratios - potential support ratio"
+            }
+          }
+        },
+        "median_age": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "string",
+              "description": "People and Society - Median age - total"
+            },
+            "male": {
+              "type": "string",
+              "description": "People and Society - Median age - male"
+            },
+            "female": {
+              "type": "string",
+              "description": "People and Society - Median age - female"
+            }
+          }
+        },
+        "population_growth_rate": {
+          "type": "string",
+          "description": "People and Society - Population growth rate"
+        },
+        "birth_rate": {
+          "type": "string",
+          "description": "People and Society - Birth rate"
+        },
+        "death_rate": {
+          "type": "string",
+          "description": "People and Society - Death rate"
+        },
+        "net_migration_rate": {
+          "type": "string",
+          "description": "People and Society - Net migration rate"
+        },
+        "population_distribution": {
+          "type": "string",
+          "description": "People and Society - Population distribution"
+        },
+        "urbanization": {
+          "type": "object",
+          "properties": {
+            "urban_population": {
+              "type": "string",
+              "description": "People and Society - Urbanization - urban population"
+            },
+            "rate_of_urbanization": {
+              "type": "string",
+              "description": "People and Society - Urbanization - rate of urbanization"
+            }
+          }
+        },
+        "major_urban_areas_population": {
+          "type": "string",
+          "description": "People and Society - Major urban areas - population"
+        },
+        "sex_ratio": {
+          "type": "object",
+          "properties": {
+            "at_birth": {
+              "type": "string",
+              "description": "People and Society - Sex ratio - at birth"
+            },
+            "0_14_years": {
+              "type": "string",
+              "description": "People and Society - Sex ratio - 0-14 years"
+            },
+            "15_64_years": {
+              "type": "string",
+              "description": "People and Society - Sex ratio - 15-64 years"
+            },
+            "65_years_and_over": {
+              "type": "string",
+              "description": "People and Society - Sex ratio - 65 years and over"
+            },
+            "total_population": {
+              "type": "string",
+              "description": "People and Society - Sex ratio - total population"
+            }
+          }
+        },
+        "mother_s_mean_age_at_first_birth": {
+          "type": "string",
+          "description": "People and Society - Mother's mean age at first birth"
+        },
+        "maternal_mortality_ratio": {
+          "type": "string",
+          "description": "People and Society - Maternal mortality ratio"
+        },
+        "infant_mortality_rate": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "string",
+              "description": "People and Society - Infant mortality rate - total"
+            },
+            "male": {
+              "type": "string",
+              "description": "People and Society - Infant mortality rate - male"
+            },
+            "female": {
+              "type": "string",
+              "description": "People and Society - Infant mortality rate - female"
+            }
+          }
+        },
+        "life_expectancy_at_birth": {
+          "type": "object",
+          "properties": {
+            "total_population": {
+              "type": "string",
+              "description": "People and Society - Life expectancy at birth - total population"
+            },
+            "male": {
+              "type": "string",
+              "description": "People and Society - Life expectancy at birth - male"
+            },
+            "female": {
+              "type": "string",
+              "description": "People and Society - Life expectancy at birth - female"
+            }
+          }
+        },
+        "total_fertility_rate": {
+          "type": "string",
+          "description": "People and Society - Total fertility rate"
+        },
+        "gross_reproduction_rate": {
+          "type": "string",
+          "description": "People and Society - Gross reproduction rate"
+        },
+        "drinking_water_source": {
+          "type": "object",
+          "properties": {
+            "improved_urban": {
+              "type": "string",
+              "description": "People and Society - Drinking water source - improved: urban"
+            },
+            "improved_rural": {
+              "type": "string",
+              "description": "People and Society - Drinking water source - improved: rural"
+            },
+            "improved_total": {
+              "type": "string",
+              "description": "People and Society - Drinking water source - improved: total"
+            },
+            "unimproved_urban": {
+              "type": "string",
+              "description": "People and Society - Drinking water source - unimproved: urban"
+            },
+            "unimproved_rural": {
+              "type": "string",
+              "description": "People and Society - Drinking water source - unimproved: rural"
+            },
+            "unimproved_total": {
+              "type": "string",
+              "description": "People and Society - Drinking water source - unimproved: total"
+            }
+          }
+        },
+        "health_expenditure": {
+          "type": "object",
+          "properties": {
+            "health_expenditure_as_of_gdp": {
+              "type": "string",
+              "description": "People and Society - Health expenditure - Health expenditure (as % of GDP)"
+            },
+            "health_expenditure_as_of_national_budget": {
+              "type": "string",
+              "description": "People and Society - Health expenditure - Health expenditure (as % of national budget)"
+            }
+          }
+        },
+        "physician_density": {
+          "type": "string",
+          "description": "People and Society - Physician density"
+        },
+        "hospital_bed_density": {
+          "type": "string",
+          "description": "People and Society - Hospital bed density"
+        },
+        "sanitation_facility_access": {
+          "type": "object",
+          "properties": {
+            "improved_urban": {
+              "type": "string",
+              "description": "People and Society - Sanitation facility access - improved: urban"
+            },
+            "improved_rural": {
+              "type": "string",
+              "description": "People and Society - Sanitation facility access - improved: rural"
+            },
+            "improved_total": {
+              "type": "string",
+              "description": "People and Society - Sanitation facility access - improved: total"
+            },
+            "unimproved_urban": {
+              "type": "string",
+              "description": "People and Society - Sanitation facility access - unimproved: urban"
+            },
+            "unimproved_rural": {
+              "type": "string",
+              "description": "People and Society - Sanitation facility access - unimproved: rural"
+            },
+            "unimproved_total": {
+              "type": "string",
+              "description": "People and Society - Sanitation facility access - unimproved: total"
+            }
+          }
+        },
+        "obesity_adult_prevalence_rate": {
+          "type": "string",
+          "description": "People and Society - Obesity - adult prevalence rate"
+        },
+        "alcohol_consumption_per_capita": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "string",
+              "description": "People and Society - Alcohol consumption per capita - total"
+            },
+            "beer": {
+              "type": "string",
+              "description": "People and Society - Alcohol consumption per capita - beer"
+            },
+            "wine": {
+              "type": "string",
+              "description": "People and Society - Alcohol consumption per capita - wine"
+            },
+            "spirits": {
+              "type": "string",
+              "description": "People and Society - Alcohol consumption per capita - spirits"
+            },
+            "other_alcohols": {
+              "type": "string",
+              "description": "People and Society - Alcohol consumption per capita - other alcohols"
+            }
+          }
+        },
+        "tobacco_use": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "string",
+              "description": "People and Society - Tobacco use - total"
+            },
+            "male": {
+              "type": "string",
+              "description": "People and Society - Tobacco use - male"
+            },
+            "female": {
+              "type": "string",
+              "description": "People and Society - Tobacco use - female"
+            }
+          }
+        },
+        "children_under_the_age_of_5_years_underweight": {
+          "type": "string",
+          "description": "People and Society - Children under the age of 5 years underweight"
+        },
+        "currently_married_women_ages_15_49": {
+          "type": "string",
+          "description": "People and Society - Currently married women (ages 15-49)"
+        },
+        "education_expenditure": {
+          "type": "object",
+          "properties": {
+            "education_expenditure_gdp": {
+              "type": "string",
+              "description": "People and Society - Education expenditure - Education expenditure (% GDP)"
+            },
+            "education_expenditure_national_budget": {
+              "type": "string",
+              "description": "People and Society - Education expenditure - Education expenditure (% national budget)"
+            }
+          }
+        },
+        "school_life_expectancy_primary_to_tertiary_education": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "string",
+              "description": "People and Society - School life expectancy (primary to tertiary education) - total"
+            },
+            "male": {
+              "type": "string",
+              "description": "People and Society - School life expectancy (primary to tertiary education) - male"
+            },
+            "female": {
+              "type": "string",
+              "description": "People and Society - School life expectancy (primary to tertiary education) - female"
+            }
+          }
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "properties": {
+        "environmental_issues": {
+          "type": "string",
+          "description": "Environment - Environmental issues"
+        },
+        "international_environmental_agreements": {
+          "type": "object",
+          "properties": {
+            "party_to": {
+              "type": "string",
+              "description": "Environment - International environmental agreements - party to"
+            },
+            "signed_but_not_ratified": {
+              "type": "string",
+              "description": "Environment - International environmental agreements - signed, but not ratified"
+            }
+          }
+        },
+        "climate": {
+          "type": "string",
+          "description": "Environment - Climate"
+        },
+        "land_use": {
+          "type": "object",
+          "properties": {
+            "agricultural_land": {
+              "type": "string",
+              "description": "Environment - Land use - agricultural land"
+            },
+            "agricultural_land_arable_land": {
+              "type": "string",
+              "description": "Environment - Land use - agricultural land: arable land"
+            },
+            "agricultural_land_permanent_crops": {
+              "type": "string",
+              "description": "Environment - Land use - agricultural land: permanent crops"
+            },
+            "agricultural_land_permanent_pasture": {
+              "type": "string",
+              "description": "Environment - Land use - agricultural land: permanent pasture"
+            },
+            "forest": {
+              "type": "string",
+              "description": "Environment - Land use - forest"
+            },
+            "other": {
+              "type": "string",
+              "description": "Environment - Land use - other"
+            }
+          }
+        },
+        "urbanization": {
+          "type": "object",
+          "properties": {
+            "urban_population": {
+              "type": "string",
+              "description": "Environment - Urbanization - urban population"
+            },
+            "rate_of_urbanization": {
+              "type": "string",
+              "description": "Environment - Urbanization - rate of urbanization"
+            }
+          }
+        },
+        "carbon_dioxide_emissions": {
+          "type": "object",
+          "properties": {
+            "total_emissions": {
+              "type": "string",
+              "description": "Environment - Carbon dioxide emissions - total emissions"
+            },
+            "from_coal_and_metallurgical_coke": {
+              "type": "string",
+              "description": "Environment - Carbon dioxide emissions - from coal and metallurgical coke"
+            },
+            "from_petroleum_and_other_liquids": {
+              "type": "string",
+              "description": "Environment - Carbon dioxide emissions - from petroleum and other liquids"
+            },
+            "from_consumed_natural_gas": {
+              "type": "string",
+              "description": "Environment - Carbon dioxide emissions - from consumed natural gas"
+            }
+          }
+        },
+        "particulate_matter_emissions": {
+          "type": "string",
+          "description": "Environment - Particulate matter emissions"
+        },
+        "methane_emissions": {
+          "type": "object",
+          "properties": {
+            "energy": {
+              "type": "string",
+              "description": "Environment - Methane emissions - energy"
+            },
+            "agriculture": {
+              "type": "string",
+              "description": "Environment - Methane emissions - agriculture"
+            },
+            "waste": {
+              "type": "string",
+              "description": "Environment - Methane emissions - waste"
+            },
+            "other": {
+              "type": "string",
+              "description": "Environment - Methane emissions - other"
+            }
+          }
+        },
+        "waste_and_recycling": {
+          "type": "object",
+          "properties": {
+            "municipal_solid_waste_generated_annually": {
+              "type": "string",
+              "description": "Environment - Waste and recycling - municipal solid waste generated annually"
+            },
+            "percent_of_municipal_solid_waste_recycled": {
+              "type": "string",
+              "description": "Environment - Waste and recycling - percent of municipal solid waste recycled"
+            }
+          }
+        },
+        "total_water_withdrawal": {
+          "type": "object",
+          "properties": {
+            "municipal": {
+              "type": "string",
+              "description": "Environment - Total water withdrawal - municipal"
+            },
+            "industrial": {
+              "type": "string",
+              "description": "Environment - Total water withdrawal - industrial"
+            },
+            "agricultural": {
+              "type": "string",
+              "description": "Environment - Total water withdrawal - agricultural"
+            }
+          }
+        },
+        "total_renewable_water_resources": {
+          "type": "string",
+          "description": "Environment - Total renewable water resources"
+        }
+      }
+    },
+    "government": {
+      "type": "object",
+      "properties": {
+        "country_name": {
+          "type": "object",
+          "properties": {
+            "conventional_long_form": {
+              "type": "string",
+              "description": "Government - Country name - conventional long form"
+            },
+            "conventional_short_form": {
+              "type": "string",
+              "description": "Government - Country name - conventional short form"
+            },
+            "abbreviation": {
+              "type": "string",
+              "description": "Government - Country name - abbreviation"
+            },
+            "etymology": {
+              "type": "string",
+              "description": "Government - Country name - etymology"
+            }
+          }
+        },
+        "government_type": {
+          "type": "string",
+          "description": "Government - Government type"
+        },
+        "capital": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Government - Capital - name"
+            },
+            "geographic_coordinates": {
+              "type": "string",
+              "description": "Government - Capital - geographic coordinates"
+            },
+            "time_difference": {
+              "type": "string",
+              "description": "Government - Capital - time difference"
+            },
+            "daylight_saving_time": {
+              "type": "string",
+              "description": "Government - Capital - daylight saving time"
+            },
+            "time_zone_note": {
+              "type": "string",
+              "description": "Government - Capital - time zone note"
+            },
+            "etymology": {
+              "type": "string",
+              "description": "Government - Capital - etymology"
+            }
+          }
+        },
+        "administrative_divisions": {
+          "type": "string",
+          "description": "Government - Administrative divisions"
+        },
+        "dependent_areas": {
+          "type": "string",
+          "description": "Government - Dependent areas"
+        },
+        "legal_system": {
+          "type": "string",
+          "description": "Government - Legal system"
+        },
+        "constitution": {
+          "type": "object",
+          "properties": {
+            "history": {
+              "type": "string",
+              "description": "Government - Constitution - history"
+            },
+            "amendment_process": {
+              "type": "string",
+              "description": "Government - Constitution - amendment process"
+            }
+          }
+        },
+        "international_law_organization_participation": {
+          "type": "string",
+          "description": "Government - International law organization participation"
+        },
+        "citizenship": {
+          "type": "object",
+          "properties": {
+            "citizenship_by_birth": {
+              "type": "string",
+              "description": "Government - Citizenship - citizenship by birth"
+            },
+            "citizenship_by_descent_only": {
+              "type": "string",
+              "description": "Government - Citizenship - citizenship by descent only"
+            },
+            "dual_citizenship_recognized": {
+              "type": "string",
+              "description": "Government - Citizenship - dual citizenship recognized"
+            },
+            "residency_requirement_for_naturalization": {
+              "type": "string",
+              "description": "Government - Citizenship - residency requirement for naturalization"
+            }
+          }
+        },
+        "suffrage": {
+          "type": "string",
+          "description": "Government - Suffrage"
+        },
+        "executive_branch": {
+          "type": "object",
+          "properties": {
+            "chief_of_state": {
+              "type": "string",
+              "description": "Government - Executive branch - chief of state"
+            },
+            "head_of_government": {
+              "type": "string",
+              "description": "Government - Executive branch - head of government"
+            },
+            "cabinet": {
+              "type": "string",
+              "description": "Government - Executive branch - cabinet"
+            },
+            "election_appointment_process": {
+              "type": "string",
+              "description": "Government - Executive branch - election/appointment process"
+            },
+            "most_recent_election_date": {
+              "type": "string",
+              "description": "Government - Executive branch - most recent election date"
+            },
+            "election_results": {
+              "type": "string",
+              "description": "Government - Executive branch - election results"
+            },
+            "expected_date_of_next_election": {
+              "type": "string",
+              "description": "Government - Executive branch - expected date of next election"
+            }
+          }
+        },
+        "legislative_branch": {
+          "type": "object",
+          "properties": {
+            "legislature_name": {
+              "type": "string",
+              "description": "Government - Legislative branch - legislature name"
+            },
+            "legislative_structure": {
+              "type": "string",
+              "description": "Government - Legislative branch - legislative structure"
+            }
+          }
+        },
+        "legislative_branch_lower_chamber": {
+          "type": "object",
+          "properties": {
+            "chamber_name": {
+              "type": "string",
+              "description": "Government - Legislative branch - lower chamber - chamber name"
+            },
+            "number_of_seats": {
+              "type": "string",
+              "description": "Government - Legislative branch - lower chamber - number of seats"
+            },
+            "electoral_system": {
+              "type": "string",
+              "description": "Government - Legislative branch - lower chamber - electoral system"
+            },
+            "scope_of_elections": {
+              "type": "string",
+              "description": "Government - Legislative branch - lower chamber - scope of elections"
+            },
+            "term_in_office": {
+              "type": "string",
+              "description": "Government - Legislative branch - lower chamber - term in office"
+            },
+            "most_recent_election_date": {
+              "type": "string",
+              "description": "Government - Legislative branch - lower chamber - most recent election date"
+            },
+            "parties_elected_and_seats_per_party": {
+              "type": "string",
+              "description": "Government - Legislative branch - lower chamber - parties elected and seats per party"
+            },
+            "percentage_of_women_in_chamber": {
+              "type": "string",
+              "description": "Government - Legislative branch - lower chamber - percentage of women in chamber"
+            },
+            "expected_date_of_next_election": {
+              "type": "string",
+              "description": "Government - Legislative branch - lower chamber - expected date of next election"
+            }
+          }
+        },
+        "legislative_branch_upper_chamber": {
+          "type": "object",
+          "properties": {
+            "chamber_name": {
+              "type": "string",
+              "description": "Government - Legislative branch - upper chamber - chamber name"
+            },
+            "number_of_seats": {
+              "type": "string",
+              "description": "Government - Legislative branch - upper chamber - number of seats"
+            },
+            "electoral_system": {
+              "type": "string",
+              "description": "Government - Legislative branch - upper chamber - electoral system"
+            },
+            "scope_of_elections": {
+              "type": "string",
+              "description": "Government - Legislative branch - upper chamber - scope of elections"
+            },
+            "term_in_office": {
+              "type": "string",
+              "description": "Government - Legislative branch - upper chamber - term in office"
+            },
+            "most_recent_election_date": {
+              "type": "string",
+              "description": "Government - Legislative branch - upper chamber - most recent election date"
+            },
+            "parties_elected_and_seats_per_party": {
+              "type": "string",
+              "description": "Government - Legislative branch - upper chamber - parties elected and seats per party"
+            },
+            "percentage_of_women_in_chamber": {
+              "type": "string",
+              "description": "Government - Legislative branch - upper chamber - percentage of women in chamber"
+            },
+            "expected_date_of_next_election": {
+              "type": "string",
+              "description": "Government - Legislative branch - upper chamber - expected date of next election"
+            }
+          }
+        },
+        "judicial_branch": {
+          "type": "object",
+          "properties": {
+            "highest_court_s": {
+              "type": "string",
+              "description": "Government - Judicial branch - highest court(s)"
+            },
+            "judge_selection_and_term_of_office": {
+              "type": "string",
+              "description": "Government - Judicial branch - judge selection and term of office"
+            },
+            "subordinate_courts": {
+              "type": "string",
+              "description": "Government - Judicial branch - subordinate courts"
+            }
+          }
+        },
+        "political_parties": {
+          "type": "string",
+          "description": "Government - Political parties"
+        },
+        "international_organization_participation": {
+          "type": "string",
+          "description": "Government - International organization participation"
+        },
+        "independence": {
+          "type": "string",
+          "description": "Government - Independence"
+        },
+        "national_holiday": {
+          "type": "string",
+          "description": "Government - National holiday"
+        },
+        "flag": {
+          "type": "string",
+          "description": "Government - Flag"
+        },
+        "national_symbol_s": {
+          "type": "string",
+          "description": "Government - National symbol(s)"
+        },
+        "national_color_s": {
+          "type": "string",
+          "description": "Government - National color(s)"
+        },
+        "national_anthem_s": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Government - National anthem(s) - title"
+            },
+            "lyrics_music": {
+              "type": "string",
+              "description": "Government - National anthem(s) - lyrics/music"
+            },
+            "history": {
+              "type": "string",
+              "description": "Government - National anthem(s) - history"
+            }
+          }
+        },
+        "national_heritage": {
+          "type": "object",
+          "properties": {
+            "total_world_heritage_sites": {
+              "type": "string",
+              "description": "Government - National heritage - total World Heritage Sites"
+            },
+            "selected_world_heritage_site_locales": {
+              "type": "string",
+              "description": "Government - National heritage - selected World Heritage Site locales"
+            }
+          }
+        }
+      }
+    },
+    "economy": {
+      "type": "object",
+      "properties": {
+        "economic_overview": {
+          "type": "string",
+          "description": "Economy - Economic overview"
+        },
+        "real_gdp_purchasing_power_parity": {
+          "type": "object",
+          "properties": {
+            "real_gdp_purchasing_power_parity_2024": {
+              "type": "string",
+              "description": "Economy - Real GDP (purchasing power parity) - Real GDP (purchasing power parity) 2024"
+            },
+            "real_gdp_purchasing_power_parity_2023": {
+              "type": "string",
+              "description": "Economy - Real GDP (purchasing power parity) - Real GDP (purchasing power parity) 2023"
+            },
+            "real_gdp_purchasing_power_parity_2022": {
+              "type": "string",
+              "description": "Economy - Real GDP (purchasing power parity) - Real GDP (purchasing power parity) 2022"
+            }
+          }
+        },
+        "real_gdp_growth_rate": {
+          "type": "object",
+          "properties": {
+            "real_gdp_growth_rate_2024": {
+              "type": "string",
+              "description": "Economy - Real GDP growth rate - Real GDP growth rate 2024"
+            },
+            "real_gdp_growth_rate_2023": {
+              "type": "string",
+              "description": "Economy - Real GDP growth rate - Real GDP growth rate 2023"
+            },
+            "real_gdp_growth_rate_2022": {
+              "type": "string",
+              "description": "Economy - Real GDP growth rate - Real GDP growth rate 2022"
+            }
+          }
+        },
+        "real_gdp_per_capita": {
+          "type": "object",
+          "properties": {
+            "real_gdp_per_capita_2024": {
+              "type": "string",
+              "description": "Economy - Real GDP per capita - Real GDP per capita 2024"
+            },
+            "real_gdp_per_capita_2023": {
+              "type": "string",
+              "description": "Economy - Real GDP per capita - Real GDP per capita 2023"
+            },
+            "real_gdp_per_capita_2022": {
+              "type": "string",
+              "description": "Economy - Real GDP per capita - Real GDP per capita 2022"
+            }
+          }
+        },
+        "gdp_official_exchange_rate": {
+          "type": "string",
+          "description": "Economy - GDP (official exchange rate)"
+        },
+        "inflation_rate_consumer_prices": {
+          "type": "object",
+          "properties": {
+            "inflation_rate_consumer_prices_2024": {
+              "type": "string",
+              "description": "Economy - Inflation rate (consumer prices) - Inflation rate (consumer prices) 2024"
+            },
+            "inflation_rate_consumer_prices_2023": {
+              "type": "string",
+              "description": "Economy - Inflation rate (consumer prices) - Inflation rate (consumer prices) 2023"
+            },
+            "inflation_rate_consumer_prices_2022": {
+              "type": "string",
+              "description": "Economy - Inflation rate (consumer prices) - Inflation rate (consumer prices) 2022"
+            }
+          }
+        },
+        "gdp_composition_by_sector_of_origin": {
+          "type": "object",
+          "properties": {
+            "agriculture": {
+              "type": "string",
+              "description": "Economy - GDP - composition, by sector of origin - agriculture"
+            },
+            "industry": {
+              "type": "string",
+              "description": "Economy - GDP - composition, by sector of origin - industry"
+            },
+            "services": {
+              "type": "string",
+              "description": "Economy - GDP - composition, by sector of origin - services"
+            }
+          }
+        },
+        "gdp_composition_by_end_use": {
+          "type": "object",
+          "properties": {
+            "household_consumption": {
+              "type": "string",
+              "description": "Economy - GDP - composition, by end use - household consumption"
+            },
+            "government_consumption": {
+              "type": "string",
+              "description": "Economy - GDP - composition, by end use - government consumption"
+            },
+            "investment_in_fixed_capital": {
+              "type": "string",
+              "description": "Economy - GDP - composition, by end use - investment in fixed capital"
+            },
+            "investment_in_inventories": {
+              "type": "string",
+              "description": "Economy - GDP - composition, by end use - investment in inventories"
+            },
+            "exports_of_goods_and_services": {
+              "type": "string",
+              "description": "Economy - GDP - composition, by end use - exports of goods and services"
+            },
+            "imports_of_goods_and_services": {
+              "type": "string",
+              "description": "Economy - GDP - composition, by end use - imports of goods and services"
+            }
+          }
+        },
+        "agricultural_products": {
+          "type": "string",
+          "description": "Economy - Agricultural products"
+        },
+        "industries": {
+          "type": "string",
+          "description": "Economy - Industries"
+        },
+        "industrial_production_growth_rate": {
+          "type": "string",
+          "description": "Economy - Industrial production growth rate"
+        },
+        "labor_force": {
+          "type": "string",
+          "description": "Economy - Labor force"
+        },
+        "unemployment_rate": {
+          "type": "object",
+          "properties": {
+            "unemployment_rate_2024": {
+              "type": "string",
+              "description": "Economy - Unemployment rate - Unemployment rate 2024"
+            },
+            "unemployment_rate_2023": {
+              "type": "string",
+              "description": "Economy - Unemployment rate - Unemployment rate 2023"
+            },
+            "unemployment_rate_2022": {
+              "type": "string",
+              "description": "Economy - Unemployment rate - Unemployment rate 2022"
+            }
+          }
+        },
+        "youth_unemployment_rate_ages_15_24": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "string",
+              "description": "Economy - Youth unemployment rate (ages 15-24) - total"
+            },
+            "male": {
+              "type": "string",
+              "description": "Economy - Youth unemployment rate (ages 15-24) - male"
+            },
+            "female": {
+              "type": "string",
+              "description": "Economy - Youth unemployment rate (ages 15-24) - female"
+            }
+          }
+        },
+        "gini_index_coefficient_distribution_of_family_income": {
+          "type": "object",
+          "properties": {
+            "gini_index_coefficient_distribution_of_family_income_2023": {
+              "type": "string",
+              "description": "Economy - Gini Index coefficient - distribution of family income - Gini Index coefficient - distribution of family income 2023"
+            }
+          }
+        },
+        "average_household_expenditures": {
+          "type": "object",
+          "properties": {
+            "on_food": {
+              "type": "string",
+              "description": "Economy - Average household expenditures - on food"
+            },
+            "on_alcohol_and_tobacco": {
+              "type": "string",
+              "description": "Economy - Average household expenditures - on alcohol and tobacco"
+            }
+          }
+        },
+        "household_income_or_consumption_by_percentage_share": {
+          "type": "object",
+          "properties": {
+            "lowest_10": {
+              "type": "string",
+              "description": "Economy - Household income or consumption by percentage share - lowest 10%"
+            },
+            "highest_10": {
+              "type": "string",
+              "description": "Economy - Household income or consumption by percentage share - highest 10%"
+            }
+          }
+        },
+        "remittances": {
+          "type": "object",
+          "properties": {
+            "remittances_2024": {
+              "type": "string",
+              "description": "Economy - Remittances - Remittances 2024"
+            },
+            "remittances_2023": {
+              "type": "string",
+              "description": "Economy - Remittances - Remittances 2023"
+            },
+            "remittances_2022": {
+              "type": "string",
+              "description": "Economy - Remittances - Remittances 2022"
+            }
+          }
+        },
+        "budget": {
+          "type": "object",
+          "properties": {
+            "revenues": {
+              "type": "string",
+              "description": "Economy - Budget - revenues"
+            },
+            "expenditures": {
+              "type": "string",
+              "description": "Economy - Budget - expenditures"
+            }
+          }
+        },
+        "public_debt": {
+          "type": "object",
+          "properties": {
+            "public_debt_2023": {
+              "type": "string",
+              "description": "Economy - Public debt - Public debt 2023"
+            }
+          }
+        },
+        "taxes_and_other_revenues": {
+          "type": "string",
+          "description": "Economy - Taxes and other revenues"
+        },
+        "current_account_balance": {
+          "type": "object",
+          "properties": {
+            "current_account_balance_2024": {
+              "type": "string",
+              "description": "Economy - Current account balance - Current account balance 2024"
+            },
+            "current_account_balance_2023": {
+              "type": "string",
+              "description": "Economy - Current account balance - Current account balance 2023"
+            },
+            "current_account_balance_2022": {
+              "type": "string",
+              "description": "Economy - Current account balance - Current account balance 2022"
+            }
+          }
+        },
+        "exports": {
+          "type": "object",
+          "properties": {
+            "exports_2024": {
+              "type": "string",
+              "description": "Economy - Exports - Exports 2024"
+            },
+            "exports_2023": {
+              "type": "string",
+              "description": "Economy - Exports - Exports 2023"
+            },
+            "exports_2022": {
+              "type": "string",
+              "description": "Economy - Exports - Exports 2022"
+            }
+          }
+        },
+        "exports_partners": {
+          "type": "string",
+          "description": "Economy - Exports - partners"
+        },
+        "exports_commodities": {
+          "type": "string",
+          "description": "Economy - Exports - commodities"
+        },
+        "imports": {
+          "type": "object",
+          "properties": {
+            "imports_2024": {
+              "type": "string",
+              "description": "Economy - Imports - Imports 2024"
+            },
+            "imports_2023": {
+              "type": "string",
+              "description": "Economy - Imports - Imports 2023"
+            },
+            "imports_2022": {
+              "type": "string",
+              "description": "Economy - Imports - Imports 2022"
+            }
+          }
+        },
+        "imports_partners": {
+          "type": "string",
+          "description": "Economy - Imports - partners"
+        },
+        "imports_commodities": {
+          "type": "string",
+          "description": "Economy - Imports - commodities"
+        },
+        "reserves_of_foreign_exchange_and_gold": {
+          "type": "object",
+          "properties": {
+            "reserves_of_foreign_exchange_and_gold_2024": {
+              "type": "string",
+              "description": "Economy - Reserves of foreign exchange and gold - Reserves of foreign exchange and gold 2024"
+            },
+            "reserves_of_foreign_exchange_and_gold_2023": {
+              "type": "string",
+              "description": "Economy - Reserves of foreign exchange and gold - Reserves of foreign exchange and gold 2023"
+            },
+            "reserves_of_foreign_exchange_and_gold_2022": {
+              "type": "string",
+              "description": "Economy - Reserves of foreign exchange and gold - Reserves of foreign exchange and gold 2022"
+            }
+          }
+        },
+        "exchange_rates": {
+          "type": "string",
+          "description": "Economy - Exchange rates"
+        }
+      }
+    },
+    "energy": {
+      "type": "object",
+      "properties": {
+        "electricity_access": {
+          "type": "object",
+          "properties": {
+            "electrification_total_population": {
+              "type": "string",
+              "description": "Energy - Electricity access - electrification - total population"
+            }
+          }
+        },
+        "electricity": {
+          "type": "object",
+          "properties": {
+            "installed_generating_capacity": {
+              "type": "string",
+              "description": "Energy - Electricity - installed generating capacity"
+            },
+            "consumption": {
+              "type": "string",
+              "description": "Energy - Electricity - consumption"
+            },
+            "exports": {
+              "type": "string",
+              "description": "Energy - Electricity - exports"
+            },
+            "imports": {
+              "type": "string",
+              "description": "Energy - Electricity - imports"
+            },
+            "transmission_distribution_losses": {
+              "type": "string",
+              "description": "Energy - Electricity - transmission/distribution losses"
+            }
+          }
+        },
+        "electricity_generation_sources": {
+          "type": "object",
+          "properties": {
+            "fossil_fuels": {
+              "type": "string",
+              "description": "Energy - Electricity generation sources - fossil fuels"
+            },
+            "nuclear": {
+              "type": "string",
+              "description": "Energy - Electricity generation sources - nuclear"
+            },
+            "solar": {
+              "type": "string",
+              "description": "Energy - Electricity generation sources - solar"
+            },
+            "wind": {
+              "type": "string",
+              "description": "Energy - Electricity generation sources - wind"
+            },
+            "hydroelectricity": {
+              "type": "string",
+              "description": "Energy - Electricity generation sources - hydroelectricity"
+            },
+            "geothermal": {
+              "type": "string",
+              "description": "Energy - Electricity generation sources - geothermal"
+            },
+            "biomass_and_waste": {
+              "type": "string",
+              "description": "Energy - Electricity generation sources - biomass and waste"
+            }
+          }
+        },
+        "nuclear_energy": {
+          "type": "object",
+          "properties": {
+            "number_of_operational_nuclear_reactors": {
+              "type": "string",
+              "description": "Energy - Nuclear energy - Number of operational nuclear reactors"
+            },
+            "net_capacity_of_operational_nuclear_reactors": {
+              "type": "string",
+              "description": "Energy - Nuclear energy - Net capacity of operational nuclear reactors"
+            },
+            "percent_of_total_electricity_production": {
+              "type": "string",
+              "description": "Energy - Nuclear energy - Percent of total electricity production"
+            },
+            "number_of_nuclear_reactors_permanently_shut_down": {
+              "type": "string",
+              "description": "Energy - Nuclear energy - Number of nuclear reactors permanently shut down"
+            }
+          }
+        },
+        "coal": {
+          "type": "object",
+          "properties": {
+            "production": {
+              "type": "string",
+              "description": "Energy - Coal - production"
+            },
+            "consumption": {
+              "type": "string",
+              "description": "Energy - Coal - consumption"
+            },
+            "exports": {
+              "type": "string",
+              "description": "Energy - Coal - exports"
+            },
+            "imports": {
+              "type": "string",
+              "description": "Energy - Coal - imports"
+            },
+            "proven_reserves": {
+              "type": "string",
+              "description": "Energy - Coal - proven reserves"
+            }
+          }
+        },
+        "petroleum": {
+          "type": "object",
+          "properties": {
+            "total_petroleum_production": {
+              "type": "string",
+              "description": "Energy - Petroleum - total petroleum production"
+            },
+            "refined_petroleum_consumption": {
+              "type": "string",
+              "description": "Energy - Petroleum - refined petroleum consumption"
+            },
+            "crude_oil_estimated_reserves": {
+              "type": "string",
+              "description": "Energy - Petroleum - crude oil estimated reserves"
+            }
+          }
+        },
+        "natural_gas": {
+          "type": "object",
+          "properties": {
+            "production": {
+              "type": "string",
+              "description": "Energy - Natural gas - production"
+            },
+            "consumption": {
+              "type": "string",
+              "description": "Energy - Natural gas - consumption"
+            },
+            "exports": {
+              "type": "string",
+              "description": "Energy - Natural gas - exports"
+            },
+            "imports": {
+              "type": "string",
+              "description": "Energy - Natural gas - imports"
+            },
+            "proven_reserves": {
+              "type": "string",
+              "description": "Energy - Natural gas - proven reserves"
+            }
+          }
+        },
+        "energy_consumption_per_capita": {
+          "type": "object",
+          "properties": {
+            "total_energy_consumption_per_capita_2023": {
+              "type": "string",
+              "description": "Energy - Energy consumption per capita - Total energy consumption per capita 2023"
+            }
+          }
+        }
+      }
+    },
+    "communications": {
+      "type": "object",
+      "properties": {
+        "telephones_fixed_lines": {
+          "type": "object",
+          "properties": {
+            "total_subscriptions": {
+              "type": "string",
+              "description": "Communications - Telephones - fixed lines - total subscriptions"
+            },
+            "subscriptions_per_100_inhabitants": {
+              "type": "string",
+              "description": "Communications - Telephones - fixed lines - subscriptions per 100 inhabitants"
+            }
+          }
+        },
+        "telephones_mobile_cellular": {
+          "type": "object",
+          "properties": {
+            "total_subscriptions": {
+              "type": "string",
+              "description": "Communications - Telephones - mobile cellular - total subscriptions"
+            },
+            "subscriptions_per_100_inhabitants": {
+              "type": "string",
+              "description": "Communications - Telephones - mobile cellular - subscriptions per 100 inhabitants"
+            }
+          }
+        },
+        "broadcast_media": {
+          "type": "string",
+          "description": "Communications - Broadcast media"
+        },
+        "internet_country_code": {
+          "type": "string",
+          "description": "Communications - Internet country code"
+        },
+        "internet_users": {
+          "type": "object",
+          "properties": {
+            "percent_of_population": {
+              "type": "string",
+              "description": "Communications - Internet users - percent of population"
+            }
+          }
+        },
+        "broadband_fixed_subscriptions": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "string",
+              "description": "Communications - Broadband - fixed subscriptions - total"
+            },
+            "subscriptions_per_100_inhabitants": {
+              "type": "string",
+              "description": "Communications - Broadband - fixed subscriptions - subscriptions per 100 inhabitants"
+            }
+          }
+        }
+      }
+    },
+    "transportation": {
+      "type": "object",
+      "properties": {
+        "civil_aircraft_registration_country_code_prefix": {
+          "type": "string",
+          "description": "Transportation - Civil aircraft registration country code prefix"
+        },
+        "airports": {
+          "type": "string",
+          "description": "Transportation - Airports"
+        },
+        "heliports": {
+          "type": "string",
+          "description": "Transportation - Heliports"
+        },
+        "railways": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "string",
+              "description": "Transportation - Railways - total"
+            },
+            "standard_gauge": {
+              "type": "string",
+              "description": "Transportation - Railways - standard gauge"
+            }
+          }
+        },
+        "merchant_marine": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "string",
+              "description": "Transportation - Merchant marine - total"
+            },
+            "by_type": {
+              "type": "string",
+              "description": "Transportation - Merchant marine - by type"
+            }
+          }
+        },
+        "ports": {
+          "type": "object",
+          "properties": {
+            "total_ports": {
+              "type": "string",
+              "description": "Transportation - Ports - total ports"
+            },
+            "large": {
+              "type": "string",
+              "description": "Transportation - Ports - large"
+            },
+            "medium": {
+              "type": "string",
+              "description": "Transportation - Ports - medium"
+            },
+            "small": {
+              "type": "string",
+              "description": "Transportation - Ports - small"
+            },
+            "very_small": {
+              "type": "string",
+              "description": "Transportation - Ports - very small"
+            },
+            "ports_with_oil_terminals": {
+              "type": "string",
+              "description": "Transportation - Ports - ports with oil terminals"
+            },
+            "key_ports": {
+              "type": "string",
+              "description": "Transportation - Ports - key ports"
+            }
+          }
+        }
+      }
+    },
+    "military_and_security": {
+      "type": "object",
+      "properties": {
+        "military_and_security_forces": {
+          "type": "string",
+          "description": "Military and Security - Military and security forces"
+        },
+        "military_expenditures": {
+          "type": "object",
+          "properties": {
+            "military_expenditures_2025": {
+              "type": "string",
+              "description": "Military and Security - Military expenditures - Military Expenditures 2025"
+            },
+            "military_expenditures_2024": {
+              "type": "string",
+              "description": "Military and Security - Military expenditures - Military Expenditures 2024"
+            },
+            "military_expenditures_2023": {
+              "type": "string",
+              "description": "Military and Security - Military expenditures - Military Expenditures 2023"
+            },
+            "military_expenditures_2022": {
+              "type": "string",
+              "description": "Military and Security - Military expenditures - Military Expenditures 2022"
+            },
+            "military_expenditures_2021": {
+              "type": "string",
+              "description": "Military and Security - Military expenditures - Military Expenditures 2021"
+            }
+          }
+        },
+        "military_and_security_service_personnel_strengths": {
+          "type": "string",
+          "description": "Military and Security - Military and security service personnel strengths"
+        },
+        "military_equipment_inventories_and_acquisitions": {
+          "type": "string",
+          "description": "Military and Security - Military equipment inventories and acquisitions"
+        },
+        "military_service_age_and_obligation": {
+          "type": "string",
+          "description": "Military and Security - Military service age and obligation"
+        },
+        "military_deployments": {
+          "type": "string",
+          "description": "Military and Security - Military deployments"
+        },
+        "military_note": {
+          "type": "string",
+          "description": "Military and Security - Military - note"
+        }
+      }
+    },
+    "space": {
+      "type": "object",
+      "properties": {
+        "space_agency_agencies": {
+          "type": "string",
+          "description": "Space - Space agency/agencies"
+        },
+        "space_launch_site_s": {
+          "type": "string",
+          "description": "Space - Space launch site(s)"
+        },
+        "space_program_overview": {
+          "type": "string",
+          "description": "Space - Space program overview"
+        },
+        "key_space_program_milestones": {
+          "type": "string",
+          "description": "Space - Key space-program milestones"
+        }
+      }
+    },
+    "terrorism": {
+      "type": "object",
+      "properties": {
+        "terrorist_group_s": {
+          "type": "string",
+          "description": "Terrorism - Terrorist group(s)"
+        }
+      }
+    },
+    "transnational_issues": {
+      "type": "object",
+      "properties": {
+        "refugees_and_internally_displaced_persons": {
+          "type": "object",
+          "properties": {
+            "refugees": {
+              "type": "string",
+              "description": "Transnational Issues - Refugees and internally displaced persons - refugees"
+            },
+            "idps": {
+              "type": "string",
+              "description": "Transnational Issues - Refugees and internally displaced persons - IDPs"
+            }
+          }
+        }
+      }
+    }
+  }
+}

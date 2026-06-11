@@ -1,0 +1,37 @@
+[
+  {
+    "method": "instructor",
+    "fixture": "war_and_peace",
+    "budget": "native",
+    "seed": 0,
+    "fields_total": 200,
+    "fields_extracted": 13,
+    "coverage": 0.065,
+    "k": 1,
+    "k_min": 1,
+    "optimality_gap": 0.0,
+    "call_failed": 0,
+    "elapsed_seconds": 20.46,
+    "error": null,
+    "data": {
+      "book": {
+        "title": "War and Peace",
+        "author": "Leo Tolstoy",
+        "original_language": "Russian",
+        "genre": "Literary",
+        "setting_country": "Russia",
+        "central_conflict": "Napoleon's invasion of Russia",
+        "time_period": "1805-1812",
+        "emperor_of_france": "Napoleon",
+        "russian_commander": "Kutúzov",
+        "longest_battle_setting": "Borodino",
+        "narrative_style": "Realistic",
+        "number_of_main_families": 5,
+        "ends_with_epilogue": true
+      },
+      "characters": null,
+      "locations": null,
+      "events": null
+    }
+  }
+]

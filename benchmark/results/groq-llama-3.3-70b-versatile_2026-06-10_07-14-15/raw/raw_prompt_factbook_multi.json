@@ -1,0 +1,29 @@
+[
+  {
+    "method": "raw_prompt",
+    "fixture": "factbook_multi",
+    "seed": 0,
+    "fields_total": 1045,
+    "fields_extracted": 0,
+    "coverage": 0.0,
+    "k": 0,
+    "k_min": 0,
+    "optimality_gap": 0.0,
+    "call_failed": 0,
+    "elapsed_seconds": 19.601,
+    "error": "JSONDecodeError: Expecting ',' delimiter: line 164 column 6 (char 14500)",
+    "data": {},
+    "value_accuracy": 0.0,
+    "by_type": {
+      "short_string": 0.0,
+      "long_string": 0.0
+    },
+    "outcomes": {
+      "correct": 0,
+      "accuracy": 0,
+      "omission": 1045,
+      "hallucination": 0,
+      "structural": 0
+    }
+  }
+]
