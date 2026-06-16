@@ -50,6 +50,10 @@ You are a structured data extraction assistant. Extract the specified fields \
 from the provided document.
 
 OUTPUT FORMAT — follow exactly:
+- Output exactly one line for EVERY field listed below, in the order given. Do \
+not stop early or end your response until every listed field has its own line — \
+a field you cannot find still gets a line (use the sourcing rule below). Never \
+silently skip or omit a field.
 - Write one field per line using: field.path = value
 {sourcing_rule}
 - Use NEEDS_REVALIDATION if you find the field but cannot determine its value confidently
@@ -117,8 +121,9 @@ def build_extraction_prompt(
             message. See :class:`~formatshield.extraction._papt.TemplateType`.
         cluster_type: Structural classification of the field group. Used for
             cluster-specific phrasing (no-op in MVP; TEP routing in post-MVP).
-        instructions: Optional caller steering, prepended before the SFEP format
-            contract (which is always kept so parsing stays valid).
+        instructions: Optional caller steering, placed at the top of the user
+            message (above the fields and document) so the model follows it
+            reliably; the system message stays the pure SFEP format contract.
         dependency_values: Optional ``{path: value}`` of upstream dependency
             fields resolved in earlier rounds, rendered as a labelled block
             before the field list so the model reuses them.
@@ -147,11 +152,17 @@ def build_extraction_prompt(
     if not fields:
         raise ValueError("fields must be non-empty — cannot build extraction prompt")
 
-    system_content = _prepend(
-        instructions, _build_system_message(cluster_type, knowledge_fallback=knowledge_fallback)
-    )
+    # Caller instructions go in the USER message, not the system message. Chat
+    # models — Llama-70B on Groq especially — follow user-turn instructions far more
+    # reliably than system-prompt ones (IHEval arXiv:2502.08745; Llama-70B prompting
+    # guidance puts task instructions in the user turn). The system message stays the
+    # pure SFEP output contract; the caller's domain instructions frame the task at
+    # the top of the user message, right above the fields and document.
+    system_content = _build_system_message(cluster_type, knowledge_fallback=knowledge_fallback)
     user_core = _build_user_message(fields, document_excerpt, template_type)
-    user_content = _prepend(_format_dependency_block(dependency_values), user_core)
+    user_content = _prepend(
+        instructions, _prepend(_format_dependency_block(dependency_values), user_core)
+    )
 
     return [
         {"role": "system", "content": system_content},
@@ -216,10 +227,11 @@ def build_retry_system_message(
         True
     """
     sourcing_rule = _SOURCING_RULE_KNOWLEDGE if knowledge_fallback else _SOURCING_RULE_STRICT
-    system_content = _prepend(
-        instructions, _RETRY_SYSTEM_PROMPT_TEMPLATE.format(sourcing_rule=sourcing_rule)
+    # Caller instructions go in the user turn here too (see build_extraction_prompt).
+    system_content = _RETRY_SYSTEM_PROMPT_TEMPLATE.format(sourcing_rule=sourcing_rule)
+    user_content = _prepend(
+        instructions, _build_retry_user_message(failed_fields, errors, document_excerpt)
     )
-    user_content = _build_retry_user_message(failed_fields, errors, document_excerpt)
 
     return [
         {"role": "system", "content": system_content},
