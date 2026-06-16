@@ -39,9 +39,18 @@ site/
 # Live Groq hard-test results (numbered, not committed)
 test-results/
 
+# Local-only scale-test scripts + generated fixtures (run by hand, not shipped)
+test-scripts/
+
 # Large downloaded real 10-K text (live tests fetch on demand)
 tests/fixtures/documents/*.txt
 
 # Downloaded medical dataset + extracted note (live test fetches on demand)
 tests/fixtures/documents/_mtsamples.csv
 tests/fixtures/documents/clinical_note.txt
+
+# Benchmark: small gold documents are committed for reproducibility; the large
+# War & Peace text (coverage-only, regenerable via datasets/gen) is not.
+# Benchmark results ARE committed — raw outputs are the reproducibility evidence
+# (honest-claims charter, rule 3) — so benchmark/results/ is deliberately tracked.
+benchmark/datasets/real/war_and_peace/document.txt
