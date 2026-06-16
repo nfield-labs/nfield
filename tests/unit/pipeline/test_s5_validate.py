@@ -102,6 +102,38 @@ class TestRunStage5:
         assert len(state.blackboard.get_failed()) >= 0  # may vary by empty handling
 
     @pytest.mark.asyncio
+    async def test_call_failed_fields_are_not_sfr_retried(self):
+        # Fix B: a transient call/API failure (429) must not be re-fired via SFR —
+        # that retry-storm is what amplifies a 429 into a coverage collapse.
+        from formatshield.assembly._blackboard import FieldState
+
+        state, provider0 = _build_state(GOOD_RESPONSE)
+        state = await run_stage_4(state, provider0)
+        bb = state.blackboard
+        for f in state.fields:
+            bb.mark_failed(f.path, "provider error: 429 rate limit", transient=True)
+
+        class CountingProvider:
+            context_window = 8192
+            max_output_tokens = 1024
+            model_name = "mock/count"
+
+            def __init__(self) -> None:
+                self.calls = 0
+
+            async def complete(self, messages, *, max_tokens):
+                self.calls += 1
+                return ""
+
+            async def count_tokens(self, text):
+                return 1
+
+        counter = CountingProvider()
+        await run_stage_5(state, counter, ExtractionConfig(max_retry_rounds=1))
+        assert counter.calls == 0  # no SFR fired for the call-failed fields
+        assert all(bb.get_state(f.path) == FieldState.FAILED for f in state.fields)
+
+    @pytest.mark.asyncio
     async def test_returns_same_state(self):
         state, provider = _build_state(GOOD_RESPONSE)
         state = await run_stage_4(state, provider)

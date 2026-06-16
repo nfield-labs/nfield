@@ -136,6 +136,13 @@ class TestBaseProvider:
         provider = MockProvider("test-model")
         assert provider.max_output_tokens == 2048
 
+    def test_default_retry_policy_survives_a_tpm_window(self) -> None:
+        """Fix A: defaults must outlast a ~60s 429 window, not surrender in ~7s."""
+        from formatshield.providers import _base
+
+        assert _base._DEFAULT_RETRY_ATTEMPTS >= 6
+        assert _base._DEFAULT_BACKOFF_MAX >= 60.0
+
     def test_invalid_max_retries_raises_error(self) -> None:
         """Invalid max_retries parameter raises ValueError."""
         with pytest.raises(ValueError, match="max_retries must be > 0"):
@@ -238,7 +245,24 @@ class TestRetryBehavior:
         err = ProviderError("rate", status_code=429, retry_after=5.0)
         provider = _FlakyProvider(fail_times=1, error=err)
         await provider.complete([], max_tokens=10)
-        assert sleeps == [5.0]  # server's Retry-After used, not computed backoff
+        # Retry-After below the cap is honored, plus full jitter (< 1s).
+        assert len(sleeps) == 1
+        assert 5.0 <= sleeps[0] < 6.0
+
+    async def test_caps_large_retry_after(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        sleeps: list[float] = []
+
+        async def record(seconds: float) -> None:
+            sleeps.append(seconds)
+
+        monkeypatch.setattr(_base.asyncio, "sleep", record)
+        # A full-window TPM Retry-After (~55s) is capped to rate_limit_backoff_max
+        # (8s) + jitter — the bucket refills continuously, so we don't sleep a window.
+        err = ProviderError("rate", status_code=429, retry_after=55.0)
+        provider = _FlakyProvider(fail_times=1, error=err)
+        await provider.complete([], max_tokens=10)
+        assert len(sleeps) == 1
+        assert 8.0 <= sleeps[0] < 9.0
 
 
 def _no_sleep():

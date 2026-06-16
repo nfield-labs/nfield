@@ -123,7 +123,10 @@ class TestInstructions:
         )
         await engine.extract("doc")
         system_msg = provider.last_messages[0]["content"]
-        assert "DOMAIN: clinical trial records. Prefer ISO dates." in system_msg
+        user_msg = provider.last_messages[1]["content"]
+        # Instructions reach the model in the USER turn (better Llama adherence);
+        # the system message stays the SFEP contract.
+        assert "DOMAIN: clinical trial records. Prefer ISO dates." in user_msg
         assert "OUTPUT FORMAT" in system_msg  # SFEP contract preserved
 
     async def test_large_instructions_increases_leaf_count(self, monkeypatch):

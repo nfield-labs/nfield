@@ -252,25 +252,31 @@ class TestRunStage2c:
         schema_paths = {f.path for f in state.fields}
         assert leaf_paths == schema_paths
 
-    def test_leaf_safe_output_is_per_leaf_reservation_not_ceiling(self):
-        """safe_output reserves only what the leaf needs, not M_O/half-context.
+    def test_output_is_decoupled_from_input_budget(self):
+        """Output generates into the window headroom, not the input budget.
 
-        Review H1: a model with a huge M_O but small C_usable must still
-        produce a small per-leaf reservation (Στ + margin), leaving most of
-        C_usable for the document excerpt.
+        Decoupling: the excerpt keeps the FULL input budget (C_usable - overhead,
+        output not subtracted), and the call's output cap (safe_output) is bounded
+        by the headroom (C_eff - C_usable), never by the input budget — so a
+        verbose answer never steals excerpt space, yet prompt + output still fits
+        the full window. safe_output is right-sized to the leaf's predicted output,
+        so a tiny schema reserves far less than the headroom (rate-limit friendly).
         """
         state = _prepare_state(SIMPLE_SCHEMA)
-        state.M_O = 131_072  # huge output ceiling
-        state.C_usable = 4096.0
+        state.C_eff = 8192
+        state.C_usable = 4096.0  # the 50% input ceiling
+        state.M_O = 131_072  # huge model output limit — headroom must bind it
         state = run_stage_2c(state, ExtractionConfig())
+        headroom = state.C_eff - state.C_usable
         for leaf in state.leaves:
-            # Reservation is tiny vs both M_O and C_usable for a 2-field leaf
-            assert leaf.safe_output < 500, (
-                f"safe_output {leaf.safe_output} is not a per-leaf reservation"
-            )
-            # B_excerpt keeps the large majority of C_usable for the document
-            b_excerpt = state.C_usable - leaf.overhead - leaf.safe_output
+            # Right-sized, headroom-bounded output reservation (> 0, never the
+            # input budget): a tiny leaf reserves only what it will emit.
+            assert 0 < leaf.safe_output <= headroom
+            # The excerpt keeps the full input budget; output is not subtracted.
+            b_excerpt = state.C_usable - leaf.overhead
             assert b_excerpt > 0.7 * state.C_usable
+            # Decoupling invariant: prompt + output never exceeds the full window.
+            assert leaf.overhead + b_excerpt + leaf.safe_output <= state.C_eff
 
     def test_k_min_uses_output_ceiling_not_capped_value(self):
         """K_min for a tiny schema under a huge M_O is 1 (volume bound)."""
@@ -309,6 +315,85 @@ class TestAggressiveScale:
         in_order = [leaf for r in state.execution_order for leaf in r]
         assert len(in_order) == len(state.leaves)
         assert state.K_min >= 1
+
+
+def _record_schema(n_records: int, fields_per_record: int) -> dict:
+    """Schema with ``n_records`` identical-shape siblings under ``recs``."""
+    rec_shape = {
+        "type": "object",
+        "properties": {f"f{j:02d}": {"type": "string"} for j in range(fields_per_record)},
+    }
+    return {
+        "type": "object",
+        "properties": {
+            "recs": {
+                "type": "object",
+                "properties": {f"rec_{i + 1}": rec_shape for i in range(n_records)},
+            }
+        },
+    }
+
+
+def _record_document(n_records: int, fields_per_record: int) -> str:
+    blocks = ["HEADER LINE"]
+    for i in range(1, n_records + 1):
+        lines = [f"RECORD {i}"]
+        lines += [f"f{j:02d}: value-{i}-{j}" for j in range(fields_per_record)]
+        blocks.append("\n".join(lines))
+    return "\n".join(blocks) + "\n"
+
+
+class TestRecordAwarePacking:
+    """When the document has a record structure, packing is record-local."""
+
+    def _state(self, n_records: int, fpr: int):
+        doc = _record_document(n_records, fpr)
+        state = PipelineState(chars_per_token=4.0, C_eff=131_000, M_O=10_000, C_usable=65_500.0)
+        state = run_stage_1(state, _record_schema(n_records, fpr))
+        state = run_stage_2a(state)
+        state = run_stage_2b(state, doc, ExtractionConfig())
+        state = run_stage_2c(state, ExtractionConfig())
+        return state
+
+    def test_record_structure_detected(self):
+        state = self._state(6, 10)
+        assert state.record_ordinal  # populated → record-aware path taken
+        assert len(state.record_block_tokens) == 6
+
+    def test_every_field_placed_exactly_once(self):
+        state = self._state(6, 10)
+        paths = [f.path for leaf in state.leaves for f in leaf.fields]
+        assert len(paths) == len(set(paths)) == 6 * 10
+
+    def test_leaves_are_record_contiguous(self):
+        # Next-Fit by record order → each leaf's records form a CONTIGUOUS run
+        # (consecutive ordinals), never a scatter of distant records. The run's
+        # length depends on record size; the no-scatter property is what matters.
+        state = self._state(6, 10)
+        ro = state.record_ordinal
+        for leaf in state.leaves:
+            ords = sorted({ro[f.path] for f in leaf.fields if f.path in ro})
+            if ords:
+                assert ords == list(range(ords[0], ords[-1] + 1))  # contiguous, no gaps
+
+    def test_k_stays_at_reliability_floor(self):
+        state = self._state(6, 10)
+        # 60 fields, cap 50 → 2 leaves minimum; record-local packing stays near it.
+        assert state.K_min <= len(state.leaves) <= state.K_min + 2
+
+    def test_record_bigger_than_budget_does_not_explode_k(self):
+        # A record whose block far exceeds the tiny budget must still pack by the
+        # field cap, not degenerate to one field per leaf (the over_budget edge).
+        doc = _record_document(4, 20)
+        state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=2000, C_usable=20.0)
+        state = run_stage_1(state, _record_schema(4, 20))
+        state = run_stage_2a(state)
+        state = run_stage_2b(state, doc, ExtractionConfig())
+        state = run_stage_2c(state, ExtractionConfig())
+        # 80 fields ÷ cap 50 ≈ 2 reliability leaves; never ~80 one-field leaves.
+        assert len(state.leaves) <= state.K_min + 4
+        paths = [f.path for leaf in state.leaves for f in leaf.fields]
+        assert len(paths) == len(set(paths)) == 80  # still every field, once
 
     def test_400_fields_still_partitions_cleanly(self):
         state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=8192, C_usable=4096.0)

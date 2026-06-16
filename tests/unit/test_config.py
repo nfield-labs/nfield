@@ -6,6 +6,7 @@ import pytest
 
 from formatshield.config import (
     DEFAULT_CONTEXT_UTILIZATION_RATIO,
+    DEFAULT_MAX_API_RETRIES,
     DEFAULT_MAX_RETRY_ROUNDS,
     ExtractionConfig,
 )
@@ -25,6 +26,11 @@ class TestExtractionConfigDefaults:
         cfg = ExtractionConfig()
         assert cfg.max_retry_rounds == DEFAULT_MAX_RETRY_ROUNDS
         assert cfg.max_retry_rounds == 2
+
+    def test_default_max_api_retries(self) -> None:
+        cfg = ExtractionConfig()
+        assert cfg.max_api_retries == DEFAULT_MAX_API_RETRIES
+        assert cfg.max_api_retries == 10  # outlasts a rolling-window TPM storm
 
     def test_default_model_is_none(self) -> None:
         cfg = ExtractionConfig()

@@ -127,7 +127,8 @@ class TestExtract:
             ],
         )
         assert result.exit_code == 0, result.stdout
-        assert "DOMAIN: invoices. Be exact." in provider.last_messages[0]["content"]
+        # Instructions reach the model in the user turn (better Llama adherence).
+        assert "DOMAIN: invoices. Be exact." in provider.last_messages[1]["content"]
 
     def test_extract_missing_document(self, tmp_path):
         schema_file = _write(tmp_path / "s.json", json.dumps(_SCHEMA))

@@ -103,6 +103,20 @@ class TestRecoveryPass:
         assert state.blackboard.get_state("b") == FieldState.FILLED
         assert state.blackboard.get_filled()["b"] == "recovered_value"
 
+    async def test_call_failed_field_is_not_re_extracted(self):
+        # A transient call/API failure (e.g. 429) must NOT be re-decomposed by
+        # recovery — re-firing into a throttled API is the retry-storm that turns
+        # one 429 into a coverage collapse. It stays an honest call-failure.
+        state = _state_with_missing()
+        bb = Blackboard(["a", "b"])
+        bb.write("a", "one")
+        bb.mark_failed("b", "provider error: 429 rate limit", transient=True)
+        state.blackboard = bb
+        provider = _RecoverProvider()  # would recover "b" if asked
+        await run_recovery_pass(state, provider, ExtractionConfig(max_retry_rounds=0))
+        assert provider.calls == 0  # recovery did not fire into the throttled API
+        assert state.blackboard.get_state("b") == FieldState.FAILED
+
     async def test_filled_field_untouched(self):
         state = _state_with_missing()
         cfg = ExtractionConfig(max_retry_rounds=0)

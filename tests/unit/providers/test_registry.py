@@ -83,3 +83,13 @@ class TestFromModelCredentials:
         provider = from_model("groq/llama-3.1-8b")
         assert provider._api_key is None  # type: ignore[attr-defined]
         assert provider._base_url is None  # type: ignore[attr-defined]
+
+    def test_max_retries_forwarded_when_set(self) -> None:
+        provider = from_model("groq/llama-3.1-8b", max_retries=10)
+        assert provider._max_retries == 10  # type: ignore[attr-defined]
+
+    def test_max_retries_defaults_to_provider_floor_when_unset(self) -> None:
+        from formatshield.providers._base import _DEFAULT_RETRY_ATTEMPTS
+
+        provider = from_model("groq/llama-3.1-8b")
+        assert provider._max_retries == _DEFAULT_RETRY_ATTEMPTS  # type: ignore[attr-defined]

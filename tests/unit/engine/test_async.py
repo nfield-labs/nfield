@@ -191,9 +191,22 @@ class TestCredentialForwarding:
         assert captured["api_key"] == "gsk_x"
         assert captured["base_url"] == "https://p/v1"
 
+    def test_engine_forwards_config_max_api_retries(self, monkeypatch):
+        from formatshield.config import ExtractionConfig
+
+        captured: dict = {}
+
+        def fake_from_model(_model, **kwargs):
+            captured.update(kwargs)
+            return object()
+
+        monkeypatch.setattr("formatshield.engine._async.from_model", fake_from_model)
+        AsyncFormatShield("groq/x", _SCHEMA, config=ExtractionConfig(max_api_retries=3))
+        assert captured["max_retries"] == 3
+
 
 class TestConcurrentCalibration:
-    """Concurrent first-time extracts calibrate exactly once (LOW-1 lock)."""
+    """Concurrent first-time extracts calibrate exactly once (calibration lock)."""
 
     async def test_concurrent_extracts_calibrate_once(self, install_provider):
         provider = install_provider(_ECHO)

@@ -27,7 +27,7 @@ def make_field(path: str, ftype: str, description: str = "") -> Field:
 
 
 class TestPromptContextPrepend:
-    """Caller instructions are prepended, SFEP contract preserved."""
+    """Caller instructions lead the USER message; SFEP contract stays in system."""
 
     def test_extraction_prompt_prepends_instructions(self):
         f = make_field("name", "string")
@@ -37,12 +37,14 @@ class TestPromptContextPrepend:
             TemplateType.STANDARD,
             instructions="DOMAIN: clinical notes. Be precise about dosages.",
         )
-        system = msgs[0]["content"]
-        # Caller instructions appear...
-        assert system.startswith("DOMAIN: clinical notes. Be precise about dosages.")
-        # ...and the built-in SFEP contract is still there (parsing stays valid).
+        system, user = msgs[0]["content"], msgs[1]["content"]
+        # Caller instructions lead the USER message (Llama follows user-turn
+        # instructions more reliably than system-prompt ones).
+        assert user.startswith("DOMAIN: clinical notes. Be precise about dosages.")
+        # The system message stays the pure SFEP contract (parsing stays valid).
         assert "OUTPUT FORMAT" in system
         assert "field.path = value" in system
+        assert "DOMAIN: clinical notes" not in system
 
     def test_empty_instructions_leaves_prompt_unchanged(self):
         f = make_field("name", "string")
@@ -56,7 +58,8 @@ class TestPromptContextPrepend:
         msgs = build_retry_system_message(
             [f], {"age": "bad"}, "doc", instructions="DOMAIN: finance."
         )
-        assert msgs[0]["content"].startswith("DOMAIN: finance.")
+        # Instructions lead the user message; the system message is the retry contract.
+        assert msgs[1]["content"].startswith("DOMAIN: finance.")
         assert "RE-EXTRACTION" in msgs[0]["content"]
 
 
