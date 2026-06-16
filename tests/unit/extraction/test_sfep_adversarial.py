@@ -1,13 +1,13 @@
-"""Adversarial edge-case tests for extraction._sfep — found by agent-reviewer.
+"""Edge-case tests for extraction._sfep.
 
-Tests cover bugs and gaps NOT covered by the original test suite:
-- Empty raw_value "" should map to None (spec: raw_value == "" → None)
-- Single-item array without brackets should degrade gracefully (spec: [raw_value])
-- Dead code check: _RE_ARRAY_ITEM is never used (import hygiene)
-- Float literal "1e5" parsed as integer field
-- Value with leading/trailing spaces in arrays
-- Unicode values in arrays
-- Deeply nested array paths parse correctly
+Covers cases the main suite does not:
+- an empty raw value "" maps to None
+- a single-item array without brackets degrades to [raw_value]
+- _RE_ARRAY_ITEM is unused (import hygiene)
+- a float literal like "1e5" in an integer field
+- leading/trailing spaces inside array values
+- unicode values in arrays
+- deeply nested array paths
 """
 
 from __future__ import annotations
@@ -31,14 +31,12 @@ def make_field(path: str, ftype: str, constraints: dict | None = None) -> Field:
 
 
 # ---------------------------------------------------------------------------
-# BUG: Empty raw_value should map to None (arch engine spec §4.1)
-# The spec says: IF raw_value == "null" OR raw_value == "": RETURN None
-# Current code only checks "NULL", not empty string "".
+# An empty raw value should map to None (like the "null" literal), not just "NULL".
 # ---------------------------------------------------------------------------
 
 
 class TestEmptyRawValueHandling:
-    """M5 FIXED — empty string now maps to None per spec §4.1."""
+    """An empty string maps to None."""
 
     def test_empty_string_for_integer_field_returns_none(self):
         """Empty raw_value on integer field returns None (spec: '' → None)."""
@@ -67,13 +65,12 @@ class TestEmptyRawValueHandling:
 
 
 # ---------------------------------------------------------------------------
-# BUG: Single-item array without brackets — spec says return [raw_value]
-# Current code raises ExtractionError for no-comma no-bracket input.
+# A single item without brackets or commas should degrade to [raw_value], not raise.
 # ---------------------------------------------------------------------------
 
 
 class TestSingleItemArrayFallback:
-    """M6 FIXED — single-value array without brackets now wraps as [value] per spec §4.1."""
+    """A single value without brackets wraps as [value]."""
 
     def test_single_item_no_brackets_no_comma(self):
         """LLM outputs 'engineering' for array field — becomes ['engineering']."""

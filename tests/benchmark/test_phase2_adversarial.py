@@ -1,11 +1,10 @@
-"""rev27 adversarial tests — fairness, coverage capping, instructor converter.
+"""Adversarial benchmark tests — fairness, coverage capping, instructor converter.
 
-Written by the reviewer to probe the Phase-2 benchmark work:
-  * the gold-based coverage recorded by the runner must never exceed 1.0, even
-    when an adapter over-extracts (the rev26 ``coverage>1`` regression);
-  * the instructor schema->Pydantic converter must build an all-optional model
-    (partial extraction is not rejected) and a digit-leading schema key must
-    round-trip through a Field alias so gold path-alignment is preserved.
+* the gold-based coverage recorded by the runner must never exceed 1.0, even
+  when an adapter over-extracts;
+* the instructor schema->Pydantic converter must build an all-optional model
+  (partial extraction is not rejected), and a digit-leading schema key must
+  round-trip through a Field alias so gold path-alignment is preserved.
 """
 
 from __future__ import annotations
@@ -121,7 +120,7 @@ class TestInstructorConverter:
         # A real fixture key like "0_14_years" is not a valid identifier, so the
         # converter stores it as field_0 but keeps the original key as a Field
         # alias. With populate_by_name + dump-by-alias the round trip restores the
-        # gold key, so path alignment is preserved (MEDIUM-1 fix).
+        # gold key, so path alignment is preserved.
         assert _safe_field("0_14_years", 0) == "field_0"
         model = _model_from_schema(
             {"type": "object", "properties": {"0_14_years": {"type": "string"}}}, "T", depth=0

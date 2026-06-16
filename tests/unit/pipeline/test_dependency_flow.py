@@ -1,10 +1,10 @@
-"""Tests for dependency value injection (§3.1) and CADTR cascade (§3.2).
+"""Tests for dependency value injection and cascade invalidation.
 
 Covers, deterministically and without network:
 - the [Resolved dependency values] prompt block,
 - per-leaf injection_cost (cross-leaf deps cost tokens, intra-leaf deps don't),
 - Stage 4 gathering of resolved upstream deps from the blackboard,
-- CADTR cascade_invalidate flagging downstream dependents.
+- cascade_invalidate flagging downstream dependents.
 """
 
 from __future__ import annotations

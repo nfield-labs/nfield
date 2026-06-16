@@ -1,11 +1,11 @@
-"""Adversarial tests for validation._retry — found by agent-reviewer.
+"""Edge-case tests for validation._retry.
 
-Tests cover bugs and gaps NOT covered by the original test suite:
-- CRITICAL C1: orchestrate_retry doesn't re-validate recovered values
-- handle_missing_fields with None leaf crashes (docstring bug)
+Covers cases the main suite does not:
+- orchestrate_retry re-validates recovered values
+- handle_missing_fields with a None leaf
 - classify_failure text-match fragility
-- split_retry_batches ordering is non-deterministic
-- Dead code: _compute_retry_max_tokens is never called
+- split_retry_batches ordering is deterministic
+- _compute_retry_max_tokens is removed (no dead code)
 """
 
 from __future__ import annotations
@@ -222,7 +222,7 @@ class TestSplitRetryBatchesOrdering:
 
 class TestDeadCodeRemoved:
     def test_compute_retry_max_tokens_was_removed(self):
-        """BUG M2 FIXED: _compute_retry_max_tokens was dead code and has been removed."""
+        """_compute_retry_max_tokens was dead code and has been removed."""
         import importlib
 
         module = importlib.import_module("formatshield.validation._retry")

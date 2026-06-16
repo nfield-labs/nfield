@@ -1,8 +1,8 @@
-"""Adversarial review tests (agent-reviewer, rev 26-benchmark).
+"""Adversarial benchmark tests — edge cases beyond the main suite.
 
-These probe edge cases the original suite did not cover. Tests that PASS lock in
-correct behaviour; tests marked ``xfail(strict=True)`` document a real gap the
-coder must close (they will turn into failures the moment the gap is fixed).
+Locks in correct behaviour on inputs that are easy to mis-handle: a legitimate
+zero / False value, mixed outcome buckets, positional array matching, and a
+whole-run API failure credited to call-failed rather than model omission.
 """
 
 from __future__ import annotations
@@ -41,15 +41,14 @@ def test_buckets_total_n_with_mixed_outcomes():
     assert sum(report.outcomes.values()) == report.n_fields == 5
 
 
-# --- HIGH: array reordering penalty is applied but undisclosed ----------------
+# --- Array reordering is penalised positionally -----------------------------
 
 
 def test_reordered_array_same_set_is_penalised_positionally():
-    """Same set, different order -> 0% under positional matching.
+    """Same set, different order scores 0 under positional (item_N) matching.
 
-    The design (4.1) mandates the reorder penalty be *disclosed*. The scorer
-    silently applies an ordered match (item_N vs item_N). This test documents
-    the behaviour; if a set-match or disclosed policy lands, update it.
+    Documents the current ordered-match behaviour; update if a set-match policy
+    is introduced.
     """
     schema = _schema({"xs": {"type": "array", "items": {"type": "string"}}})
     report = score({"xs": ["B", "A"]}, {"xs.item_0": "A", "xs.item_1": "B"}, schema)
@@ -57,7 +56,7 @@ def test_reordered_array_same_set_is_penalised_positionally():
     assert report.outcomes[Outcome.ACCURACY] == 2
 
 
-# --- HIGH: a whole-run API failure is mislabelled as model omission ----------
+# --- A whole-run API failure is credited to call-failed ---------------------
 
 
 def test_total_call_failure_is_credited_to_call_failed(monkeypatch):
@@ -65,7 +64,7 @@ def test_total_call_failure_is_credited_to_call_failed(monkeypatch):
 
     Exercises the real adapter: when ``nfield()`` raises (timeout / 429), every
     targeted field was lost to the call, so the adapter must report them all as
-    call-failed (design §4.3 / §7), not leave the count at zero.
+    call-failed, not leave the count at zero.
     """
     from benchmark.adapters.nfield_adapter import NfieldAdapter
 

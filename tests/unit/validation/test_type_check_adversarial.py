@@ -1,12 +1,12 @@
-"""Adversarial tests for validation._type_check -- found by agent-reviewer.
+"""Edge-case tests for validation._type_check.
 
-Tests cover bugs and gaps NOT covered by the original test suite:
-- NEEDS_REVALIDATION checked via repr() -- fragile (H1)
-- multipleOf float precision bug (M3)
-- Large integer/float edge cases
-- Constraint checks on coerced values (not original type)
-- Unknown format string silently passes
-- Pattern with regex special chars in value
+Covers cases the main suite does not:
+- NEEDS_REVALIDATION checked via repr() is fragile
+- multipleOf float-precision handling
+- large integer/float edge cases
+- constraint checks on coerced values (not the original type)
+- an unknown format string passes silently
+- a pattern with regex special characters in the value
 """
 
 from __future__ import annotations
@@ -57,8 +57,8 @@ class TestMultipleOfFloatPrecision:
         valid, _err = validate_field(0.3, f)
         if not valid:
             pytest.xfail(
-                "BUG M3: multipleOf float precision -- 0.3 % 0.1 != 0 due to floating point. "
-                "Fix: use round(value % multiple, 10) == 0 or math.isclose()"
+                "multipleOf float precision: 0.3 % 0.1 != 0 due to floating point. "
+                "Fix: use round(value % multiple, 10) == 0 or math.isclose()."
             )
 
     def test_multiple_of_float_0_25(self):

@@ -27,8 +27,8 @@ def _dataset(gold: dict[str, Any] | None = None) -> LoadedDataset:
     )
 
 
-def _run(adapter, dataset, **kwargs):  # test helper for the shared-budget run_sweep
-    # Every method is run under one shared budget; the tests use a fixed toy one.
+def _run(adapter, dataset, **kwargs):
+    # Default the shared run budget to a fixed toy one for the tests.
     kwargs.setdefault("context_window", 8192)
     kwargs.setdefault("max_output_tokens", 2048)
     kwargs.setdefault("budget", "native")

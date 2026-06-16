@@ -1,10 +1,10 @@
-"""Adversarial tests for assembly._quality — found by agent-reviewer.
+"""Edge-case tests for assembly._quality.
 
-Tests cover bugs and gaps NOT covered by the original test suite:
-- QualityReport.per_field_confidence dict is mutable inside frozen dataclass
-- fields_failed not tracked in QualityReport
+Covers cases the main suite does not:
+- per_field_confidence is mutable inside a frozen dataclass
+- fields_failed is not tracked in QualityReport
 - _determine_confidence_level with fields in CONFLICT state
-- FAILED fields contribute to quality_score as missing (correct) but unreported
+- FAILED fields count toward quality_score as missing but go unreported
 """
 
 from __future__ import annotations

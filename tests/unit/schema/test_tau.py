@@ -285,7 +285,7 @@ class TestComputeEnumTau:
 
 
 class TestComputeTauProperties:
-    """Hypothesis property tests to catch rare edge cases (principles §10.4)."""
+    """Hypothesis property tests to catch rare edge cases."""
 
     @given(
         type_=st.sampled_from(
