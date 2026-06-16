@@ -1,0 +1,3619 @@
+[
+  {
+    "method": "nfield",
+    "fixture": "clinical_registry",
+    "budget": "native",
+    "seed": 0,
+    "fields_total": 2523,
+    "fields_extracted": 2523,
+    "coverage": 1.0,
+    "k": 64,
+    "k_min": 61,
+    "optimality_gap": 0.04918032786885246,
+    "call_failed": 0,
+    "elapsed_seconds": 26.306,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "study": {
+        "study_id": "ONC-REG-2024-117",
+        "title": "Multi-Center Observational Registry of Solid Tumor and Hematologic Malignancy Outcomes",
+        "sponsor": "National Oncology Research Consortium",
+        "phase": "Phase IV",
+        "therapeutic_area": "Oncology",
+        "registry_name": "PANORAMA Registry",
+        "n_sites": 5,
+        "n_patients_enrolled": 44,
+        "target_enrollment": 50,
+        "enrollment_start": "2022-01-15",
+        "enrollment_end": "2023-12-20",
+        "data_cutoff_date": "2024-06-30",
+        "principal_investigator": "Dr. Helen R. Marsh",
+        "open_label": true,
+        "median_followup_months": 18.6
+      },
+      "patients": {
+        "patient_record_1": {
+          "patient_id": "PT-0001",
+          "enrollment_date": "2023-05-27",
+          "site_name": "Southwest Hematology Clinic, Phoenix AZ",
+          "on_study": true,
+          "demographics": {
+            "first_name": "William",
+            "last_name": "Lewis",
+            "age_years": 46,
+            "sex": "Female",
+            "race": "Black",
+            "height_cm": 171.3,
+            "weight_kg": 69.8,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 146,
+            "bp_diastolic_mmhg": 76,
+            "heart_rate_bpm": 105,
+            "resp_rate": 19,
+            "temp_c": 37.4,
+            "spo2_pct": 97
+          },
+          "labs": {
+            "hemoglobin_g_dl": 14.2,
+            "wbc_10e9_l": 10.5,
+            "platelets_10e9_l": 103,
+            "glucose_mg_dl": 142,
+            "creatinine_mg_dl": 1.95,
+            "alt_u_l": 109,
+            "ast_u_l": 91,
+            "albumin_g_dl": 3.3,
+            "sodium_mmol_l": 137,
+            "potassium_mmol_l": 4.1,
+            "calcium_mg_dl": 8.8
+          },
+          "staging": {
+            "ecog_status": "2",
+            "primary_diagnosis": "Malignant neoplasm of pancreas",
+            "primary_diagnosis_icd10": "C25.9",
+            "diagnosis_date": "2020-03-27",
+            "tumor_stage": "IV"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Tamoxifen",
+              "dose_mg": 61.9,
+              "frequency": "BID",
+              "route": "Oral"
+            },
+            "medication_2": {
+              "name": "Dexamethasone",
+              "dose_mg": 130.4,
+              "frequency": "TID",
+              "route": "IV"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Rash",
+              "grade": "4",
+              "serious": true,
+              "outcome": "Ongoing",
+              "onset_date": "2023-09-25"
+            },
+            "adverse_event_2": {
+              "term": "Thrombocytopenia",
+              "grade": "4",
+              "serious": true,
+              "outcome": "Recovered",
+              "onset_date": "2023-02-07"
+            },
+            "adverse_event_3": {
+              "term": "Alopecia",
+              "grade": "2",
+              "serious": true,
+              "outcome": "Ongoing",
+              "onset_date": "2023-10-17"
+            }
+          }
+        },
+        "patient_record_2": {
+          "patient_id": "PT-0002",
+          "enrollment_date": "2022-03-18",
+          "site_name": "Southwest Hematology Clinic, Phoenix AZ",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Anthony",
+            "last_name": "Jackson",
+            "age_years": 70,
+            "sex": "Male",
+            "race": "Native American",
+            "height_cm": 163.9,
+            "weight_kg": 119.3,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 121,
+            "bp_diastolic_mmhg": 102,
+            "heart_rate_bpm": 63,
+            "resp_rate": 17,
+            "temp_c": 36.7,
+            "spo2_pct": 93
+          },
+          "labs": {
+            "hemoglobin_g_dl": 11.8,
+            "wbc_10e9_l": 8.4,
+            "platelets_10e9_l": 396,
+            "glucose_mg_dl": 148,
+            "creatinine_mg_dl": 1.95,
+            "alt_u_l": 63,
+            "ast_u_l": 114,
+            "albumin_g_dl": 3.7,
+            "sodium_mmol_l": 142,
+            "potassium_mmol_l": 4.6,
+            "calcium_mg_dl": 8.5
+          },
+          "staging": {
+            "ecog_status": "4",
+            "primary_diagnosis": "Renal cell carcinoma",
+            "primary_diagnosis_icd10": "C64.9",
+            "diagnosis_date": "2022-08-24",
+            "tumor_stage": "I"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Tamoxifen",
+              "dose_mg": 18.2,
+              "frequency": "PRN",
+              "route": "Oral"
+            },
+            "medication_2": {
+              "name": "Ondansetron",
+              "dose_mg": 340.2,
+              "frequency": "QD",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Fatigue",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2022-07-31"
+            },
+            "adverse_event_2": {
+              "term": "Fatigue",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2023-12-08"
+            },
+            "adverse_event_3": {
+              "term": "Neutropenia",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2022-06-09"
+            }
+          }
+        },
+        "patient_record_3": {
+          "patient_id": "PT-0003",
+          "enrollment_date": "2022-12-24",
+          "site_name": "Pacific Tumor Center, Seattle WA",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Amanda",
+            "last_name": "Jones",
+            "age_years": 36,
+            "sex": "Male",
+            "race": "Black",
+            "height_cm": 181.2,
+            "weight_kg": 80.3,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 120,
+            "bp_diastolic_mmhg": 87,
+            "heart_rate_bpm": 52,
+            "resp_rate": 23,
+            "temp_c": 37.7,
+            "spo2_pct": 90
+          },
+          "labs": {
+            "hemoglobin_g_dl": 9.1,
+            "wbc_10e9_l": 8.4,
+            "platelets_10e9_l": 135,
+            "glucose_mg_dl": 203,
+            "creatinine_mg_dl": 1.63,
+            "alt_u_l": 8,
+            "ast_u_l": 90,
+            "albumin_g_dl": 5.1,
+            "sodium_mmol_l": 131,
+            "potassium_mmol_l": 3.2,
+            "calcium_mg_dl": 10.6
+          },
+          "staging": {
+            "ecog_status": "3",
+            "primary_diagnosis": "Malignant neoplasm of lung",
+            "primary_diagnosis_icd10": "C34.90",
+            "diagnosis_date": "2022-06-16",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Letrozole",
+              "dose_mg": 246.9,
+              "frequency": "QID",
+              "route": "Oral"
+            },
+            "medication_2": {
+              "name": "Letrozole",
+              "dose_mg": 485.8,
+              "frequency": "PRN",
+              "route": "Subcutaneous"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Peripheral neuropathy",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2022-04-09"
+            },
+            "adverse_event_2": {
+              "term": "Rash",
+              "grade": "4",
+              "serious": true,
+              "outcome": "Resolved",
+              "onset_date": "2022-12-22"
+            },
+            "adverse_event_3": {
+              "term": "Febrile neutropenia",
+              "grade": "2",
+              "serious": true,
+              "outcome": "Fatal",
+              "onset_date": "2023-03-08"
+            }
+          }
+        },
+        "patient_record_4": {
+          "patient_id": "PT-0004",
+          "enrollment_date": "2023-10-30",
+          "site_name": "Southwest Hematology Clinic, Phoenix AZ",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Andrew",
+            "last_name": "Clark",
+            "age_years": 70,
+            "sex": "Male",
+            "race": "Black",
+            "height_cm": 172.1,
+            "weight_kg": 51.3,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 128,
+            "bp_diastolic_mmhg": 68,
+            "heart_rate_bpm": 89,
+            "resp_rate": 22,
+            "temp_c": 38.0,
+            "spo2_pct": 93
+          },
+          "labs": {
+            "hemoglobin_g_dl": 16.5,
+            "wbc_10e9_l": 10.0,
+            "platelets_10e9_l": 386,
+            "glucose_mg_dl": 169,
+            "creatinine_mg_dl": 1.79,
+            "alt_u_l": 20,
+            "ast_u_l": 53,
+            "albumin_g_dl": 4.0,
+            "sodium_mmol_l": 138,
+            "potassium_mmol_l": 3.2,
+            "calcium_mg_dl": 9.1
+          },
+          "staging": {
+            "ecog_status": "2",
+            "primary_diagnosis": "Malignant neoplasm of breast",
+            "primary_diagnosis_icd10": "C50.911",
+            "diagnosis_date": "2023-02-09",
+            "tumor_stage": "II"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Tamoxifen",
+              "dose_mg": 180.0,
+              "frequency": "QID",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Allopurinol",
+              "dose_mg": 401.1,
+              "frequency": "TID",
+              "route": "Intramuscular"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Diarrhea",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2023-09-04"
+            },
+            "adverse_event_2": {
+              "term": "Thrombocytopenia",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2021-03-26"
+            },
+            "adverse_event_3": {
+              "term": "Fatigue",
+              "grade": "3",
+              "serious": true,
+              "outcome": "Fatal",
+              "onset_date": "2021-07-29"
+            }
+          }
+        },
+        "patient_record_5": {
+          "patient_id": "PT-0005",
+          "enrollment_date": "2022-06-11",
+          "site_name": "Lakeshore Medical University, Cleveland OH",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Michelle",
+            "last_name": "Baker",
+            "age_years": 42,
+            "sex": "Female",
+            "race": "Black",
+            "height_cm": 189.2,
+            "weight_kg": 77.5,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 139,
+            "bp_diastolic_mmhg": 97,
+            "heart_rate_bpm": 76,
+            "resp_rate": 21,
+            "temp_c": 38.0,
+            "spo2_pct": 91
+          },
+          "labs": {
+            "hemoglobin_g_dl": 12.3,
+            "wbc_10e9_l": 10.1,
+            "platelets_10e9_l": 278,
+            "glucose_mg_dl": 113,
+            "creatinine_mg_dl": 2.13,
+            "alt_u_l": 96,
+            "ast_u_l": 13,
+            "albumin_g_dl": 2.9,
+            "sodium_mmol_l": 136,
+            "potassium_mmol_l": 4.4,
+            "calcium_mg_dl": 8.8
+          },
+          "staging": {
+            "ecog_status": "1",
+            "primary_diagnosis": "Renal cell carcinoma",
+            "primary_diagnosis_icd10": "C64.9",
+            "diagnosis_date": "2021-02-08",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Rituximab",
+              "dose_mg": 140.9,
+              "frequency": "QD",
+              "route": "IV"
+            },
+            "medication_2": {
+              "name": "Metformin",
+              "dose_mg": 391.5,
+              "frequency": "QID",
+              "route": "IV"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Hypertension",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2023-10-27"
+            },
+            "adverse_event_2": {
+              "term": "Fatigue",
+              "grade": "4",
+              "serious": true,
+              "outcome": "Recovering",
+              "onset_date": "2024-03-16"
+            },
+            "adverse_event_3": {
+              "term": "Nausea",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2023-09-30"
+            }
+          }
+        },
+        "patient_record_6": {
+          "patient_id": "PT-0006",
+          "enrollment_date": "2022-12-26",
+          "site_name": "Pacific Tumor Center, Seattle WA",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Susan",
+            "last_name": "Flores",
+            "age_years": 55,
+            "sex": "Female",
+            "race": "Native American",
+            "height_cm": 168.1,
+            "weight_kg": 66.1,
+            "smoker": true
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 114,
+            "bp_diastolic_mmhg": 65,
+            "heart_rate_bpm": 73,
+            "resp_rate": 19,
+            "temp_c": 38.0,
+            "spo2_pct": 99
+          },
+          "labs": {
+            "hemoglobin_g_dl": 10.2,
+            "wbc_10e9_l": 11.9,
+            "platelets_10e9_l": 404,
+            "glucose_mg_dl": 219,
+            "creatinine_mg_dl": 2.02,
+            "alt_u_l": 104,
+            "ast_u_l": 15,
+            "albumin_g_dl": 3.8,
+            "sodium_mmol_l": 135,
+            "potassium_mmol_l": 5.2,
+            "calcium_mg_dl": 9.0
+          },
+          "staging": {
+            "ecog_status": "4",
+            "primary_diagnosis": "Diffuse large B-cell lymphoma",
+            "primary_diagnosis_icd10": "C83.30",
+            "diagnosis_date": "2022-11-13",
+            "tumor_stage": "II"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Cisplatin",
+              "dose_mg": 42.0,
+              "frequency": "TID",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Pembrolizumab",
+              "dose_mg": 183.7,
+              "frequency": "BID",
+              "route": "IV"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Nausea",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Recovered",
+              "onset_date": "2022-07-21"
+            },
+            "adverse_event_2": {
+              "term": "Thrombocytopenia",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2021-05-09"
+            },
+            "adverse_event_3": {
+              "term": "Peripheral neuropathy",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2021-07-12"
+            }
+          }
+        },
+        "patient_record_7": {
+          "patient_id": "PT-0007",
+          "enrollment_date": "2022-03-12",
+          "site_name": "Lakeshore Medical University, Cleveland OH",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Kimberly",
+            "last_name": "Jones",
+            "age_years": 78,
+            "sex": "Male",
+            "race": "Black",
+            "height_cm": 192.5,
+            "weight_kg": 68.3,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 121,
+            "bp_diastolic_mmhg": 78,
+            "heart_rate_bpm": 59,
+            "resp_rate": 12,
+            "temp_c": 37.2,
+            "spo2_pct": 90
+          },
+          "labs": {
+            "hemoglobin_g_dl": 16.4,
+            "wbc_10e9_l": 7.9,
+            "platelets_10e9_l": 375,
+            "glucose_mg_dl": 189,
+            "creatinine_mg_dl": 0.77,
+            "alt_u_l": 107,
+            "ast_u_l": 28,
+            "albumin_g_dl": 4.2,
+            "sodium_mmol_l": 139,
+            "potassium_mmol_l": 5.1,
+            "calcium_mg_dl": 10.3
+          },
+          "staging": {
+            "ecog_status": "2",
+            "primary_diagnosis": "Acute myeloid leukemia",
+            "primary_diagnosis_icd10": "C92.00",
+            "diagnosis_date": "2020-06-20",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Rituximab",
+              "dose_mg": 466.9,
+              "frequency": "QID",
+              "route": "Subcutaneous"
+            },
+            "medication_2": {
+              "name": "Ondansetron",
+              "dose_mg": 298.9,
+              "frequency": "PRN",
+              "route": "IV"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Neutropenia",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2022-06-26"
+            },
+            "adverse_event_2": {
+              "term": "Alopecia",
+              "grade": "5",
+              "serious": true,
+              "outcome": "Recovered",
+              "onset_date": "2021-01-07"
+            },
+            "adverse_event_3": {
+              "term": "Fatigue",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2021-03-27"
+            }
+          }
+        },
+        "patient_record_8": {
+          "patient_id": "PT-0008",
+          "enrollment_date": "2022-10-14",
+          "site_name": "Memorial Cancer Center, Boston MA",
+          "on_study": false,
+          "demographics": {
+            "first_name": "James",
+            "last_name": "Baker",
+            "age_years": 33,
+            "sex": "Male",
+            "race": "Black",
+            "height_cm": 174.5,
+            "weight_kg": 86.8,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 113,
+            "bp_diastolic_mmhg": 62,
+            "heart_rate_bpm": 73,
+            "resp_rate": 23,
+            "temp_c": 37.7,
+            "spo2_pct": 100
+          },
+          "labs": {
+            "hemoglobin_g_dl": 10.3,
+            "wbc_10e9_l": 11.8,
+            "platelets_10e9_l": 364,
+            "glucose_mg_dl": 94,
+            "creatinine_mg_dl": 2.03,
+            "alt_u_l": 103,
+            "ast_u_l": 43,
+            "albumin_g_dl": 4.0,
+            "sodium_mmol_l": 141,
+            "potassium_mmol_l": 4.9,
+            "calcium_mg_dl": 10.3
+          },
+          "staging": {
+            "ecog_status": "0",
+            "primary_diagnosis": "Malignant neoplasm of prostate",
+            "primary_diagnosis_icd10": "C61",
+            "diagnosis_date": "2021-03-09",
+            "tumor_stage": "IIIB"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Letrozole",
+              "dose_mg": 269.9,
+              "frequency": "QID",
+              "route": "Subcutaneous"
+            },
+            "medication_2": {
+              "name": "Tamoxifen",
+              "dose_mg": 268.5,
+              "frequency": "PRN",
+              "route": "IV"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Alopecia",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2023-05-07"
+            },
+            "adverse_event_2": {
+              "term": "Febrile neutropenia",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2023-09-14"
+            },
+            "adverse_event_3": {
+              "term": "Rash",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2021-05-25"
+            }
+          }
+        },
+        "patient_record_9": {
+          "patient_id": "PT-0009",
+          "enrollment_date": "2022-06-20",
+          "site_name": "Memorial Cancer Center, Boston MA",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Linda",
+            "last_name": "Anderson",
+            "age_years": 36,
+            "sex": "Male",
+            "race": "Asian",
+            "height_cm": 188.1,
+            "weight_kg": 107.2,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 114,
+            "bp_diastolic_mmhg": 86,
+            "heart_rate_bpm": 82,
+            "resp_rate": 13,
+            "temp_c": 37.0,
+            "spo2_pct": 98
+          },
+          "labs": {
+            "hemoglobin_g_dl": 10.6,
+            "wbc_10e9_l": 11.1,
+            "platelets_10e9_l": 246,
+            "glucose_mg_dl": 165,
+            "creatinine_mg_dl": 2.38,
+            "alt_u_l": 71,
+            "ast_u_l": 121,
+            "albumin_g_dl": 3.8,
+            "sodium_mmol_l": 130,
+            "potassium_mmol_l": 3.9,
+            "calcium_mg_dl": 9.5
+          },
+          "staging": {
+            "ecog_status": "3",
+            "primary_diagnosis": "Malignant neoplasm of prostate",
+            "primary_diagnosis_icd10": "C61",
+            "diagnosis_date": "2021-05-04",
+            "tumor_stage": "IV"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Carboplatin",
+              "dose_mg": 234.1,
+              "frequency": "PRN",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Ondansetron",
+              "dose_mg": 13.4,
+              "frequency": "TID",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Alopecia",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2023-10-12"
+            },
+            "adverse_event_2": {
+              "term": "Anemia",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2021-03-27"
+            },
+            "adverse_event_3": {
+              "term": "Febrile neutropenia",
+              "grade": "2",
+              "serious": true,
+              "outcome": "Recovering",
+              "onset_date": "2023-09-25"
+            }
+          }
+        },
+        "patient_record_10": {
+          "patient_id": "PT-0010",
+          "enrollment_date": "2022-09-17",
+          "site_name": "Pacific Tumor Center, Seattle WA",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Karen",
+            "last_name": "Wilson",
+            "age_years": 46,
+            "sex": "Female",
+            "race": "Asian",
+            "height_cm": 177.3,
+            "weight_kg": 76.2,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 149,
+            "bp_diastolic_mmhg": 87,
+            "heart_rate_bpm": 69,
+            "resp_rate": 18,
+            "temp_c": 37.8,
+            "spo2_pct": 96
+          },
+          "labs": {
+            "hemoglobin_g_dl": 14.7,
+            "wbc_10e9_l": 5.0,
+            "platelets_10e9_l": 366,
+            "glucose_mg_dl": 147,
+            "creatinine_mg_dl": 1.26,
+            "alt_u_l": 25,
+            "ast_u_l": 31,
+            "albumin_g_dl": 3.5,
+            "sodium_mmol_l": 141,
+            "potassium_mmol_l": 4.5,
+            "calcium_mg_dl": 9.9
+          },
+          "staging": {
+            "ecog_status": "1",
+            "primary_diagnosis": "Malignant melanoma of skin",
+            "primary_diagnosis_icd10": "C43.9",
+            "diagnosis_date": "2021-07-03",
+            "tumor_stage": "I"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Rituximab",
+              "dose_mg": 429.4,
+              "frequency": "BID",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Metformin",
+              "dose_mg": 315.4,
+              "frequency": "PRN",
+              "route": "IV"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Hypertension",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2021-02-05"
+            },
+            "adverse_event_2": {
+              "term": "Thrombocytopenia",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2021-12-16"
+            },
+            "adverse_event_3": {
+              "term": "Mucositis",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2024-02-09"
+            }
+          }
+        },
+        "patient_record_11": {
+          "patient_id": "PT-0011",
+          "enrollment_date": "2022-05-04",
+          "site_name": "Pacific Tumor Center, Seattle WA",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Robert",
+            "last_name": "Wright",
+            "age_years": 64,
+            "sex": "Female",
+            "race": "Asian",
+            "height_cm": 177.4,
+            "weight_kg": 111.6,
+            "smoker": true
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 166,
+            "bp_diastolic_mmhg": 78,
+            "heart_rate_bpm": 69,
+            "resp_rate": 20,
+            "temp_c": 36.5,
+            "spo2_pct": 100
+          },
+          "labs": {
+            "hemoglobin_g_dl": 13.2,
+            "wbc_10e9_l": 3.4,
+            "platelets_10e9_l": 194,
+            "glucose_mg_dl": 210,
+            "creatinine_mg_dl": 1.03,
+            "alt_u_l": 37,
+            "ast_u_l": 40,
+            "albumin_g_dl": 3.0,
+            "sodium_mmol_l": 139,
+            "potassium_mmol_l": 4.6,
+            "calcium_mg_dl": 8.0
+          },
+          "staging": {
+            "ecog_status": "1",
+            "primary_diagnosis": "Malignant neoplasm of ovary",
+            "primary_diagnosis_icd10": "C56.9",
+            "diagnosis_date": "2019-01-02",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Doxorubicin",
+              "dose_mg": 492.8,
+              "frequency": "BID",
+              "route": "IV"
+            },
+            "medication_2": {
+              "name": "Carboplatin",
+              "dose_mg": 240.7,
+              "frequency": "BID",
+              "route": "Intramuscular"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Febrile neutropenia",
+              "grade": "3",
+              "serious": true,
+              "outcome": "Resolved",
+              "onset_date": "2022-08-24"
+            },
+            "adverse_event_2": {
+              "term": "Hypertension",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2023-05-17"
+            },
+            "adverse_event_3": {
+              "term": "Fatigue",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2022-03-24"
+            }
+          }
+        },
+        "patient_record_12": {
+          "patient_id": "PT-0012",
+          "enrollment_date": "2023-06-25",
+          "site_name": "Lakeshore Medical University, Cleveland OH",
+          "on_study": false,
+          "demographics": {
+            "first_name": "Joshua",
+            "last_name": "Robinson",
+            "age_years": 46,
+            "sex": "Female",
+            "race": "White",
+            "height_cm": 176.7,
+            "weight_kg": 87.3,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 112,
+            "bp_diastolic_mmhg": 84,
+            "heart_rate_bpm": 97,
+            "resp_rate": 17,
+            "temp_c": 37.3,
+            "spo2_pct": 96
+          },
+          "labs": {
+            "hemoglobin_g_dl": 12.3,
+            "wbc_10e9_l": 6.8,
+            "platelets_10e9_l": 154,
+            "glucose_mg_dl": 81,
+            "creatinine_mg_dl": 1.63,
+            "alt_u_l": 12,
+            "ast_u_l": 85,
+            "albumin_g_dl": 3.0,
+            "sodium_mmol_l": 141,
+            "potassium_mmol_l": 3.6,
+            "calcium_mg_dl": 8.6
+          },
+          "staging": {
+            "ecog_status": "4",
+            "primary_diagnosis": "Malignant neoplasm of prostate",
+            "primary_diagnosis_icd10": "C61",
+            "diagnosis_date": "2023-03-17",
+            "tumor_stage": "II"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Tamoxifen",
+              "dose_mg": 341.4,
+              "frequency": "PRN",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Rituximab",
+              "dose_mg": 172.0,
+              "frequency": "PRN",
+              "route": "Subcutaneous"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Neutropenia",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2022-02-06"
+            },
+            "adverse_event_2": {
+              "term": "Mucositis",
+              "grade": "2",
+              "serious": true,
+              "outcome": "Ongoing",
+              "onset_date": "2022-09-22"
+            },
+            "adverse_event_3": {
+              "term": "Rash",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2023-12-10"
+            }
+          }
+        },
+        "patient_record_13": {
+          "patient_id": "PT-0013",
+          "enrollment_date": "2022-10-04",
+          "site_name": "Lakeshore Medical University, Cleveland OH",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Robert",
+            "last_name": "Anderson",
+            "age_years": 51,
+            "sex": "Male",
+            "race": "Native American",
+            "height_cm": 169.4,
+            "weight_kg": 90.8,
+            "smoker": true
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 118,
+            "bp_diastolic_mmhg": 76,
+            "heart_rate_bpm": 75,
+            "resp_rate": 14,
+            "temp_c": 37.3,
+            "spo2_pct": 99
+          },
+          "labs": {
+            "hemoglobin_g_dl": 14.2,
+            "wbc_10e9_l": 11.0,
+            "platelets_10e9_l": 317,
+            "glucose_mg_dl": 80,
+            "creatinine_mg_dl": 0.68,
+            "alt_u_l": 51,
+            "ast_u_l": 126,
+            "albumin_g_dl": 3.1,
+            "sodium_mmol_l": 137,
+            "potassium_mmol_l": 4.9,
+            "calcium_mg_dl": 10.4
+          },
+          "staging": {
+            "ecog_status": "4",
+            "primary_diagnosis": "Malignant neoplasm of breast",
+            "primary_diagnosis_icd10": "C50.911",
+            "diagnosis_date": "2020-01-11",
+            "tumor_stage": "IV"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Cisplatin",
+              "dose_mg": 414.9,
+              "frequency": "TID",
+              "route": "Subcutaneous"
+            },
+            "medication_2": {
+              "name": "Ondansetron",
+              "dose_mg": 438.6,
+              "frequency": "QID",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Anemia",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Recovering",
+              "onset_date": "2021-11-01"
+            },
+            "adverse_event_2": {
+              "term": "Neutropenia",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2022-04-26"
+            },
+            "adverse_event_3": {
+              "term": "Peripheral neuropathy",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Fatal",
+              "onset_date": "2023-11-18"
+            }
+          }
+        },
+        "patient_record_14": {
+          "patient_id": "PT-0014",
+          "enrollment_date": "2022-10-07",
+          "site_name": "Pacific Tumor Center, Seattle WA",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Elizabeth",
+            "last_name": "Sanchez",
+            "age_years": 73,
+            "sex": "Female",
+            "race": "Other",
+            "height_cm": 169.9,
+            "weight_kg": 48.9,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 139,
+            "bp_diastolic_mmhg": 65,
+            "heart_rate_bpm": 68,
+            "resp_rate": 17,
+            "temp_c": 37.6,
+            "spo2_pct": 94
+          },
+          "labs": {
+            "hemoglobin_g_dl": 16.8,
+            "wbc_10e9_l": 2.9,
+            "platelets_10e9_l": 309,
+            "glucose_mg_dl": 98,
+            "creatinine_mg_dl": 1.03,
+            "alt_u_l": 99,
+            "ast_u_l": 118,
+            "albumin_g_dl": 4.0,
+            "sodium_mmol_l": 143,
+            "potassium_mmol_l": 5.1,
+            "calcium_mg_dl": 10.4
+          },
+          "staging": {
+            "ecog_status": "2",
+            "primary_diagnosis": "Malignant neoplasm of lung",
+            "primary_diagnosis_icd10": "C34.90",
+            "diagnosis_date": "2021-09-02",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Ondansetron",
+              "dose_mg": 319.8,
+              "frequency": "TID",
+              "route": "Subcutaneous"
+            },
+            "medication_2": {
+              "name": "Nivolumab",
+              "dose_mg": 305.9,
+              "frequency": "TID",
+              "route": "Intramuscular"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Nausea",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2021-09-03"
+            },
+            "adverse_event_2": {
+              "term": "Fatigue",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2023-05-29"
+            },
+            "adverse_event_3": {
+              "term": "Neutropenia",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2021-01-01"
+            }
+          }
+        },
+        "patient_record_15": {
+          "patient_id": "PT-0015",
+          "enrollment_date": "2022-04-21",
+          "site_name": "Pacific Tumor Center, Seattle WA",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Ashley",
+            "last_name": "Martin",
+            "age_years": 35,
+            "sex": "Female",
+            "race": "Asian",
+            "height_cm": 185.0,
+            "weight_kg": 70.3,
+            "smoker": true
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 126,
+            "bp_diastolic_mmhg": 100,
+            "heart_rate_bpm": 59,
+            "resp_rate": 17,
+            "temp_c": 37.3,
+            "spo2_pct": 100
+          },
+          "labs": {
+            "hemoglobin_g_dl": 11.1,
+            "wbc_10e9_l": 13.6,
+            "platelets_10e9_l": 341,
+            "glucose_mg_dl": 106,
+            "creatinine_mg_dl": 1.39,
+            "alt_u_l": 9,
+            "ast_u_l": 10,
+            "albumin_g_dl": 4.9,
+            "sodium_mmol_l": 133,
+            "potassium_mmol_l": 3.7,
+            "calcium_mg_dl": 9.3
+          },
+          "staging": {
+            "ecog_status": "2",
+            "primary_diagnosis": "Malignant neoplasm of colon",
+            "primary_diagnosis_icd10": "C18.9",
+            "diagnosis_date": "2019-05-05",
+            "tumor_stage": "I"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Cisplatin",
+              "dose_mg": 112.9,
+              "frequency": "QID",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Tamoxifen",
+              "dose_mg": 233.7,
+              "frequency": "BID",
+              "route": "Intramuscular"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Alopecia",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Recovering",
+              "onset_date": "2021-10-25"
+            },
+            "adverse_event_2": {
+              "term": "Nausea",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2023-05-22"
+            },
+            "adverse_event_3": {
+              "term": "Diarrhea",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2022-05-09"
+            }
+          }
+        },
+        "patient_record_16": {
+          "patient_id": "PT-0016",
+          "enrollment_date": "2022-08-29",
+          "site_name": "Lakeshore Medical University, Cleveland OH",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Michael",
+            "last_name": "Harris",
+            "age_years": 78,
+            "sex": "Female",
+            "race": "Native American",
+            "height_cm": 190.8,
+            "weight_kg": 112.7,
+            "smoker": true
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 130,
+            "bp_diastolic_mmhg": 66,
+            "heart_rate_bpm": 82,
+            "resp_rate": 21,
+            "temp_c": 36.9,
+            "spo2_pct": 100
+          },
+          "labs": {
+            "hemoglobin_g_dl": 9.9,
+            "wbc_10e9_l": 13.5,
+            "platelets_10e9_l": 338,
+            "glucose_mg_dl": 72,
+            "creatinine_mg_dl": 0.99,
+            "alt_u_l": 64,
+            "ast_u_l": 12,
+            "albumin_g_dl": 4.2,
+            "sodium_mmol_l": 130,
+            "potassium_mmol_l": 4.7,
+            "calcium_mg_dl": 8.7
+          },
+          "staging": {
+            "ecog_status": "4",
+            "primary_diagnosis": "Malignant neoplasm of pancreas",
+            "primary_diagnosis_icd10": "C25.9",
+            "diagnosis_date": "2021-08-29",
+            "tumor_stage": "II"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Carboplatin",
+              "dose_mg": 102.9,
+              "frequency": "PRN",
+              "route": "IV"
+            },
+            "medication_2": {
+              "name": "Tamoxifen",
+              "dose_mg": 61.7,
+              "frequency": "TID",
+              "route": "Subcutaneous"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Neutropenia",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2022-03-13"
+            },
+            "adverse_event_2": {
+              "term": "Mucositis",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2023-11-20"
+            },
+            "adverse_event_3": {
+              "term": "Thrombocytopenia",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2024-01-16"
+            }
+          }
+        },
+        "patient_record_17": {
+          "patient_id": "PT-0017",
+          "enrollment_date": "2022-03-22",
+          "site_name": "Riverside Oncology Institute, Chicago IL",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Karen",
+            "last_name": "Lopez",
+            "age_years": 57,
+            "sex": "Male",
+            "race": "Other",
+            "height_cm": 150.7,
+            "weight_kg": 57.1,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 137,
+            "bp_diastolic_mmhg": 74,
+            "heart_rate_bpm": 95,
+            "resp_rate": 16,
+            "temp_c": 37.2,
+            "spo2_pct": 94
+          },
+          "labs": {
+            "hemoglobin_g_dl": 13.2,
+            "wbc_10e9_l": 2.7,
+            "platelets_10e9_l": 356,
+            "glucose_mg_dl": 151,
+            "creatinine_mg_dl": 0.86,
+            "alt_u_l": 70,
+            "ast_u_l": 40,
+            "albumin_g_dl": 4.7,
+            "sodium_mmol_l": 144,
+            "potassium_mmol_l": 3.5,
+            "calcium_mg_dl": 9.2
+          },
+          "staging": {
+            "ecog_status": "0",
+            "primary_diagnosis": "Malignant neoplasm of lung",
+            "primary_diagnosis_icd10": "C34.90",
+            "diagnosis_date": "2019-09-04",
+            "tumor_stage": "I"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Nivolumab",
+              "dose_mg": 14.9,
+              "frequency": "TID",
+              "route": "Subcutaneous"
+            },
+            "medication_2": {
+              "name": "Letrozole",
+              "dose_mg": 430.7,
+              "frequency": "PRN",
+              "route": "IV"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Diarrhea",
+              "grade": "3",
+              "serious": true,
+              "outcome": "Ongoing",
+              "onset_date": "2021-10-16"
+            },
+            "adverse_event_2": {
+              "term": "Mucositis",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2022-03-05"
+            },
+            "adverse_event_3": {
+              "term": "Thrombocytopenia",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2022-01-21"
+            }
+          }
+        },
+        "patient_record_18": {
+          "patient_id": "PT-0018",
+          "enrollment_date": "2023-02-05",
+          "site_name": "Southwest Hematology Clinic, Phoenix AZ",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Joshua",
+            "last_name": "Sanchez",
+            "age_years": 51,
+            "sex": "Male",
+            "race": "Black",
+            "height_cm": 189.4,
+            "weight_kg": 115.1,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 119,
+            "bp_diastolic_mmhg": 95,
+            "heart_rate_bpm": 104,
+            "resp_rate": 14,
+            "temp_c": 37.9,
+            "spo2_pct": 100
+          },
+          "labs": {
+            "hemoglobin_g_dl": 16.4,
+            "wbc_10e9_l": 4.6,
+            "platelets_10e9_l": 96,
+            "glucose_mg_dl": 211,
+            "creatinine_mg_dl": 0.86,
+            "alt_u_l": 103,
+            "ast_u_l": 109,
+            "albumin_g_dl": 2.8,
+            "sodium_mmol_l": 130,
+            "potassium_mmol_l": 4.0,
+            "calcium_mg_dl": 8.2
+          },
+          "staging": {
+            "ecog_status": "1",
+            "primary_diagnosis": "Malignant neoplasm of lung",
+            "primary_diagnosis_icd10": "C34.90",
+            "diagnosis_date": "2022-11-08",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Ondansetron",
+              "dose_mg": 51.9,
+              "frequency": "QD",
+              "route": "IV"
+            },
+            "medication_2": {
+              "name": "Bevacizumab",
+              "dose_mg": 379.3,
+              "frequency": "PRN",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Thrombocytopenia",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2023-05-19"
+            },
+            "adverse_event_2": {
+              "term": "Peripheral neuropathy",
+              "grade": "4",
+              "serious": true,
+              "outcome": "Recovering",
+              "onset_date": "2021-05-03"
+            },
+            "adverse_event_3": {
+              "term": "Nausea",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Ongoing",
+              "onset_date": "2021-08-31"
+            }
+          }
+        },
+        "patient_record_19": {
+          "patient_id": "PT-0019",
+          "enrollment_date": "2022-11-04",
+          "site_name": "Lakeshore Medical University, Cleveland OH",
+          "on_study": true,
+          "demographics": {
+            "first_name": "James",
+            "last_name": "Nelson",
+            "age_years": 69,
+            "sex": "Female",
+            "race": "Other",
+            "height_cm": 192.3,
+            "weight_kg": 82.9,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 106,
+            "bp_diastolic_mmhg": 88,
+            "heart_rate_bpm": 105,
+            "resp_rate": 22,
+            "temp_c": 37.0,
+            "spo2_pct": 98
+          },
+          "labs": {
+            "hemoglobin_g_dl": 13.5,
+            "wbc_10e9_l": 9.7,
+            "platelets_10e9_l": 324,
+            "glucose_mg_dl": 123,
+            "creatinine_mg_dl": 1.52,
+            "alt_u_l": 95,
+            "ast_u_l": 29,
+            "albumin_g_dl": 4.4,
+            "sodium_mmol_l": 143,
+            "potassium_mmol_l": 4.0,
+            "calcium_mg_dl": 8.9
+          },
+          "staging": {
+            "ecog_status": "3",
+            "primary_diagnosis": "Malignant neoplasm of colon",
+            "primary_diagnosis_icd10": "C18.9",
+            "diagnosis_date": "2021-07-09",
+            "tumor_stage": "IV"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Metformin",
+              "dose_mg": 486.9,
+              "frequency": "QD",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Tamoxifen",
+              "dose_mg": 76.3,
+              "frequency": "QD",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Fatigue",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2022-09-16"
+            },
+            "adverse_event_2": {
+              "term": "Peripheral neuropathy",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2023-09-17"
+            },
+            "adverse_event_3": {
+              "term": "Neutropenia",
+              "grade": "4",
+              "serious": true,
+              "outcome": "Recovered",
+              "onset_date": "2021-07-17"
+            }
+          }
+        },
+        "patient_record_20": {
+          "patient_id": "PT-0020",
+          "enrollment_date": "2022-04-22",
+          "site_name": "Pacific Tumor Center, Seattle WA",
+          "on_study": false,
+          "demographics": {
+            "first_name": "Sandra",
+            "last_name": "Clark",
+            "age_years": 37,
+            "sex": "Female",
+            "race": "Native American",
+            "height_cm": 178.8,
+            "weight_kg": 87.2,
+            "smoker": true
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 148,
+            "bp_diastolic_mmhg": 85,
+            "heart_rate_bpm": 87,
+            "resp_rate": 21,
+            "temp_c": 37.5,
+            "spo2_pct": 97
+          },
+          "labs": {
+            "hemoglobin_g_dl": 9.5,
+            "wbc_10e9_l": 13.9,
+            "platelets_10e9_l": 397,
+            "glucose_mg_dl": 219,
+            "creatinine_mg_dl": 1.47,
+            "alt_u_l": 92,
+            "ast_u_l": 111,
+            "albumin_g_dl": 3.2,
+            "sodium_mmol_l": 132,
+            "potassium_mmol_l": 4.0,
+            "calcium_mg_dl": 8.3
+          },
+          "staging": {
+            "ecog_status": "4",
+            "primary_diagnosis": "Diffuse large B-cell lymphoma",
+            "primary_diagnosis_icd10": "C83.30",
+            "diagnosis_date": "2021-10-04",
+            "tumor_stage": "IV"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Allopurinol",
+              "dose_mg": 84.6,
+              "frequency": "TID",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Tamoxifen",
+              "dose_mg": 395.3,
+              "frequency": "TID",
+              "route": "Subcutaneous"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Nausea",
+              "grade": "4",
+              "serious": true,
+              "outcome": "Recovering",
+              "onset_date": "2021-06-16"
+            },
+            "adverse_event_2": {
+              "term": "Alopecia",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2023-04-06"
+            },
+            "adverse_event_3": {
+              "term": "Thrombocytopenia",
+              "grade": "3",
+              "serious": true,
+              "outcome": "Ongoing",
+              "onset_date": "2022-08-14"
+            }
+          }
+        },
+        "patient_record_21": {
+          "patient_id": "PT-0021",
+          "enrollment_date": "2022-05-11",
+          "site_name": "Memorial Cancer Center, Boston MA",
+          "on_study": false,
+          "demographics": {
+            "first_name": "Brian",
+            "last_name": "Nguyen",
+            "age_years": 59,
+            "sex": "Male",
+            "race": "White",
+            "height_cm": 180.1,
+            "weight_kg": 57.6,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 166,
+            "bp_diastolic_mmhg": 96,
+            "heart_rate_bpm": 108,
+            "resp_rate": 15,
+            "temp_c": 38.3,
+            "spo2_pct": 91
+          },
+          "labs": {
+            "hemoglobin_g_dl": 9.6,
+            "wbc_10e9_l": 5.2,
+            "platelets_10e9_l": 371,
+            "glucose_mg_dl": 168,
+            "creatinine_mg_dl": 1.81,
+            "alt_u_l": 31,
+            "ast_u_l": 76,
+            "albumin_g_dl": 4.6,
+            "sodium_mmol_l": 136,
+            "potassium_mmol_l": 5.2,
+            "calcium_mg_dl": 8.6
+          },
+          "staging": {
+            "ecog_status": "0",
+            "primary_diagnosis": "Diffuse large B-cell lymphoma",
+            "primary_diagnosis_icd10": "C83.30",
+            "diagnosis_date": "2022-06-08",
+            "tumor_stage": "I"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Rituximab",
+              "dose_mg": 358.6,
+              "frequency": "QID",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Tamoxifen",
+              "dose_mg": 249.9,
+              "frequency": "TID",
+              "route": "Subcutaneous"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Mucositis",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Resolved",
+              "onset_date": "2021-07-21"
+            },
+            "adverse_event_2": {
+              "term": "Anemia",
+              "grade": "2",
+              "serious": true,
+              "outcome": "Recovering",
+              "onset_date": "2022-10-14"
+            },
+            "adverse_event_3": {
+              "term": "Peripheral neuropathy",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2021-03-22"
+            }
+          }
+        },
+        "patient_record_22": {
+          "patient_id": "PT-0022",
+          "enrollment_date": "2022-04-02",
+          "site_name": "Riverside Oncology Institute, Chicago IL",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Nancy",
+            "last_name": "King",
+            "age_years": 58,
+            "sex": "Male",
+            "race": "Native American",
+            "height_cm": 159.3,
+            "weight_kg": 115.3,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 126,
+            "bp_diastolic_mmhg": 64,
+            "heart_rate_bpm": 85,
+            "resp_rate": 19,
+            "temp_c": 36.5,
+            "spo2_pct": 93
+          },
+          "labs": {
+            "hemoglobin_g_dl": 8.8,
+            "wbc_10e9_l": 13.0,
+            "platelets_10e9_l": 172,
+            "glucose_mg_dl": 163,
+            "creatinine_mg_dl": 1.1,
+            "alt_u_l": 21,
+            "ast_u_l": 29,
+            "albumin_g_dl": 4.0,
+            "sodium_mmol_l": 132,
+            "potassium_mmol_l": 4.8,
+            "calcium_mg_dl": 10.2
+          },
+          "staging": {
+            "ecog_status": "3",
+            "primary_diagnosis": "Malignant neoplasm of colon",
+            "primary_diagnosis_icd10": "C18.9",
+            "diagnosis_date": "2023-01-06",
+            "tumor_stage": "II"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Pembrolizumab",
+              "dose_mg": 214.7,
+              "frequency": "QID",
+              "route": "IV"
+            },
+            "medication_2": {
+              "name": "Nivolumab",
+              "dose_mg": 86.0,
+              "frequency": "TID",
+              "route": "IV"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Diarrhea",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2021-02-02"
+            },
+            "adverse_event_2": {
+              "term": "Peripheral neuropathy",
+              "grade": "2",
+              "serious": true,
+              "outcome": "Recovering",
+              "onset_date": "2022-02-12"
+            },
+            "adverse_event_3": {
+              "term": "Mucositis",
+              "grade": "5",
+              "serious": true,
+              "outcome": "Resolved",
+              "onset_date": "2022-08-20"
+            }
+          }
+        },
+        "patient_record_23": {
+          "patient_id": "PT-0023",
+          "enrollment_date": "2022-10-25",
+          "site_name": "Riverside Oncology Institute, Chicago IL",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Ashley",
+            "last_name": "Ramirez",
+            "age_years": 60,
+            "sex": "Male",
+            "race": "Black",
+            "height_cm": 191.4,
+            "weight_kg": 82.0,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 107,
+            "bp_diastolic_mmhg": 68,
+            "heart_rate_bpm": 82,
+            "resp_rate": 15,
+            "temp_c": 37.6,
+            "spo2_pct": 98
+          },
+          "labs": {
+            "hemoglobin_g_dl": 15.7,
+            "wbc_10e9_l": 3.0,
+            "platelets_10e9_l": 127,
+            "glucose_mg_dl": 91,
+            "creatinine_mg_dl": 0.64,
+            "alt_u_l": 43,
+            "ast_u_l": 128,
+            "albumin_g_dl": 4.7,
+            "sodium_mmol_l": 139,
+            "potassium_mmol_l": 4.7,
+            "calcium_mg_dl": 9.8
+          },
+          "staging": {
+            "ecog_status": "1",
+            "primary_diagnosis": "Malignant neoplasm of colon",
+            "primary_diagnosis_icd10": "C18.9",
+            "diagnosis_date": "2019-03-27",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Pembrolizumab",
+              "dose_mg": 154.5,
+              "frequency": "TID",
+              "route": "IV"
+            },
+            "medication_2": {
+              "name": "Metformin",
+              "dose_mg": 18.4,
+              "frequency": "QD",
+              "route": "IV"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Peripheral neuropathy",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Recovered",
+              "onset_date": "2023-08-08"
+            },
+            "adverse_event_2": {
+              "term": "Hypertension",
+              "grade": "4",
+              "serious": true,
+              "outcome": "Ongoing",
+              "onset_date": "2023-08-02"
+            },
+            "adverse_event_3": {
+              "term": "Mucositis",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2023-05-02"
+            }
+          }
+        },
+        "patient_record_24": {
+          "patient_id": "PT-0024",
+          "enrollment_date": "2023-05-08",
+          "site_name": "Pacific Tumor Center, Seattle WA",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Joshua",
+            "last_name": "Young",
+            "age_years": 36,
+            "sex": "Female",
+            "race": "Other",
+            "height_cm": 183.0,
+            "weight_kg": 114.2,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 131,
+            "bp_diastolic_mmhg": 65,
+            "heart_rate_bpm": 93,
+            "resp_rate": 19,
+            "temp_c": 38.0,
+            "spo2_pct": 97
+          },
+          "labs": {
+            "hemoglobin_g_dl": 14.9,
+            "wbc_10e9_l": 6.6,
+            "platelets_10e9_l": 325,
+            "glucose_mg_dl": 79,
+            "creatinine_mg_dl": 2.32,
+            "alt_u_l": 64,
+            "ast_u_l": 16,
+            "albumin_g_dl": 5.1,
+            "sodium_mmol_l": 142,
+            "potassium_mmol_l": 3.4,
+            "calcium_mg_dl": 8.4
+          },
+          "staging": {
+            "ecog_status": "2",
+            "primary_diagnosis": "Malignant melanoma of skin",
+            "primary_diagnosis_icd10": "C43.9",
+            "diagnosis_date": "2023-05-24",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Carboplatin",
+              "dose_mg": 198.3,
+              "frequency": "PRN",
+              "route": "Subcutaneous"
+            },
+            "medication_2": {
+              "name": "Dexamethasone",
+              "dose_mg": 333.3,
+              "frequency": "QID",
+              "route": "IV"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Anemia",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2021-08-10"
+            },
+            "adverse_event_2": {
+              "term": "Rash",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2024-02-09"
+            },
+            "adverse_event_3": {
+              "term": "Hypertension",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2024-01-10"
+            }
+          }
+        },
+        "patient_record_25": {
+          "patient_id": "PT-0025",
+          "enrollment_date": "2022-03-15",
+          "site_name": "Lakeshore Medical University, Cleveland OH",
+          "on_study": false,
+          "demographics": {
+            "first_name": "Richard",
+            "last_name": "Davis",
+            "age_years": 79,
+            "sex": "Female",
+            "race": "Asian",
+            "height_cm": 179.9,
+            "weight_kg": 103.8,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 158,
+            "bp_diastolic_mmhg": 88,
+            "heart_rate_bpm": 52,
+            "resp_rate": 14,
+            "temp_c": 36.9,
+            "spo2_pct": 90
+          },
+          "labs": {
+            "hemoglobin_g_dl": 12.9,
+            "wbc_10e9_l": 4.7,
+            "platelets_10e9_l": 174,
+            "glucose_mg_dl": 144,
+            "creatinine_mg_dl": 1.91,
+            "alt_u_l": 90,
+            "ast_u_l": 85,
+            "albumin_g_dl": 4.7,
+            "sodium_mmol_l": 140,
+            "potassium_mmol_l": 4.6,
+            "calcium_mg_dl": 10.6
+          },
+          "staging": {
+            "ecog_status": "1",
+            "primary_diagnosis": "Malignant neoplasm of breast",
+            "primary_diagnosis_icd10": "C50.911",
+            "diagnosis_date": "2020-07-23",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Carboplatin",
+              "dose_mg": 431.2,
+              "frequency": "TID",
+              "route": "IV"
+            },
+            "medication_2": {
+              "name": "Tamoxifen",
+              "dose_mg": 403.0,
+              "frequency": "QD",
+              "route": "Intramuscular"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Thrombocytopenia",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2023-06-27"
+            },
+            "adverse_event_2": {
+              "term": "Nausea",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2024-03-08"
+            },
+            "adverse_event_3": {
+              "term": "Mucositis",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2023-08-07"
+            }
+          }
+        },
+        "patient_record_26": {
+          "patient_id": "PT-0026",
+          "enrollment_date": "2023-05-30",
+          "site_name": "Southwest Hematology Clinic, Phoenix AZ",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Steven",
+            "last_name": "Flores",
+            "age_years": 73,
+            "sex": "Male",
+            "race": "Native American",
+            "height_cm": 161.1,
+            "weight_kg": 112.6,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 109,
+            "bp_diastolic_mmhg": 94,
+            "heart_rate_bpm": 88,
+            "resp_rate": 20,
+            "temp_c": 37.7,
+            "spo2_pct": 95
+          },
+          "labs": {
+            "hemoglobin_g_dl": 16.7,
+            "wbc_10e9_l": 13.3,
+            "platelets_10e9_l": 317,
+            "glucose_mg_dl": 188,
+            "creatinine_mg_dl": 1.46,
+            "alt_u_l": 20,
+            "ast_u_l": 37,
+            "albumin_g_dl": 4.0,
+            "sodium_mmol_l": 134,
+            "potassium_mmol_l": 4.5,
+            "calcium_mg_dl": 10.1
+          },
+          "staging": {
+            "ecog_status": "2",
+            "primary_diagnosis": "Malignant melanoma of skin",
+            "primary_diagnosis_icd10": "C43.9",
+            "diagnosis_date": "2023-01-26",
+            "tumor_stage": "IV"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Filgrastim",
+              "dose_mg": 83.3,
+              "frequency": "QD",
+              "route": "Oral"
+            },
+            "medication_2": {
+              "name": "Nivolumab",
+              "dose_mg": 397.7,
+              "frequency": "BID",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Nausea",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2021-05-30"
+            },
+            "adverse_event_2": {
+              "term": "Diarrhea",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Ongoing",
+              "onset_date": "2022-07-04"
+            },
+            "adverse_event_3": {
+              "term": "Neutropenia",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2023-04-01"
+            }
+          }
+        },
+        "patient_record_27": {
+          "patient_id": "PT-0027",
+          "enrollment_date": "2023-09-13",
+          "site_name": "Lakeshore Medical University, Cleveland OH",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Kevin",
+            "last_name": "Baker",
+            "age_years": 46,
+            "sex": "Female",
+            "race": "Black",
+            "height_cm": 153.4,
+            "weight_kg": 96.5,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 137,
+            "bp_diastolic_mmhg": 92,
+            "heart_rate_bpm": 77,
+            "resp_rate": 15,
+            "temp_c": 36.1,
+            "spo2_pct": 100
+          },
+          "labs": {
+            "hemoglobin_g_dl": 13.0,
+            "wbc_10e9_l": 11.2,
+            "platelets_10e9_l": 191,
+            "glucose_mg_dl": 74,
+            "creatinine_mg_dl": 1.71,
+            "alt_u_l": 14,
+            "ast_u_l": 28,
+            "albumin_g_dl": 5.1,
+            "sodium_mmol_l": 134,
+            "potassium_mmol_l": 5.1,
+            "calcium_mg_dl": 8.2
+          },
+          "staging": {
+            "ecog_status": "3",
+            "primary_diagnosis": "Malignant melanoma of skin",
+            "primary_diagnosis_icd10": "C43.9",
+            "diagnosis_date": "2021-08-02",
+            "tumor_stage": "IIIB"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Paclitaxel",
+              "dose_mg": 307.4,
+              "frequency": "BID",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Carboplatin",
+              "dose_mg": 298.1,
+              "frequency": "TID",
+              "route": "IV"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Peripheral neuropathy",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2022-08-21"
+            },
+            "adverse_event_2": {
+              "term": "Nausea",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2023-11-22"
+            },
+            "adverse_event_3": {
+              "term": "Alopecia",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2023-04-24"
+            }
+          }
+        },
+        "patient_record_28": {
+          "patient_id": "PT-0028",
+          "enrollment_date": "2022-11-25",
+          "site_name": "Memorial Cancer Center, Boston MA",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Mary",
+            "last_name": "Flores",
+            "age_years": 51,
+            "sex": "Female",
+            "race": "White",
+            "height_cm": 167.6,
+            "weight_kg": 70.6,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 108,
+            "bp_diastolic_mmhg": 63,
+            "heart_rate_bpm": 96,
+            "resp_rate": 15,
+            "temp_c": 37.6,
+            "spo2_pct": 98
+          },
+          "labs": {
+            "hemoglobin_g_dl": 12.7,
+            "wbc_10e9_l": 13.0,
+            "platelets_10e9_l": 361,
+            "glucose_mg_dl": 173,
+            "creatinine_mg_dl": 1.4,
+            "alt_u_l": 27,
+            "ast_u_l": 88,
+            "albumin_g_dl": 2.9,
+            "sodium_mmol_l": 138,
+            "potassium_mmol_l": 3.7,
+            "calcium_mg_dl": 9.1
+          },
+          "staging": {
+            "ecog_status": "0",
+            "primary_diagnosis": "Malignant neoplasm of lung",
+            "primary_diagnosis_icd10": "C34.90",
+            "diagnosis_date": "2020-01-04",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Tamoxifen",
+              "dose_mg": 456.6,
+              "frequency": "QD",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Filgrastim",
+              "dose_mg": 208.2,
+              "frequency": "TID",
+              "route": "IV"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Febrile neutropenia",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2022-10-07"
+            },
+            "adverse_event_2": {
+              "term": "Nausea",
+              "grade": "5",
+              "serious": true,
+              "outcome": "Recovered",
+              "onset_date": "2022-01-22"
+            },
+            "adverse_event_3": {
+              "term": "Febrile neutropenia",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2023-11-01"
+            }
+          }
+        },
+        "patient_record_29": {
+          "patient_id": "PT-0029",
+          "enrollment_date": "2023-11-09",
+          "site_name": "Riverside Oncology Institute, Chicago IL",
+          "on_study": false,
+          "demographics": {
+            "first_name": "Barbara",
+            "last_name": "Johnson",
+            "age_years": 35,
+            "sex": "Female",
+            "race": "Asian",
+            "height_cm": 175.2,
+            "weight_kg": 55.6,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 148,
+            "bp_diastolic_mmhg": 97,
+            "heart_rate_bpm": 71,
+            "resp_rate": 17,
+            "temp_c": 38.3,
+            "spo2_pct": 95
+          },
+          "labs": {
+            "hemoglobin_g_dl": 12.9,
+            "wbc_10e9_l": 11.1,
+            "platelets_10e9_l": 173,
+            "glucose_mg_dl": 126,
+            "creatinine_mg_dl": 0.75,
+            "alt_u_l": 81,
+            "ast_u_l": 85,
+            "albumin_g_dl": 4.2,
+            "sodium_mmol_l": 141,
+            "potassium_mmol_l": 3.7,
+            "calcium_mg_dl": 10.0
+          },
+          "staging": {
+            "ecog_status": "1",
+            "primary_diagnosis": "Acute myeloid leukemia",
+            "primary_diagnosis_icd10": "C92.00",
+            "diagnosis_date": "2021-10-20",
+            "tumor_stage": "II"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Cisplatin",
+              "dose_mg": 27.4,
+              "frequency": "QD",
+              "route": "Oral"
+            },
+            "medication_2": {
+              "name": "Letrozole",
+              "dose_mg": 341.4,
+              "frequency": "PRN",
+              "route": "Intramuscular"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Anemia",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2022-03-08"
+            },
+            "adverse_event_2": {
+              "term": "Hypertension",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2022-07-26"
+            },
+            "adverse_event_3": {
+              "term": "Anemia",
+              "grade": "2",
+              "serious": true,
+              "outcome": "Ongoing",
+              "onset_date": "2023-04-02"
+            }
+          }
+        },
+        "patient_record_30": {
+          "patient_id": "PT-0030",
+          "enrollment_date": "2022-09-05",
+          "site_name": "Riverside Oncology Institute, Chicago IL",
+          "on_study": true,
+          "demographics": {
+            "first_name": "James",
+            "last_name": "Robinson",
+            "age_years": 64,
+            "sex": "Female",
+            "race": "White",
+            "height_cm": 167.7,
+            "weight_kg": 79.2,
+            "smoker": true
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 124,
+            "bp_diastolic_mmhg": 94,
+            "heart_rate_bpm": 73,
+            "resp_rate": 12,
+            "temp_c": 37.4,
+            "spo2_pct": 100
+          },
+          "labs": {
+            "hemoglobin_g_dl": 10.9,
+            "wbc_10e9_l": 9.0,
+            "platelets_10e9_l": 378,
+            "glucose_mg_dl": 79,
+            "creatinine_mg_dl": 1.27,
+            "alt_u_l": 34,
+            "ast_u_l": 39,
+            "albumin_g_dl": 3.6,
+            "sodium_mmol_l": 141,
+            "potassium_mmol_l": 3.3,
+            "calcium_mg_dl": 8.8
+          },
+          "staging": {
+            "ecog_status": "2",
+            "primary_diagnosis": "Renal cell carcinoma",
+            "primary_diagnosis_icd10": "C64.9",
+            "diagnosis_date": "2022-07-22",
+            "tumor_stage": "IV"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Bevacizumab",
+              "dose_mg": 399.0,
+              "frequency": "TID",
+              "route": "IV"
+            },
+            "medication_2": {
+              "name": "Doxorubicin",
+              "dose_mg": 261.6,
+              "frequency": "PRN",
+              "route": "Subcutaneous"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Anemia",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2022-09-23"
+            },
+            "adverse_event_2": {
+              "term": "Fatigue",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2023-05-18"
+            },
+            "adverse_event_3": {
+              "term": "Thrombocytopenia",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2022-10-04"
+            }
+          }
+        },
+        "patient_record_31": {
+          "patient_id": "PT-0031",
+          "enrollment_date": "2023-02-15",
+          "site_name": "Southwest Hematology Clinic, Phoenix AZ",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Steven",
+            "last_name": "Young",
+            "age_years": 37,
+            "sex": "Male",
+            "race": "Other",
+            "height_cm": 157.9,
+            "weight_kg": 55.9,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 141,
+            "bp_diastolic_mmhg": 84,
+            "heart_rate_bpm": 106,
+            "resp_rate": 18,
+            "temp_c": 37.2,
+            "spo2_pct": 94
+          },
+          "labs": {
+            "hemoglobin_g_dl": 8.9,
+            "wbc_10e9_l": 2.8,
+            "platelets_10e9_l": 92,
+            "glucose_mg_dl": 81,
+            "creatinine_mg_dl": 2.23,
+            "alt_u_l": 15,
+            "ast_u_l": 41,
+            "albumin_g_dl": 4.6,
+            "sodium_mmol_l": 138,
+            "potassium_mmol_l": 3.3,
+            "calcium_mg_dl": 9.7
+          },
+          "staging": {
+            "ecog_status": "1",
+            "primary_diagnosis": "Diffuse large B-cell lymphoma",
+            "primary_diagnosis_icd10": "C83.30",
+            "diagnosis_date": "2020-03-05",
+            "tumor_stage": "II"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Carboplatin",
+              "dose_mg": 54.6,
+              "frequency": "BID",
+              "route": "IV"
+            },
+            "medication_2": {
+              "name": "Allopurinol",
+              "dose_mg": 304.8,
+              "frequency": "QD",
+              "route": "Subcutaneous"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Fatigue",
+              "grade": "4",
+              "serious": true,
+              "outcome": "Ongoing",
+              "onset_date": "2022-09-05"
+            },
+            "adverse_event_2": {
+              "term": "Hypertension",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2021-01-11"
+            },
+            "adverse_event_3": {
+              "term": "Neutropenia",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2021-06-12"
+            }
+          }
+        },
+        "patient_record_32": {
+          "patient_id": "PT-0032",
+          "enrollment_date": "2022-06-01",
+          "site_name": "Pacific Tumor Center, Seattle WA",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Margaret",
+            "last_name": "Baker",
+            "age_years": 39,
+            "sex": "Male",
+            "race": "Native American",
+            "height_cm": 177.5,
+            "weight_kg": 82.0,
+            "smoker": true
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 104,
+            "bp_diastolic_mmhg": 88,
+            "heart_rate_bpm": 101,
+            "resp_rate": 19,
+            "temp_c": 37.6,
+            "spo2_pct": 97
+          },
+          "labs": {
+            "hemoglobin_g_dl": 15.6,
+            "wbc_10e9_l": 4.5,
+            "platelets_10e9_l": 410,
+            "glucose_mg_dl": 93,
+            "creatinine_mg_dl": 0.54,
+            "alt_u_l": 23,
+            "ast_u_l": 84,
+            "albumin_g_dl": 2.8,
+            "sodium_mmol_l": 146,
+            "potassium_mmol_l": 4.1,
+            "calcium_mg_dl": 9.5
+          },
+          "staging": {
+            "ecog_status": "3",
+            "primary_diagnosis": "Malignant neoplasm of prostate",
+            "primary_diagnosis_icd10": "C61",
+            "diagnosis_date": "2020-02-07",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Filgrastim",
+              "dose_mg": 219.6,
+              "frequency": "QD",
+              "route": "Oral"
+            },
+            "medication_2": {
+              "name": "Allopurinol",
+              "dose_mg": 241.7,
+              "frequency": "PRN",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Thrombocytopenia",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2022-10-16"
+            },
+            "adverse_event_2": {
+              "term": "Diarrhea",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Fatal",
+              "onset_date": "2022-10-15"
+            },
+            "adverse_event_3": {
+              "term": "Fatigue",
+              "grade": "4",
+              "serious": true,
+              "outcome": "Recovered",
+              "onset_date": "2023-12-11"
+            }
+          }
+        },
+        "patient_record_33": {
+          "patient_id": "PT-0033",
+          "enrollment_date": "2023-04-05",
+          "site_name": "Lakeshore Medical University, Cleveland OH",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Andrew",
+            "last_name": "Jackson",
+            "age_years": 85,
+            "sex": "Male",
+            "race": "Other",
+            "height_cm": 154.1,
+            "weight_kg": 99.1,
+            "smoker": true
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 126,
+            "bp_diastolic_mmhg": 73,
+            "heart_rate_bpm": 104,
+            "resp_rate": 12,
+            "temp_c": 36.2,
+            "spo2_pct": 94
+          },
+          "labs": {
+            "hemoglobin_g_dl": 8.2,
+            "wbc_10e9_l": 13.9,
+            "platelets_10e9_l": 186,
+            "glucose_mg_dl": 151,
+            "creatinine_mg_dl": 1.18,
+            "alt_u_l": 115,
+            "ast_u_l": 38,
+            "albumin_g_dl": 3.9,
+            "sodium_mmol_l": 134,
+            "potassium_mmol_l": 4.7,
+            "calcium_mg_dl": 10.6
+          },
+          "staging": {
+            "ecog_status": "0",
+            "primary_diagnosis": "Renal cell carcinoma",
+            "primary_diagnosis_icd10": "C64.9",
+            "diagnosis_date": "2020-01-10",
+            "tumor_stage": "II"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Doxorubicin",
+              "dose_mg": 303.6,
+              "frequency": "QID",
+              "route": "IV"
+            },
+            "medication_2": {
+              "name": "Metformin",
+              "dose_mg": 267.7,
+              "frequency": "QD",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Febrile neutropenia",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Resolved",
+              "onset_date": "2022-06-30"
+            },
+            "adverse_event_2": {
+              "term": "Peripheral neuropathy",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2022-11-16"
+            },
+            "adverse_event_3": {
+              "term": "Peripheral neuropathy",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2023-08-26"
+            }
+          }
+        },
+        "patient_record_34": {
+          "patient_id": "PT-0034",
+          "enrollment_date": "2023-11-03",
+          "site_name": "Lakeshore Medical University, Cleveland OH",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Matthew",
+            "last_name": "Moore",
+            "age_years": 86,
+            "sex": "Female",
+            "race": "Black",
+            "height_cm": 150.6,
+            "weight_kg": 73.8,
+            "smoker": true
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 110,
+            "bp_diastolic_mmhg": 83,
+            "heart_rate_bpm": 92,
+            "resp_rate": 19,
+            "temp_c": 36.6,
+            "spo2_pct": 90
+          },
+          "labs": {
+            "hemoglobin_g_dl": 15.7,
+            "wbc_10e9_l": 12.3,
+            "platelets_10e9_l": 254,
+            "glucose_mg_dl": 125,
+            "creatinine_mg_dl": 0.69,
+            "alt_u_l": 90,
+            "ast_u_l": 28,
+            "albumin_g_dl": 5.0,
+            "sodium_mmol_l": 145,
+            "potassium_mmol_l": 5.1,
+            "calcium_mg_dl": 8.8
+          },
+          "staging": {
+            "ecog_status": "1",
+            "primary_diagnosis": "Renal cell carcinoma",
+            "primary_diagnosis_icd10": "C64.9",
+            "diagnosis_date": "2021-05-17",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Doxorubicin",
+              "dose_mg": 10.4,
+              "frequency": "BID",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Dexamethasone",
+              "dose_mg": 294.9,
+              "frequency": "TID",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Peripheral neuropathy",
+              "grade": "3",
+              "serious": true,
+              "outcome": "Recovering",
+              "onset_date": "2022-02-19"
+            },
+            "adverse_event_2": {
+              "term": "Hypertension",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2022-02-17"
+            },
+            "adverse_event_3": {
+              "term": "Anemia",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2021-12-29"
+            }
+          }
+        },
+        "patient_record_35": {
+          "patient_id": "PT-0035",
+          "enrollment_date": "2023-09-24",
+          "site_name": "Southwest Hematology Clinic, Phoenix AZ",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Charles",
+            "last_name": "Garcia",
+            "age_years": 71,
+            "sex": "Male",
+            "race": "Asian",
+            "height_cm": 181.6,
+            "weight_kg": 86.7,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 143,
+            "bp_diastolic_mmhg": 71,
+            "heart_rate_bpm": 57,
+            "resp_rate": 19,
+            "temp_c": 37.9,
+            "spo2_pct": 93
+          },
+          "labs": {
+            "hemoglobin_g_dl": 13.1,
+            "wbc_10e9_l": 5.9,
+            "platelets_10e9_l": 367,
+            "glucose_mg_dl": 185,
+            "creatinine_mg_dl": 0.87,
+            "alt_u_l": 26,
+            "ast_u_l": 44,
+            "albumin_g_dl": 4.4,
+            "sodium_mmol_l": 142,
+            "potassium_mmol_l": 3.4,
+            "calcium_mg_dl": 10.0
+          },
+          "staging": {
+            "ecog_status": "0",
+            "primary_diagnosis": "Acute myeloid leukemia",
+            "primary_diagnosis_icd10": "C92.00",
+            "diagnosis_date": "2022-04-19",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Rituximab",
+              "dose_mg": 469.3,
+              "frequency": "QID",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Rituximab",
+              "dose_mg": 259.8,
+              "frequency": "QID",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Fatigue",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Recovering",
+              "onset_date": "2022-05-17"
+            },
+            "adverse_event_2": {
+              "term": "Febrile neutropenia",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2022-02-21"
+            },
+            "adverse_event_3": {
+              "term": "Febrile neutropenia",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Resolved",
+              "onset_date": "2023-04-12"
+            }
+          }
+        },
+        "patient_record_36": {
+          "patient_id": "PT-0036",
+          "enrollment_date": "2023-05-05",
+          "site_name": "Riverside Oncology Institute, Chicago IL",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Karen",
+            "last_name": "Scott",
+            "age_years": 62,
+            "sex": "Female",
+            "race": "Black",
+            "height_cm": 169.2,
+            "weight_kg": 89.6,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 152,
+            "bp_diastolic_mmhg": 62,
+            "heart_rate_bpm": 103,
+            "resp_rate": 12,
+            "temp_c": 37.7,
+            "spo2_pct": 90
+          },
+          "labs": {
+            "hemoglobin_g_dl": 13.9,
+            "wbc_10e9_l": 8.3,
+            "platelets_10e9_l": 236,
+            "glucose_mg_dl": 131,
+            "creatinine_mg_dl": 0.83,
+            "alt_u_l": 8,
+            "ast_u_l": 11,
+            "albumin_g_dl": 4.5,
+            "sodium_mmol_l": 142,
+            "potassium_mmol_l": 5.1,
+            "calcium_mg_dl": 8.5
+          },
+          "staging": {
+            "ecog_status": "4",
+            "primary_diagnosis": "Malignant melanoma of skin",
+            "primary_diagnosis_icd10": "C43.9",
+            "diagnosis_date": "2019-03-19",
+            "tumor_stage": "II"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Paclitaxel",
+              "dose_mg": 33.8,
+              "frequency": "BID",
+              "route": "Oral"
+            },
+            "medication_2": {
+              "name": "Ondansetron",
+              "dose_mg": 387.1,
+              "frequency": "QD",
+              "route": "IV"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Nausea",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2023-01-25"
+            },
+            "adverse_event_2": {
+              "term": "Mucositis",
+              "grade": "5",
+              "serious": true,
+              "outcome": "Resolved",
+              "onset_date": "2024-03-29"
+            },
+            "adverse_event_3": {
+              "term": "Fatigue",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2021-10-14"
+            }
+          }
+        },
+        "patient_record_37": {
+          "patient_id": "PT-0037",
+          "enrollment_date": "2023-11-12",
+          "site_name": "Lakeshore Medical University, Cleveland OH",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Mark",
+            "last_name": "Sanchez",
+            "age_years": 31,
+            "sex": "Male",
+            "race": "Other",
+            "height_cm": 150.6,
+            "weight_kg": 116.0,
+            "smoker": true
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 121,
+            "bp_diastolic_mmhg": 90,
+            "heart_rate_bpm": 101,
+            "resp_rate": 24,
+            "temp_c": 36.5,
+            "spo2_pct": 95
+          },
+          "labs": {
+            "hemoglobin_g_dl": 13.1,
+            "wbc_10e9_l": 9.2,
+            "platelets_10e9_l": 96,
+            "glucose_mg_dl": 199,
+            "creatinine_mg_dl": 1.18,
+            "alt_u_l": 94,
+            "ast_u_l": 96,
+            "albumin_g_dl": 3.2,
+            "sodium_mmol_l": 142,
+            "potassium_mmol_l": 4.7,
+            "calcium_mg_dl": 8.9
+          },
+          "staging": {
+            "ecog_status": "3",
+            "primary_diagnosis": "Malignant neoplasm of prostate",
+            "primary_diagnosis_icd10": "C61",
+            "diagnosis_date": "2022-03-02",
+            "tumor_stage": "IV"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Filgrastim",
+              "dose_mg": 64.4,
+              "frequency": "QD",
+              "route": "Subcutaneous"
+            },
+            "medication_2": {
+              "name": "Nivolumab",
+              "dose_mg": 455.7,
+              "frequency": "TID",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Fatigue",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2021-02-16"
+            },
+            "adverse_event_2": {
+              "term": "Neutropenia",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2023-04-01"
+            },
+            "adverse_event_3": {
+              "term": "Nausea",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2023-04-02"
+            }
+          }
+        },
+        "patient_record_38": {
+          "patient_id": "PT-0038",
+          "enrollment_date": "2023-09-24",
+          "site_name": "Lakeshore Medical University, Cleveland OH",
+          "on_study": false,
+          "demographics": {
+            "first_name": "Sandra",
+            "last_name": "Robinson",
+            "age_years": 51,
+            "sex": "Male",
+            "race": "Asian",
+            "height_cm": 167.5,
+            "weight_kg": 71.0,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 162,
+            "bp_diastolic_mmhg": 85,
+            "heart_rate_bpm": 76,
+            "resp_rate": 13,
+            "temp_c": 36.7,
+            "spo2_pct": 95
+          },
+          "labs": {
+            "hemoglobin_g_dl": 16.0,
+            "wbc_10e9_l": 9.2,
+            "platelets_10e9_l": 398,
+            "glucose_mg_dl": 160,
+            "creatinine_mg_dl": 2.13,
+            "alt_u_l": 43,
+            "ast_u_l": 61,
+            "albumin_g_dl": 4.7,
+            "sodium_mmol_l": 144,
+            "potassium_mmol_l": 3.5,
+            "calcium_mg_dl": 8.4
+          },
+          "staging": {
+            "ecog_status": "3",
+            "primary_diagnosis": "Malignant neoplasm of breast",
+            "primary_diagnosis_icd10": "C50.911",
+            "diagnosis_date": "2021-06-21",
+            "tumor_stage": "I"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Dexamethasone",
+              "dose_mg": 12.3,
+              "frequency": "QID",
+              "route": "Intramuscular"
+            },
+            "medication_2": {
+              "name": "Paclitaxel",
+              "dose_mg": 492.9,
+              "frequency": "QID",
+              "route": "Intramuscular"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Anemia",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2022-09-15"
+            },
+            "adverse_event_2": {
+              "term": "Diarrhea",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Fatal",
+              "onset_date": "2023-09-16"
+            },
+            "adverse_event_3": {
+              "term": "Alopecia",
+              "grade": "1",
+              "serious": true,
+              "outcome": "Fatal",
+              "onset_date": "2022-08-26"
+            }
+          }
+        },
+        "patient_record_39": {
+          "patient_id": "PT-0039",
+          "enrollment_date": "2023-04-10",
+          "site_name": "Memorial Cancer Center, Boston MA",
+          "on_study": true,
+          "demographics": {
+            "first_name": "William",
+            "last_name": "Thompson",
+            "age_years": 83,
+            "sex": "Female",
+            "race": "White",
+            "height_cm": 166.8,
+            "weight_kg": 61.8,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 140,
+            "bp_diastolic_mmhg": 71,
+            "heart_rate_bpm": 107,
+            "resp_rate": 21,
+            "temp_c": 37.1,
+            "spo2_pct": 94
+          },
+          "labs": {
+            "hemoglobin_g_dl": 10.7,
+            "wbc_10e9_l": 11.3,
+            "platelets_10e9_l": 272,
+            "glucose_mg_dl": 183,
+            "creatinine_mg_dl": 1.99,
+            "alt_u_l": 44,
+            "ast_u_l": 84,
+            "albumin_g_dl": 3.3,
+            "sodium_mmol_l": 144,
+            "potassium_mmol_l": 4.6,
+            "calcium_mg_dl": 9.5
+          },
+          "staging": {
+            "ecog_status": "2",
+            "primary_diagnosis": "Malignant neoplasm of ovary",
+            "primary_diagnosis_icd10": "C56.9",
+            "diagnosis_date": "2019-05-26",
+            "tumor_stage": "IIIA"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Doxorubicin",
+              "dose_mg": 325.0,
+              "frequency": "QD",
+              "route": "Oral"
+            },
+            "medication_2": {
+              "name": "Letrozole",
+              "dose_mg": 348.7,
+              "frequency": "TID",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Alopecia",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2022-12-21"
+            },
+            "adverse_event_2": {
+              "term": "Nausea",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2022-02-26"
+            },
+            "adverse_event_3": {
+              "term": "Rash",
+              "grade": "3",
+              "serious": true,
+              "outcome": "Resolved",
+              "onset_date": "2024-04-15"
+            }
+          }
+        },
+        "patient_record_40": {
+          "patient_id": "PT-0040",
+          "enrollment_date": "2023-09-15",
+          "site_name": "Lakeshore Medical University, Cleveland OH",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Linda",
+            "last_name": "Walker",
+            "age_years": 68,
+            "sex": "Female",
+            "race": "White",
+            "height_cm": 161.1,
+            "weight_kg": 112.2,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 142,
+            "bp_diastolic_mmhg": 82,
+            "heart_rate_bpm": 97,
+            "resp_rate": 19,
+            "temp_c": 37.6,
+            "spo2_pct": 100
+          },
+          "labs": {
+            "hemoglobin_g_dl": 12.5,
+            "wbc_10e9_l": 12.0,
+            "platelets_10e9_l": 417,
+            "glucose_mg_dl": 108,
+            "creatinine_mg_dl": 1.03,
+            "alt_u_l": 68,
+            "ast_u_l": 13,
+            "albumin_g_dl": 3.0,
+            "sodium_mmol_l": 141,
+            "potassium_mmol_l": 3.2,
+            "calcium_mg_dl": 9.2
+          },
+          "staging": {
+            "ecog_status": "1",
+            "primary_diagnosis": "Malignant neoplasm of breast",
+            "primary_diagnosis_icd10": "C50.911",
+            "diagnosis_date": "2020-02-22",
+            "tumor_stage": "II"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Metformin",
+              "dose_mg": 125.5,
+              "frequency": "QD",
+              "route": "Oral"
+            },
+            "medication_2": {
+              "name": "Nivolumab",
+              "dose_mg": 417.8,
+              "frequency": "TID",
+              "route": "Subcutaneous"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Neutropenia",
+              "grade": "2",
+              "serious": true,
+              "outcome": "Recovered",
+              "onset_date": "2022-03-27"
+            },
+            "adverse_event_2": {
+              "term": "Nausea",
+              "grade": "3",
+              "serious": false,
+              "outcome": "Recovering",
+              "onset_date": "2023-06-23"
+            },
+            "adverse_event_3": {
+              "term": "Diarrhea",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Resolved",
+              "onset_date": "2023-03-31"
+            }
+          }
+        },
+        "patient_record_41": {
+          "patient_id": "PT-0041",
+          "enrollment_date": "2022-09-05",
+          "site_name": "Memorial Cancer Center, Boston MA",
+          "on_study": true,
+          "demographics": {
+            "first_name": "James",
+            "last_name": "Wilson",
+            "age_years": 59,
+            "sex": "Female",
+            "race": "Black",
+            "height_cm": 168.3,
+            "weight_kg": 118.6,
+            "smoker": true
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 102,
+            "bp_diastolic_mmhg": 60,
+            "heart_rate_bpm": 82,
+            "resp_rate": 20,
+            "temp_c": 37.6,
+            "spo2_pct": 92
+          },
+          "labs": {
+            "hemoglobin_g_dl": 15.6,
+            "wbc_10e9_l": 3.1,
+            "platelets_10e9_l": 257,
+            "glucose_mg_dl": 96,
+            "creatinine_mg_dl": 0.86,
+            "alt_u_l": 21,
+            "ast_u_l": 69,
+            "albumin_g_dl": 4.6,
+            "sodium_mmol_l": 145,
+            "potassium_mmol_l": 4.2,
+            "calcium_mg_dl": 9.9
+          },
+          "staging": {
+            "ecog_status": "3",
+            "primary_diagnosis": "Renal cell carcinoma",
+            "primary_diagnosis_icd10": "C64.9",
+            "diagnosis_date": "2022-02-06",
+            "tumor_stage": "I"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Doxorubicin",
+              "dose_mg": 193.0,
+              "frequency": "QID",
+              "route": "Subcutaneous"
+            },
+            "medication_2": {
+              "name": "Dexamethasone",
+              "dose_mg": 377.7,
+              "frequency": "QD",
+              "route": "Intramuscular"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Peripheral neuropathy",
+              "grade": "5",
+              "serious": true,
+              "outcome": "Recovered",
+              "onset_date": "2023-10-19"
+            },
+            "adverse_event_2": {
+              "term": "Diarrhea",
+              "grade": "5",
+              "serious": true,
+              "outcome": "Resolved",
+              "onset_date": "2023-09-19"
+            },
+            "adverse_event_3": {
+              "term": "Hypertension",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2023-06-27"
+            }
+          }
+        },
+        "patient_record_42": {
+          "patient_id": "PT-0042",
+          "enrollment_date": "2023-05-23",
+          "site_name": "Memorial Cancer Center, Boston MA",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Barbara",
+            "last_name": "Harris",
+            "age_years": 66,
+            "sex": "Male",
+            "race": "White",
+            "height_cm": 187.9,
+            "weight_kg": 51.4,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 111,
+            "bp_diastolic_mmhg": 67,
+            "heart_rate_bpm": 59,
+            "resp_rate": 23,
+            "temp_c": 37.6,
+            "spo2_pct": 96
+          },
+          "labs": {
+            "hemoglobin_g_dl": 15.7,
+            "wbc_10e9_l": 5.3,
+            "platelets_10e9_l": 419,
+            "glucose_mg_dl": 209,
+            "creatinine_mg_dl": 1.08,
+            "alt_u_l": 114,
+            "ast_u_l": 107,
+            "albumin_g_dl": 2.9,
+            "sodium_mmol_l": 145,
+            "potassium_mmol_l": 4.1,
+            "calcium_mg_dl": 8.2
+          },
+          "staging": {
+            "ecog_status": "0",
+            "primary_diagnosis": "Renal cell carcinoma",
+            "primary_diagnosis_icd10": "C64.9",
+            "diagnosis_date": "2020-03-25",
+            "tumor_stage": "IV"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Dexamethasone",
+              "dose_mg": 26.1,
+              "frequency": "QD",
+              "route": "Oral"
+            },
+            "medication_2": {
+              "name": "Cisplatin",
+              "dose_mg": 150.2,
+              "frequency": "QD",
+              "route": "Intramuscular"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Anemia",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2022-11-18"
+            },
+            "adverse_event_2": {
+              "term": "Neutropenia",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Recovered",
+              "onset_date": "2021-02-14"
+            },
+            "adverse_event_3": {
+              "term": "Neutropenia",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2023-06-21"
+            }
+          }
+        },
+        "patient_record_43": {
+          "patient_id": "PT-0043",
+          "enrollment_date": "2023-11-11",
+          "site_name": "Southwest Hematology Clinic, Phoenix AZ",
+          "on_study": true,
+          "demographics": {
+            "first_name": "Charles",
+            "last_name": "Wright",
+            "age_years": 73,
+            "sex": "Male",
+            "race": "Black",
+            "height_cm": 189.8,
+            "weight_kg": 98.9,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 136,
+            "bp_diastolic_mmhg": 71,
+            "heart_rate_bpm": 89,
+            "resp_rate": 15,
+            "temp_c": 37.3,
+            "spo2_pct": 98
+          },
+          "labs": {
+            "hemoglobin_g_dl": 14.0,
+            "wbc_10e9_l": 3.4,
+            "platelets_10e9_l": 99,
+            "glucose_mg_dl": 182,
+            "creatinine_mg_dl": 1.34,
+            "alt_u_l": 20,
+            "ast_u_l": 86,
+            "albumin_g_dl": 4.2,
+            "sodium_mmol_l": 142,
+            "potassium_mmol_l": 5.3,
+            "calcium_mg_dl": 10.2
+          },
+          "staging": {
+            "ecog_status": "1",
+            "primary_diagnosis": "Malignant neoplasm of pancreas",
+            "primary_diagnosis_icd10": "C25.9",
+            "diagnosis_date": "2019-03-06",
+            "tumor_stage": "IIIB"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Dexamethasone",
+              "dose_mg": 262.0,
+              "frequency": "QD",
+              "route": "Subcutaneous"
+            },
+            "medication_2": {
+              "name": "Carboplatin",
+              "dose_mg": 154.5,
+              "frequency": "QD",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Hypertension",
+              "grade": "2",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2021-01-23"
+            },
+            "adverse_event_2": {
+              "term": "Peripheral neuropathy",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2021-12-23"
+            },
+            "adverse_event_3": {
+              "term": "Nausea",
+              "grade": "4",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2021-06-09"
+            }
+          }
+        },
+        "patient_record_44": {
+          "patient_id": "PT-0044",
+          "enrollment_date": "2023-11-12",
+          "site_name": "Memorial Cancer Center, Boston MA",
+          "on_study": false,
+          "demographics": {
+            "first_name": "Donna",
+            "last_name": "Martin",
+            "age_years": 46,
+            "sex": "Male",
+            "race": "Native American",
+            "height_cm": 161.3,
+            "weight_kg": 80.5,
+            "smoker": false
+          },
+          "vitals": {
+            "bp_systolic_mmhg": 120,
+            "bp_diastolic_mmhg": 84,
+            "heart_rate_bpm": 66,
+            "resp_rate": 19,
+            "temp_c": 37.7,
+            "spo2_pct": 94
+          },
+          "labs": {
+            "hemoglobin_g_dl": 14.6,
+            "wbc_10e9_l": 11.0,
+            "platelets_10e9_l": 148,
+            "glucose_mg_dl": 167,
+            "creatinine_mg_dl": 0.92,
+            "alt_u_l": 32,
+            "ast_u_l": 29,
+            "albumin_g_dl": 3.2,
+            "sodium_mmol_l": 144,
+            "potassium_mmol_l": 4.4,
+            "calcium_mg_dl": 8.4
+          },
+          "staging": {
+            "ecog_status": "1",
+            "primary_diagnosis": "Malignant melanoma of skin",
+            "primary_diagnosis_icd10": "C43.9",
+            "diagnosis_date": "2019-01-06",
+            "tumor_stage": "IIIB"
+          },
+          "medications": {
+            "medication_1": {
+              "name": "Metformin",
+              "dose_mg": 315.3,
+              "frequency": "PRN",
+              "route": "Subcutaneous"
+            },
+            "medication_2": {
+              "name": "Dexamethasone",
+              "dose_mg": 66.4,
+              "frequency": "PRN",
+              "route": "Oral"
+            }
+          },
+          "adverse_events": {
+            "adverse_event_1": {
+              "term": "Fatigue",
+              "grade": "1",
+              "serious": false,
+              "outcome": "Ongoing",
+              "onset_date": "2023-03-04"
+            },
+            "adverse_event_2": {
+              "term": "Neutropenia",
+              "grade": "5",
+              "serious": true,
+              "outcome": "Recovering",
+              "onset_date": "2021-01-03"
+            },
+            "adverse_event_3": {
+              "term": "Alopecia",
+              "grade": "5",
+              "serious": false,
+              "outcome": "Fatal",
+              "onset_date": "2021-12-11"
+            }
+          }
+        }
+      }
+    },
+    "value_accuracy": 1.0,
+    "by_type": {
+      "boolean": 1.0,
+      "enum": 1.0,
+      "integer": 1.0,
+      "number": 1.0,
+      "short_string": 1.0,
+      "long_string": 1.0
+    },
+    "outcomes": {
+      "correct": 2523,
+      "accuracy": 0,
+      "omission": 0,
+      "hallucination": 0,
+      "structural": 0
+    }
+  }
+]

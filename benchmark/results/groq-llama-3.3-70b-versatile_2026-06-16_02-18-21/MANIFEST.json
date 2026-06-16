@@ -1,0 +1,409 @@
+{
+  "model": "groq/llama-3.3-70b-versatile",
+  "date": "2026-06-16",
+  "temperature": 0,
+  "library_version": "0.1.dev84+g3806eb5a3.d20260609",
+  "python_version": "3.12.0",
+  "runs": [
+    {
+      "method": "nfield",
+      "fixture": "clinicaltrial",
+      "budget": "native",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-06-16T02:19:04+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "clinicaltrial",
+      "budget": "native",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-06-16T02:20:07+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "clinicaltrial",
+      "budget": "native",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-06-16T02:21:13+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "clinicaltrial",
+      "budget": "native",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-06-16T02:22:23+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "clinicaltrial",
+      "budget": "native",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-06-16T02:23:26+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "factbook_multi",
+      "budget": "native",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-16T02:27:20+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "factbook_multi",
+      "budget": "native",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-16T02:28:55+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "factbook_multi",
+      "budget": "native",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-16T02:30:49+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "factbook_multi",
+      "budget": "native",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-16T02:30:54+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "factbook_multi",
+      "budget": "native",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-16T02:32:57+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "factbook_us",
+      "budget": "native",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-06-16T02:33:17+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "factbook_us",
+      "budget": "native",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-06-16T02:34:11+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "factbook_us",
+      "budget": "native",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-06-16T02:34:58+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "factbook_us",
+      "budget": "native",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-06-16T02:35:42+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "factbook_us",
+      "budget": "native",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-06-16T02:36:32+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "war_and_peace",
+      "budget": "native",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-06-16T02:37:58+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "war_and_peace",
+      "budget": "native",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-06-16T02:38:36+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "war_and_peace",
+      "budget": "native",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-06-16T02:38:55+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "war_and_peace",
+      "budget": "native",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-06-16T02:39:28+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "war_and_peace",
+      "budget": "native",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-06-16T02:39:43+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "clinicaltrial",
+      "budget": "constrained",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-06-16T02:40:12+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "clinicaltrial",
+      "budget": "constrained",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-06-16T02:40:36+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "clinicaltrial",
+      "budget": "constrained",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-06-16T02:41:05+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "clinicaltrial",
+      "budget": "constrained",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-06-16T02:41:31+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "clinicaltrial",
+      "budget": "constrained",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-06-16T02:41:58+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-16T02:44:21+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-16T02:44:57+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-16T02:45:33+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-16T02:45:39+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-16T02:46:17+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "factbook_us",
+      "budget": "constrained",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-06-16T02:46:37+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "factbook_us",
+      "budget": "constrained",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-06-16T02:47:13+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "factbook_us",
+      "budget": "constrained",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-06-16T02:47:46+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "factbook_us",
+      "budget": "constrained",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-06-16T02:48:22+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "factbook_us",
+      "budget": "constrained",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-06-16T02:48:57+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "war_and_peace",
+      "budget": "constrained",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-06-16T02:49:19+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "war_and_peace",
+      "budget": "constrained",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-06-16T02:49:28+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "war_and_peace",
+      "budget": "constrained",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-06-16T02:49:37+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "war_and_peace",
+      "budget": "constrained",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-06-16T02:49:47+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "war_and_peace",
+      "budget": "constrained",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-06-16T02:49:56+00:00"
+    }
+  ]
+}

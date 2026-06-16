@@ -1,0 +1,49 @@
+{
+  "model": "groq/llama-3.3-70b-versatile",
+  "date": "2026-06-16",
+  "temperature": 0,
+  "library_version": "0.1.dev84+g3806eb5a3.d20260609",
+  "python_version": "3.12.0",
+  "runs": [
+    {
+      "method": "nfield",
+      "fixture": "clinical_registry",
+      "budget": "native",
+      "n_fields": 2523,
+      "seeds": 1,
+      "schema_sha256": "af3edfc2f10f4bd24b3980401753d066161f0fa897e493c7903b31687298e1d0",
+      "document_sha256": "0ce9e59f8755a82fec37fc87805af5b87ea2769d0e4992b576619999a1a310af",
+      "recorded_at": "2026-06-16T03:35:30+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "cre_rent_roll",
+      "budget": "native",
+      "n_fields": 4000,
+      "seeds": 1,
+      "schema_sha256": "93f057e628e9d848b3b974b9a2f79ee3a5af8c6045b5ff3e9858896e79ce36fd",
+      "document_sha256": "6963aa8c904be68dca719b142d8e86a335f3c6430384f19389a2e9741d3b43f1",
+      "recorded_at": "2026-06-16T03:36:09+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "clinical_registry",
+      "budget": "constrained",
+      "n_fields": 2523,
+      "seeds": 1,
+      "schema_sha256": "af3edfc2f10f4bd24b3980401753d066161f0fa897e493c7903b31687298e1d0",
+      "document_sha256": "0ce9e59f8755a82fec37fc87805af5b87ea2769d0e4992b576619999a1a310af",
+      "recorded_at": "2026-06-16T03:36:33+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "cre_rent_roll",
+      "budget": "constrained",
+      "n_fields": 4000,
+      "seeds": 1,
+      "schema_sha256": "93f057e628e9d848b3b974b9a2f79ee3a5af8c6045b5ff3e9858896e79ce36fd",
+      "document_sha256": "6963aa8c904be68dca719b142d8e86a335f3c6430384f19389a2e9741d3b43f1",
+      "recorded_at": "2026-06-16T03:37:14+00:00"
+    }
+  ]
+}

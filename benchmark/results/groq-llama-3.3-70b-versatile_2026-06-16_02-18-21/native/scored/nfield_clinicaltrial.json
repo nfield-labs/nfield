@@ -1,0 +1,20 @@
+{
+  "method": "nfield",
+  "fixture": "clinicaltrial",
+  "n_fields": 304,
+  "runs": 1,
+  "coverage_mean": 0.9276315789473685,
+  "fields_covered_mean": 282.0,
+  "value_accuracy_mean": 0.7960526315789473,
+  "value_accuracy_std": 0.0,
+  "json_pass_all": false,
+  "by_type_mean": {
+    "boolean": 1.0,
+    "enum": 1.0,
+    "integer": 1.0,
+    "number": 0.8333333333333334,
+    "short_string": 0.8291457286432161,
+    "long_string": 0.6521739130434783
+  },
+  "call_failed_mean": 0.0
+}

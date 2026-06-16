@@ -1,0 +1,284 @@
+[
+  {
+    "method": "nfield",
+    "fixture": "war_and_peace",
+    "budget": "native",
+    "seed": 0,
+    "fields_total": 200,
+    "fields_extracted": 190,
+    "coverage": 0.95,
+    "k": 10,
+    "k_min": 6,
+    "optimality_gap": 0.6666666666666666,
+    "call_failed": 0,
+    "elapsed_seconds": 85.043,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "book": {
+        "title": "War and Peace",
+        "author": "Leo Tolstoy",
+        "original_language": "Russian",
+        "genre": "Historical fiction",
+        "setting_country": "Russia",
+        "central_conflict": "Napoleonic Wars",
+        "time_period": "1805-1812",
+        "emperor_of_france": "Napoleon",
+        "russian_commander": "Kutuzov",
+        "longest_battle_setting": "Borodino",
+        "narrative_style": "Realistic and philosophical",
+        "number_of_main_families": 5,
+        "ends_with_epilogue": true
+      },
+      "characters": {
+        "pierre": {
+          "full_name": "Pierre Bezukhov",
+          "family_name": "Bezukhov",
+          "gender": "Male",
+          "social_class": "Noble",
+          "nationality": "Russian",
+          "primary_role": "Protagonist",
+          "notable_trait": "Intelligent and introspective"
+        },
+        "natasha": {
+          "full_name": "Natalya Rostova",
+          "family_name": "Rostova",
+          "gender": "Female",
+          "social_class": "Noble",
+          "nationality": "Russian",
+          "primary_role": "Protagonist"
+        },
+        "andrei": {
+          "full_name": "Andrei Bolkonsky",
+          "family_name": "Bolkonsky",
+          "gender": "Male",
+          "social_class": "Noble",
+          "nationality": "Russian",
+          "primary_role": "Protagonist",
+          "notable_trait": "Honorable and serious"
+        },
+        "nikolai": {
+          "full_name": "Nikolai Rostov",
+          "family_name": "Rostov",
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Military officer",
+          "notable_trait": "Honesty"
+        },
+        "marya": {
+          "full_name": "Marya Bolkonskaya",
+          "family_name": "Bolkonskaya",
+          "gender": "Female",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Princess",
+          "notable_trait": "Kindness"
+        },
+        "helene": {
+          "full_name": "Hélène Kuragina",
+          "family_name": "Kuragina",
+          "gender": "Female",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Socialite",
+          "notable_trait": "Beauty"
+        },
+        "anatole": {
+          "full_name": "Anatole Kuragin",
+          "family_name": "Kuragin",
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Military officer",
+          "notable_trait": "Charm"
+        },
+        "boris": {
+          "full_name": "Boris Drubetskoy",
+          "family_name": "Drubetskoy",
+          "gender": "Male",
+          "social_class": "Nobility",
+          "nationality": "Russian",
+          "primary_role": "Military officer",
+          "notable_trait": "Ambition"
+        },
+        "sonya": {
+          "full_name": "Sónya",
+          "family_name": "None",
+          "gender": "female",
+          "social_class": "noble/poor relation",
+          "nationality": "Russian",
+          "primary_role": "ward/companion",
+          "notable_trait": "kindness, selflessness"
+        },
+        "dolokhov": {
+          "full_name": "Fyodor Ivanovich Dolokhov",
+          "family_name": "Dolokhov",
+          "gender": "male",
+          "social_class": "noble",
+          "nationality": "Russian",
+          "primary_role": "officer",
+          "notable_trait": "boldness, recklessness"
+        },
+        "denisov": {
+          "full_name": "Vasili Dmitrich Denisov",
+          "family_name": "Denisov",
+          "gender": "male",
+          "social_class": "noble",
+          "nationality": "Russian",
+          "primary_role": "military officer",
+          "notable_trait": "brave and generous"
+        },
+        "old_bolkonsky": {
+          "full_name": "Prince Nikolai Andreevich Bolkonsky",
+          "family_name": "Bolkonsky",
+          "gender": "male",
+          "social_class": "noble",
+          "nationality": "Russian",
+          "primary_role": "prince/landowner",
+          "notable_trait": "strictness, wisdom"
+        },
+        "vasili": {
+          "full_name": "Prince Vasíli Kurágin",
+          "family_name": "Kurágin",
+          "gender": "male",
+          "social_class": "noble",
+          "nationality": "Russian",
+          "primary_role": "prince/courtier",
+          "notable_trait": "cunning, ambition"
+        },
+        "napoleon": {
+          "full_name": "Napoleon Bonaparte",
+          "family_name": "Bonaparte",
+          "gender": "male",
+          "social_class": "Emperor/Military",
+          "nationality": "French",
+          "primary_role": "Emperor of France",
+          "notable_trait": "Ambition"
+        },
+        "kutuzov": {
+          "full_name": "Mikhail Illarionovich Golenishchev-Kutuzov",
+          "family_name": "Kutuzov",
+          "gender": "male",
+          "social_class": "Military/Ar nobility",
+          "nationality": "Russian",
+          "primary_role": "General-in-Chief",
+          "notable_trait": "Wisdom/Pragmatism"
+        },
+        "karataev": {
+          "full_name": "Platon Karataev",
+          "family_name": "Karataev",
+          "gender": "male",
+          "social_class": "Peasant/Soldier",
+          "nationality": "Russian",
+          "primary_role": "Soldier",
+          "notable_trait": "Kindness/Spirituality"
+        }
+      },
+      "locations": {
+        "location_00": {
+          "name": "Moscow",
+          "country": "Russia",
+          "significance": "Moscow was the center of Russian culture and society, and the burning of the city was a significant event in the novel",
+          "type": "city"
+        },
+        "location_01": {
+          "name": "Saint Petersburg",
+          "country": "Russia",
+          "significance": "Saint Petersburg was the capital of Russia and the center of the Russian aristocracy",
+          "type": "city"
+        },
+        "location_02": {
+          "name": "Bald Hills estate",
+          "country": "Russia",
+          "significance": "Bald Hills was the estate of Prince Bolkonsky and a symbol of the old Russian nobility",
+          "type": "estate"
+        },
+        "location_03": {
+          "name": "Borodino",
+          "country": "Russia",
+          "significance": "Borodino was the site of a bloody battle between the Russian and French armies",
+          "type": "battlefield"
+        },
+        "location_04": {
+          "name": "Austerlitz",
+          "type": "battlefield"
+        },
+        "location_05": {
+          "name": "Smolensk",
+          "country": "Russia",
+          "type": "city"
+        },
+        "location_06": {
+          "name": "Otradnoe estate",
+          "country": "Russia",
+          "type": "estate"
+        },
+        "location_07": {
+          "name": "the Rostov home",
+          "country": "Russia",
+          "type": "house"
+        },
+        "location_08": {
+          "name": "the battlefield",
+          "type": "battlefield"
+        },
+        "location_09": {
+          "name": "Russia",
+          "type": "country"
+        }
+      },
+      "events": {
+        "event_00": {
+          "name": "Battle of Austerlitz",
+          "year": 1805,
+          "location": "Austerlitz, Moravia",
+          "outcome": "French victory",
+          "key_participant": "Napoleon"
+        },
+        "event_01": {
+          "name": "Battle of Borodino",
+          "year": 1812,
+          "location": "Borodino, Russia",
+          "outcome": "Inconclusive",
+          "key_participant": "Napoleon and Kutuzov"
+        },
+        "event_02": {
+          "name": "French invasion of Russia",
+          "year": 1812,
+          "location": "Russia",
+          "outcome": "French defeat",
+          "key_participant": "Napoleon and Kutuzov"
+        },
+        "event_03": {
+          "name": "Burning of Moscow",
+          "year": 1812,
+          "location": "Moscow",
+          "outcome": "The city was largely destroyed, and the French army suffered heavy losses",
+          "key_participant": "Napoleon"
+        },
+        "event_04": {
+          "name": "French retreat from Moscow",
+          "year": 1812,
+          "location": "Russia",
+          "outcome": "The French army was defeated and forced to retreat",
+          "key_participant": "Napoleon"
+        },
+        "event_05": {
+          "name": "Pierre's capture",
+          "year": 1812,
+          "location": "Moscow",
+          "outcome": "Pierre was taken prisoner by the French",
+          "key_participant": "Pierre"
+        },
+        "event_06": {
+          "name": "Natasha's first ball",
+          "year": 1809,
+          "location": "Moscow",
+          "outcome": "Natasha had a successful and enjoyable first ball",
+          "key_participant": "Natasha"
+        }
+      }
+    }
+  }
+]

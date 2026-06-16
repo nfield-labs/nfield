@@ -1,0 +1,3498 @@
+================================================================
+MULTI-CENTER CLINICAL PATIENT REGISTRY - DATA EXPORT
+================================================================
+
+STUDY-LEVEL METADATA
+--------------------
+Study ID: ONC-REG-2024-117
+Title: Multi-Center Observational Registry of Solid Tumor and Hematologic Malignancy Outcomes
+Sponsor: National Oncology Research Consortium
+Phase: Phase IV
+Therapeutic Area: Oncology
+Registry Name: PANORAMA Registry
+Number of Sites: 5
+Patients Enrolled: 44
+Target Enrollment: 50
+Enrollment Start: 2022-01-15
+Enrollment End: 2023-12-20
+Data Cutoff Date: 2024-06-30
+Principal Investigator: Dr. Helen R. Marsh
+Open Label: Yes
+Median Follow-up (months): 18.6
+
+================================================================
+PATIENT RECORD 1
+================================================================
+Patient ID: PT-0001
+Enrollment Date: 2023-05-27
+Site Name: Southwest Hematology Clinic, Phoenix AZ
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: William
+  Last Name: Lewis
+  Age (years): 46
+  Sex: Female
+  Race: Black
+  Height (cm): 171.3
+  Weight (kg): 69.8
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 146
+  BP Diastolic (mmHg): 76
+  Heart Rate (bpm): 105
+  Respiratory Rate: 19
+  Temperature (C): 37.4
+  SpO2 (pct): 97
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 14.2
+  WBC (10e9/L): 10.5
+  Platelets (10e9/L): 103
+  Glucose (mg/dL): 142
+  Creatinine (mg/dL): 1.95
+  ALT (U/L): 109
+  AST (U/L): 91
+  Albumin (g/dL): 3.3
+  Sodium (mmol/L): 137
+  Potassium (mmol/L): 4.1
+  Calcium (mg/dL): 8.8
+
+  Disease Staging
+  ---------------
+  ECOG Status: 2
+  Primary Diagnosis: Malignant neoplasm of pancreas
+  Primary Diagnosis ICD-10: C25.9
+  Diagnosis Date: 2020-03-27
+  Tumor Stage: IV
+
+  Medications
+  -----------
+  Medication 1 Name: Tamoxifen
+  Medication 1 Dose (mg): 61.9
+  Medication 1 Frequency: BID
+  Medication 1 Route: Oral
+  Medication 2 Name: Dexamethasone
+  Medication 2 Dose (mg): 130.4
+  Medication 2 Frequency: TID
+  Medication 2 Route: IV
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Rash
+  Adverse Event 1 Grade: 4
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Ongoing
+  Adverse Event 1 Onset Date: 2023-09-25
+  Adverse Event 2 Term: Thrombocytopenia
+  Adverse Event 2 Grade: 4
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Recovered
+  Adverse Event 2 Onset Date: 2023-02-07
+  Adverse Event 3 Term: Alopecia
+  Adverse Event 3 Grade: 2
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Ongoing
+  Adverse Event 3 Onset Date: 2023-10-17
+
+================================================================
+PATIENT RECORD 2
+================================================================
+Patient ID: PT-0002
+Enrollment Date: 2022-03-18
+Site Name: Southwest Hematology Clinic, Phoenix AZ
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Anthony
+  Last Name: Jackson
+  Age (years): 70
+  Sex: Male
+  Race: Native American
+  Height (cm): 163.9
+  Weight (kg): 119.3
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 121
+  BP Diastolic (mmHg): 102
+  Heart Rate (bpm): 63
+  Respiratory Rate: 17
+  Temperature (C): 36.7
+  SpO2 (pct): 93
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 11.8
+  WBC (10e9/L): 8.4
+  Platelets (10e9/L): 396
+  Glucose (mg/dL): 148
+  Creatinine (mg/dL): 1.95
+  ALT (U/L): 63
+  AST (U/L): 114
+  Albumin (g/dL): 3.7
+  Sodium (mmol/L): 142
+  Potassium (mmol/L): 4.6
+  Calcium (mg/dL): 8.5
+
+  Disease Staging
+  ---------------
+  ECOG Status: 4
+  Primary Diagnosis: Renal cell carcinoma
+  Primary Diagnosis ICD-10: C64.9
+  Diagnosis Date: 2022-08-24
+  Tumor Stage: I
+
+  Medications
+  -----------
+  Medication 1 Name: Tamoxifen
+  Medication 1 Dose (mg): 18.2
+  Medication 1 Frequency: PRN
+  Medication 1 Route: Oral
+  Medication 2 Name: Ondansetron
+  Medication 2 Dose (mg): 340.2
+  Medication 2 Frequency: QD
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Fatigue
+  Adverse Event 1 Grade: 3
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Recovering
+  Adverse Event 1 Onset Date: 2022-07-31
+  Adverse Event 2 Term: Fatigue
+  Adverse Event 2 Grade: 2
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovering
+  Adverse Event 2 Onset Date: 2023-12-08
+  Adverse Event 3 Term: Neutropenia
+  Adverse Event 3 Grade: 4
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2022-06-09
+
+================================================================
+PATIENT RECORD 3
+================================================================
+Patient ID: PT-0003
+Enrollment Date: 2022-12-24
+Site Name: Pacific Tumor Center, Seattle WA
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Amanda
+  Last Name: Jones
+  Age (years): 36
+  Sex: Male
+  Race: Black
+  Height (cm): 181.2
+  Weight (kg): 80.3
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 120
+  BP Diastolic (mmHg): 87
+  Heart Rate (bpm): 52
+  Respiratory Rate: 23
+  Temperature (C): 37.7
+  SpO2 (pct): 90
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 9.1
+  WBC (10e9/L): 8.4
+  Platelets (10e9/L): 135
+  Glucose (mg/dL): 203
+  Creatinine (mg/dL): 1.63
+  ALT (U/L): 8
+  AST (U/L): 90
+  Albumin (g/dL): 5.1
+  Sodium (mmol/L): 131
+  Potassium (mmol/L): 3.2
+  Calcium (mg/dL): 10.6
+
+  Disease Staging
+  ---------------
+  ECOG Status: 3
+  Primary Diagnosis: Malignant neoplasm of lung
+  Primary Diagnosis ICD-10: C34.90
+  Diagnosis Date: 2022-06-16
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Letrozole
+  Medication 1 Dose (mg): 246.9
+  Medication 1 Frequency: QID
+  Medication 1 Route: Oral
+  Medication 2 Name: Letrozole
+  Medication 2 Dose (mg): 485.8
+  Medication 2 Frequency: PRN
+  Medication 2 Route: Subcutaneous
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Peripheral neuropathy
+  Adverse Event 1 Grade: 3
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2022-04-09
+  Adverse Event 2 Term: Rash
+  Adverse Event 2 Grade: 4
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Resolved
+  Adverse Event 2 Onset Date: 2022-12-22
+  Adverse Event 3 Term: Febrile neutropenia
+  Adverse Event 3 Grade: 2
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2023-03-08
+
+================================================================
+PATIENT RECORD 4
+================================================================
+Patient ID: PT-0004
+Enrollment Date: 2023-10-30
+Site Name: Southwest Hematology Clinic, Phoenix AZ
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Andrew
+  Last Name: Clark
+  Age (years): 70
+  Sex: Male
+  Race: Black
+  Height (cm): 172.1
+  Weight (kg): 51.3
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 128
+  BP Diastolic (mmHg): 68
+  Heart Rate (bpm): 89
+  Respiratory Rate: 22
+  Temperature (C): 38.0
+  SpO2 (pct): 93
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 16.5
+  WBC (10e9/L): 10.0
+  Platelets (10e9/L): 386
+  Glucose (mg/dL): 169
+  Creatinine (mg/dL): 1.79
+  ALT (U/L): 20
+  AST (U/L): 53
+  Albumin (g/dL): 4.0
+  Sodium (mmol/L): 138
+  Potassium (mmol/L): 3.2
+  Calcium (mg/dL): 9.1
+
+  Disease Staging
+  ---------------
+  ECOG Status: 2
+  Primary Diagnosis: Malignant neoplasm of breast
+  Primary Diagnosis ICD-10: C50.911
+  Diagnosis Date: 2023-02-09
+  Tumor Stage: II
+
+  Medications
+  -----------
+  Medication 1 Name: Tamoxifen
+  Medication 1 Dose (mg): 180.0
+  Medication 1 Frequency: QID
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Allopurinol
+  Medication 2 Dose (mg): 401.1
+  Medication 2 Frequency: TID
+  Medication 2 Route: Intramuscular
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Diarrhea
+  Adverse Event 1 Grade: 5
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2023-09-04
+  Adverse Event 2 Term: Thrombocytopenia
+  Adverse Event 2 Grade: 2
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Ongoing
+  Adverse Event 2 Onset Date: 2021-03-26
+  Adverse Event 3 Term: Fatigue
+  Adverse Event 3 Grade: 3
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2021-07-29
+
+================================================================
+PATIENT RECORD 5
+================================================================
+Patient ID: PT-0005
+Enrollment Date: 2022-06-11
+Site Name: Lakeshore Medical University, Cleveland OH
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Michelle
+  Last Name: Baker
+  Age (years): 42
+  Sex: Female
+  Race: Black
+  Height (cm): 189.2
+  Weight (kg): 77.5
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 139
+  BP Diastolic (mmHg): 97
+  Heart Rate (bpm): 76
+  Respiratory Rate: 21
+  Temperature (C): 38.0
+  SpO2 (pct): 91
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 12.3
+  WBC (10e9/L): 10.1
+  Platelets (10e9/L): 278
+  Glucose (mg/dL): 113
+  Creatinine (mg/dL): 2.13
+  ALT (U/L): 96
+  AST (U/L): 13
+  Albumin (g/dL): 2.9
+  Sodium (mmol/L): 136
+  Potassium (mmol/L): 4.4
+  Calcium (mg/dL): 8.8
+
+  Disease Staging
+  ---------------
+  ECOG Status: 1
+  Primary Diagnosis: Renal cell carcinoma
+  Primary Diagnosis ICD-10: C64.9
+  Diagnosis Date: 2021-02-08
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Rituximab
+  Medication 1 Dose (mg): 140.9
+  Medication 1 Frequency: QD
+  Medication 1 Route: IV
+  Medication 2 Name: Metformin
+  Medication 2 Dose (mg): 391.5
+  Medication 2 Frequency: QID
+  Medication 2 Route: IV
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Hypertension
+  Adverse Event 1 Grade: 5
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Resolved
+  Adverse Event 1 Onset Date: 2023-10-27
+  Adverse Event 2 Term: Fatigue
+  Adverse Event 2 Grade: 4
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Recovering
+  Adverse Event 2 Onset Date: 2024-03-16
+  Adverse Event 3 Term: Nausea
+  Adverse Event 3 Grade: 5
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Recovered
+  Adverse Event 3 Onset Date: 2023-09-30
+
+================================================================
+PATIENT RECORD 6
+================================================================
+Patient ID: PT-0006
+Enrollment Date: 2022-12-26
+Site Name: Pacific Tumor Center, Seattle WA
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Susan
+  Last Name: Flores
+  Age (years): 55
+  Sex: Female
+  Race: Native American
+  Height (cm): 168.1
+  Weight (kg): 66.1
+  Smoker: Yes
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 114
+  BP Diastolic (mmHg): 65
+  Heart Rate (bpm): 73
+  Respiratory Rate: 19
+  Temperature (C): 38.0
+  SpO2 (pct): 99
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 10.2
+  WBC (10e9/L): 11.9
+  Platelets (10e9/L): 404
+  Glucose (mg/dL): 219
+  Creatinine (mg/dL): 2.02
+  ALT (U/L): 104
+  AST (U/L): 15
+  Albumin (g/dL): 3.8
+  Sodium (mmol/L): 135
+  Potassium (mmol/L): 5.2
+  Calcium (mg/dL): 9.0
+
+  Disease Staging
+  ---------------
+  ECOG Status: 4
+  Primary Diagnosis: Diffuse large B-cell lymphoma
+  Primary Diagnosis ICD-10: C83.30
+  Diagnosis Date: 2022-11-13
+  Tumor Stage: II
+
+  Medications
+  -----------
+  Medication 1 Name: Cisplatin
+  Medication 1 Dose (mg): 42.0
+  Medication 1 Frequency: TID
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Pembrolizumab
+  Medication 2 Dose (mg): 183.7
+  Medication 2 Frequency: BID
+  Medication 2 Route: IV
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Nausea
+  Adverse Event 1 Grade: 1
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2022-07-21
+  Adverse Event 2 Term: Thrombocytopenia
+  Adverse Event 2 Grade: 5
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Resolved
+  Adverse Event 2 Onset Date: 2021-05-09
+  Adverse Event 3 Term: Peripheral neuropathy
+  Adverse Event 3 Grade: 2
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Recovered
+  Adverse Event 3 Onset Date: 2021-07-12
+
+================================================================
+PATIENT RECORD 7
+================================================================
+Patient ID: PT-0007
+Enrollment Date: 2022-03-12
+Site Name: Lakeshore Medical University, Cleveland OH
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Kimberly
+  Last Name: Jones
+  Age (years): 78
+  Sex: Male
+  Race: Black
+  Height (cm): 192.5
+  Weight (kg): 68.3
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 121
+  BP Diastolic (mmHg): 78
+  Heart Rate (bpm): 59
+  Respiratory Rate: 12
+  Temperature (C): 37.2
+  SpO2 (pct): 90
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 16.4
+  WBC (10e9/L): 7.9
+  Platelets (10e9/L): 375
+  Glucose (mg/dL): 189
+  Creatinine (mg/dL): 0.77
+  ALT (U/L): 107
+  AST (U/L): 28
+  Albumin (g/dL): 4.2
+  Sodium (mmol/L): 139
+  Potassium (mmol/L): 5.1
+  Calcium (mg/dL): 10.3
+
+  Disease Staging
+  ---------------
+  ECOG Status: 2
+  Primary Diagnosis: Acute myeloid leukemia
+  Primary Diagnosis ICD-10: C92.00
+  Diagnosis Date: 2020-06-20
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Rituximab
+  Medication 1 Dose (mg): 466.9
+  Medication 1 Frequency: QID
+  Medication 1 Route: Subcutaneous
+  Medication 2 Name: Ondansetron
+  Medication 2 Dose (mg): 298.9
+  Medication 2 Frequency: PRN
+  Medication 2 Route: IV
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Neutropenia
+  Adverse Event 1 Grade: 4
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Resolved
+  Adverse Event 1 Onset Date: 2022-06-26
+  Adverse Event 2 Term: Alopecia
+  Adverse Event 2 Grade: 5
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Recovered
+  Adverse Event 2 Onset Date: 2021-01-07
+  Adverse Event 3 Term: Fatigue
+  Adverse Event 3 Grade: 1
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Recovering
+  Adverse Event 3 Onset Date: 2021-03-27
+
+================================================================
+PATIENT RECORD 8
+================================================================
+Patient ID: PT-0008
+Enrollment Date: 2022-10-14
+Site Name: Memorial Cancer Center, Boston MA
+On Study: No
+
+  Demographics
+  ------------
+  First Name: James
+  Last Name: Baker
+  Age (years): 33
+  Sex: Male
+  Race: Black
+  Height (cm): 174.5
+  Weight (kg): 86.8
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 113
+  BP Diastolic (mmHg): 62
+  Heart Rate (bpm): 73
+  Respiratory Rate: 23
+  Temperature (C): 37.7
+  SpO2 (pct): 100
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 10.3
+  WBC (10e9/L): 11.8
+  Platelets (10e9/L): 364
+  Glucose (mg/dL): 94
+  Creatinine (mg/dL): 2.03
+  ALT (U/L): 103
+  AST (U/L): 43
+  Albumin (g/dL): 4.0
+  Sodium (mmol/L): 141
+  Potassium (mmol/L): 4.9
+  Calcium (mg/dL): 10.3
+
+  Disease Staging
+  ---------------
+  ECOG Status: 0
+  Primary Diagnosis: Malignant neoplasm of prostate
+  Primary Diagnosis ICD-10: C61
+  Diagnosis Date: 2021-03-09
+  Tumor Stage: IIIB
+
+  Medications
+  -----------
+  Medication 1 Name: Letrozole
+  Medication 1 Dose (mg): 269.9
+  Medication 1 Frequency: QID
+  Medication 1 Route: Subcutaneous
+  Medication 2 Name: Tamoxifen
+  Medication 2 Dose (mg): 268.5
+  Medication 2 Frequency: PRN
+  Medication 2 Route: IV
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Alopecia
+  Adverse Event 1 Grade: 4
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Ongoing
+  Adverse Event 1 Onset Date: 2023-05-07
+  Adverse Event 2 Term: Febrile neutropenia
+  Adverse Event 2 Grade: 2
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovering
+  Adverse Event 2 Onset Date: 2023-09-14
+  Adverse Event 3 Term: Rash
+  Adverse Event 3 Grade: 3
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Recovering
+  Adverse Event 3 Onset Date: 2021-05-25
+
+================================================================
+PATIENT RECORD 9
+================================================================
+Patient ID: PT-0009
+Enrollment Date: 2022-06-20
+Site Name: Memorial Cancer Center, Boston MA
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Linda
+  Last Name: Anderson
+  Age (years): 36
+  Sex: Male
+  Race: Asian
+  Height (cm): 188.1
+  Weight (kg): 107.2
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 114
+  BP Diastolic (mmHg): 86
+  Heart Rate (bpm): 82
+  Respiratory Rate: 13
+  Temperature (C): 37.0
+  SpO2 (pct): 98
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 10.6
+  WBC (10e9/L): 11.1
+  Platelets (10e9/L): 246
+  Glucose (mg/dL): 165
+  Creatinine (mg/dL): 2.38
+  ALT (U/L): 71
+  AST (U/L): 121
+  Albumin (g/dL): 3.8
+  Sodium (mmol/L): 130
+  Potassium (mmol/L): 3.9
+  Calcium (mg/dL): 9.5
+
+  Disease Staging
+  ---------------
+  ECOG Status: 3
+  Primary Diagnosis: Malignant neoplasm of prostate
+  Primary Diagnosis ICD-10: C61
+  Diagnosis Date: 2021-05-04
+  Tumor Stage: IV
+
+  Medications
+  -----------
+  Medication 1 Name: Carboplatin
+  Medication 1 Dose (mg): 234.1
+  Medication 1 Frequency: PRN
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Ondansetron
+  Medication 2 Dose (mg): 13.4
+  Medication 2 Frequency: TID
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Alopecia
+  Adverse Event 1 Grade: 4
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Ongoing
+  Adverse Event 1 Onset Date: 2023-10-12
+  Adverse Event 2 Term: Anemia
+  Adverse Event 2 Grade: 5
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Resolved
+  Adverse Event 2 Onset Date: 2021-03-27
+  Adverse Event 3 Term: Febrile neutropenia
+  Adverse Event 3 Grade: 2
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Recovering
+  Adverse Event 3 Onset Date: 2023-09-25
+
+================================================================
+PATIENT RECORD 10
+================================================================
+Patient ID: PT-0010
+Enrollment Date: 2022-09-17
+Site Name: Pacific Tumor Center, Seattle WA
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Karen
+  Last Name: Wilson
+  Age (years): 46
+  Sex: Female
+  Race: Asian
+  Height (cm): 177.3
+  Weight (kg): 76.2
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 149
+  BP Diastolic (mmHg): 87
+  Heart Rate (bpm): 69
+  Respiratory Rate: 18
+  Temperature (C): 37.8
+  SpO2 (pct): 96
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 14.7
+  WBC (10e9/L): 5.0
+  Platelets (10e9/L): 366
+  Glucose (mg/dL): 147
+  Creatinine (mg/dL): 1.26
+  ALT (U/L): 25
+  AST (U/L): 31
+  Albumin (g/dL): 3.5
+  Sodium (mmol/L): 141
+  Potassium (mmol/L): 4.5
+  Calcium (mg/dL): 9.9
+
+  Disease Staging
+  ---------------
+  ECOG Status: 1
+  Primary Diagnosis: Malignant melanoma of skin
+  Primary Diagnosis ICD-10: C43.9
+  Diagnosis Date: 2021-07-03
+  Tumor Stage: I
+
+  Medications
+  -----------
+  Medication 1 Name: Rituximab
+  Medication 1 Dose (mg): 429.4
+  Medication 1 Frequency: BID
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Metformin
+  Medication 2 Dose (mg): 315.4
+  Medication 2 Frequency: PRN
+  Medication 2 Route: IV
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Hypertension
+  Adverse Event 1 Grade: 1
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Fatal
+  Adverse Event 1 Onset Date: 2021-02-05
+  Adverse Event 2 Term: Thrombocytopenia
+  Adverse Event 2 Grade: 3
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Resolved
+  Adverse Event 2 Onset Date: 2021-12-16
+  Adverse Event 3 Term: Mucositis
+  Adverse Event 3 Grade: 5
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Resolved
+  Adverse Event 3 Onset Date: 2024-02-09
+
+================================================================
+PATIENT RECORD 11
+================================================================
+Patient ID: PT-0011
+Enrollment Date: 2022-05-04
+Site Name: Pacific Tumor Center, Seattle WA
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Robert
+  Last Name: Wright
+  Age (years): 64
+  Sex: Female
+  Race: Asian
+  Height (cm): 177.4
+  Weight (kg): 111.6
+  Smoker: Yes
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 166
+  BP Diastolic (mmHg): 78
+  Heart Rate (bpm): 69
+  Respiratory Rate: 20
+  Temperature (C): 36.5
+  SpO2 (pct): 100
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 13.2
+  WBC (10e9/L): 3.4
+  Platelets (10e9/L): 194
+  Glucose (mg/dL): 210
+  Creatinine (mg/dL): 1.03
+  ALT (U/L): 37
+  AST (U/L): 40
+  Albumin (g/dL): 3.0
+  Sodium (mmol/L): 139
+  Potassium (mmol/L): 4.6
+  Calcium (mg/dL): 8.0
+
+  Disease Staging
+  ---------------
+  ECOG Status: 1
+  Primary Diagnosis: Malignant neoplasm of ovary
+  Primary Diagnosis ICD-10: C56.9
+  Diagnosis Date: 2019-01-02
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Doxorubicin
+  Medication 1 Dose (mg): 492.8
+  Medication 1 Frequency: BID
+  Medication 1 Route: IV
+  Medication 2 Name: Carboplatin
+  Medication 2 Dose (mg): 240.7
+  Medication 2 Frequency: BID
+  Medication 2 Route: Intramuscular
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Febrile neutropenia
+  Adverse Event 1 Grade: 3
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Resolved
+  Adverse Event 1 Onset Date: 2022-08-24
+  Adverse Event 2 Term: Hypertension
+  Adverse Event 2 Grade: 1
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Ongoing
+  Adverse Event 2 Onset Date: 2023-05-17
+  Adverse Event 3 Term: Fatigue
+  Adverse Event 3 Grade: 4
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2022-03-24
+
+================================================================
+PATIENT RECORD 12
+================================================================
+Patient ID: PT-0012
+Enrollment Date: 2023-06-25
+Site Name: Lakeshore Medical University, Cleveland OH
+On Study: No
+
+  Demographics
+  ------------
+  First Name: Joshua
+  Last Name: Robinson
+  Age (years): 46
+  Sex: Female
+  Race: White
+  Height (cm): 176.7
+  Weight (kg): 87.3
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 112
+  BP Diastolic (mmHg): 84
+  Heart Rate (bpm): 97
+  Respiratory Rate: 17
+  Temperature (C): 37.3
+  SpO2 (pct): 96
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 12.3
+  WBC (10e9/L): 6.8
+  Platelets (10e9/L): 154
+  Glucose (mg/dL): 81
+  Creatinine (mg/dL): 1.63
+  ALT (U/L): 12
+  AST (U/L): 85
+  Albumin (g/dL): 3.0
+  Sodium (mmol/L): 141
+  Potassium (mmol/L): 3.6
+  Calcium (mg/dL): 8.6
+
+  Disease Staging
+  ---------------
+  ECOG Status: 4
+  Primary Diagnosis: Malignant neoplasm of prostate
+  Primary Diagnosis ICD-10: C61
+  Diagnosis Date: 2023-03-17
+  Tumor Stage: II
+
+  Medications
+  -----------
+  Medication 1 Name: Tamoxifen
+  Medication 1 Dose (mg): 341.4
+  Medication 1 Frequency: PRN
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Rituximab
+  Medication 2 Dose (mg): 172.0
+  Medication 2 Frequency: PRN
+  Medication 2 Route: Subcutaneous
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Neutropenia
+  Adverse Event 1 Grade: 4
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2022-02-06
+  Adverse Event 2 Term: Mucositis
+  Adverse Event 2 Grade: 2
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Ongoing
+  Adverse Event 2 Onset Date: 2022-09-22
+  Adverse Event 3 Term: Rash
+  Adverse Event 3 Grade: 5
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2023-12-10
+
+================================================================
+PATIENT RECORD 13
+================================================================
+Patient ID: PT-0013
+Enrollment Date: 2022-10-04
+Site Name: Lakeshore Medical University, Cleveland OH
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Robert
+  Last Name: Anderson
+  Age (years): 51
+  Sex: Male
+  Race: Native American
+  Height (cm): 169.4
+  Weight (kg): 90.8
+  Smoker: Yes
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 118
+  BP Diastolic (mmHg): 76
+  Heart Rate (bpm): 75
+  Respiratory Rate: 14
+  Temperature (C): 37.3
+  SpO2 (pct): 99
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 14.2
+  WBC (10e9/L): 11.0
+  Platelets (10e9/L): 317
+  Glucose (mg/dL): 80
+  Creatinine (mg/dL): 0.68
+  ALT (U/L): 51
+  AST (U/L): 126
+  Albumin (g/dL): 3.1
+  Sodium (mmol/L): 137
+  Potassium (mmol/L): 4.9
+  Calcium (mg/dL): 10.4
+
+  Disease Staging
+  ---------------
+  ECOG Status: 4
+  Primary Diagnosis: Malignant neoplasm of breast
+  Primary Diagnosis ICD-10: C50.911
+  Diagnosis Date: 2020-01-11
+  Tumor Stage: IV
+
+  Medications
+  -----------
+  Medication 1 Name: Cisplatin
+  Medication 1 Dose (mg): 414.9
+  Medication 1 Frequency: TID
+  Medication 1 Route: Subcutaneous
+  Medication 2 Name: Ondansetron
+  Medication 2 Dose (mg): 438.6
+  Medication 2 Frequency: QID
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Anemia
+  Adverse Event 1 Grade: 1
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Recovering
+  Adverse Event 1 Onset Date: 2021-11-01
+  Adverse Event 2 Term: Neutropenia
+  Adverse Event 2 Grade: 4
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovered
+  Adverse Event 2 Onset Date: 2022-04-26
+  Adverse Event 3 Term: Peripheral neuropathy
+  Adverse Event 3 Grade: 1
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2023-11-18
+
+================================================================
+PATIENT RECORD 14
+================================================================
+Patient ID: PT-0014
+Enrollment Date: 2022-10-07
+Site Name: Pacific Tumor Center, Seattle WA
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Elizabeth
+  Last Name: Sanchez
+  Age (years): 73
+  Sex: Female
+  Race: Other
+  Height (cm): 169.9
+  Weight (kg): 48.9
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 139
+  BP Diastolic (mmHg): 65
+  Heart Rate (bpm): 68
+  Respiratory Rate: 17
+  Temperature (C): 37.6
+  SpO2 (pct): 94
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 16.8
+  WBC (10e9/L): 2.9
+  Platelets (10e9/L): 309
+  Glucose (mg/dL): 98
+  Creatinine (mg/dL): 1.03
+  ALT (U/L): 99
+  AST (U/L): 118
+  Albumin (g/dL): 4.0
+  Sodium (mmol/L): 143
+  Potassium (mmol/L): 5.1
+  Calcium (mg/dL): 10.4
+
+  Disease Staging
+  ---------------
+  ECOG Status: 2
+  Primary Diagnosis: Malignant neoplasm of lung
+  Primary Diagnosis ICD-10: C34.90
+  Diagnosis Date: 2021-09-02
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Ondansetron
+  Medication 1 Dose (mg): 319.8
+  Medication 1 Frequency: TID
+  Medication 1 Route: Subcutaneous
+  Medication 2 Name: Nivolumab
+  Medication 2 Dose (mg): 305.9
+  Medication 2 Frequency: TID
+  Medication 2 Route: Intramuscular
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Nausea
+  Adverse Event 1 Grade: 2
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Fatal
+  Adverse Event 1 Onset Date: 2021-09-03
+  Adverse Event 2 Term: Fatigue
+  Adverse Event 2 Grade: 3
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovering
+  Adverse Event 2 Onset Date: 2023-05-29
+  Adverse Event 3 Term: Neutropenia
+  Adverse Event 3 Grade: 2
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Recovering
+  Adverse Event 3 Onset Date: 2021-01-01
+
+================================================================
+PATIENT RECORD 15
+================================================================
+Patient ID: PT-0015
+Enrollment Date: 2022-04-21
+Site Name: Pacific Tumor Center, Seattle WA
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Ashley
+  Last Name: Martin
+  Age (years): 35
+  Sex: Female
+  Race: Asian
+  Height (cm): 185.0
+  Weight (kg): 70.3
+  Smoker: Yes
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 126
+  BP Diastolic (mmHg): 100
+  Heart Rate (bpm): 59
+  Respiratory Rate: 17
+  Temperature (C): 37.3
+  SpO2 (pct): 100
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 11.1
+  WBC (10e9/L): 13.6
+  Platelets (10e9/L): 341
+  Glucose (mg/dL): 106
+  Creatinine (mg/dL): 1.39
+  ALT (U/L): 9
+  AST (U/L): 10
+  Albumin (g/dL): 4.9
+  Sodium (mmol/L): 133
+  Potassium (mmol/L): 3.7
+  Calcium (mg/dL): 9.3
+
+  Disease Staging
+  ---------------
+  ECOG Status: 2
+  Primary Diagnosis: Malignant neoplasm of colon
+  Primary Diagnosis ICD-10: C18.9
+  Diagnosis Date: 2019-05-05
+  Tumor Stage: I
+
+  Medications
+  -----------
+  Medication 1 Name: Cisplatin
+  Medication 1 Dose (mg): 112.9
+  Medication 1 Frequency: QID
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Tamoxifen
+  Medication 2 Dose (mg): 233.7
+  Medication 2 Frequency: BID
+  Medication 2 Route: Intramuscular
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Alopecia
+  Adverse Event 1 Grade: 1
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Recovering
+  Adverse Event 1 Onset Date: 2021-10-25
+  Adverse Event 2 Term: Nausea
+  Adverse Event 2 Grade: 2
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Fatal
+  Adverse Event 2 Onset Date: 2023-05-22
+  Adverse Event 3 Term: Diarrhea
+  Adverse Event 3 Grade: 2
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Recovered
+  Adverse Event 3 Onset Date: 2022-05-09
+
+================================================================
+PATIENT RECORD 16
+================================================================
+Patient ID: PT-0016
+Enrollment Date: 2022-08-29
+Site Name: Lakeshore Medical University, Cleveland OH
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Michael
+  Last Name: Harris
+  Age (years): 78
+  Sex: Female
+  Race: Native American
+  Height (cm): 190.8
+  Weight (kg): 112.7
+  Smoker: Yes
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 130
+  BP Diastolic (mmHg): 66
+  Heart Rate (bpm): 82
+  Respiratory Rate: 21
+  Temperature (C): 36.9
+  SpO2 (pct): 100
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 9.9
+  WBC (10e9/L): 13.5
+  Platelets (10e9/L): 338
+  Glucose (mg/dL): 72
+  Creatinine (mg/dL): 0.99
+  ALT (U/L): 64
+  AST (U/L): 12
+  Albumin (g/dL): 4.2
+  Sodium (mmol/L): 130
+  Potassium (mmol/L): 4.7
+  Calcium (mg/dL): 8.7
+
+  Disease Staging
+  ---------------
+  ECOG Status: 4
+  Primary Diagnosis: Malignant neoplasm of pancreas
+  Primary Diagnosis ICD-10: C25.9
+  Diagnosis Date: 2021-08-29
+  Tumor Stage: II
+
+  Medications
+  -----------
+  Medication 1 Name: Carboplatin
+  Medication 1 Dose (mg): 102.9
+  Medication 1 Frequency: PRN
+  Medication 1 Route: IV
+  Medication 2 Name: Tamoxifen
+  Medication 2 Dose (mg): 61.7
+  Medication 2 Frequency: TID
+  Medication 2 Route: Subcutaneous
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Neutropenia
+  Adverse Event 1 Grade: 4
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Ongoing
+  Adverse Event 1 Onset Date: 2022-03-13
+  Adverse Event 2 Term: Mucositis
+  Adverse Event 2 Grade: 5
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovering
+  Adverse Event 2 Onset Date: 2023-11-20
+  Adverse Event 3 Term: Thrombocytopenia
+  Adverse Event 3 Grade: 2
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Recovered
+  Adverse Event 3 Onset Date: 2024-01-16
+
+================================================================
+PATIENT RECORD 17
+================================================================
+Patient ID: PT-0017
+Enrollment Date: 2022-03-22
+Site Name: Riverside Oncology Institute, Chicago IL
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Karen
+  Last Name: Lopez
+  Age (years): 57
+  Sex: Male
+  Race: Other
+  Height (cm): 150.7
+  Weight (kg): 57.1
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 137
+  BP Diastolic (mmHg): 74
+  Heart Rate (bpm): 95
+  Respiratory Rate: 16
+  Temperature (C): 37.2
+  SpO2 (pct): 94
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 13.2
+  WBC (10e9/L): 2.7
+  Platelets (10e9/L): 356
+  Glucose (mg/dL): 151
+  Creatinine (mg/dL): 0.86
+  ALT (U/L): 70
+  AST (U/L): 40
+  Albumin (g/dL): 4.7
+  Sodium (mmol/L): 144
+  Potassium (mmol/L): 3.5
+  Calcium (mg/dL): 9.2
+
+  Disease Staging
+  ---------------
+  ECOG Status: 0
+  Primary Diagnosis: Malignant neoplasm of lung
+  Primary Diagnosis ICD-10: C34.90
+  Diagnosis Date: 2019-09-04
+  Tumor Stage: I
+
+  Medications
+  -----------
+  Medication 1 Name: Nivolumab
+  Medication 1 Dose (mg): 14.9
+  Medication 1 Frequency: TID
+  Medication 1 Route: Subcutaneous
+  Medication 2 Name: Letrozole
+  Medication 2 Dose (mg): 430.7
+  Medication 2 Frequency: PRN
+  Medication 2 Route: IV
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Diarrhea
+  Adverse Event 1 Grade: 3
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Ongoing
+  Adverse Event 1 Onset Date: 2021-10-16
+  Adverse Event 2 Term: Mucositis
+  Adverse Event 2 Grade: 4
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovered
+  Adverse Event 2 Onset Date: 2022-03-05
+  Adverse Event 3 Term: Thrombocytopenia
+  Adverse Event 3 Grade: 2
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2022-01-21
+
+================================================================
+PATIENT RECORD 18
+================================================================
+Patient ID: PT-0018
+Enrollment Date: 2023-02-05
+Site Name: Southwest Hematology Clinic, Phoenix AZ
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Joshua
+  Last Name: Sanchez
+  Age (years): 51
+  Sex: Male
+  Race: Black
+  Height (cm): 189.4
+  Weight (kg): 115.1
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 119
+  BP Diastolic (mmHg): 95
+  Heart Rate (bpm): 104
+  Respiratory Rate: 14
+  Temperature (C): 37.9
+  SpO2 (pct): 100
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 16.4
+  WBC (10e9/L): 4.6
+  Platelets (10e9/L): 96
+  Glucose (mg/dL): 211
+  Creatinine (mg/dL): 0.86
+  ALT (U/L): 103
+  AST (U/L): 109
+  Albumin (g/dL): 2.8
+  Sodium (mmol/L): 130
+  Potassium (mmol/L): 4.0
+  Calcium (mg/dL): 8.2
+
+  Disease Staging
+  ---------------
+  ECOG Status: 1
+  Primary Diagnosis: Malignant neoplasm of lung
+  Primary Diagnosis ICD-10: C34.90
+  Diagnosis Date: 2022-11-08
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Ondansetron
+  Medication 1 Dose (mg): 51.9
+  Medication 1 Frequency: QD
+  Medication 1 Route: IV
+  Medication 2 Name: Bevacizumab
+  Medication 2 Dose (mg): 379.3
+  Medication 2 Frequency: PRN
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Thrombocytopenia
+  Adverse Event 1 Grade: 4
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2023-05-19
+  Adverse Event 2 Term: Peripheral neuropathy
+  Adverse Event 2 Grade: 4
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Recovering
+  Adverse Event 2 Onset Date: 2021-05-03
+  Adverse Event 3 Term: Nausea
+  Adverse Event 3 Grade: 1
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Ongoing
+  Adverse Event 3 Onset Date: 2021-08-31
+
+================================================================
+PATIENT RECORD 19
+================================================================
+Patient ID: PT-0019
+Enrollment Date: 2022-11-04
+Site Name: Lakeshore Medical University, Cleveland OH
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: James
+  Last Name: Nelson
+  Age (years): 69
+  Sex: Female
+  Race: Other
+  Height (cm): 192.3
+  Weight (kg): 82.9
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 106
+  BP Diastolic (mmHg): 88
+  Heart Rate (bpm): 105
+  Respiratory Rate: 22
+  Temperature (C): 37.0
+  SpO2 (pct): 98
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 13.5
+  WBC (10e9/L): 9.7
+  Platelets (10e9/L): 324
+  Glucose (mg/dL): 123
+  Creatinine (mg/dL): 1.52
+  ALT (U/L): 95
+  AST (U/L): 29
+  Albumin (g/dL): 4.4
+  Sodium (mmol/L): 143
+  Potassium (mmol/L): 4.0
+  Calcium (mg/dL): 8.9
+
+  Disease Staging
+  ---------------
+  ECOG Status: 3
+  Primary Diagnosis: Malignant neoplasm of colon
+  Primary Diagnosis ICD-10: C18.9
+  Diagnosis Date: 2021-07-09
+  Tumor Stage: IV
+
+  Medications
+  -----------
+  Medication 1 Name: Metformin
+  Medication 1 Dose (mg): 486.9
+  Medication 1 Frequency: QD
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Tamoxifen
+  Medication 2 Dose (mg): 76.3
+  Medication 2 Frequency: QD
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Fatigue
+  Adverse Event 1 Grade: 3
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Fatal
+  Adverse Event 1 Onset Date: 2022-09-16
+  Adverse Event 2 Term: Peripheral neuropathy
+  Adverse Event 2 Grade: 3
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovered
+  Adverse Event 2 Onset Date: 2023-09-17
+  Adverse Event 3 Term: Neutropenia
+  Adverse Event 3 Grade: 4
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Recovered
+  Adverse Event 3 Onset Date: 2021-07-17
+
+================================================================
+PATIENT RECORD 20
+================================================================
+Patient ID: PT-0020
+Enrollment Date: 2022-04-22
+Site Name: Pacific Tumor Center, Seattle WA
+On Study: No
+
+  Demographics
+  ------------
+  First Name: Sandra
+  Last Name: Clark
+  Age (years): 37
+  Sex: Female
+  Race: Native American
+  Height (cm): 178.8
+  Weight (kg): 87.2
+  Smoker: Yes
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 148
+  BP Diastolic (mmHg): 85
+  Heart Rate (bpm): 87
+  Respiratory Rate: 21
+  Temperature (C): 37.5
+  SpO2 (pct): 97
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 9.5
+  WBC (10e9/L): 13.9
+  Platelets (10e9/L): 397
+  Glucose (mg/dL): 219
+  Creatinine (mg/dL): 1.47
+  ALT (U/L): 92
+  AST (U/L): 111
+  Albumin (g/dL): 3.2
+  Sodium (mmol/L): 132
+  Potassium (mmol/L): 4.0
+  Calcium (mg/dL): 8.3
+
+  Disease Staging
+  ---------------
+  ECOG Status: 4
+  Primary Diagnosis: Diffuse large B-cell lymphoma
+  Primary Diagnosis ICD-10: C83.30
+  Diagnosis Date: 2021-10-04
+  Tumor Stage: IV
+
+  Medications
+  -----------
+  Medication 1 Name: Allopurinol
+  Medication 1 Dose (mg): 84.6
+  Medication 1 Frequency: TID
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Tamoxifen
+  Medication 2 Dose (mg): 395.3
+  Medication 2 Frequency: TID
+  Medication 2 Route: Subcutaneous
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Nausea
+  Adverse Event 1 Grade: 4
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Recovering
+  Adverse Event 1 Onset Date: 2021-06-16
+  Adverse Event 2 Term: Alopecia
+  Adverse Event 2 Grade: 1
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovering
+  Adverse Event 2 Onset Date: 2023-04-06
+  Adverse Event 3 Term: Thrombocytopenia
+  Adverse Event 3 Grade: 3
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Ongoing
+  Adverse Event 3 Onset Date: 2022-08-14
+
+================================================================
+PATIENT RECORD 21
+================================================================
+Patient ID: PT-0021
+Enrollment Date: 2022-05-11
+Site Name: Memorial Cancer Center, Boston MA
+On Study: No
+
+  Demographics
+  ------------
+  First Name: Brian
+  Last Name: Nguyen
+  Age (years): 59
+  Sex: Male
+  Race: White
+  Height (cm): 180.1
+  Weight (kg): 57.6
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 166
+  BP Diastolic (mmHg): 96
+  Heart Rate (bpm): 108
+  Respiratory Rate: 15
+  Temperature (C): 38.3
+  SpO2 (pct): 91
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 9.6
+  WBC (10e9/L): 5.2
+  Platelets (10e9/L): 371
+  Glucose (mg/dL): 168
+  Creatinine (mg/dL): 1.81
+  ALT (U/L): 31
+  AST (U/L): 76
+  Albumin (g/dL): 4.6
+  Sodium (mmol/L): 136
+  Potassium (mmol/L): 5.2
+  Calcium (mg/dL): 8.6
+
+  Disease Staging
+  ---------------
+  ECOG Status: 0
+  Primary Diagnosis: Diffuse large B-cell lymphoma
+  Primary Diagnosis ICD-10: C83.30
+  Diagnosis Date: 2022-06-08
+  Tumor Stage: I
+
+  Medications
+  -----------
+  Medication 1 Name: Rituximab
+  Medication 1 Dose (mg): 358.6
+  Medication 1 Frequency: QID
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Tamoxifen
+  Medication 2 Dose (mg): 249.9
+  Medication 2 Frequency: TID
+  Medication 2 Route: Subcutaneous
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Mucositis
+  Adverse Event 1 Grade: 1
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Resolved
+  Adverse Event 1 Onset Date: 2021-07-21
+  Adverse Event 2 Term: Anemia
+  Adverse Event 2 Grade: 2
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Recovering
+  Adverse Event 2 Onset Date: 2022-10-14
+  Adverse Event 3 Term: Peripheral neuropathy
+  Adverse Event 3 Grade: 5
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Resolved
+  Adverse Event 3 Onset Date: 2021-03-22
+
+================================================================
+PATIENT RECORD 22
+================================================================
+Patient ID: PT-0022
+Enrollment Date: 2022-04-02
+Site Name: Riverside Oncology Institute, Chicago IL
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Nancy
+  Last Name: King
+  Age (years): 58
+  Sex: Male
+  Race: Native American
+  Height (cm): 159.3
+  Weight (kg): 115.3
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 126
+  BP Diastolic (mmHg): 64
+  Heart Rate (bpm): 85
+  Respiratory Rate: 19
+  Temperature (C): 36.5
+  SpO2 (pct): 93
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 8.8
+  WBC (10e9/L): 13.0
+  Platelets (10e9/L): 172
+  Glucose (mg/dL): 163
+  Creatinine (mg/dL): 1.1
+  ALT (U/L): 21
+  AST (U/L): 29
+  Albumin (g/dL): 4.0
+  Sodium (mmol/L): 132
+  Potassium (mmol/L): 4.8
+  Calcium (mg/dL): 10.2
+
+  Disease Staging
+  ---------------
+  ECOG Status: 3
+  Primary Diagnosis: Malignant neoplasm of colon
+  Primary Diagnosis ICD-10: C18.9
+  Diagnosis Date: 2023-01-06
+  Tumor Stage: II
+
+  Medications
+  -----------
+  Medication 1 Name: Pembrolizumab
+  Medication 1 Dose (mg): 214.7
+  Medication 1 Frequency: QID
+  Medication 1 Route: IV
+  Medication 2 Name: Nivolumab
+  Medication 2 Dose (mg): 86.0
+  Medication 2 Frequency: TID
+  Medication 2 Route: IV
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Diarrhea
+  Adverse Event 1 Grade: 2
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Ongoing
+  Adverse Event 1 Onset Date: 2021-02-02
+  Adverse Event 2 Term: Peripheral neuropathy
+  Adverse Event 2 Grade: 2
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Recovering
+  Adverse Event 2 Onset Date: 2022-02-12
+  Adverse Event 3 Term: Mucositis
+  Adverse Event 3 Grade: 5
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Resolved
+  Adverse Event 3 Onset Date: 2022-08-20
+
+================================================================
+PATIENT RECORD 23
+================================================================
+Patient ID: PT-0023
+Enrollment Date: 2022-10-25
+Site Name: Riverside Oncology Institute, Chicago IL
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Ashley
+  Last Name: Ramirez
+  Age (years): 60
+  Sex: Male
+  Race: Black
+  Height (cm): 191.4
+  Weight (kg): 82.0
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 107
+  BP Diastolic (mmHg): 68
+  Heart Rate (bpm): 82
+  Respiratory Rate: 15
+  Temperature (C): 37.6
+  SpO2 (pct): 98
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 15.7
+  WBC (10e9/L): 3.0
+  Platelets (10e9/L): 127
+  Glucose (mg/dL): 91
+  Creatinine (mg/dL): 0.64
+  ALT (U/L): 43
+  AST (U/L): 128
+  Albumin (g/dL): 4.7
+  Sodium (mmol/L): 139
+  Potassium (mmol/L): 4.7
+  Calcium (mg/dL): 9.8
+
+  Disease Staging
+  ---------------
+  ECOG Status: 1
+  Primary Diagnosis: Malignant neoplasm of colon
+  Primary Diagnosis ICD-10: C18.9
+  Diagnosis Date: 2019-03-27
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Pembrolizumab
+  Medication 1 Dose (mg): 154.5
+  Medication 1 Frequency: TID
+  Medication 1 Route: IV
+  Medication 2 Name: Metformin
+  Medication 2 Dose (mg): 18.4
+  Medication 2 Frequency: QD
+  Medication 2 Route: IV
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Peripheral neuropathy
+  Adverse Event 1 Grade: 1
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2023-08-08
+  Adverse Event 2 Term: Hypertension
+  Adverse Event 2 Grade: 4
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Ongoing
+  Adverse Event 2 Onset Date: 2023-08-02
+  Adverse Event 3 Term: Mucositis
+  Adverse Event 3 Grade: 4
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Resolved
+  Adverse Event 3 Onset Date: 2023-05-02
+
+================================================================
+PATIENT RECORD 24
+================================================================
+Patient ID: PT-0024
+Enrollment Date: 2023-05-08
+Site Name: Pacific Tumor Center, Seattle WA
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Joshua
+  Last Name: Young
+  Age (years): 36
+  Sex: Female
+  Race: Other
+  Height (cm): 183.0
+  Weight (kg): 114.2
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 131
+  BP Diastolic (mmHg): 65
+  Heart Rate (bpm): 93
+  Respiratory Rate: 19
+  Temperature (C): 38.0
+  SpO2 (pct): 97
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 14.9
+  WBC (10e9/L): 6.6
+  Platelets (10e9/L): 325
+  Glucose (mg/dL): 79
+  Creatinine (mg/dL): 2.32
+  ALT (U/L): 64
+  AST (U/L): 16
+  Albumin (g/dL): 5.1
+  Sodium (mmol/L): 142
+  Potassium (mmol/L): 3.4
+  Calcium (mg/dL): 8.4
+
+  Disease Staging
+  ---------------
+  ECOG Status: 2
+  Primary Diagnosis: Malignant melanoma of skin
+  Primary Diagnosis ICD-10: C43.9
+  Diagnosis Date: 2023-05-24
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Carboplatin
+  Medication 1 Dose (mg): 198.3
+  Medication 1 Frequency: PRN
+  Medication 1 Route: Subcutaneous
+  Medication 2 Name: Dexamethasone
+  Medication 2 Dose (mg): 333.3
+  Medication 2 Frequency: QID
+  Medication 2 Route: IV
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Anemia
+  Adverse Event 1 Grade: 3
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2021-08-10
+  Adverse Event 2 Term: Rash
+  Adverse Event 2 Grade: 1
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Ongoing
+  Adverse Event 2 Onset Date: 2024-02-09
+  Adverse Event 3 Term: Hypertension
+  Adverse Event 3 Grade: 5
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2024-01-10
+
+================================================================
+PATIENT RECORD 25
+================================================================
+Patient ID: PT-0025
+Enrollment Date: 2022-03-15
+Site Name: Lakeshore Medical University, Cleveland OH
+On Study: No
+
+  Demographics
+  ------------
+  First Name: Richard
+  Last Name: Davis
+  Age (years): 79
+  Sex: Female
+  Race: Asian
+  Height (cm): 179.9
+  Weight (kg): 103.8
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 158
+  BP Diastolic (mmHg): 88
+  Heart Rate (bpm): 52
+  Respiratory Rate: 14
+  Temperature (C): 36.9
+  SpO2 (pct): 90
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 12.9
+  WBC (10e9/L): 4.7
+  Platelets (10e9/L): 174
+  Glucose (mg/dL): 144
+  Creatinine (mg/dL): 1.91
+  ALT (U/L): 90
+  AST (U/L): 85
+  Albumin (g/dL): 4.7
+  Sodium (mmol/L): 140
+  Potassium (mmol/L): 4.6
+  Calcium (mg/dL): 10.6
+
+  Disease Staging
+  ---------------
+  ECOG Status: 1
+  Primary Diagnosis: Malignant neoplasm of breast
+  Primary Diagnosis ICD-10: C50.911
+  Diagnosis Date: 2020-07-23
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Carboplatin
+  Medication 1 Dose (mg): 431.2
+  Medication 1 Frequency: TID
+  Medication 1 Route: IV
+  Medication 2 Name: Tamoxifen
+  Medication 2 Dose (mg): 403.0
+  Medication 2 Frequency: QD
+  Medication 2 Route: Intramuscular
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Thrombocytopenia
+  Adverse Event 1 Grade: 4
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Resolved
+  Adverse Event 1 Onset Date: 2023-06-27
+  Adverse Event 2 Term: Nausea
+  Adverse Event 2 Grade: 3
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovering
+  Adverse Event 2 Onset Date: 2024-03-08
+  Adverse Event 3 Term: Mucositis
+  Adverse Event 3 Grade: 1
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Ongoing
+  Adverse Event 3 Onset Date: 2023-08-07
+
+================================================================
+PATIENT RECORD 26
+================================================================
+Patient ID: PT-0026
+Enrollment Date: 2023-05-30
+Site Name: Southwest Hematology Clinic, Phoenix AZ
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Steven
+  Last Name: Flores
+  Age (years): 73
+  Sex: Male
+  Race: Native American
+  Height (cm): 161.1
+  Weight (kg): 112.6
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 109
+  BP Diastolic (mmHg): 94
+  Heart Rate (bpm): 88
+  Respiratory Rate: 20
+  Temperature (C): 37.7
+  SpO2 (pct): 95
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 16.7
+  WBC (10e9/L): 13.3
+  Platelets (10e9/L): 317
+  Glucose (mg/dL): 188
+  Creatinine (mg/dL): 1.46
+  ALT (U/L): 20
+  AST (U/L): 37
+  Albumin (g/dL): 4.0
+  Sodium (mmol/L): 134
+  Potassium (mmol/L): 4.5
+  Calcium (mg/dL): 10.1
+
+  Disease Staging
+  ---------------
+  ECOG Status: 2
+  Primary Diagnosis: Malignant melanoma of skin
+  Primary Diagnosis ICD-10: C43.9
+  Diagnosis Date: 2023-01-26
+  Tumor Stage: IV
+
+  Medications
+  -----------
+  Medication 1 Name: Filgrastim
+  Medication 1 Dose (mg): 83.3
+  Medication 1 Frequency: QD
+  Medication 1 Route: Oral
+  Medication 2 Name: Nivolumab
+  Medication 2 Dose (mg): 397.7
+  Medication 2 Frequency: BID
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Nausea
+  Adverse Event 1 Grade: 5
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2021-05-30
+  Adverse Event 2 Term: Diarrhea
+  Adverse Event 2 Grade: 1
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Ongoing
+  Adverse Event 2 Onset Date: 2022-07-04
+  Adverse Event 3 Term: Neutropenia
+  Adverse Event 3 Grade: 1
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Ongoing
+  Adverse Event 3 Onset Date: 2023-04-01
+
+================================================================
+PATIENT RECORD 27
+================================================================
+Patient ID: PT-0027
+Enrollment Date: 2023-09-13
+Site Name: Lakeshore Medical University, Cleveland OH
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Kevin
+  Last Name: Baker
+  Age (years): 46
+  Sex: Female
+  Race: Black
+  Height (cm): 153.4
+  Weight (kg): 96.5
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 137
+  BP Diastolic (mmHg): 92
+  Heart Rate (bpm): 77
+  Respiratory Rate: 15
+  Temperature (C): 36.1
+  SpO2 (pct): 100
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 13.0
+  WBC (10e9/L): 11.2
+  Platelets (10e9/L): 191
+  Glucose (mg/dL): 74
+  Creatinine (mg/dL): 1.71
+  ALT (U/L): 14
+  AST (U/L): 28
+  Albumin (g/dL): 5.1
+  Sodium (mmol/L): 134
+  Potassium (mmol/L): 5.1
+  Calcium (mg/dL): 8.2
+
+  Disease Staging
+  ---------------
+  ECOG Status: 3
+  Primary Diagnosis: Malignant melanoma of skin
+  Primary Diagnosis ICD-10: C43.9
+  Diagnosis Date: 2021-08-02
+  Tumor Stage: IIIB
+
+  Medications
+  -----------
+  Medication 1 Name: Paclitaxel
+  Medication 1 Dose (mg): 307.4
+  Medication 1 Frequency: BID
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Carboplatin
+  Medication 2 Dose (mg): 298.1
+  Medication 2 Frequency: TID
+  Medication 2 Route: IV
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Peripheral neuropathy
+  Adverse Event 1 Grade: 4
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Fatal
+  Adverse Event 1 Onset Date: 2022-08-21
+  Adverse Event 2 Term: Nausea
+  Adverse Event 2 Grade: 3
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovered
+  Adverse Event 2 Onset Date: 2023-11-22
+  Adverse Event 3 Term: Alopecia
+  Adverse Event 3 Grade: 2
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2023-04-24
+
+================================================================
+PATIENT RECORD 28
+================================================================
+Patient ID: PT-0028
+Enrollment Date: 2022-11-25
+Site Name: Memorial Cancer Center, Boston MA
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Mary
+  Last Name: Flores
+  Age (years): 51
+  Sex: Female
+  Race: White
+  Height (cm): 167.6
+  Weight (kg): 70.6
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 108
+  BP Diastolic (mmHg): 63
+  Heart Rate (bpm): 96
+  Respiratory Rate: 15
+  Temperature (C): 37.6
+  SpO2 (pct): 98
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 12.7
+  WBC (10e9/L): 13.0
+  Platelets (10e9/L): 361
+  Glucose (mg/dL): 173
+  Creatinine (mg/dL): 1.4
+  ALT (U/L): 27
+  AST (U/L): 88
+  Albumin (g/dL): 2.9
+  Sodium (mmol/L): 138
+  Potassium (mmol/L): 3.7
+  Calcium (mg/dL): 9.1
+
+  Disease Staging
+  ---------------
+  ECOG Status: 0
+  Primary Diagnosis: Malignant neoplasm of lung
+  Primary Diagnosis ICD-10: C34.90
+  Diagnosis Date: 2020-01-04
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Tamoxifen
+  Medication 1 Dose (mg): 456.6
+  Medication 1 Frequency: QD
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Filgrastim
+  Medication 2 Dose (mg): 208.2
+  Medication 2 Frequency: TID
+  Medication 2 Route: IV
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Febrile neutropenia
+  Adverse Event 1 Grade: 3
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Recovering
+  Adverse Event 1 Onset Date: 2022-10-07
+  Adverse Event 2 Term: Nausea
+  Adverse Event 2 Grade: 5
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Recovered
+  Adverse Event 2 Onset Date: 2022-01-22
+  Adverse Event 3 Term: Febrile neutropenia
+  Adverse Event 3 Grade: 4
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Ongoing
+  Adverse Event 3 Onset Date: 2023-11-01
+
+================================================================
+PATIENT RECORD 29
+================================================================
+Patient ID: PT-0029
+Enrollment Date: 2023-11-09
+Site Name: Riverside Oncology Institute, Chicago IL
+On Study: No
+
+  Demographics
+  ------------
+  First Name: Barbara
+  Last Name: Johnson
+  Age (years): 35
+  Sex: Female
+  Race: Asian
+  Height (cm): 175.2
+  Weight (kg): 55.6
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 148
+  BP Diastolic (mmHg): 97
+  Heart Rate (bpm): 71
+  Respiratory Rate: 17
+  Temperature (C): 38.3
+  SpO2 (pct): 95
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 12.9
+  WBC (10e9/L): 11.1
+  Platelets (10e9/L): 173
+  Glucose (mg/dL): 126
+  Creatinine (mg/dL): 0.75
+  ALT (U/L): 81
+  AST (U/L): 85
+  Albumin (g/dL): 4.2
+  Sodium (mmol/L): 141
+  Potassium (mmol/L): 3.7
+  Calcium (mg/dL): 10.0
+
+  Disease Staging
+  ---------------
+  ECOG Status: 1
+  Primary Diagnosis: Acute myeloid leukemia
+  Primary Diagnosis ICD-10: C92.00
+  Diagnosis Date: 2021-10-20
+  Tumor Stage: II
+
+  Medications
+  -----------
+  Medication 1 Name: Cisplatin
+  Medication 1 Dose (mg): 27.4
+  Medication 1 Frequency: QD
+  Medication 1 Route: Oral
+  Medication 2 Name: Letrozole
+  Medication 2 Dose (mg): 341.4
+  Medication 2 Frequency: PRN
+  Medication 2 Route: Intramuscular
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Anemia
+  Adverse Event 1 Grade: 1
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Recovering
+  Adverse Event 1 Onset Date: 2022-03-08
+  Adverse Event 2 Term: Hypertension
+  Adverse Event 2 Grade: 4
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Resolved
+  Adverse Event 2 Onset Date: 2022-07-26
+  Adverse Event 3 Term: Anemia
+  Adverse Event 3 Grade: 2
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Ongoing
+  Adverse Event 3 Onset Date: 2023-04-02
+
+================================================================
+PATIENT RECORD 30
+================================================================
+Patient ID: PT-0030
+Enrollment Date: 2022-09-05
+Site Name: Riverside Oncology Institute, Chicago IL
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: James
+  Last Name: Robinson
+  Age (years): 64
+  Sex: Female
+  Race: White
+  Height (cm): 167.7
+  Weight (kg): 79.2
+  Smoker: Yes
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 124
+  BP Diastolic (mmHg): 94
+  Heart Rate (bpm): 73
+  Respiratory Rate: 12
+  Temperature (C): 37.4
+  SpO2 (pct): 100
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 10.9
+  WBC (10e9/L): 9.0
+  Platelets (10e9/L): 378
+  Glucose (mg/dL): 79
+  Creatinine (mg/dL): 1.27
+  ALT (U/L): 34
+  AST (U/L): 39
+  Albumin (g/dL): 3.6
+  Sodium (mmol/L): 141
+  Potassium (mmol/L): 3.3
+  Calcium (mg/dL): 8.8
+
+  Disease Staging
+  ---------------
+  ECOG Status: 2
+  Primary Diagnosis: Renal cell carcinoma
+  Primary Diagnosis ICD-10: C64.9
+  Diagnosis Date: 2022-07-22
+  Tumor Stage: IV
+
+  Medications
+  -----------
+  Medication 1 Name: Bevacizumab
+  Medication 1 Dose (mg): 399.0
+  Medication 1 Frequency: TID
+  Medication 1 Route: IV
+  Medication 2 Name: Doxorubicin
+  Medication 2 Dose (mg): 261.6
+  Medication 2 Frequency: PRN
+  Medication 2 Route: Subcutaneous
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Anemia
+  Adverse Event 1 Grade: 4
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2022-09-23
+  Adverse Event 2 Term: Fatigue
+  Adverse Event 2 Grade: 2
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Fatal
+  Adverse Event 2 Onset Date: 2023-05-18
+  Adverse Event 3 Term: Thrombocytopenia
+  Adverse Event 3 Grade: 2
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2022-10-04
+
+================================================================
+PATIENT RECORD 31
+================================================================
+Patient ID: PT-0031
+Enrollment Date: 2023-02-15
+Site Name: Southwest Hematology Clinic, Phoenix AZ
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Steven
+  Last Name: Young
+  Age (years): 37
+  Sex: Male
+  Race: Other
+  Height (cm): 157.9
+  Weight (kg): 55.9
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 141
+  BP Diastolic (mmHg): 84
+  Heart Rate (bpm): 106
+  Respiratory Rate: 18
+  Temperature (C): 37.2
+  SpO2 (pct): 94
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 8.9
+  WBC (10e9/L): 2.8
+  Platelets (10e9/L): 92
+  Glucose (mg/dL): 81
+  Creatinine (mg/dL): 2.23
+  ALT (U/L): 15
+  AST (U/L): 41
+  Albumin (g/dL): 4.6
+  Sodium (mmol/L): 138
+  Potassium (mmol/L): 3.3
+  Calcium (mg/dL): 9.7
+
+  Disease Staging
+  ---------------
+  ECOG Status: 1
+  Primary Diagnosis: Diffuse large B-cell lymphoma
+  Primary Diagnosis ICD-10: C83.30
+  Diagnosis Date: 2020-03-05
+  Tumor Stage: II
+
+  Medications
+  -----------
+  Medication 1 Name: Carboplatin
+  Medication 1 Dose (mg): 54.6
+  Medication 1 Frequency: BID
+  Medication 1 Route: IV
+  Medication 2 Name: Allopurinol
+  Medication 2 Dose (mg): 304.8
+  Medication 2 Frequency: QD
+  Medication 2 Route: Subcutaneous
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Fatigue
+  Adverse Event 1 Grade: 4
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Ongoing
+  Adverse Event 1 Onset Date: 2022-09-05
+  Adverse Event 2 Term: Hypertension
+  Adverse Event 2 Grade: 3
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Resolved
+  Adverse Event 2 Onset Date: 2021-01-11
+  Adverse Event 3 Term: Neutropenia
+  Adverse Event 3 Grade: 5
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Recovered
+  Adverse Event 3 Onset Date: 2021-06-12
+
+================================================================
+PATIENT RECORD 32
+================================================================
+Patient ID: PT-0032
+Enrollment Date: 2022-06-01
+Site Name: Pacific Tumor Center, Seattle WA
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Margaret
+  Last Name: Baker
+  Age (years): 39
+  Sex: Male
+  Race: Native American
+  Height (cm): 177.5
+  Weight (kg): 82.0
+  Smoker: Yes
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 104
+  BP Diastolic (mmHg): 88
+  Heart Rate (bpm): 101
+  Respiratory Rate: 19
+  Temperature (C): 37.6
+  SpO2 (pct): 97
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 15.6
+  WBC (10e9/L): 4.5
+  Platelets (10e9/L): 410
+  Glucose (mg/dL): 93
+  Creatinine (mg/dL): 0.54
+  ALT (U/L): 23
+  AST (U/L): 84
+  Albumin (g/dL): 2.8
+  Sodium (mmol/L): 146
+  Potassium (mmol/L): 4.1
+  Calcium (mg/dL): 9.5
+
+  Disease Staging
+  ---------------
+  ECOG Status: 3
+  Primary Diagnosis: Malignant neoplasm of prostate
+  Primary Diagnosis ICD-10: C61
+  Diagnosis Date: 2020-02-07
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Filgrastim
+  Medication 1 Dose (mg): 219.6
+  Medication 1 Frequency: QD
+  Medication 1 Route: Oral
+  Medication 2 Name: Allopurinol
+  Medication 2 Dose (mg): 241.7
+  Medication 2 Frequency: PRN
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Thrombocytopenia
+  Adverse Event 1 Grade: 3
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Fatal
+  Adverse Event 1 Onset Date: 2022-10-16
+  Adverse Event 2 Term: Diarrhea
+  Adverse Event 2 Grade: 1
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Fatal
+  Adverse Event 2 Onset Date: 2022-10-15
+  Adverse Event 3 Term: Fatigue
+  Adverse Event 3 Grade: 4
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Recovered
+  Adverse Event 3 Onset Date: 2023-12-11
+
+================================================================
+PATIENT RECORD 33
+================================================================
+Patient ID: PT-0033
+Enrollment Date: 2023-04-05
+Site Name: Lakeshore Medical University, Cleveland OH
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Andrew
+  Last Name: Jackson
+  Age (years): 85
+  Sex: Male
+  Race: Other
+  Height (cm): 154.1
+  Weight (kg): 99.1
+  Smoker: Yes
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 126
+  BP Diastolic (mmHg): 73
+  Heart Rate (bpm): 104
+  Respiratory Rate: 12
+  Temperature (C): 36.2
+  SpO2 (pct): 94
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 8.2
+  WBC (10e9/L): 13.9
+  Platelets (10e9/L): 186
+  Glucose (mg/dL): 151
+  Creatinine (mg/dL): 1.18
+  ALT (U/L): 115
+  AST (U/L): 38
+  Albumin (g/dL): 3.9
+  Sodium (mmol/L): 134
+  Potassium (mmol/L): 4.7
+  Calcium (mg/dL): 10.6
+
+  Disease Staging
+  ---------------
+  ECOG Status: 0
+  Primary Diagnosis: Renal cell carcinoma
+  Primary Diagnosis ICD-10: C64.9
+  Diagnosis Date: 2020-01-10
+  Tumor Stage: II
+
+  Medications
+  -----------
+  Medication 1 Name: Doxorubicin
+  Medication 1 Dose (mg): 303.6
+  Medication 1 Frequency: QID
+  Medication 1 Route: IV
+  Medication 2 Name: Metformin
+  Medication 2 Dose (mg): 267.7
+  Medication 2 Frequency: QD
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Febrile neutropenia
+  Adverse Event 1 Grade: 1
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Resolved
+  Adverse Event 1 Onset Date: 2022-06-30
+  Adverse Event 2 Term: Peripheral neuropathy
+  Adverse Event 2 Grade: 3
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovered
+  Adverse Event 2 Onset Date: 2022-11-16
+  Adverse Event 3 Term: Peripheral neuropathy
+  Adverse Event 3 Grade: 3
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Ongoing
+  Adverse Event 3 Onset Date: 2023-08-26
+
+================================================================
+PATIENT RECORD 34
+================================================================
+Patient ID: PT-0034
+Enrollment Date: 2023-11-03
+Site Name: Lakeshore Medical University, Cleveland OH
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Matthew
+  Last Name: Moore
+  Age (years): 86
+  Sex: Female
+  Race: Black
+  Height (cm): 150.6
+  Weight (kg): 73.8
+  Smoker: Yes
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 110
+  BP Diastolic (mmHg): 83
+  Heart Rate (bpm): 92
+  Respiratory Rate: 19
+  Temperature (C): 36.6
+  SpO2 (pct): 90
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 15.7
+  WBC (10e9/L): 12.3
+  Platelets (10e9/L): 254
+  Glucose (mg/dL): 125
+  Creatinine (mg/dL): 0.69
+  ALT (U/L): 90
+  AST (U/L): 28
+  Albumin (g/dL): 5.0
+  Sodium (mmol/L): 145
+  Potassium (mmol/L): 5.1
+  Calcium (mg/dL): 8.8
+
+  Disease Staging
+  ---------------
+  ECOG Status: 1
+  Primary Diagnosis: Renal cell carcinoma
+  Primary Diagnosis ICD-10: C64.9
+  Diagnosis Date: 2021-05-17
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Doxorubicin
+  Medication 1 Dose (mg): 10.4
+  Medication 1 Frequency: BID
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Dexamethasone
+  Medication 2 Dose (mg): 294.9
+  Medication 2 Frequency: TID
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Peripheral neuropathy
+  Adverse Event 1 Grade: 3
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Recovering
+  Adverse Event 1 Onset Date: 2022-02-19
+  Adverse Event 2 Term: Hypertension
+  Adverse Event 2 Grade: 1
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Resolved
+  Adverse Event 2 Onset Date: 2022-02-17
+  Adverse Event 3 Term: Anemia
+  Adverse Event 3 Grade: 3
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2021-12-29
+
+================================================================
+PATIENT RECORD 35
+================================================================
+Patient ID: PT-0035
+Enrollment Date: 2023-09-24
+Site Name: Southwest Hematology Clinic, Phoenix AZ
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Charles
+  Last Name: Garcia
+  Age (years): 71
+  Sex: Male
+  Race: Asian
+  Height (cm): 181.6
+  Weight (kg): 86.7
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 143
+  BP Diastolic (mmHg): 71
+  Heart Rate (bpm): 57
+  Respiratory Rate: 19
+  Temperature (C): 37.9
+  SpO2 (pct): 93
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 13.1
+  WBC (10e9/L): 5.9
+  Platelets (10e9/L): 367
+  Glucose (mg/dL): 185
+  Creatinine (mg/dL): 0.87
+  ALT (U/L): 26
+  AST (U/L): 44
+  Albumin (g/dL): 4.4
+  Sodium (mmol/L): 142
+  Potassium (mmol/L): 3.4
+  Calcium (mg/dL): 10.0
+
+  Disease Staging
+  ---------------
+  ECOG Status: 0
+  Primary Diagnosis: Acute myeloid leukemia
+  Primary Diagnosis ICD-10: C92.00
+  Diagnosis Date: 2022-04-19
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Rituximab
+  Medication 1 Dose (mg): 469.3
+  Medication 1 Frequency: QID
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Rituximab
+  Medication 2 Dose (mg): 259.8
+  Medication 2 Frequency: QID
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Fatigue
+  Adverse Event 1 Grade: 1
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Recovering
+  Adverse Event 1 Onset Date: 2022-05-17
+  Adverse Event 2 Term: Febrile neutropenia
+  Adverse Event 2 Grade: 2
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovered
+  Adverse Event 2 Onset Date: 2022-02-21
+  Adverse Event 3 Term: Febrile neutropenia
+  Adverse Event 3 Grade: 1
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Resolved
+  Adverse Event 3 Onset Date: 2023-04-12
+
+================================================================
+PATIENT RECORD 36
+================================================================
+Patient ID: PT-0036
+Enrollment Date: 2023-05-05
+Site Name: Riverside Oncology Institute, Chicago IL
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Karen
+  Last Name: Scott
+  Age (years): 62
+  Sex: Female
+  Race: Black
+  Height (cm): 169.2
+  Weight (kg): 89.6
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 152
+  BP Diastolic (mmHg): 62
+  Heart Rate (bpm): 103
+  Respiratory Rate: 12
+  Temperature (C): 37.7
+  SpO2 (pct): 90
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 13.9
+  WBC (10e9/L): 8.3
+  Platelets (10e9/L): 236
+  Glucose (mg/dL): 131
+  Creatinine (mg/dL): 0.83
+  ALT (U/L): 8
+  AST (U/L): 11
+  Albumin (g/dL): 4.5
+  Sodium (mmol/L): 142
+  Potassium (mmol/L): 5.1
+  Calcium (mg/dL): 8.5
+
+  Disease Staging
+  ---------------
+  ECOG Status: 4
+  Primary Diagnosis: Malignant melanoma of skin
+  Primary Diagnosis ICD-10: C43.9
+  Diagnosis Date: 2019-03-19
+  Tumor Stage: II
+
+  Medications
+  -----------
+  Medication 1 Name: Paclitaxel
+  Medication 1 Dose (mg): 33.8
+  Medication 1 Frequency: BID
+  Medication 1 Route: Oral
+  Medication 2 Name: Ondansetron
+  Medication 2 Dose (mg): 387.1
+  Medication 2 Frequency: QD
+  Medication 2 Route: IV
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Nausea
+  Adverse Event 1 Grade: 3
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2023-01-25
+  Adverse Event 2 Term: Mucositis
+  Adverse Event 2 Grade: 5
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Resolved
+  Adverse Event 2 Onset Date: 2024-03-29
+  Adverse Event 3 Term: Fatigue
+  Adverse Event 3 Grade: 5
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Resolved
+  Adverse Event 3 Onset Date: 2021-10-14
+
+================================================================
+PATIENT RECORD 37
+================================================================
+Patient ID: PT-0037
+Enrollment Date: 2023-11-12
+Site Name: Lakeshore Medical University, Cleveland OH
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Mark
+  Last Name: Sanchez
+  Age (years): 31
+  Sex: Male
+  Race: Other
+  Height (cm): 150.6
+  Weight (kg): 116.0
+  Smoker: Yes
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 121
+  BP Diastolic (mmHg): 90
+  Heart Rate (bpm): 101
+  Respiratory Rate: 24
+  Temperature (C): 36.5
+  SpO2 (pct): 95
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 13.1
+  WBC (10e9/L): 9.2
+  Platelets (10e9/L): 96
+  Glucose (mg/dL): 199
+  Creatinine (mg/dL): 1.18
+  ALT (U/L): 94
+  AST (U/L): 96
+  Albumin (g/dL): 3.2
+  Sodium (mmol/L): 142
+  Potassium (mmol/L): 4.7
+  Calcium (mg/dL): 8.9
+
+  Disease Staging
+  ---------------
+  ECOG Status: 3
+  Primary Diagnosis: Malignant neoplasm of prostate
+  Primary Diagnosis ICD-10: C61
+  Diagnosis Date: 2022-03-02
+  Tumor Stage: IV
+
+  Medications
+  -----------
+  Medication 1 Name: Filgrastim
+  Medication 1 Dose (mg): 64.4
+  Medication 1 Frequency: QD
+  Medication 1 Route: Subcutaneous
+  Medication 2 Name: Nivolumab
+  Medication 2 Dose (mg): 455.7
+  Medication 2 Frequency: TID
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Fatigue
+  Adverse Event 1 Grade: 2
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Ongoing
+  Adverse Event 1 Onset Date: 2021-02-16
+  Adverse Event 2 Term: Neutropenia
+  Adverse Event 2 Grade: 4
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Ongoing
+  Adverse Event 2 Onset Date: 2023-04-01
+  Adverse Event 3 Term: Nausea
+  Adverse Event 3 Grade: 5
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Recovered
+  Adverse Event 3 Onset Date: 2023-04-02
+
+================================================================
+PATIENT RECORD 38
+================================================================
+Patient ID: PT-0038
+Enrollment Date: 2023-09-24
+Site Name: Lakeshore Medical University, Cleveland OH
+On Study: No
+
+  Demographics
+  ------------
+  First Name: Sandra
+  Last Name: Robinson
+  Age (years): 51
+  Sex: Male
+  Race: Asian
+  Height (cm): 167.5
+  Weight (kg): 71.0
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 162
+  BP Diastolic (mmHg): 85
+  Heart Rate (bpm): 76
+  Respiratory Rate: 13
+  Temperature (C): 36.7
+  SpO2 (pct): 95
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 16.0
+  WBC (10e9/L): 9.2
+  Platelets (10e9/L): 398
+  Glucose (mg/dL): 160
+  Creatinine (mg/dL): 2.13
+  ALT (U/L): 43
+  AST (U/L): 61
+  Albumin (g/dL): 4.7
+  Sodium (mmol/L): 144
+  Potassium (mmol/L): 3.5
+  Calcium (mg/dL): 8.4
+
+  Disease Staging
+  ---------------
+  ECOG Status: 3
+  Primary Diagnosis: Malignant neoplasm of breast
+  Primary Diagnosis ICD-10: C50.911
+  Diagnosis Date: 2021-06-21
+  Tumor Stage: I
+
+  Medications
+  -----------
+  Medication 1 Name: Dexamethasone
+  Medication 1 Dose (mg): 12.3
+  Medication 1 Frequency: QID
+  Medication 1 Route: Intramuscular
+  Medication 2 Name: Paclitaxel
+  Medication 2 Dose (mg): 492.9
+  Medication 2 Frequency: QID
+  Medication 2 Route: Intramuscular
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Anemia
+  Adverse Event 1 Grade: 5
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Fatal
+  Adverse Event 1 Onset Date: 2022-09-15
+  Adverse Event 2 Term: Diarrhea
+  Adverse Event 2 Grade: 1
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Fatal
+  Adverse Event 2 Onset Date: 2023-09-16
+  Adverse Event 3 Term: Alopecia
+  Adverse Event 3 Grade: 1
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2022-08-26
+
+================================================================
+PATIENT RECORD 39
+================================================================
+Patient ID: PT-0039
+Enrollment Date: 2023-04-10
+Site Name: Memorial Cancer Center, Boston MA
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: William
+  Last Name: Thompson
+  Age (years): 83
+  Sex: Female
+  Race: White
+  Height (cm): 166.8
+  Weight (kg): 61.8
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 140
+  BP Diastolic (mmHg): 71
+  Heart Rate (bpm): 107
+  Respiratory Rate: 21
+  Temperature (C): 37.1
+  SpO2 (pct): 94
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 10.7
+  WBC (10e9/L): 11.3
+  Platelets (10e9/L): 272
+  Glucose (mg/dL): 183
+  Creatinine (mg/dL): 1.99
+  ALT (U/L): 44
+  AST (U/L): 84
+  Albumin (g/dL): 3.3
+  Sodium (mmol/L): 144
+  Potassium (mmol/L): 4.6
+  Calcium (mg/dL): 9.5
+
+  Disease Staging
+  ---------------
+  ECOG Status: 2
+  Primary Diagnosis: Malignant neoplasm of ovary
+  Primary Diagnosis ICD-10: C56.9
+  Diagnosis Date: 2019-05-26
+  Tumor Stage: IIIA
+
+  Medications
+  -----------
+  Medication 1 Name: Doxorubicin
+  Medication 1 Dose (mg): 325.0
+  Medication 1 Frequency: QD
+  Medication 1 Route: Oral
+  Medication 2 Name: Letrozole
+  Medication 2 Dose (mg): 348.7
+  Medication 2 Frequency: TID
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Alopecia
+  Adverse Event 1 Grade: 5
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2022-12-21
+  Adverse Event 2 Term: Nausea
+  Adverse Event 2 Grade: 1
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovering
+  Adverse Event 2 Onset Date: 2022-02-26
+  Adverse Event 3 Term: Rash
+  Adverse Event 3 Grade: 3
+  Adverse Event 3 Serious: Yes
+  Adverse Event 3 Outcome: Resolved
+  Adverse Event 3 Onset Date: 2024-04-15
+
+================================================================
+PATIENT RECORD 40
+================================================================
+Patient ID: PT-0040
+Enrollment Date: 2023-09-15
+Site Name: Lakeshore Medical University, Cleveland OH
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Linda
+  Last Name: Walker
+  Age (years): 68
+  Sex: Female
+  Race: White
+  Height (cm): 161.1
+  Weight (kg): 112.2
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 142
+  BP Diastolic (mmHg): 82
+  Heart Rate (bpm): 97
+  Respiratory Rate: 19
+  Temperature (C): 37.6
+  SpO2 (pct): 100
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 12.5
+  WBC (10e9/L): 12.0
+  Platelets (10e9/L): 417
+  Glucose (mg/dL): 108
+  Creatinine (mg/dL): 1.03
+  ALT (U/L): 68
+  AST (U/L): 13
+  Albumin (g/dL): 3.0
+  Sodium (mmol/L): 141
+  Potassium (mmol/L): 3.2
+  Calcium (mg/dL): 9.2
+
+  Disease Staging
+  ---------------
+  ECOG Status: 1
+  Primary Diagnosis: Malignant neoplasm of breast
+  Primary Diagnosis ICD-10: C50.911
+  Diagnosis Date: 2020-02-22
+  Tumor Stage: II
+
+  Medications
+  -----------
+  Medication 1 Name: Metformin
+  Medication 1 Dose (mg): 125.5
+  Medication 1 Frequency: QD
+  Medication 1 Route: Oral
+  Medication 2 Name: Nivolumab
+  Medication 2 Dose (mg): 417.8
+  Medication 2 Frequency: TID
+  Medication 2 Route: Subcutaneous
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Neutropenia
+  Adverse Event 1 Grade: 2
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2022-03-27
+  Adverse Event 2 Term: Nausea
+  Adverse Event 2 Grade: 3
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovering
+  Adverse Event 2 Onset Date: 2023-06-23
+  Adverse Event 3 Term: Diarrhea
+  Adverse Event 3 Grade: 5
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Resolved
+  Adverse Event 3 Onset Date: 2023-03-31
+
+================================================================
+PATIENT RECORD 41
+================================================================
+Patient ID: PT-0041
+Enrollment Date: 2022-09-05
+Site Name: Memorial Cancer Center, Boston MA
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: James
+  Last Name: Wilson
+  Age (years): 59
+  Sex: Female
+  Race: Black
+  Height (cm): 168.3
+  Weight (kg): 118.6
+  Smoker: Yes
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 102
+  BP Diastolic (mmHg): 60
+  Heart Rate (bpm): 82
+  Respiratory Rate: 20
+  Temperature (C): 37.6
+  SpO2 (pct): 92
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 15.6
+  WBC (10e9/L): 3.1
+  Platelets (10e9/L): 257
+  Glucose (mg/dL): 96
+  Creatinine (mg/dL): 0.86
+  ALT (U/L): 21
+  AST (U/L): 69
+  Albumin (g/dL): 4.6
+  Sodium (mmol/L): 145
+  Potassium (mmol/L): 4.2
+  Calcium (mg/dL): 9.9
+
+  Disease Staging
+  ---------------
+  ECOG Status: 3
+  Primary Diagnosis: Renal cell carcinoma
+  Primary Diagnosis ICD-10: C64.9
+  Diagnosis Date: 2022-02-06
+  Tumor Stage: I
+
+  Medications
+  -----------
+  Medication 1 Name: Doxorubicin
+  Medication 1 Dose (mg): 193.0
+  Medication 1 Frequency: QID
+  Medication 1 Route: Subcutaneous
+  Medication 2 Name: Dexamethasone
+  Medication 2 Dose (mg): 377.7
+  Medication 2 Frequency: QD
+  Medication 2 Route: Intramuscular
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Peripheral neuropathy
+  Adverse Event 1 Grade: 5
+  Adverse Event 1 Serious: Yes
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2023-10-19
+  Adverse Event 2 Term: Diarrhea
+  Adverse Event 2 Grade: 5
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Resolved
+  Adverse Event 2 Onset Date: 2023-09-19
+  Adverse Event 3 Term: Hypertension
+  Adverse Event 3 Grade: 2
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2023-06-27
+
+================================================================
+PATIENT RECORD 42
+================================================================
+Patient ID: PT-0042
+Enrollment Date: 2023-05-23
+Site Name: Memorial Cancer Center, Boston MA
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Barbara
+  Last Name: Harris
+  Age (years): 66
+  Sex: Male
+  Race: White
+  Height (cm): 187.9
+  Weight (kg): 51.4
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 111
+  BP Diastolic (mmHg): 67
+  Heart Rate (bpm): 59
+  Respiratory Rate: 23
+  Temperature (C): 37.6
+  SpO2 (pct): 96
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 15.7
+  WBC (10e9/L): 5.3
+  Platelets (10e9/L): 419
+  Glucose (mg/dL): 209
+  Creatinine (mg/dL): 1.08
+  ALT (U/L): 114
+  AST (U/L): 107
+  Albumin (g/dL): 2.9
+  Sodium (mmol/L): 145
+  Potassium (mmol/L): 4.1
+  Calcium (mg/dL): 8.2
+
+  Disease Staging
+  ---------------
+  ECOG Status: 0
+  Primary Diagnosis: Renal cell carcinoma
+  Primary Diagnosis ICD-10: C64.9
+  Diagnosis Date: 2020-03-25
+  Tumor Stage: IV
+
+  Medications
+  -----------
+  Medication 1 Name: Dexamethasone
+  Medication 1 Dose (mg): 26.1
+  Medication 1 Frequency: QD
+  Medication 1 Route: Oral
+  Medication 2 Name: Cisplatin
+  Medication 2 Dose (mg): 150.2
+  Medication 2 Frequency: QD
+  Medication 2 Route: Intramuscular
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Anemia
+  Adverse Event 1 Grade: 1
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Recovered
+  Adverse Event 1 Onset Date: 2022-11-18
+  Adverse Event 2 Term: Neutropenia
+  Adverse Event 2 Grade: 1
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Recovered
+  Adverse Event 2 Onset Date: 2021-02-14
+  Adverse Event 3 Term: Neutropenia
+  Adverse Event 3 Grade: 1
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2023-06-21
+
+================================================================
+PATIENT RECORD 43
+================================================================
+Patient ID: PT-0043
+Enrollment Date: 2023-11-11
+Site Name: Southwest Hematology Clinic, Phoenix AZ
+On Study: Yes
+
+  Demographics
+  ------------
+  First Name: Charles
+  Last Name: Wright
+  Age (years): 73
+  Sex: Male
+  Race: Black
+  Height (cm): 189.8
+  Weight (kg): 98.9
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 136
+  BP Diastolic (mmHg): 71
+  Heart Rate (bpm): 89
+  Respiratory Rate: 15
+  Temperature (C): 37.3
+  SpO2 (pct): 98
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 14.0
+  WBC (10e9/L): 3.4
+  Platelets (10e9/L): 99
+  Glucose (mg/dL): 182
+  Creatinine (mg/dL): 1.34
+  ALT (U/L): 20
+  AST (U/L): 86
+  Albumin (g/dL): 4.2
+  Sodium (mmol/L): 142
+  Potassium (mmol/L): 5.3
+  Calcium (mg/dL): 10.2
+
+  Disease Staging
+  ---------------
+  ECOG Status: 1
+  Primary Diagnosis: Malignant neoplasm of pancreas
+  Primary Diagnosis ICD-10: C25.9
+  Diagnosis Date: 2019-03-06
+  Tumor Stage: IIIB
+
+  Medications
+  -----------
+  Medication 1 Name: Dexamethasone
+  Medication 1 Dose (mg): 262.0
+  Medication 1 Frequency: QD
+  Medication 1 Route: Subcutaneous
+  Medication 2 Name: Carboplatin
+  Medication 2 Dose (mg): 154.5
+  Medication 2 Frequency: QD
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Hypertension
+  Adverse Event 1 Grade: 2
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Fatal
+  Adverse Event 1 Onset Date: 2021-01-23
+  Adverse Event 2 Term: Peripheral neuropathy
+  Adverse Event 2 Grade: 5
+  Adverse Event 2 Serious: No
+  Adverse Event 2 Outcome: Ongoing
+  Adverse Event 2 Onset Date: 2021-12-23
+  Adverse Event 3 Term: Nausea
+  Adverse Event 3 Grade: 4
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2021-06-09
+
+================================================================
+PATIENT RECORD 44
+================================================================
+Patient ID: PT-0044
+Enrollment Date: 2023-11-12
+Site Name: Memorial Cancer Center, Boston MA
+On Study: No
+
+  Demographics
+  ------------
+  First Name: Donna
+  Last Name: Martin
+  Age (years): 46
+  Sex: Male
+  Race: Native American
+  Height (cm): 161.3
+  Weight (kg): 80.5
+  Smoker: No
+
+  Vital Signs
+  -----------
+  BP Systolic (mmHg): 120
+  BP Diastolic (mmHg): 84
+  Heart Rate (bpm): 66
+  Respiratory Rate: 19
+  Temperature (C): 37.7
+  SpO2 (pct): 94
+
+  Laboratory Results
+  ------------------
+  Hemoglobin (g/dL): 14.6
+  WBC (10e9/L): 11.0
+  Platelets (10e9/L): 148
+  Glucose (mg/dL): 167
+  Creatinine (mg/dL): 0.92
+  ALT (U/L): 32
+  AST (U/L): 29
+  Albumin (g/dL): 3.2
+  Sodium (mmol/L): 144
+  Potassium (mmol/L): 4.4
+  Calcium (mg/dL): 8.4
+
+  Disease Staging
+  ---------------
+  ECOG Status: 1
+  Primary Diagnosis: Malignant melanoma of skin
+  Primary Diagnosis ICD-10: C43.9
+  Diagnosis Date: 2019-01-06
+  Tumor Stage: IIIB
+
+  Medications
+  -----------
+  Medication 1 Name: Metformin
+  Medication 1 Dose (mg): 315.3
+  Medication 1 Frequency: PRN
+  Medication 1 Route: Subcutaneous
+  Medication 2 Name: Dexamethasone
+  Medication 2 Dose (mg): 66.4
+  Medication 2 Frequency: PRN
+  Medication 2 Route: Oral
+
+  Adverse Events
+  --------------
+  Adverse Event 1 Term: Fatigue
+  Adverse Event 1 Grade: 1
+  Adverse Event 1 Serious: No
+  Adverse Event 1 Outcome: Ongoing
+  Adverse Event 1 Onset Date: 2023-03-04
+  Adverse Event 2 Term: Neutropenia
+  Adverse Event 2 Grade: 5
+  Adverse Event 2 Serious: Yes
+  Adverse Event 2 Outcome: Recovering
+  Adverse Event 2 Onset Date: 2021-01-03
+  Adverse Event 3 Term: Alopecia
+  Adverse Event 3 Grade: 5
+  Adverse Event 3 Serious: No
+  Adverse Event 3 Outcome: Fatal
+  Adverse Event 3 Onset Date: 2021-12-11
+

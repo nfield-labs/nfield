@@ -1,0 +1,5719 @@
+[
+  {
+    "method": "nfield",
+    "fixture": "cre_rent_roll",
+    "budget": "constrained",
+    "seed": 0,
+    "fields_total": 4000,
+    "fields_extracted": 4000,
+    "coverage": 1.0,
+    "k": 95,
+    "k_min": 94,
+    "optimality_gap": 0.010638297872340425,
+    "call_failed": 0,
+    "elapsed_seconds": 40.756,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "property": {
+        "property_name": "Beacon Commons",
+        "street_address": "5135 Granite Ave",
+        "city": "Austin",
+        "state": "TX",
+        "zip_code": "78701",
+        "property_subtype": "Distribution",
+        "year_built": 2001,
+        "year_renovated": 2022,
+        "total_rentable_sqft": 1136617,
+        "total_units": 120,
+        "stories": 34,
+        "parking_spaces": 1080,
+        "occupancy_pct": 96.7,
+        "weighted_avg_lease_term_months": 45.9,
+        "owner_entity": "Cedar Group REIT",
+        "property_manager": "Delta Management",
+        "leasing_agent": "Harbor Capital",
+        "lender": "Forge National Bank",
+        "loan_number": "CMBS-924034",
+        "loan_balance_usd": 127274531,
+        "interest_rate_pct": 7.09,
+        "maturity_date": "2033-08-26",
+        "cap_rate_pct": 6.91,
+        "gross_potential_rent_usd": 25175265,
+        "vacancy_loss_usd": 1225377,
+        "effective_gross_income_usd": 23949888,
+        "operating_expenses_usd": 9202678,
+        "net_operating_income_usd": 14747210,
+        "as_of_date": "2024-09-30",
+        "market": "Austin",
+        "submarket": "Austin CBD",
+        "appraised_value_usd": 213381713,
+        "ltv_pct": 59.6,
+        "debt_service_coverage_ratio": 1.72,
+        "price_per_sqft_usd": 187.73,
+        "tax_parcel_id": "25-3801-470",
+        "zoning": "C-2",
+        "flood_zone": "AE",
+        "report_prepared_by": "Beacon Advisory",
+        "report_id": "RR-2024-7201"
+      },
+      "units": {
+        "unit_1": {
+          "identity": {
+            "unit_number": "Suite 100",
+            "floor": 8,
+            "space_type": "Retail",
+            "rentable_sqft": 42904,
+            "usable_sqft": 36107,
+            "load_factor_pct": 18.82
+          },
+          "tenant": {
+            "tenant_name": "Beacon Group",
+            "dba": "Atlas Co",
+            "industry": "Government",
+            "credit_rating": "B",
+            "tenant_since": "2020-03-26",
+            "guarantor": "Atlas Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1000",
+            "lease_status": "HoldOver",
+            "commencement_date": "2022-06-15",
+            "expiration_date": "2025-05-30",
+            "term_months": 36,
+            "base_rent_annual_usd": 2509884,
+            "base_rent_psf_usd": 58.5,
+            "annual_escalation_pct": 2.81,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 6.81,
+            "real_estate_tax_psf_usd": 4.4,
+            "insurance_psf_usd": 2.08,
+            "management_fee_pct": 3.82
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 18.75,
+            "security_deposit_usd": 418314,
+            "letter_of_credit_usd": 796588,
+            "percentage_rent_pct": 3.24
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_2": {
+          "identity": {
+            "unit_number": "Suite 105",
+            "floor": 21,
+            "space_type": "Industrial",
+            "rentable_sqft": 39708,
+            "usable_sqft": 34739,
+            "load_factor_pct": 14.3
+          },
+          "tenant": {
+            "tenant_name": "Evergreen Partners",
+            "dba": "Atlas LLC",
+            "industry": "Technology",
+            "credit_rating": "BBB",
+            "tenant_since": "2019-11-06",
+            "guarantor": "Evergreen Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1001",
+            "lease_status": "HoldOver",
+            "commencement_date": "2020-05-23",
+            "expiration_date": "2023-05-08",
+            "term_months": 36,
+            "base_rent_annual_usd": 1143987,
+            "base_rent_psf_usd": 28.81,
+            "annual_escalation_pct": 3.15,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 7.68,
+            "real_estate_tax_psf_usd": 6.46,
+            "insurance_psf_usd": 1.06,
+            "management_fee_pct": 4.09
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 18.69,
+            "security_deposit_usd": 95332,
+            "letter_of_credit_usd": 478160,
+            "percentage_rent_pct": 2.18
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_3": {
+          "identity": {
+            "unit_number": "Suite 110",
+            "floor": 20,
+            "space_type": "Medical",
+            "rentable_sqft": 3470,
+            "usable_sqft": 2999,
+            "load_factor_pct": 15.71
+          },
+          "tenant": {
+            "tenant_name": "Atlas Systems",
+            "dba": "Atlas LLC",
+            "industry": "Healthcare",
+            "credit_rating": "BB",
+            "tenant_since": "2021-05-09",
+            "guarantor": "Harbor Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1002",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2023-03-05",
+            "expiration_date": "2033-01-11",
+            "term_months": 120,
+            "base_rent_annual_usd": 210282,
+            "base_rent_psf_usd": 60.6,
+            "annual_escalation_pct": 3.12,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 4.24,
+            "real_estate_tax_psf_usd": 4.07,
+            "insurance_psf_usd": 1.89,
+            "management_fee_pct": 3.54
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 83.29,
+            "security_deposit_usd": 35047,
+            "letter_of_credit_usd": 91636,
+            "percentage_rent_pct": 2.31
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_4": {
+          "identity": {
+            "unit_number": "Suite 115",
+            "floor": 11,
+            "space_type": "Medical",
+            "rentable_sqft": 36871,
+            "usable_sqft": 34829,
+            "load_factor_pct": 5.86
+          },
+          "tenant": {
+            "tenant_name": "Forge Industries",
+            "dba": "Forge LLC",
+            "industry": "Government",
+            "credit_rating": "B",
+            "tenant_since": "2019-06-08",
+            "guarantor": "Beacon Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1003",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2019-09-18",
+            "expiration_date": "2024-08-22",
+            "term_months": 60,
+            "base_rent_annual_usd": 1854611,
+            "base_rent_psf_usd": 50.3,
+            "annual_escalation_pct": 3.1,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 7.96,
+            "real_estate_tax_psf_usd": 6.56,
+            "insurance_psf_usd": 0.91,
+            "management_fee_pct": 2.07
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 17.62,
+            "security_deposit_usd": 154550,
+            "letter_of_credit_usd": 463989,
+            "percentage_rent_pct": 6.92
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_5": {
+          "identity": {
+            "unit_number": "Suite 120",
+            "floor": 4,
+            "space_type": "Flex",
+            "rentable_sqft": 21323,
+            "usable_sqft": 17664,
+            "load_factor_pct": 20.71
+          },
+          "tenant": {
+            "tenant_name": "Forge Partners",
+            "dba": "Cedar LLC",
+            "industry": "Finance",
+            "credit_rating": "NR",
+            "tenant_since": "2019-02-28",
+            "guarantor": "Delta Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1004",
+            "lease_status": "Pending",
+            "commencement_date": "2021-05-29",
+            "expiration_date": "2031-08-05",
+            "term_months": 124,
+            "base_rent_annual_usd": 1222021,
+            "base_rent_psf_usd": 57.31,
+            "annual_escalation_pct": 3.21,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 5.23,
+            "real_estate_tax_psf_usd": 3.18,
+            "insurance_psf_usd": 1.79,
+            "management_fee_pct": 4.35
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 20.41,
+            "security_deposit_usd": 101835,
+            "letter_of_credit_usd": 543230,
+            "percentage_rent_pct": 7.69
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_6": {
+          "identity": {
+            "unit_number": "Suite 125",
+            "floor": 1,
+            "space_type": "Flex",
+            "rentable_sqft": 15905,
+            "usable_sqft": 13889,
+            "load_factor_pct": 14.52
+          },
+          "tenant": {
+            "tenant_name": "Granite Holdings",
+            "dba": "Harbor Co",
+            "industry": "Retail",
+            "credit_rating": "BBB",
+            "tenant_since": "2022-12-09",
+            "guarantor": "Evergreen Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1005",
+            "lease_status": "Vacant",
+            "commencement_date": "2023-10-02",
+            "expiration_date": "2033-08-10",
+            "term_months": 120,
+            "base_rent_annual_usd": 318577,
+            "base_rent_psf_usd": 20.03,
+            "annual_escalation_pct": 2.43,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 3.95,
+            "real_estate_tax_psf_usd": 4.6,
+            "insurance_psf_usd": 1.86,
+            "management_fee_pct": 3.41
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 30.79,
+            "security_deposit_usd": 79644,
+            "letter_of_credit_usd": 70518,
+            "percentage_rent_pct": 5.06
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_7": {
+          "identity": {
+            "unit_number": "Suite 130",
+            "floor": 8,
+            "space_type": "Retail",
+            "rentable_sqft": 5799,
+            "usable_sqft": 5111,
+            "load_factor_pct": 13.46
+          },
+          "tenant": {
+            "tenant_name": "Evergreen Group",
+            "dba": "Cedar Inc",
+            "industry": "Finance",
+            "credit_rating": "B",
+            "tenant_since": "2018-11-19",
+            "guarantor": "Harbor Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1006",
+            "lease_status": "HoldOver",
+            "commencement_date": "2020-03-20",
+            "expiration_date": "2027-02-12",
+            "term_months": 84,
+            "base_rent_annual_usd": 239266,
+            "base_rent_psf_usd": 41.26,
+            "annual_escalation_pct": 3.43,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 8.23,
+            "real_estate_tax_psf_usd": 3.9,
+            "insurance_psf_usd": 1.86,
+            "management_fee_pct": 4.33
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 63.39,
+            "security_deposit_usd": 19938,
+            "letter_of_credit_usd": 89362,
+            "percentage_rent_pct": 5.39
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 120,
+            "has_termination_option": true
+          }
+        },
+        "unit_8": {
+          "identity": {
+            "unit_number": "Suite 135",
+            "floor": 28,
+            "space_type": "Medical",
+            "rentable_sqft": 18483,
+            "usable_sqft": 16231,
+            "load_factor_pct": 13.87
+          },
+          "tenant": {
+            "tenant_name": "Cedar Holdings",
+            "dba": "Harbor Co",
+            "industry": "Logistics",
+            "credit_rating": "A",
+            "tenant_since": "2018-02-03",
+            "guarantor": "Forge Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1007",
+            "lease_status": "Vacant",
+            "commencement_date": "2019-01-21",
+            "expiration_date": "2023-12-26",
+            "term_months": 60,
+            "base_rent_annual_usd": 921562,
+            "base_rent_psf_usd": 49.86,
+            "annual_escalation_pct": 2.13,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 6.9,
+            "real_estate_tax_psf_usd": 2.75,
+            "insurance_psf_usd": 2.04,
+            "management_fee_pct": 2.24
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 22.56,
+            "security_deposit_usd": 230390,
+            "letter_of_credit_usd": 306707,
+            "percentage_rent_pct": 7.15
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_9": {
+          "identity": {
+            "unit_number": "Suite 140",
+            "floor": 29,
+            "space_type": "Retail",
+            "rentable_sqft": 34570,
+            "usable_sqft": 31692,
+            "load_factor_pct": 9.08
+          },
+          "tenant": {
+            "tenant_name": "Harbor Group",
+            "dba": "Delta LLC",
+            "industry": "Government",
+            "credit_rating": "NR",
+            "tenant_since": "2020-12-16",
+            "guarantor": "Delta Holdings"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1008",
+            "lease_status": "HoldOver",
+            "commencement_date": "2022-01-15",
+            "expiration_date": "2031-11-24",
+            "term_months": 120,
+            "base_rent_annual_usd": 1998491,
+            "base_rent_psf_usd": 57.81,
+            "annual_escalation_pct": 3.81,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 8.86,
+            "real_estate_tax_psf_usd": 5.21,
+            "insurance_psf_usd": 2.27,
+            "management_fee_pct": 3.24
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 80.32,
+            "security_deposit_usd": 333081,
+            "letter_of_credit_usd": 317669,
+            "percentage_rent_pct": 3.05
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_10": {
+          "identity": {
+            "unit_number": "Suite 145",
+            "floor": 12,
+            "space_type": "Retail",
+            "rentable_sqft": 43838,
+            "usable_sqft": 40156,
+            "load_factor_pct": 9.17
+          },
+          "tenant": {
+            "tenant_name": "Harbor Capital",
+            "dba": "Forge Co",
+            "industry": "Healthcare",
+            "credit_rating": "AA",
+            "tenant_since": "2019-02-09",
+            "guarantor": "Atlas Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1009",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2020-08-22",
+            "expiration_date": "2030-07-01",
+            "term_months": 120,
+            "base_rent_annual_usd": 2283521,
+            "base_rent_psf_usd": 52.09,
+            "annual_escalation_pct": 3.45,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 5.29,
+            "real_estate_tax_psf_usd": 3.5,
+            "insurance_psf_usd": 1.73,
+            "management_fee_pct": 3.53
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 28.96,
+            "security_deposit_usd": 570880,
+            "letter_of_credit_usd": 381359,
+            "percentage_rent_pct": 1.34
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_11": {
+          "identity": {
+            "unit_number": "Suite 150",
+            "floor": 22,
+            "space_type": "Retail",
+            "rentable_sqft": 13541,
+            "usable_sqft": 12420,
+            "load_factor_pct": 9.03
+          },
+          "tenant": {
+            "tenant_name": "Forge Logistics",
+            "dba": "Granite Inc",
+            "industry": "Technology",
+            "credit_rating": "BB",
+            "tenant_since": "2019-05-30",
+            "guarantor": "Evergreen Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1010",
+            "lease_status": "Vacant",
+            "commencement_date": "2020-09-13",
+            "expiration_date": "2030-07-23",
+            "term_months": 120,
+            "base_rent_annual_usd": 515641,
+            "base_rent_psf_usd": 38.08,
+            "annual_escalation_pct": 3.88,
+            "free_rent_months": 2
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 3.35,
+            "real_estate_tax_psf_usd": 4.65,
+            "insurance_psf_usd": 1.68,
+            "management_fee_pct": 4.41
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 19.35,
+            "security_deposit_usd": 128910,
+            "letter_of_credit_usd": 205347,
+            "percentage_rent_pct": 5.82
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 270,
+            "has_termination_option": true
+          }
+        },
+        "unit_12": {
+          "identity": {
+            "unit_number": "Suite 155",
+            "floor": 32,
+            "space_type": "Industrial",
+            "rentable_sqft": 40863,
+            "usable_sqft": 36264,
+            "load_factor_pct": 12.68
+          },
+          "tenant": {
+            "tenant_name": "Cedar Group",
+            "dba": "Cedar LLC",
+            "industry": "Logistics",
+            "credit_rating": "A",
+            "tenant_since": "2022-06-10",
+            "guarantor": "Atlas Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1011",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2023-08-25",
+            "expiration_date": "2026-08-09",
+            "term_months": 36,
+            "base_rent_annual_usd": 1433474,
+            "base_rent_psf_usd": 35.08,
+            "annual_escalation_pct": 3.08,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 6.79,
+            "real_estate_tax_psf_usd": 3.33,
+            "insurance_psf_usd": 1.96,
+            "management_fee_pct": 3.1
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 52.09,
+            "security_deposit_usd": 238912,
+            "letter_of_credit_usd": 631300,
+            "percentage_rent_pct": 3.86
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_13": {
+          "identity": {
+            "unit_number": "Suite 160",
+            "floor": 14,
+            "space_type": "Flex",
+            "rentable_sqft": 38596,
+            "usable_sqft": 35633,
+            "load_factor_pct": 8.32
+          },
+          "tenant": {
+            "tenant_name": "Atlas Systems",
+            "dba": "Cedar Inc",
+            "industry": "Finance",
+            "credit_rating": "B",
+            "tenant_since": "2019-12-06",
+            "guarantor": "Delta Holdings"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1012",
+            "lease_status": "Active",
+            "commencement_date": "2021-04-26",
+            "expiration_date": "2028-03-20",
+            "term_months": 84,
+            "base_rent_annual_usd": 2277549,
+            "base_rent_psf_usd": 59.01,
+            "annual_escalation_pct": 3.08,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 5.68,
+            "real_estate_tax_psf_usd": 5.11,
+            "insurance_psf_usd": 0.67,
+            "management_fee_pct": 4.69
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 65.31,
+            "security_deposit_usd": 569387,
+            "letter_of_credit_usd": 408764,
+            "percentage_rent_pct": 4.69
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_14": {
+          "identity": {
+            "unit_number": "Suite 165",
+            "floor": 12,
+            "space_type": "Flex",
+            "rentable_sqft": 14471,
+            "usable_sqft": 13439,
+            "load_factor_pct": 7.68
+          },
+          "tenant": {
+            "tenant_name": "Granite Partners",
+            "dba": "Cedar Co",
+            "industry": "Retail",
+            "credit_rating": "AA",
+            "tenant_since": "2021-08-07",
+            "guarantor": "Cedar Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1013",
+            "lease_status": "Vacant",
+            "commencement_date": "2022-04-07",
+            "expiration_date": "2032-06-13",
+            "term_months": 124,
+            "base_rent_annual_usd": 885046,
+            "base_rent_psf_usd": 61.16,
+            "annual_escalation_pct": 2.74,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 8.39,
+            "real_estate_tax_psf_usd": 2.39,
+            "insurance_psf_usd": 0.8,
+            "management_fee_pct": 4.83
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 56.79,
+            "security_deposit_usd": 73753,
+            "letter_of_credit_usd": 311571,
+            "percentage_rent_pct": 0.87
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 120,
+            "has_termination_option": true
+          }
+        },
+        "unit_15": {
+          "identity": {
+            "unit_number": "Suite 170",
+            "floor": 25,
+            "space_type": "Office",
+            "rentable_sqft": 26090,
+            "usable_sqft": 22215,
+            "load_factor_pct": 17.44
+          },
+          "tenant": {
+            "tenant_name": "Evergreen Systems",
+            "dba": "Beacon Co",
+            "industry": "Logistics",
+            "credit_rating": "AAA",
+            "tenant_since": "2021-04-22",
+            "guarantor": "Forge Holdings"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1014",
+            "lease_status": "Active",
+            "commencement_date": "2021-07-08",
+            "expiration_date": "2028-06-01",
+            "term_months": 84,
+            "base_rent_annual_usd": 741738,
+            "base_rent_psf_usd": 28.43,
+            "annual_escalation_pct": 3.35,
+            "free_rent_months": 2
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 5.88,
+            "real_estate_tax_psf_usd": 4.19,
+            "insurance_psf_usd": 1.79,
+            "management_fee_pct": 4.76
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 36.24,
+            "security_deposit_usd": 61811,
+            "letter_of_credit_usd": 361761,
+            "percentage_rent_pct": 6.07
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_16": {
+          "identity": {
+            "unit_number": "Suite 175",
+            "floor": 29,
+            "space_type": "Retail",
+            "rentable_sqft": 35970,
+            "usable_sqft": 30873,
+            "load_factor_pct": 16.51
+          },
+          "tenant": {
+            "tenant_name": "Atlas Industries",
+            "dba": "Delta LLC",
+            "industry": "Government",
+            "credit_rating": "BB",
+            "tenant_since": "2018-04-16",
+            "guarantor": "Cedar Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1015",
+            "lease_status": "Vacant",
+            "commencement_date": "2020-05-25",
+            "expiration_date": "2030-08-01",
+            "term_months": 124,
+            "base_rent_annual_usd": 1003922,
+            "base_rent_psf_usd": 27.91,
+            "annual_escalation_pct": 3.92,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 5.74,
+            "real_estate_tax_psf_usd": 2.95,
+            "insurance_psf_usd": 2.49,
+            "management_fee_pct": 2.06
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 12.98,
+            "security_deposit_usd": 250980,
+            "letter_of_credit_usd": 363948,
+            "percentage_rent_pct": 7.26
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 180,
+            "has_termination_option": true
+          }
+        },
+        "unit_17": {
+          "identity": {
+            "unit_number": "Suite 180",
+            "floor": 22,
+            "space_type": "Industrial",
+            "rentable_sqft": 3687,
+            "usable_sqft": 3234,
+            "load_factor_pct": 14.01
+          },
+          "tenant": {
+            "tenant_name": "Delta Group",
+            "dba": "Atlas LLC",
+            "industry": "Retail",
+            "credit_rating": "BBB",
+            "tenant_since": "2019-10-28",
+            "guarantor": "Cedar Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1016",
+            "lease_status": "Pending",
+            "commencement_date": "2022-01-23",
+            "expiration_date": "2025-01-07",
+            "term_months": 36,
+            "base_rent_annual_usd": 176533,
+            "base_rent_psf_usd": 47.88,
+            "annual_escalation_pct": 3.34,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 4.46,
+            "real_estate_tax_psf_usd": 6.27,
+            "insurance_psf_usd": 1.86,
+            "management_fee_pct": 3.59
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 71.88,
+            "security_deposit_usd": 44133,
+            "letter_of_credit_usd": 33253,
+            "percentage_rent_pct": 6.8
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_18": {
+          "identity": {
+            "unit_number": "Suite 185",
+            "floor": 24,
+            "space_type": "Office",
+            "rentable_sqft": 7632,
+            "usable_sqft": 6617,
+            "load_factor_pct": 15.34
+          },
+          "tenant": {
+            "tenant_name": "Atlas Logistics",
+            "dba": "Forge Co",
+            "industry": "Healthcare",
+            "credit_rating": "BBB",
+            "tenant_since": "2021-01-12",
+            "guarantor": "Beacon Logistics"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1017",
+            "lease_status": "HoldOver",
+            "commencement_date": "2022-09-18",
+            "expiration_date": "2032-07-27",
+            "term_months": 120,
+            "base_rent_annual_usd": 471047,
+            "base_rent_psf_usd": 61.72,
+            "annual_escalation_pct": 3.44,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 8.43,
+            "real_estate_tax_psf_usd": 6.03,
+            "insurance_psf_usd": 1.78,
+            "management_fee_pct": 4.04
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 46.14,
+            "security_deposit_usd": 39253,
+            "letter_of_credit_usd": 64216,
+            "percentage_rent_pct": 5.8
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_19": {
+          "identity": {
+            "unit_number": "Suite 190",
+            "floor": 19,
+            "space_type": "Retail",
+            "rentable_sqft": 11098,
+            "usable_sqft": 9191,
+            "load_factor_pct": 20.75
+          },
+          "tenant": {
+            "tenant_name": "Harbor Capital",
+            "dba": "Evergreen Inc",
+            "industry": "Logistics",
+            "credit_rating": "AAA",
+            "tenant_since": "2022-02-13",
+            "guarantor": "Granite Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1018",
+            "lease_status": "Pending",
+            "commencement_date": "2023-05-16",
+            "expiration_date": "2026-04-30",
+            "term_months": 36,
+            "base_rent_annual_usd": 502073,
+            "base_rent_psf_usd": 45.24,
+            "annual_escalation_pct": 3.61,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 5.17,
+            "real_estate_tax_psf_usd": 3.57,
+            "insurance_psf_usd": 0.95,
+            "management_fee_pct": 4.43
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 59.15,
+            "security_deposit_usd": 83678,
+            "letter_of_credit_usd": 149160,
+            "percentage_rent_pct": 4.64
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_20": {
+          "identity": {
+            "unit_number": "Suite 195",
+            "floor": 2,
+            "space_type": "Flex",
+            "rentable_sqft": 12627,
+            "usable_sqft": 11414,
+            "load_factor_pct": 10.63
+          },
+          "tenant": {
+            "tenant_name": "Cedar Industries",
+            "dba": "Granite LLC",
+            "industry": "Logistics",
+            "credit_rating": "AAA",
+            "tenant_since": "2020-07-25",
+            "guarantor": "Forge Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1019",
+            "lease_status": "Vacant",
+            "commencement_date": "2022-12-30",
+            "expiration_date": "2033-03-07",
+            "term_months": 124,
+            "base_rent_annual_usd": 281960,
+            "base_rent_psf_usd": 22.33,
+            "annual_escalation_pct": 3.61,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 3.42,
+            "real_estate_tax_psf_usd": 4.37,
+            "insurance_psf_usd": 1.13,
+            "management_fee_pct": 2.06
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 59.7,
+            "security_deposit_usd": 70490,
+            "letter_of_credit_usd": 68314,
+            "percentage_rent_pct": 7.0
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 120,
+            "has_termination_option": true
+          }
+        },
+        "unit_21": {
+          "identity": {
+            "unit_number": "Suite 200",
+            "floor": 5,
+            "space_type": "Medical",
+            "rentable_sqft": 22215,
+            "usable_sqft": 19343,
+            "load_factor_pct": 14.85
+          },
+          "tenant": {
+            "tenant_name": "Delta Holdings",
+            "dba": "Cedar Inc",
+            "industry": "Healthcare",
+            "credit_rating": "NR",
+            "tenant_since": "2019-07-23",
+            "guarantor": "Cedar Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1020",
+            "lease_status": "Active",
+            "commencement_date": "2019-10-09",
+            "expiration_date": "2024-09-12",
+            "term_months": 60,
+            "base_rent_annual_usd": 625352,
+            "base_rent_psf_usd": 28.15,
+            "annual_escalation_pct": 2.85,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 7.69,
+            "real_estate_tax_psf_usd": 3.8,
+            "insurance_psf_usd": 2.3,
+            "management_fee_pct": 2.45
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 33.34,
+            "security_deposit_usd": 104225,
+            "letter_of_credit_usd": 80409,
+            "percentage_rent_pct": 2.02
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_22": {
+          "identity": {
+            "unit_number": "Suite 205",
+            "floor": 19,
+            "space_type": "Flex",
+            "rentable_sqft": 34040,
+            "usable_sqft": 32324,
+            "load_factor_pct": 5.31
+          },
+          "tenant": {
+            "tenant_name": "Harbor Capital",
+            "dba": "Delta Co",
+            "industry": "Healthcare",
+            "credit_rating": "A",
+            "tenant_since": "2020-08-26",
+            "guarantor": "Delta Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1021",
+            "lease_status": "Pending",
+            "commencement_date": "2022-11-27",
+            "expiration_date": "2027-11-01",
+            "term_months": 60,
+            "base_rent_annual_usd": 1568563,
+            "base_rent_psf_usd": 46.08,
+            "annual_escalation_pct": 3.13,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 7.68,
+            "real_estate_tax_psf_usd": 6.98,
+            "insurance_psf_usd": 1.16,
+            "management_fee_pct": 4.61
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 31.48,
+            "security_deposit_usd": 130713,
+            "letter_of_credit_usd": 698915,
+            "percentage_rent_pct": 3.92
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_23": {
+          "identity": {
+            "unit_number": "Suite 210",
+            "floor": 1,
+            "space_type": "Office",
+            "rentable_sqft": 23442,
+            "usable_sqft": 22175,
+            "load_factor_pct": 5.71
+          },
+          "tenant": {
+            "tenant_name": "Harbor Systems",
+            "dba": "Evergreen Co",
+            "industry": "Technology",
+            "credit_rating": "NR",
+            "tenant_since": "2017-12-19",
+            "guarantor": "Granite Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1022",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2019-06-16",
+            "expiration_date": "2026-05-10",
+            "term_months": 84,
+            "base_rent_annual_usd": 489000,
+            "base_rent_psf_usd": 20.86,
+            "annual_escalation_pct": 3.0,
+            "free_rent_months": 2
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 5.91,
+            "real_estate_tax_psf_usd": 6.62,
+            "insurance_psf_usd": 1.54,
+            "management_fee_pct": 4.08
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 13.11,
+            "security_deposit_usd": 122250,
+            "letter_of_credit_usd": 201608,
+            "percentage_rent_pct": 1.34
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_24": {
+          "identity": {
+            "unit_number": "Suite 215",
+            "floor": 27,
+            "space_type": "Industrial",
+            "rentable_sqft": 41773,
+            "usable_sqft": 36751,
+            "load_factor_pct": 13.66
+          },
+          "tenant": {
+            "tenant_name": "Delta Systems",
+            "dba": "Forge Co",
+            "industry": "Legal",
+            "credit_rating": "BBB",
+            "tenant_since": "2018-02-15",
+            "guarantor": "Beacon Logistics"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1023",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2020-01-10",
+            "expiration_date": "2022-12-25",
+            "term_months": 36,
+            "base_rent_annual_usd": 1134554,
+            "base_rent_psf_usd": 27.16,
+            "annual_escalation_pct": 2.59,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 3.82,
+            "real_estate_tax_psf_usd": 5.61,
+            "insurance_psf_usd": 1.89,
+            "management_fee_pct": 4.14
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 64.56,
+            "security_deposit_usd": 189092,
+            "letter_of_credit_usd": 455883,
+            "percentage_rent_pct": 3.93
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_25": {
+          "identity": {
+            "unit_number": "Suite 220",
+            "floor": 2,
+            "space_type": "Retail",
+            "rentable_sqft": 36282,
+            "usable_sqft": 29895,
+            "load_factor_pct": 21.36
+          },
+          "tenant": {
+            "tenant_name": "Cedar Capital",
+            "dba": "Beacon Inc",
+            "industry": "Healthcare",
+            "credit_rating": "BB",
+            "tenant_since": "2020-11-28",
+            "guarantor": "Beacon Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1024",
+            "lease_status": "HoldOver",
+            "commencement_date": "2022-08-01",
+            "expiration_date": "2025-07-16",
+            "term_months": 36,
+            "base_rent_annual_usd": 1164652,
+            "base_rent_psf_usd": 32.1,
+            "annual_escalation_pct": 3.65,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 7.07,
+            "real_estate_tax_psf_usd": 4.14,
+            "insurance_psf_usd": 0.95,
+            "management_fee_pct": 3.77
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 16.2,
+            "security_deposit_usd": 194108,
+            "letter_of_credit_usd": 564142,
+            "percentage_rent_pct": 0.2
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 270,
+            "has_termination_option": true
+          }
+        },
+        "unit_26": {
+          "identity": {
+            "unit_number": "Suite 225",
+            "floor": 3,
+            "space_type": "Medical",
+            "rentable_sqft": 39215,
+            "usable_sqft": 32887,
+            "load_factor_pct": 19.24
+          },
+          "tenant": {
+            "tenant_name": "Cedar Industries",
+            "dba": "Delta Co",
+            "industry": "Healthcare",
+            "credit_rating": "NR",
+            "tenant_since": "2023-01-01",
+            "guarantor": "Forge Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1025",
+            "lease_status": "Pending",
+            "commencement_date": "2023-08-22",
+            "expiration_date": "2033-06-30",
+            "term_months": 120,
+            "base_rent_annual_usd": 1441935,
+            "base_rent_psf_usd": 36.77,
+            "annual_escalation_pct": 3.86,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 5.45,
+            "real_estate_tax_psf_usd": 4.84,
+            "insurance_psf_usd": 1.11,
+            "management_fee_pct": 2.04
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 46.83,
+            "security_deposit_usd": 360483,
+            "letter_of_credit_usd": 209853,
+            "percentage_rent_pct": 5.68
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_27": {
+          "identity": {
+            "unit_number": "Suite 230",
+            "floor": 7,
+            "space_type": "Industrial",
+            "rentable_sqft": 5796,
+            "usable_sqft": 5052,
+            "load_factor_pct": 14.73
+          },
+          "tenant": {
+            "tenant_name": "Delta Partners",
+            "dba": "Atlas LLC",
+            "industry": "Healthcare",
+            "credit_rating": "AA",
+            "tenant_since": "2020-07-09",
+            "guarantor": "Forge Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1026",
+            "lease_status": "HoldOver",
+            "commencement_date": "2022-11-18",
+            "expiration_date": "2029-10-12",
+            "term_months": 84,
+            "base_rent_annual_usd": 223667,
+            "base_rent_psf_usd": 38.59,
+            "annual_escalation_pct": 2.33,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 3.26,
+            "real_estate_tax_psf_usd": 3.67,
+            "insurance_psf_usd": 1.91,
+            "management_fee_pct": 3.17
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 11.94,
+            "security_deposit_usd": 55916,
+            "letter_of_credit_usd": 23005,
+            "percentage_rent_pct": 0.64
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_28": {
+          "identity": {
+            "unit_number": "Suite 235",
+            "floor": 26,
+            "space_type": "Flex",
+            "rentable_sqft": 27394,
+            "usable_sqft": 23822,
+            "load_factor_pct": 14.99
+          },
+          "tenant": {
+            "tenant_name": "Delta Capital",
+            "dba": "Evergreen Co",
+            "industry": "Retail",
+            "credit_rating": "BB",
+            "tenant_since": "2019-11-05",
+            "guarantor": "Evergreen Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1027",
+            "lease_status": "Active",
+            "commencement_date": "2021-12-28",
+            "expiration_date": "2028-11-21",
+            "term_months": 84,
+            "base_rent_annual_usd": 849487,
+            "base_rent_psf_usd": 31.01,
+            "annual_escalation_pct": 2.49,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 6.57,
+            "real_estate_tax_psf_usd": 6.34,
+            "insurance_psf_usd": 1.21,
+            "management_fee_pct": 2.9
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 57.33,
+            "security_deposit_usd": 212371,
+            "letter_of_credit_usd": 97506,
+            "percentage_rent_pct": 5.01
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_29": {
+          "identity": {
+            "unit_number": "Suite 240",
+            "floor": 17,
+            "space_type": "Retail",
+            "rentable_sqft": 21168,
+            "usable_sqft": 18154,
+            "load_factor_pct": 16.6
+          },
+          "tenant": {
+            "tenant_name": "Forge Capital",
+            "dba": "Cedar Co",
+            "industry": "Healthcare",
+            "credit_rating": "A",
+            "tenant_since": "2020-07-05",
+            "guarantor": "Cedar Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1028",
+            "lease_status": "Active",
+            "commencement_date": "2020-08-23",
+            "expiration_date": "2023-08-08",
+            "term_months": 36,
+            "base_rent_annual_usd": 954465,
+            "base_rent_psf_usd": 45.09,
+            "annual_escalation_pct": 3.12,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 7.36,
+            "real_estate_tax_psf_usd": 5.38,
+            "insurance_psf_usd": 1.41,
+            "management_fee_pct": 2.07
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 62.99,
+            "security_deposit_usd": 238616,
+            "letter_of_credit_usd": 404471,
+            "percentage_rent_pct": 7.19
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_30": {
+          "identity": {
+            "unit_number": "Suite 245",
+            "floor": 13,
+            "space_type": "Retail",
+            "rentable_sqft": 43883,
+            "usable_sqft": 37852,
+            "load_factor_pct": 15.93
+          },
+          "tenant": {
+            "tenant_name": "Evergreen Industries",
+            "dba": "Harbor Co",
+            "industry": "Technology",
+            "credit_rating": "AA",
+            "tenant_since": "2018-12-23",
+            "guarantor": "Evergreen Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1029",
+            "lease_status": "HoldOver",
+            "commencement_date": "2020-01-25",
+            "expiration_date": "2029-12-03",
+            "term_months": 120,
+            "base_rent_annual_usd": 2057673,
+            "base_rent_psf_usd": 46.89,
+            "annual_escalation_pct": 2.42,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 3.59,
+            "real_estate_tax_psf_usd": 2.98,
+            "insurance_psf_usd": 2.2,
+            "management_fee_pct": 4.75
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 63.5,
+            "security_deposit_usd": 342945,
+            "letter_of_credit_usd": 712820,
+            "percentage_rent_pct": 3.26
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_31": {
+          "identity": {
+            "unit_number": "Suite 250",
+            "floor": 23,
+            "space_type": "Retail",
+            "rentable_sqft": 13492,
+            "usable_sqft": 11088,
+            "load_factor_pct": 21.68
+          },
+          "tenant": {
+            "tenant_name": "Cedar Industries",
+            "dba": "Beacon Inc",
+            "industry": "Retail",
+            "credit_rating": "A",
+            "tenant_since": "2021-12-22",
+            "guarantor": "Delta Holdings"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1030",
+            "lease_status": "Active",
+            "commencement_date": "2022-11-05",
+            "expiration_date": "2033-01-11",
+            "term_months": 124,
+            "base_rent_annual_usd": 373458,
+            "base_rent_psf_usd": 27.68,
+            "annual_escalation_pct": 3.13,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 8.5,
+            "real_estate_tax_psf_usd": 5.42,
+            "insurance_psf_usd": 2.27,
+            "management_fee_pct": 4.49
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 65.62,
+            "security_deposit_usd": 62243,
+            "letter_of_credit_usd": 90682,
+            "percentage_rent_pct": 7.56
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 180,
+            "has_termination_option": true
+          }
+        },
+        "unit_32": {
+          "identity": {
+            "unit_number": "Suite 255",
+            "floor": 30,
+            "space_type": "Office",
+            "rentable_sqft": 17433,
+            "usable_sqft": 16225,
+            "load_factor_pct": 7.45
+          },
+          "tenant": {
+            "tenant_name": "Atlas Partners",
+            "dba": "Evergreen Inc",
+            "industry": "Healthcare",
+            "credit_rating": "BB",
+            "tenant_since": "2019-03-13",
+            "guarantor": "Beacon Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1031",
+            "lease_status": "Active",
+            "commencement_date": "2020-08-12",
+            "expiration_date": "2025-07-17",
+            "term_months": 60,
+            "base_rent_annual_usd": 878623,
+            "base_rent_psf_usd": 50.4,
+            "annual_escalation_pct": 2.75,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 3.82,
+            "real_estate_tax_psf_usd": 6.65,
+            "insurance_psf_usd": 0.55,
+            "management_fee_pct": 4.21
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 78.2,
+            "security_deposit_usd": 146437,
+            "letter_of_credit_usd": 259639,
+            "percentage_rent_pct": 1.04
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_33": {
+          "identity": {
+            "unit_number": "Suite 260",
+            "floor": 7,
+            "space_type": "Industrial",
+            "rentable_sqft": 27859,
+            "usable_sqft": 24359,
+            "load_factor_pct": 14.37
+          },
+          "tenant": {
+            "tenant_name": "Delta Industries",
+            "dba": "Harbor Co",
+            "industry": "Healthcare",
+            "credit_rating": "A",
+            "tenant_since": "2019-08-29",
+            "guarantor": "Granite Logistics"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1032",
+            "lease_status": "HoldOver",
+            "commencement_date": "2022-01-29",
+            "expiration_date": "2031-12-08",
+            "term_months": 120,
+            "base_rent_annual_usd": 1676554,
+            "base_rent_psf_usd": 60.18,
+            "annual_escalation_pct": 2.09,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 7.04,
+            "real_estate_tax_psf_usd": 6.19,
+            "insurance_psf_usd": 1.45,
+            "management_fee_pct": 4.19
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 55.63,
+            "security_deposit_usd": 139712,
+            "letter_of_credit_usd": 314731,
+            "percentage_rent_pct": 1.11
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 180,
+            "has_termination_option": true
+          }
+        },
+        "unit_34": {
+          "identity": {
+            "unit_number": "Suite 265",
+            "floor": 15,
+            "space_type": "Retail",
+            "rentable_sqft": 28190,
+            "usable_sqft": 26570,
+            "load_factor_pct": 6.1
+          },
+          "tenant": {
+            "tenant_name": "Cedar Systems",
+            "dba": "Harbor LLC",
+            "industry": "Legal",
+            "credit_rating": "AA",
+            "tenant_since": "2019-02-23",
+            "guarantor": "Atlas Logistics"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1033",
+            "lease_status": "HoldOver",
+            "commencement_date": "2019-12-22",
+            "expiration_date": "2030-02-27",
+            "term_months": 124,
+            "base_rent_annual_usd": 399734,
+            "base_rent_psf_usd": 14.18,
+            "annual_escalation_pct": 3.27,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 7.63,
+            "real_estate_tax_psf_usd": 3.1,
+            "insurance_psf_usd": 0.55,
+            "management_fee_pct": 4.99
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 12.07,
+            "security_deposit_usd": 99933,
+            "letter_of_credit_usd": 172387,
+            "percentage_rent_pct": 1.46
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_35": {
+          "identity": {
+            "unit_number": "Suite 270",
+            "floor": 15,
+            "space_type": "Medical",
+            "rentable_sqft": 8115,
+            "usable_sqft": 6861,
+            "load_factor_pct": 18.28
+          },
+          "tenant": {
+            "tenant_name": "Beacon Partners",
+            "dba": "Delta LLC",
+            "industry": "Retail",
+            "credit_rating": "AAA",
+            "tenant_since": "2021-04-21",
+            "guarantor": "Atlas Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1034",
+            "lease_status": "Pending",
+            "commencement_date": "2022-11-25",
+            "expiration_date": "2029-10-19",
+            "term_months": 84,
+            "base_rent_annual_usd": 315024,
+            "base_rent_psf_usd": 38.82,
+            "annual_escalation_pct": 3.51,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 4.34,
+            "real_estate_tax_psf_usd": 5.07,
+            "insurance_psf_usd": 0.97,
+            "management_fee_pct": 2.87
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 80.29,
+            "security_deposit_usd": 52504,
+            "letter_of_credit_usd": 62943,
+            "percentage_rent_pct": 7.5
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_36": {
+          "identity": {
+            "unit_number": "Suite 275",
+            "floor": 3,
+            "space_type": "Flex",
+            "rentable_sqft": 21857,
+            "usable_sqft": 20690,
+            "load_factor_pct": 5.64
+          },
+          "tenant": {
+            "tenant_name": "Beacon Capital",
+            "dba": "Beacon Co",
+            "industry": "Technology",
+            "credit_rating": "AAA",
+            "tenant_since": "2020-06-18",
+            "guarantor": "Granite Holdings"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1035",
+            "lease_status": "Active",
+            "commencement_date": "2022-04-15",
+            "expiration_date": "2032-02-22",
+            "term_months": 120,
+            "base_rent_annual_usd": 633853,
+            "base_rent_psf_usd": 29.0,
+            "annual_escalation_pct": 2.9,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 8.15,
+            "real_estate_tax_psf_usd": 5.14,
+            "insurance_psf_usd": 0.56,
+            "management_fee_pct": 2.81
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 34.0,
+            "security_deposit_usd": 105642,
+            "letter_of_credit_usd": 243117,
+            "percentage_rent_pct": 1.82
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_37": {
+          "identity": {
+            "unit_number": "Suite 280",
+            "floor": 28,
+            "space_type": "Flex",
+            "rentable_sqft": 2051,
+            "usable_sqft": 1744,
+            "load_factor_pct": 17.6
+          },
+          "tenant": {
+            "tenant_name": "Granite Group",
+            "dba": "Granite Co",
+            "industry": "Government",
+            "credit_rating": "AA",
+            "tenant_since": "2018-02-05",
+            "guarantor": "Cedar Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1036",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2020-04-01",
+            "expiration_date": "2030-06-08",
+            "term_months": 124,
+            "base_rent_annual_usd": 32016,
+            "base_rent_psf_usd": 15.61,
+            "annual_escalation_pct": 3.82,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 7.72,
+            "real_estate_tax_psf_usd": 4.18,
+            "insurance_psf_usd": 0.66,
+            "management_fee_pct": 2.86
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 59.25,
+            "security_deposit_usd": 2668,
+            "letter_of_credit_usd": 8571,
+            "percentage_rent_pct": 6.79
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_38": {
+          "identity": {
+            "unit_number": "Suite 285",
+            "floor": 16,
+            "space_type": "Office",
+            "rentable_sqft": 26553,
+            "usable_sqft": 24594,
+            "load_factor_pct": 7.97
+          },
+          "tenant": {
+            "tenant_name": "Beacon Capital",
+            "dba": "Evergreen Inc",
+            "industry": "Logistics",
+            "credit_rating": "A",
+            "tenant_since": "2018-02-12",
+            "guarantor": "Evergreen Logistics"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1037",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2020-05-24",
+            "expiration_date": "2023-05-09",
+            "term_months": 36,
+            "base_rent_annual_usd": 878638,
+            "base_rent_psf_usd": 33.09,
+            "annual_escalation_pct": 3.65,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 7.6,
+            "real_estate_tax_psf_usd": 2.31,
+            "insurance_psf_usd": 1.75,
+            "management_fee_pct": 3.07
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 31.44,
+            "security_deposit_usd": 219659,
+            "letter_of_credit_usd": 332880,
+            "percentage_rent_pct": 7.87
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_39": {
+          "identity": {
+            "unit_number": "Suite 290",
+            "floor": 23,
+            "space_type": "Flex",
+            "rentable_sqft": 39359,
+            "usable_sqft": 33940,
+            "load_factor_pct": 15.97
+          },
+          "tenant": {
+            "tenant_name": "Atlas Capital",
+            "dba": "Evergreen Co",
+            "industry": "Finance",
+            "credit_rating": "NR",
+            "tenant_since": "2020-02-23",
+            "guarantor": "Harbor Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1038",
+            "lease_status": "HoldOver",
+            "commencement_date": "2020-04-20",
+            "expiration_date": "2030-06-27",
+            "term_months": 124,
+            "base_rent_annual_usd": 1617261,
+            "base_rent_psf_usd": 41.09,
+            "annual_escalation_pct": 3.5,
+            "free_rent_months": 2
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 6.89,
+            "real_estate_tax_psf_usd": 5.0,
+            "insurance_psf_usd": 1.95,
+            "management_fee_pct": 2.9
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 58.76,
+            "security_deposit_usd": 269543,
+            "letter_of_credit_usd": 383052,
+            "percentage_rent_pct": 4.59
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_40": {
+          "identity": {
+            "unit_number": "Suite 295",
+            "floor": 24,
+            "space_type": "Industrial",
+            "rentable_sqft": 13848,
+            "usable_sqft": 12384,
+            "load_factor_pct": 11.82
+          },
+          "tenant": {
+            "tenant_name": "Cedar Partners",
+            "dba": "Granite Inc",
+            "industry": "Healthcare",
+            "credit_rating": "AAA",
+            "tenant_since": "2018-02-10",
+            "guarantor": "Delta Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1039",
+            "lease_status": "Active",
+            "commencement_date": "2019-11-28",
+            "expiration_date": "2024-11-01",
+            "term_months": 60,
+            "base_rent_annual_usd": 696138,
+            "base_rent_psf_usd": 50.27,
+            "annual_escalation_pct": 3.2,
+            "free_rent_months": 2
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 3.27,
+            "real_estate_tax_psf_usd": 2.25,
+            "insurance_psf_usd": 2.35,
+            "management_fee_pct": 2.05
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 72.2,
+            "security_deposit_usd": 174034,
+            "letter_of_credit_usd": 84699,
+            "percentage_rent_pct": 1.35
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 270,
+            "has_termination_option": true
+          }
+        },
+        "unit_41": {
+          "identity": {
+            "unit_number": "Suite 300",
+            "floor": 2,
+            "space_type": "Retail",
+            "rentable_sqft": 32897,
+            "usable_sqft": 29169,
+            "load_factor_pct": 12.78
+          },
+          "tenant": {
+            "tenant_name": "Harbor Capital",
+            "dba": "Atlas Co",
+            "industry": "Healthcare",
+            "credit_rating": "AAA",
+            "tenant_since": "2021-08-01",
+            "guarantor": "Atlas Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1040",
+            "lease_status": "Vacant",
+            "commencement_date": "2022-06-29",
+            "expiration_date": "2025-06-13",
+            "term_months": 36,
+            "base_rent_annual_usd": 1384305,
+            "base_rent_psf_usd": 42.08,
+            "annual_escalation_pct": 2.24,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 5.53,
+            "real_estate_tax_psf_usd": 5.62,
+            "insurance_psf_usd": 2.06,
+            "management_fee_pct": 4.15
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 22.76,
+            "security_deposit_usd": 115358,
+            "letter_of_credit_usd": 196104,
+            "percentage_rent_pct": 6.48
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_42": {
+          "identity": {
+            "unit_number": "Suite 305",
+            "floor": 7,
+            "space_type": "Retail",
+            "rentable_sqft": 38751,
+            "usable_sqft": 36701,
+            "load_factor_pct": 5.59
+          },
+          "tenant": {
+            "tenant_name": "Evergreen Holdings",
+            "dba": "Forge LLC",
+            "industry": "Legal",
+            "credit_rating": "BBB",
+            "tenant_since": "2020-05-13",
+            "guarantor": "Evergreen Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1041",
+            "lease_status": "Pending",
+            "commencement_date": "2022-02-01",
+            "expiration_date": "2032-04-09",
+            "term_months": 124,
+            "base_rent_annual_usd": 2021639,
+            "base_rent_psf_usd": 52.17,
+            "annual_escalation_pct": 2.81,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 4.78,
+            "real_estate_tax_psf_usd": 6.26,
+            "insurance_psf_usd": 0.52,
+            "management_fee_pct": 2.72
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 80.22,
+            "security_deposit_usd": 168469,
+            "letter_of_credit_usd": 215807,
+            "percentage_rent_pct": 3.01
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_43": {
+          "identity": {
+            "unit_number": "Suite 310",
+            "floor": 14,
+            "space_type": "Office",
+            "rentable_sqft": 5951,
+            "usable_sqft": 5564,
+            "load_factor_pct": 6.96
+          },
+          "tenant": {
+            "tenant_name": "Granite Partners",
+            "dba": "Forge Co",
+            "industry": "Healthcare",
+            "credit_rating": "NR",
+            "tenant_since": "2023-05-20",
+            "guarantor": "Forge Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1042",
+            "lease_status": "Vacant",
+            "commencement_date": "2023-09-21",
+            "expiration_date": "2028-08-25",
+            "term_months": 60,
+            "base_rent_annual_usd": 253750,
+            "base_rent_psf_usd": 42.64,
+            "annual_escalation_pct": 2.76,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 6.62,
+            "real_estate_tax_psf_usd": 2.4,
+            "insurance_psf_usd": 1.3,
+            "management_fee_pct": 2.03
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 49.53,
+            "security_deposit_usd": 42291,
+            "letter_of_credit_usd": 71804,
+            "percentage_rent_pct": 3.48
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 270,
+            "has_termination_option": true
+          }
+        },
+        "unit_44": {
+          "identity": {
+            "unit_number": "Suite 315",
+            "floor": 31,
+            "space_type": "Medical",
+            "rentable_sqft": 4457,
+            "usable_sqft": 3816,
+            "load_factor_pct": 16.8
+          },
+          "tenant": {
+            "tenant_name": "Delta Systems",
+            "dba": "Granite Inc",
+            "industry": "Healthcare",
+            "credit_rating": "BB",
+            "tenant_since": "2019-01-12",
+            "guarantor": "Beacon Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1043",
+            "lease_status": "Pending",
+            "commencement_date": "2019-03-22",
+            "expiration_date": "2026-02-13",
+            "term_months": 84,
+            "base_rent_annual_usd": 245981,
+            "base_rent_psf_usd": 55.19,
+            "annual_escalation_pct": 3.0,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 5.73,
+            "real_estate_tax_psf_usd": 3.68,
+            "insurance_psf_usd": 1.82,
+            "management_fee_pct": 3.74
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 59.61,
+            "security_deposit_usd": 61495,
+            "letter_of_credit_usd": 81976,
+            "percentage_rent_pct": 2.21
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 180,
+            "has_termination_option": true
+          }
+        },
+        "unit_45": {
+          "identity": {
+            "unit_number": "Suite 320",
+            "floor": 12,
+            "space_type": "Medical",
+            "rentable_sqft": 18188,
+            "usable_sqft": 16050,
+            "load_factor_pct": 13.32
+          },
+          "tenant": {
+            "tenant_name": "Forge Logistics",
+            "dba": "Evergreen Co",
+            "industry": "Legal",
+            "credit_rating": "B",
+            "tenant_since": "2022-06-01",
+            "guarantor": "Cedar Holdings"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1044",
+            "lease_status": "Pending",
+            "commencement_date": "2023-09-02",
+            "expiration_date": "2033-07-11",
+            "term_months": 120,
+            "base_rent_annual_usd": 902306,
+            "base_rent_psf_usd": 49.61,
+            "annual_escalation_pct": 3.44,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 6.43,
+            "real_estate_tax_psf_usd": 5.3,
+            "insurance_psf_usd": 1.48,
+            "management_fee_pct": 3.72
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 20.51,
+            "security_deposit_usd": 150384,
+            "letter_of_credit_usd": 285274,
+            "percentage_rent_pct": 0.97
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_46": {
+          "identity": {
+            "unit_number": "Suite 325",
+            "floor": 21,
+            "space_type": "Medical",
+            "rentable_sqft": 28107,
+            "usable_sqft": 23979,
+            "load_factor_pct": 17.22
+          },
+          "tenant": {
+            "tenant_name": "Harbor Capital",
+            "dba": "Beacon Co",
+            "industry": "Healthcare",
+            "credit_rating": "BB",
+            "tenant_since": "2022-11-09",
+            "guarantor": "Evergreen Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1045",
+            "lease_status": "Active",
+            "commencement_date": "2023-02-06",
+            "expiration_date": "2028-01-11",
+            "term_months": 60,
+            "base_rent_annual_usd": 459549,
+            "base_rent_psf_usd": 16.35,
+            "annual_escalation_pct": 2.88,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 3.08,
+            "real_estate_tax_psf_usd": 4.18,
+            "insurance_psf_usd": 1.82,
+            "management_fee_pct": 3.36
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 60.2,
+            "security_deposit_usd": 114887,
+            "letter_of_credit_usd": 206615,
+            "percentage_rent_pct": 0.33
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_47": {
+          "identity": {
+            "unit_number": "Suite 330",
+            "floor": 29,
+            "space_type": "Medical",
+            "rentable_sqft": 38095,
+            "usable_sqft": 31403,
+            "load_factor_pct": 21.31
+          },
+          "tenant": {
+            "tenant_name": "Harbor Group",
+            "dba": "Beacon LLC",
+            "industry": "Government",
+            "credit_rating": "B",
+            "tenant_since": "2017-08-31",
+            "guarantor": "Beacon Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1046",
+            "lease_status": "Vacant",
+            "commencement_date": "2019-09-16",
+            "expiration_date": "2022-08-31",
+            "term_months": 36,
+            "base_rent_annual_usd": 1798845,
+            "base_rent_psf_usd": 47.22,
+            "annual_escalation_pct": 2.31,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 4.24,
+            "real_estate_tax_psf_usd": 4.76,
+            "insurance_psf_usd": 1.62,
+            "management_fee_pct": 2.63
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 12.66,
+            "security_deposit_usd": 149903,
+            "letter_of_credit_usd": 885131,
+            "percentage_rent_pct": 2.79
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_48": {
+          "identity": {
+            "unit_number": "Suite 335",
+            "floor": 7,
+            "space_type": "Industrial",
+            "rentable_sqft": 18887,
+            "usable_sqft": 16975,
+            "load_factor_pct": 11.26
+          },
+          "tenant": {
+            "tenant_name": "Cedar Logistics",
+            "dba": "Forge Co",
+            "industry": "Technology",
+            "credit_rating": "NR",
+            "tenant_since": "2021-05-20",
+            "guarantor": "Delta Holdings"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1047",
+            "lease_status": "HoldOver",
+            "commencement_date": "2021-05-26",
+            "expiration_date": "2024-05-10",
+            "term_months": 36,
+            "base_rent_annual_usd": 529591,
+            "base_rent_psf_usd": 28.04,
+            "annual_escalation_pct": 3.1,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 7.85,
+            "real_estate_tax_psf_usd": 4.51,
+            "insurance_psf_usd": 0.96,
+            "management_fee_pct": 2.43
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 73.54,
+            "security_deposit_usd": 132397,
+            "letter_of_credit_usd": 229150,
+            "percentage_rent_pct": 2.06
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 120,
+            "has_termination_option": true
+          }
+        },
+        "unit_49": {
+          "identity": {
+            "unit_number": "Suite 340",
+            "floor": 32,
+            "space_type": "Office",
+            "rentable_sqft": 17219,
+            "usable_sqft": 14791,
+            "load_factor_pct": 16.42
+          },
+          "tenant": {
+            "tenant_name": "Delta Group",
+            "dba": "Granite Co",
+            "industry": "Technology",
+            "credit_rating": "BBB",
+            "tenant_since": "2022-12-03",
+            "guarantor": "Delta Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1048",
+            "lease_status": "Vacant",
+            "commencement_date": "2023-05-14",
+            "expiration_date": "2030-04-07",
+            "term_months": 84,
+            "base_rent_annual_usd": 774510,
+            "base_rent_psf_usd": 44.98,
+            "annual_escalation_pct": 3.63,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 7.59,
+            "real_estate_tax_psf_usd": 6.84,
+            "insurance_psf_usd": 0.94,
+            "management_fee_pct": 2.12
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 21.0,
+            "security_deposit_usd": 64542,
+            "letter_of_credit_usd": 78395,
+            "percentage_rent_pct": 5.79
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_50": {
+          "identity": {
+            "unit_number": "Suite 345",
+            "floor": 1,
+            "space_type": "Flex",
+            "rentable_sqft": 37517,
+            "usable_sqft": 35298,
+            "load_factor_pct": 6.29
+          },
+          "tenant": {
+            "tenant_name": "Cedar Industries",
+            "dba": "Cedar Inc",
+            "industry": "Finance",
+            "credit_rating": "B",
+            "tenant_since": "2020-02-11",
+            "guarantor": "Forge Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1049",
+            "lease_status": "Pending",
+            "commencement_date": "2020-06-10",
+            "expiration_date": "2025-05-15",
+            "term_months": 60,
+            "base_rent_annual_usd": 2018789,
+            "base_rent_psf_usd": 53.81,
+            "annual_escalation_pct": 3.58,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 6.86,
+            "real_estate_tax_psf_usd": 3.96,
+            "insurance_psf_usd": 1.37,
+            "management_fee_pct": 2.74
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 21.07,
+            "security_deposit_usd": 504697,
+            "letter_of_credit_usd": 593384,
+            "percentage_rent_pct": 7.94
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_51": {
+          "identity": {
+            "unit_number": "Suite 350",
+            "floor": 16,
+            "space_type": "Retail",
+            "rentable_sqft": 7506,
+            "usable_sqft": 6775,
+            "load_factor_pct": 10.79
+          },
+          "tenant": {
+            "tenant_name": "Granite Capital",
+            "dba": "Evergreen Inc",
+            "industry": "Logistics",
+            "credit_rating": "BBB",
+            "tenant_since": "2022-12-25",
+            "guarantor": "Evergreen Logistics"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1050",
+            "lease_status": "Pending",
+            "commencement_date": "2023-01-07",
+            "expiration_date": "2025-12-22",
+            "term_months": 36,
+            "base_rent_annual_usd": 226831,
+            "base_rent_psf_usd": 30.22,
+            "annual_escalation_pct": 2.13,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 4.68,
+            "real_estate_tax_psf_usd": 3.1,
+            "insurance_psf_usd": 0.88,
+            "management_fee_pct": 2.25
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 65.38,
+            "security_deposit_usd": 56707,
+            "letter_of_credit_usd": 51922,
+            "percentage_rent_pct": 2.5
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_52": {
+          "identity": {
+            "unit_number": "Suite 355",
+            "floor": 16,
+            "space_type": "Industrial",
+            "rentable_sqft": 34704,
+            "usable_sqft": 29084,
+            "load_factor_pct": 19.32
+          },
+          "tenant": {
+            "tenant_name": "Delta Holdings",
+            "dba": "Beacon Co",
+            "industry": "Technology",
+            "credit_rating": "BBB",
+            "tenant_since": "2019-05-20",
+            "guarantor": "Forge Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1051",
+            "lease_status": "HoldOver",
+            "commencement_date": "2020-10-17",
+            "expiration_date": "2027-09-11",
+            "term_months": 84,
+            "base_rent_annual_usd": 762446,
+            "base_rent_psf_usd": 21.97,
+            "annual_escalation_pct": 2.66,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 4.37,
+            "real_estate_tax_psf_usd": 4.4,
+            "insurance_psf_usd": 0.66,
+            "management_fee_pct": 4.62
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 52.61,
+            "security_deposit_usd": 127074,
+            "letter_of_credit_usd": 218186,
+            "percentage_rent_pct": 4.21
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_53": {
+          "identity": {
+            "unit_number": "Suite 360",
+            "floor": 10,
+            "space_type": "Industrial",
+            "rentable_sqft": 36172,
+            "usable_sqft": 34086,
+            "load_factor_pct": 6.12
+          },
+          "tenant": {
+            "tenant_name": "Harbor Systems",
+            "dba": "Harbor LLC",
+            "industry": "Healthcare",
+            "credit_rating": "BBB",
+            "tenant_since": "2020-06-22",
+            "guarantor": "Beacon Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1052",
+            "lease_status": "HoldOver",
+            "commencement_date": "2022-08-28",
+            "expiration_date": "2032-07-06",
+            "term_months": 120,
+            "base_rent_annual_usd": 1476902,
+            "base_rent_psf_usd": 40.83,
+            "annual_escalation_pct": 2.03,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 8.29,
+            "real_estate_tax_psf_usd": 6.57,
+            "insurance_psf_usd": 1.68,
+            "management_fee_pct": 3.1
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 55.62,
+            "security_deposit_usd": 369225,
+            "letter_of_credit_usd": 431877,
+            "percentage_rent_pct": 6.45
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_54": {
+          "identity": {
+            "unit_number": "Suite 365",
+            "floor": 20,
+            "space_type": "Industrial",
+            "rentable_sqft": 3858,
+            "usable_sqft": 3185,
+            "load_factor_pct": 21.13
+          },
+          "tenant": {
+            "tenant_name": "Granite Capital",
+            "dba": "Atlas Inc",
+            "industry": "Retail",
+            "credit_rating": "AAA",
+            "tenant_since": "2020-02-06",
+            "guarantor": "Delta Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1053",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2020-11-27",
+            "expiration_date": "2030-10-06",
+            "term_months": 120,
+            "base_rent_annual_usd": 164775,
+            "base_rent_psf_usd": 42.71,
+            "annual_escalation_pct": 2.12,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 8.12,
+            "real_estate_tax_psf_usd": 5.81,
+            "insurance_psf_usd": 1.9,
+            "management_fee_pct": 4.03
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 38.24,
+            "security_deposit_usd": 13731,
+            "letter_of_credit_usd": 64729,
+            "percentage_rent_pct": 4.22
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_55": {
+          "identity": {
+            "unit_number": "Suite 370",
+            "floor": 30,
+            "space_type": "Office",
+            "rentable_sqft": 25922,
+            "usable_sqft": 23862,
+            "load_factor_pct": 8.63
+          },
+          "tenant": {
+            "tenant_name": "Evergreen Industries",
+            "dba": "Forge Co",
+            "industry": "Retail",
+            "credit_rating": "NR",
+            "tenant_since": "2018-05-16",
+            "guarantor": "Harbor Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1054",
+            "lease_status": "Active",
+            "commencement_date": "2019-12-08",
+            "expiration_date": "2030-02-13",
+            "term_months": 124,
+            "base_rent_annual_usd": 1513844,
+            "base_rent_psf_usd": 58.4,
+            "annual_escalation_pct": 2.69,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 7.35,
+            "real_estate_tax_psf_usd": 2.11,
+            "insurance_psf_usd": 0.72,
+            "management_fee_pct": 4.36
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 71.36,
+            "security_deposit_usd": 252307,
+            "letter_of_credit_usd": 429583,
+            "percentage_rent_pct": 6.1
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_56": {
+          "identity": {
+            "unit_number": "Suite 375",
+            "floor": 21,
+            "space_type": "Medical",
+            "rentable_sqft": 24072,
+            "usable_sqft": 22488,
+            "load_factor_pct": 7.04
+          },
+          "tenant": {
+            "tenant_name": "Granite Logistics",
+            "dba": "Harbor Inc",
+            "industry": "Healthcare",
+            "credit_rating": "AA",
+            "tenant_since": "2020-05-05",
+            "guarantor": "Granite Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1055",
+            "lease_status": "Active",
+            "commencement_date": "2021-05-22",
+            "expiration_date": "2028-04-15",
+            "term_months": 84,
+            "base_rent_annual_usd": 420537,
+            "base_rent_psf_usd": 17.47,
+            "annual_escalation_pct": 2.05,
+            "free_rent_months": 2
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 8.23,
+            "real_estate_tax_psf_usd": 6.85,
+            "insurance_psf_usd": 1.46,
+            "management_fee_pct": 2.54
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 80.03,
+            "security_deposit_usd": 70089,
+            "letter_of_credit_usd": 161562,
+            "percentage_rent_pct": 6.17
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 180,
+            "has_termination_option": true
+          }
+        },
+        "unit_57": {
+          "identity": {
+            "unit_number": "Suite 380",
+            "floor": 21,
+            "space_type": "Medical",
+            "rentable_sqft": 18846,
+            "usable_sqft": 15556,
+            "load_factor_pct": 21.15
+          },
+          "tenant": {
+            "tenant_name": "Delta Partners",
+            "dba": "Granite Inc",
+            "industry": "Technology",
+            "credit_rating": "AA",
+            "tenant_since": "2018-10-27",
+            "guarantor": "Evergreen Holdings"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1056",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2020-10-26",
+            "expiration_date": "2030-09-04",
+            "term_months": 120,
+            "base_rent_annual_usd": 323774,
+            "base_rent_psf_usd": 17.18,
+            "annual_escalation_pct": 2.49,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 4.68,
+            "real_estate_tax_psf_usd": 6.41,
+            "insurance_psf_usd": 2.19,
+            "management_fee_pct": 3.0
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 34.13,
+            "security_deposit_usd": 26981,
+            "letter_of_credit_usd": 152494,
+            "percentage_rent_pct": 1.01
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_58": {
+          "identity": {
+            "unit_number": "Suite 385",
+            "floor": 29,
+            "space_type": "Flex",
+            "rentable_sqft": 23111,
+            "usable_sqft": 20988,
+            "load_factor_pct": 10.12
+          },
+          "tenant": {
+            "tenant_name": "Forge Industries",
+            "dba": "Granite Co",
+            "industry": "Government",
+            "credit_rating": "AA",
+            "tenant_since": "2021-09-28",
+            "guarantor": "Delta Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1057",
+            "lease_status": "Pending",
+            "commencement_date": "2022-05-11",
+            "expiration_date": "2029-04-04",
+            "term_months": 84,
+            "base_rent_annual_usd": 1262322,
+            "base_rent_psf_usd": 54.62,
+            "annual_escalation_pct": 2.34,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 6.81,
+            "real_estate_tax_psf_usd": 3.92,
+            "insurance_psf_usd": 1.25,
+            "management_fee_pct": 2.51
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 37.24,
+            "security_deposit_usd": 105193,
+            "letter_of_credit_usd": 241489,
+            "percentage_rent_pct": 3.0
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 120,
+            "has_termination_option": true
+          }
+        },
+        "unit_59": {
+          "identity": {
+            "unit_number": "Suite 390",
+            "floor": 32,
+            "space_type": "Retail",
+            "rentable_sqft": 17007,
+            "usable_sqft": 15555,
+            "load_factor_pct": 9.33
+          },
+          "tenant": {
+            "tenant_name": "Atlas Holdings",
+            "dba": "Atlas Co",
+            "industry": "Healthcare",
+            "credit_rating": "AA",
+            "tenant_since": "2018-10-06",
+            "guarantor": "Evergreen Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1058",
+            "lease_status": "Pending",
+            "commencement_date": "2020-11-04",
+            "expiration_date": "2031-01-11",
+            "term_months": 124,
+            "base_rent_annual_usd": 546775,
+            "base_rent_psf_usd": 32.15,
+            "annual_escalation_pct": 2.96,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 6.14,
+            "real_estate_tax_psf_usd": 5.44,
+            "insurance_psf_usd": 1.08,
+            "management_fee_pct": 4.36
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 75.15,
+            "security_deposit_usd": 45564,
+            "letter_of_credit_usd": 107865,
+            "percentage_rent_pct": 2.26
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 270,
+            "has_termination_option": true
+          }
+        },
+        "unit_60": {
+          "identity": {
+            "unit_number": "Suite 395",
+            "floor": 28,
+            "space_type": "Retail",
+            "rentable_sqft": 5540,
+            "usable_sqft": 4642,
+            "load_factor_pct": 19.35
+          },
+          "tenant": {
+            "tenant_name": "Forge Systems",
+            "dba": "Granite LLC",
+            "industry": "Logistics",
+            "credit_rating": "AA",
+            "tenant_since": "2016-12-20",
+            "guarantor": "Forge Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1059",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2019-05-21",
+            "expiration_date": "2029-07-27",
+            "term_months": 124,
+            "base_rent_annual_usd": 100384,
+            "base_rent_psf_usd": 18.12,
+            "annual_escalation_pct": 3.41,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 5.51,
+            "real_estate_tax_psf_usd": 3.97,
+            "insurance_psf_usd": 0.67,
+            "management_fee_pct": 3.08
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 77.79,
+            "security_deposit_usd": 16730,
+            "letter_of_credit_usd": 45817,
+            "percentage_rent_pct": 0.42
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_61": {
+          "identity": {
+            "unit_number": "Suite 400",
+            "floor": 30,
+            "space_type": "Office",
+            "rentable_sqft": 31518,
+            "usable_sqft": 27255,
+            "load_factor_pct": 15.64
+          },
+          "tenant": {
+            "tenant_name": "Beacon Group",
+            "dba": "Forge LLC",
+            "industry": "Retail",
+            "credit_rating": "AAA",
+            "tenant_since": "2022-08-21",
+            "guarantor": "Forge Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1060",
+            "lease_status": "Pending",
+            "commencement_date": "2023-10-15",
+            "expiration_date": "2033-08-23",
+            "term_months": 120,
+            "base_rent_annual_usd": 1675812,
+            "base_rent_psf_usd": 53.17,
+            "annual_escalation_pct": 3.01,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 8.96,
+            "real_estate_tax_psf_usd": 4.25,
+            "insurance_psf_usd": 2.4,
+            "management_fee_pct": 4.64
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 32.96,
+            "security_deposit_usd": 139651,
+            "letter_of_credit_usd": 403174,
+            "percentage_rent_pct": 0.79
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 180,
+            "has_termination_option": true
+          }
+        },
+        "unit_62": {
+          "identity": {
+            "unit_number": "Suite 405",
+            "floor": 24,
+            "space_type": "Flex",
+            "rentable_sqft": 40276,
+            "usable_sqft": 37604,
+            "load_factor_pct": 7.11
+          },
+          "tenant": {
+            "tenant_name": "Cedar Group",
+            "dba": "Forge Co",
+            "industry": "Retail",
+            "credit_rating": "B",
+            "tenant_since": "2019-11-04",
+            "guarantor": "Cedar Logistics"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1061",
+            "lease_status": "Active",
+            "commencement_date": "2022-04-22",
+            "expiration_date": "2032-06-28",
+            "term_months": 124,
+            "base_rent_annual_usd": 1472893,
+            "base_rent_psf_usd": 36.57,
+            "annual_escalation_pct": 2.86,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 7.55,
+            "real_estate_tax_psf_usd": 6.71,
+            "insurance_psf_usd": 1.36,
+            "management_fee_pct": 3.65
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 18.89,
+            "security_deposit_usd": 122741,
+            "letter_of_credit_usd": 152960,
+            "percentage_rent_pct": 2.24
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_63": {
+          "identity": {
+            "unit_number": "Suite 410",
+            "floor": 25,
+            "space_type": "Office",
+            "rentable_sqft": 29884,
+            "usable_sqft": 27885,
+            "load_factor_pct": 7.17
+          },
+          "tenant": {
+            "tenant_name": "Cedar Holdings",
+            "dba": "Forge Inc",
+            "industry": "Technology",
+            "credit_rating": "AAA",
+            "tenant_since": "2020-11-29",
+            "guarantor": "Forge Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1062",
+            "lease_status": "Pending",
+            "commencement_date": "2021-12-24",
+            "expiration_date": "2024-12-08",
+            "term_months": 36,
+            "base_rent_annual_usd": 1836969,
+            "base_rent_psf_usd": 61.47,
+            "annual_escalation_pct": 3.62,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 6.01,
+            "real_estate_tax_psf_usd": 2.38,
+            "insurance_psf_usd": 0.66,
+            "management_fee_pct": 4.79
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 78.6,
+            "security_deposit_usd": 153080,
+            "letter_of_credit_usd": 898175,
+            "percentage_rent_pct": 4.92
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_64": {
+          "identity": {
+            "unit_number": "Suite 415",
+            "floor": 2,
+            "space_type": "Office",
+            "rentable_sqft": 21446,
+            "usable_sqft": 19239,
+            "load_factor_pct": 11.47
+          },
+          "tenant": {
+            "tenant_name": "Harbor Logistics",
+            "dba": "Atlas Inc",
+            "industry": "Finance",
+            "credit_rating": "BB",
+            "tenant_since": "2018-06-03",
+            "guarantor": "Forge Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1063",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2020-08-22",
+            "expiration_date": "2030-10-29",
+            "term_months": 124,
+            "base_rent_annual_usd": 813661,
+            "base_rent_psf_usd": 37.94,
+            "annual_escalation_pct": 2.29,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 4.4,
+            "real_estate_tax_psf_usd": 5.81,
+            "insurance_psf_usd": 2.33,
+            "management_fee_pct": 2.17
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 27.26,
+            "security_deposit_usd": 135610,
+            "letter_of_credit_usd": 389449,
+            "percentage_rent_pct": 0.68
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_65": {
+          "identity": {
+            "unit_number": "Suite 420",
+            "floor": 5,
+            "space_type": "Retail",
+            "rentable_sqft": 22667,
+            "usable_sqft": 20042,
+            "load_factor_pct": 13.1
+          },
+          "tenant": {
+            "tenant_name": "Evergreen Holdings",
+            "dba": "Granite Inc",
+            "industry": "Healthcare",
+            "credit_rating": "A",
+            "tenant_since": "2018-11-15",
+            "guarantor": "Forge Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1064",
+            "lease_status": "Active",
+            "commencement_date": "2019-01-14",
+            "expiration_date": "2021-12-29",
+            "term_months": 36,
+            "base_rent_annual_usd": 1389260,
+            "base_rent_psf_usd": 61.29,
+            "annual_escalation_pct": 2.74,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 3.61,
+            "real_estate_tax_psf_usd": 5.61,
+            "insurance_psf_usd": 0.75,
+            "management_fee_pct": 2.49
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 45.14,
+            "security_deposit_usd": 347315,
+            "letter_of_credit_usd": 351498,
+            "percentage_rent_pct": 0.65
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_66": {
+          "identity": {
+            "unit_number": "Suite 425",
+            "floor": 24,
+            "space_type": "Industrial",
+            "rentable_sqft": 36401,
+            "usable_sqft": 30793,
+            "load_factor_pct": 18.21
+          },
+          "tenant": {
+            "tenant_name": "Granite Group",
+            "dba": "Beacon Co",
+            "industry": "Technology",
+            "credit_rating": "B",
+            "tenant_since": "2021-11-19",
+            "guarantor": "Evergreen Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1065",
+            "lease_status": "Pending",
+            "commencement_date": "2022-09-06",
+            "expiration_date": "2029-07-31",
+            "term_months": 84,
+            "base_rent_annual_usd": 1117146,
+            "base_rent_psf_usd": 30.69,
+            "annual_escalation_pct": 2.84,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 6.81,
+            "real_estate_tax_psf_usd": 3.23,
+            "insurance_psf_usd": 1.37,
+            "management_fee_pct": 2.02
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 70.08,
+            "security_deposit_usd": 279286,
+            "letter_of_credit_usd": 153631,
+            "percentage_rent_pct": 5.87
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_67": {
+          "identity": {
+            "unit_number": "Suite 430",
+            "floor": 29,
+            "space_type": "Flex",
+            "rentable_sqft": 7264,
+            "usable_sqft": 6751,
+            "load_factor_pct": 7.6
+          },
+          "tenant": {
+            "tenant_name": "Atlas Holdings",
+            "dba": "Harbor Co",
+            "industry": "Retail",
+            "credit_rating": "AA",
+            "tenant_since": "2017-01-09",
+            "guarantor": "Granite Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1066",
+            "lease_status": "Vacant",
+            "commencement_date": "2019-06-20",
+            "expiration_date": "2029-08-26",
+            "term_months": 124,
+            "base_rent_annual_usd": 198452,
+            "base_rent_psf_usd": 27.32,
+            "annual_escalation_pct": 3.7,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 3.31,
+            "real_estate_tax_psf_usd": 3.33,
+            "insurance_psf_usd": 0.5,
+            "management_fee_pct": 4.04
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 21.29,
+            "security_deposit_usd": 33075,
+            "letter_of_credit_usd": 29155,
+            "percentage_rent_pct": 3.76
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 270,
+            "has_termination_option": true
+          }
+        },
+        "unit_68": {
+          "identity": {
+            "unit_number": "Suite 435",
+            "floor": 20,
+            "space_type": "Medical",
+            "rentable_sqft": 7949,
+            "usable_sqft": 7210,
+            "load_factor_pct": 10.25
+          },
+          "tenant": {
+            "tenant_name": "Forge Partners",
+            "dba": "Atlas Co",
+            "industry": "Finance",
+            "credit_rating": "A",
+            "tenant_since": "2019-04-20",
+            "guarantor": "Beacon Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1067",
+            "lease_status": "Active",
+            "commencement_date": "2020-03-20",
+            "expiration_date": "2025-02-22",
+            "term_months": 60,
+            "base_rent_annual_usd": 440374,
+            "base_rent_psf_usd": 55.4,
+            "annual_escalation_pct": 2.85,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 5.51,
+            "real_estate_tax_psf_usd": 5.79,
+            "insurance_psf_usd": 1.17,
+            "management_fee_pct": 2.14
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 74.63,
+            "security_deposit_usd": 36697,
+            "letter_of_credit_usd": 88361,
+            "percentage_rent_pct": 0.88
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 120,
+            "has_termination_option": true
+          }
+        },
+        "unit_69": {
+          "identity": {
+            "unit_number": "Suite 440",
+            "floor": 31,
+            "space_type": "Flex",
+            "rentable_sqft": 15155,
+            "usable_sqft": 14012,
+            "load_factor_pct": 8.16
+          },
+          "tenant": {
+            "tenant_name": "Granite Partners",
+            "dba": "Delta Inc",
+            "industry": "Legal",
+            "credit_rating": "BBB",
+            "tenant_since": "2021-02-19",
+            "guarantor": "Harbor Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1068",
+            "lease_status": "Active",
+            "commencement_date": "2023-02-19",
+            "expiration_date": "2032-12-28",
+            "term_months": 120,
+            "base_rent_annual_usd": 272638,
+            "base_rent_psf_usd": 17.99,
+            "annual_escalation_pct": 3.13,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 8.89,
+            "real_estate_tax_psf_usd": 4.34,
+            "insurance_psf_usd": 2.02,
+            "management_fee_pct": 2.08
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 74.23,
+            "security_deposit_usd": 68159,
+            "letter_of_credit_usd": 72547,
+            "percentage_rent_pct": 4.05
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_70": {
+          "identity": {
+            "unit_number": "Suite 445",
+            "floor": 22,
+            "space_type": "Flex",
+            "rentable_sqft": 22260,
+            "usable_sqft": 18273,
+            "load_factor_pct": 21.82
+          },
+          "tenant": {
+            "tenant_name": "Beacon Industries",
+            "dba": "Beacon LLC",
+            "industry": "Finance",
+            "credit_rating": "AAA",
+            "tenant_since": "2020-01-04",
+            "guarantor": "Harbor Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1069",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2020-01-28",
+            "expiration_date": "2030-04-05",
+            "term_months": 124,
+            "base_rent_annual_usd": 1017059,
+            "base_rent_psf_usd": 45.69,
+            "annual_escalation_pct": 3.6,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 5.49,
+            "real_estate_tax_psf_usd": 4.6,
+            "insurance_psf_usd": 1.8,
+            "management_fee_pct": 4.18
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 28.83,
+            "security_deposit_usd": 84754,
+            "letter_of_credit_usd": 358302,
+            "percentage_rent_pct": 5.06
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_71": {
+          "identity": {
+            "unit_number": "Suite 450",
+            "floor": 27,
+            "space_type": "Flex",
+            "rentable_sqft": 24912,
+            "usable_sqft": 21423,
+            "load_factor_pct": 16.29
+          },
+          "tenant": {
+            "tenant_name": "Delta Holdings",
+            "dba": "Atlas Co",
+            "industry": "Retail",
+            "credit_rating": "AAA",
+            "tenant_since": "2019-10-19",
+            "guarantor": "Cedar Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1070",
+            "lease_status": "HoldOver",
+            "commencement_date": "2020-06-21",
+            "expiration_date": "2023-06-06",
+            "term_months": 36,
+            "base_rent_annual_usd": 835299,
+            "base_rent_psf_usd": 33.53,
+            "annual_escalation_pct": 3.57,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 5.78,
+            "real_estate_tax_psf_usd": 2.29,
+            "insurance_psf_usd": 1.54,
+            "management_fee_pct": 3.06
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 22.79,
+            "security_deposit_usd": 139216,
+            "letter_of_credit_usd": 270122,
+            "percentage_rent_pct": 0.25
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_72": {
+          "identity": {
+            "unit_number": "Suite 455",
+            "floor": 1,
+            "space_type": "Flex",
+            "rentable_sqft": 37809,
+            "usable_sqft": 32148,
+            "load_factor_pct": 17.61
+          },
+          "tenant": {
+            "tenant_name": "Atlas Logistics",
+            "dba": "Forge LLC",
+            "industry": "Retail",
+            "credit_rating": "AA",
+            "tenant_since": "2021-09-20",
+            "guarantor": "Evergreen Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1071",
+            "lease_status": "Active",
+            "commencement_date": "2023-03-04",
+            "expiration_date": "2033-05-10",
+            "term_months": 124,
+            "base_rent_annual_usd": 2044332,
+            "base_rent_psf_usd": 54.07,
+            "annual_escalation_pct": 2.46,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 5.28,
+            "real_estate_tax_psf_usd": 5.81,
+            "insurance_psf_usd": 2.39,
+            "management_fee_pct": 3.29
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 54.06,
+            "security_deposit_usd": 170361,
+            "letter_of_credit_usd": 693591,
+            "percentage_rent_pct": 7.71
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_73": {
+          "identity": {
+            "unit_number": "Suite 460",
+            "floor": 4,
+            "space_type": "Medical",
+            "rentable_sqft": 42851,
+            "usable_sqft": 36307,
+            "load_factor_pct": 18.02
+          },
+          "tenant": {
+            "tenant_name": "Granite Systems",
+            "dba": "Delta Inc",
+            "industry": "Government",
+            "credit_rating": "B",
+            "tenant_since": "2022-08-15",
+            "guarantor": "Evergreen Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1072",
+            "lease_status": "Vacant",
+            "commencement_date": "2023-02-08",
+            "expiration_date": "2032-12-17",
+            "term_months": 120,
+            "base_rent_annual_usd": 636337,
+            "base_rent_psf_usd": 14.85,
+            "annual_escalation_pct": 2.11,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 4.12,
+            "real_estate_tax_psf_usd": 3.3,
+            "insurance_psf_usd": 1.81,
+            "management_fee_pct": 3.05
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 53.8,
+            "security_deposit_usd": 53028,
+            "letter_of_credit_usd": 229961,
+            "percentage_rent_pct": 5.1
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_74": {
+          "identity": {
+            "unit_number": "Suite 465",
+            "floor": 5,
+            "space_type": "Office",
+            "rentable_sqft": 37799,
+            "usable_sqft": 35700,
+            "load_factor_pct": 5.88
+          },
+          "tenant": {
+            "tenant_name": "Atlas Holdings",
+            "dba": "Evergreen LLC",
+            "industry": "Technology",
+            "credit_rating": "A",
+            "tenant_since": "2019-11-06",
+            "guarantor": "Cedar Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1073",
+            "lease_status": "Active",
+            "commencement_date": "2020-10-03",
+            "expiration_date": "2023-09-18",
+            "term_months": 36,
+            "base_rent_annual_usd": 661860,
+            "base_rent_psf_usd": 17.51,
+            "annual_escalation_pct": 3.97,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 7.59,
+            "real_estate_tax_psf_usd": 2.07,
+            "insurance_psf_usd": 1.9,
+            "management_fee_pct": 3.6
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 37.93,
+            "security_deposit_usd": 55155,
+            "letter_of_credit_usd": 106575,
+            "percentage_rent_pct": 1.56
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_75": {
+          "identity": {
+            "unit_number": "Suite 470",
+            "floor": 29,
+            "space_type": "Medical",
+            "rentable_sqft": 16969,
+            "usable_sqft": 15361,
+            "load_factor_pct": 10.47
+          },
+          "tenant": {
+            "tenant_name": "Harbor Logistics",
+            "dba": "Cedar LLC",
+            "industry": "Technology",
+            "credit_rating": "NR",
+            "tenant_since": "2018-11-28",
+            "guarantor": "Granite Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1074",
+            "lease_status": "Vacant",
+            "commencement_date": "2020-03-27",
+            "expiration_date": "2030-02-03",
+            "term_months": 120,
+            "base_rent_annual_usd": 611393,
+            "base_rent_psf_usd": 36.03,
+            "annual_escalation_pct": 3.81,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 5.24,
+            "real_estate_tax_psf_usd": 2.02,
+            "insurance_psf_usd": 1.16,
+            "management_fee_pct": 2.06
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 37.71,
+            "security_deposit_usd": 50949,
+            "letter_of_credit_usd": 64094,
+            "percentage_rent_pct": 4.71
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_76": {
+          "identity": {
+            "unit_number": "Suite 475",
+            "floor": 2,
+            "space_type": "Medical",
+            "rentable_sqft": 26313,
+            "usable_sqft": 22529,
+            "load_factor_pct": 16.8
+          },
+          "tenant": {
+            "tenant_name": "Evergreen Logistics",
+            "dba": "Beacon Co",
+            "industry": "Healthcare",
+            "credit_rating": "B",
+            "tenant_since": "2020-10-04",
+            "guarantor": "Delta Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1075",
+            "lease_status": "Pending",
+            "commencement_date": "2021-12-19",
+            "expiration_date": "2028-11-12",
+            "term_months": 84,
+            "base_rent_annual_usd": 728870,
+            "base_rent_psf_usd": 27.7,
+            "annual_escalation_pct": 3.07,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 8.63,
+            "real_estate_tax_psf_usd": 2.82,
+            "insurance_psf_usd": 2.47,
+            "management_fee_pct": 2.34
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 63.72,
+            "security_deposit_usd": 60739,
+            "letter_of_credit_usd": 94811,
+            "percentage_rent_pct": 5.5
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_77": {
+          "identity": {
+            "unit_number": "Suite 480",
+            "floor": 14,
+            "space_type": "Medical",
+            "rentable_sqft": 42464,
+            "usable_sqft": 39392,
+            "load_factor_pct": 7.8
+          },
+          "tenant": {
+            "tenant_name": "Cedar Partners",
+            "dba": "Forge Inc",
+            "industry": "Healthcare",
+            "credit_rating": "A",
+            "tenant_since": "2019-05-08",
+            "guarantor": "Forge Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1076",
+            "lease_status": "Vacant",
+            "commencement_date": "2019-09-19",
+            "expiration_date": "2029-11-25",
+            "term_months": 124,
+            "base_rent_annual_usd": 659465,
+            "base_rent_psf_usd": 15.53,
+            "annual_escalation_pct": 3.81,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 3.72,
+            "real_estate_tax_psf_usd": 2.64,
+            "insurance_psf_usd": 1.12,
+            "management_fee_pct": 2.19
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 40.36,
+            "security_deposit_usd": 109910,
+            "letter_of_credit_usd": 318215,
+            "percentage_rent_pct": 1.33
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_78": {
+          "identity": {
+            "unit_number": "Suite 485",
+            "floor": 25,
+            "space_type": "Office",
+            "rentable_sqft": 22807,
+            "usable_sqft": 20156,
+            "load_factor_pct": 13.15
+          },
+          "tenant": {
+            "tenant_name": "Beacon Holdings",
+            "dba": "Forge Inc",
+            "industry": "Legal",
+            "credit_rating": "BB",
+            "tenant_since": "2020-08-25",
+            "guarantor": "Cedar Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1077",
+            "lease_status": "Pending",
+            "commencement_date": "2020-10-26",
+            "expiration_date": "2030-09-04",
+            "term_months": 120,
+            "base_rent_annual_usd": 848420,
+            "base_rent_psf_usd": 37.2,
+            "annual_escalation_pct": 2.67,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 8.14,
+            "real_estate_tax_psf_usd": 6.33,
+            "insurance_psf_usd": 0.75,
+            "management_fee_pct": 2.52
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 23.6,
+            "security_deposit_usd": 212105,
+            "letter_of_credit_usd": 260368,
+            "percentage_rent_pct": 5.8
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_79": {
+          "identity": {
+            "unit_number": "Suite 490",
+            "floor": 25,
+            "space_type": "Flex",
+            "rentable_sqft": 16684,
+            "usable_sqft": 14116,
+            "load_factor_pct": 18.19
+          },
+          "tenant": {
+            "tenant_name": "Beacon Industries",
+            "dba": "Cedar Co",
+            "industry": "Logistics",
+            "credit_rating": "A",
+            "tenant_since": "2020-03-04",
+            "guarantor": "Cedar Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1078",
+            "lease_status": "Active",
+            "commencement_date": "2020-11-22",
+            "expiration_date": "2031-01-29",
+            "term_months": 124,
+            "base_rent_annual_usd": 1015555,
+            "base_rent_psf_usd": 60.87,
+            "annual_escalation_pct": 3.99,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 7.55,
+            "real_estate_tax_psf_usd": 5.58,
+            "insurance_psf_usd": 2.09,
+            "management_fee_pct": 3.59
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 70.68,
+            "security_deposit_usd": 253888,
+            "letter_of_credit_usd": 458413,
+            "percentage_rent_pct": 0.86
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_80": {
+          "identity": {
+            "unit_number": "Suite 495",
+            "floor": 9,
+            "space_type": "Office",
+            "rentable_sqft": 24186,
+            "usable_sqft": 21423,
+            "load_factor_pct": 12.9
+          },
+          "tenant": {
+            "tenant_name": "Delta Industries",
+            "dba": "Harbor LLC",
+            "industry": "Retail",
+            "credit_rating": "B",
+            "tenant_since": "2019-09-12",
+            "guarantor": "Harbor Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1079",
+            "lease_status": "Pending",
+            "commencement_date": "2020-03-24",
+            "expiration_date": "2023-03-09",
+            "term_months": 36,
+            "base_rent_annual_usd": 830305,
+            "base_rent_psf_usd": 34.33,
+            "annual_escalation_pct": 3.39,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 5.3,
+            "real_estate_tax_psf_usd": 4.33,
+            "insurance_psf_usd": 2.01,
+            "management_fee_pct": 2.44
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 65.33,
+            "security_deposit_usd": 138384,
+            "letter_of_credit_usd": 358209,
+            "percentage_rent_pct": 1.58
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_81": {
+          "identity": {
+            "unit_number": "Suite 500",
+            "floor": 8,
+            "space_type": "Medical",
+            "rentable_sqft": 25493,
+            "usable_sqft": 21019,
+            "load_factor_pct": 21.29
+          },
+          "tenant": {
+            "tenant_name": "Forge Logistics",
+            "dba": "Beacon LLC",
+            "industry": "Healthcare",
+            "credit_rating": "AAA",
+            "tenant_since": "2018-06-09",
+            "guarantor": "Delta Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1080",
+            "lease_status": "Vacant",
+            "commencement_date": "2020-06-20",
+            "expiration_date": "2030-04-29",
+            "term_months": 120,
+            "base_rent_annual_usd": 836170,
+            "base_rent_psf_usd": 32.8,
+            "annual_escalation_pct": 3.81,
+            "free_rent_months": 2
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 4.64,
+            "real_estate_tax_psf_usd": 4.4,
+            "insurance_psf_usd": 1.4,
+            "management_fee_pct": 2.2
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 20.08,
+            "security_deposit_usd": 139361,
+            "letter_of_credit_usd": 354666,
+            "percentage_rent_pct": 0.7
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 180,
+            "has_termination_option": true
+          }
+        },
+        "unit_82": {
+          "identity": {
+            "unit_number": "Suite 505",
+            "floor": 7,
+            "space_type": "Medical",
+            "rentable_sqft": 25607,
+            "usable_sqft": 21711,
+            "load_factor_pct": 17.94
+          },
+          "tenant": {
+            "tenant_name": "Cedar Logistics",
+            "dba": "Cedar Inc",
+            "industry": "Government",
+            "credit_rating": "A",
+            "tenant_since": "2019-10-17",
+            "guarantor": "Forge Holdings"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1081",
+            "lease_status": "Vacant",
+            "commencement_date": "2020-08-11",
+            "expiration_date": "2027-07-06",
+            "term_months": 84,
+            "base_rent_annual_usd": 1233489,
+            "base_rent_psf_usd": 48.17,
+            "annual_escalation_pct": 3.86,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 7.25,
+            "real_estate_tax_psf_usd": 2.84,
+            "insurance_psf_usd": 0.65,
+            "management_fee_pct": 4.19
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 83.57,
+            "security_deposit_usd": 308372,
+            "letter_of_credit_usd": 237569,
+            "percentage_rent_pct": 6.56
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 270,
+            "has_termination_option": true
+          }
+        },
+        "unit_83": {
+          "identity": {
+            "unit_number": "Suite 510",
+            "floor": 2,
+            "space_type": "Flex",
+            "rentable_sqft": 36838,
+            "usable_sqft": 32138,
+            "load_factor_pct": 14.62
+          },
+          "tenant": {
+            "tenant_name": "Forge Logistics",
+            "dba": "Cedar LLC",
+            "industry": "Healthcare",
+            "credit_rating": "BBB",
+            "tenant_since": "2018-04-15",
+            "guarantor": "Atlas Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1082",
+            "lease_status": "Active",
+            "commencement_date": "2019-11-24",
+            "expiration_date": "2022-11-08",
+            "term_months": 36,
+            "base_rent_annual_usd": 1199076,
+            "base_rent_psf_usd": 32.55,
+            "annual_escalation_pct": 3.13,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 6.49,
+            "real_estate_tax_psf_usd": 2.89,
+            "insurance_psf_usd": 1.32,
+            "management_fee_pct": 4.98
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 10.47,
+            "security_deposit_usd": 99923,
+            "letter_of_credit_usd": 352605,
+            "percentage_rent_pct": 3.15
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_84": {
+          "identity": {
+            "unit_number": "Suite 515",
+            "floor": 25,
+            "space_type": "Flex",
+            "rentable_sqft": 21404,
+            "usable_sqft": 19201,
+            "load_factor_pct": 11.47
+          },
+          "tenant": {
+            "tenant_name": "Delta Industries",
+            "dba": "Delta Inc",
+            "industry": "Technology",
+            "credit_rating": "AA",
+            "tenant_since": "2022-12-06",
+            "guarantor": "Beacon Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1083",
+            "lease_status": "Pending",
+            "commencement_date": "2023-06-18",
+            "expiration_date": "2026-06-02",
+            "term_months": 36,
+            "base_rent_annual_usd": 1027177,
+            "base_rent_psf_usd": 47.99,
+            "annual_escalation_pct": 2.84,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 5.18,
+            "real_estate_tax_psf_usd": 4.96,
+            "insurance_psf_usd": 1.8,
+            "management_fee_pct": 4.56
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 17.53,
+            "security_deposit_usd": 85598,
+            "letter_of_credit_usd": 153139,
+            "percentage_rent_pct": 2.29
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 120,
+            "has_termination_option": true
+          }
+        },
+        "unit_85": {
+          "identity": {
+            "unit_number": "Suite 520",
+            "floor": 20,
+            "space_type": "Flex",
+            "rentable_sqft": 19350,
+            "usable_sqft": 16256,
+            "load_factor_pct": 19.03
+          },
+          "tenant": {
+            "tenant_name": "Forge Logistics",
+            "dba": "Beacon Inc",
+            "industry": "Finance",
+            "credit_rating": "A",
+            "tenant_since": "2022-03-13",
+            "guarantor": "Atlas Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1084",
+            "lease_status": "Pending",
+            "commencement_date": "2022-06-30",
+            "expiration_date": "2032-05-08",
+            "term_months": 120,
+            "base_rent_annual_usd": 705114,
+            "base_rent_psf_usd": 36.44,
+            "annual_escalation_pct": 2.86,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 8.87,
+            "real_estate_tax_psf_usd": 2.28,
+            "insurance_psf_usd": 0.78,
+            "management_fee_pct": 3.28
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 49.04,
+            "security_deposit_usd": 58759,
+            "letter_of_credit_usd": 291182,
+            "percentage_rent_pct": 3.55
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_86": {
+          "identity": {
+            "unit_number": "Suite 525",
+            "floor": 9,
+            "space_type": "Industrial",
+            "rentable_sqft": 34962,
+            "usable_sqft": 30621,
+            "load_factor_pct": 14.18
+          },
+          "tenant": {
+            "tenant_name": "Harbor Logistics",
+            "dba": "Atlas Co",
+            "industry": "Finance",
+            "credit_rating": "B",
+            "tenant_since": "2019-11-11",
+            "guarantor": "Cedar Logistics"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1085",
+            "lease_status": "Pending",
+            "commencement_date": "2021-03-11",
+            "expiration_date": "2031-05-18",
+            "term_months": 124,
+            "base_rent_annual_usd": 1112490,
+            "base_rent_psf_usd": 31.82,
+            "annual_escalation_pct": 2.15,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 5.95,
+            "real_estate_tax_psf_usd": 2.8,
+            "insurance_psf_usd": 1.95,
+            "management_fee_pct": 3.77
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 13.26,
+            "security_deposit_usd": 185415,
+            "letter_of_credit_usd": 468770,
+            "percentage_rent_pct": 4.96
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 120,
+            "has_termination_option": true
+          }
+        },
+        "unit_87": {
+          "identity": {
+            "unit_number": "Suite 530",
+            "floor": 4,
+            "space_type": "Industrial",
+            "rentable_sqft": 9319,
+            "usable_sqft": 8070,
+            "load_factor_pct": 15.48
+          },
+          "tenant": {
+            "tenant_name": "Cedar Industries",
+            "dba": "Granite Co",
+            "industry": "Finance",
+            "credit_rating": "A",
+            "tenant_since": "2019-12-30",
+            "guarantor": "Granite Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1086",
+            "lease_status": "Pending",
+            "commencement_date": "2020-12-31",
+            "expiration_date": "2031-03-09",
+            "term_months": 124,
+            "base_rent_annual_usd": 276681,
+            "base_rent_psf_usd": 29.69,
+            "annual_escalation_pct": 3.04,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 4.09,
+            "real_estate_tax_psf_usd": 4.39,
+            "insurance_psf_usd": 1.41,
+            "management_fee_pct": 4.92
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 55.87,
+            "security_deposit_usd": 69170,
+            "letter_of_credit_usd": 111134,
+            "percentage_rent_pct": 1.66
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_88": {
+          "identity": {
+            "unit_number": "Suite 535",
+            "floor": 7,
+            "space_type": "Retail",
+            "rentable_sqft": 41874,
+            "usable_sqft": 34940,
+            "load_factor_pct": 19.85
+          },
+          "tenant": {
+            "tenant_name": "Delta Partners",
+            "dba": "Harbor Co",
+            "industry": "Technology",
+            "credit_rating": "A",
+            "tenant_since": "2021-08-08",
+            "guarantor": "Harbor Holdings"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1087",
+            "lease_status": "Pending",
+            "commencement_date": "2022-07-10",
+            "expiration_date": "2029-06-03",
+            "term_months": 84,
+            "base_rent_annual_usd": 1794719,
+            "base_rent_psf_usd": 42.86,
+            "annual_escalation_pct": 3.55,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 5.89,
+            "real_estate_tax_psf_usd": 5.52,
+            "insurance_psf_usd": 2.03,
+            "management_fee_pct": 3.91
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 81.2,
+            "security_deposit_usd": 149559,
+            "letter_of_credit_usd": 803119,
+            "percentage_rent_pct": 5.93
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_89": {
+          "identity": {
+            "unit_number": "Suite 540",
+            "floor": 30,
+            "space_type": "Medical",
+            "rentable_sqft": 38477,
+            "usable_sqft": 33057,
+            "load_factor_pct": 16.4
+          },
+          "tenant": {
+            "tenant_name": "Forge Group",
+            "dba": "Delta LLC",
+            "industry": "Technology",
+            "credit_rating": "AAA",
+            "tenant_since": "2019-03-06",
+            "guarantor": "Cedar Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1088",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2020-10-10",
+            "expiration_date": "2030-08-19",
+            "term_months": 120,
+            "base_rent_annual_usd": 1068506,
+            "base_rent_psf_usd": 27.77,
+            "annual_escalation_pct": 3.49,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 6.98,
+            "real_estate_tax_psf_usd": 3.46,
+            "insurance_psf_usd": 0.88,
+            "management_fee_pct": 3.48
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 48.68,
+            "security_deposit_usd": 89042,
+            "letter_of_credit_usd": 502048,
+            "percentage_rent_pct": 3.87
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_90": {
+          "identity": {
+            "unit_number": "Suite 545",
+            "floor": 32,
+            "space_type": "Flex",
+            "rentable_sqft": 25123,
+            "usable_sqft": 21384,
+            "load_factor_pct": 17.49
+          },
+          "tenant": {
+            "tenant_name": "Atlas Logistics",
+            "dba": "Forge Inc",
+            "industry": "Retail",
+            "credit_rating": "A",
+            "tenant_since": "2022-05-18",
+            "guarantor": "Forge Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1089",
+            "lease_status": "Active",
+            "commencement_date": "2023-07-04",
+            "expiration_date": "2028-06-07",
+            "term_months": 60,
+            "base_rent_annual_usd": 995373,
+            "base_rent_psf_usd": 39.62,
+            "annual_escalation_pct": 3.32,
+            "free_rent_months": 2
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 8.04,
+            "real_estate_tax_psf_usd": 5.14,
+            "insurance_psf_usd": 1.44,
+            "management_fee_pct": 3.01
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 45.04,
+            "security_deposit_usd": 82947,
+            "letter_of_credit_usd": 299687,
+            "percentage_rent_pct": 3.92
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 270,
+            "has_termination_option": true
+          }
+        },
+        "unit_91": {
+          "identity": {
+            "unit_number": "Suite 550",
+            "floor": 13,
+            "space_type": "Office",
+            "rentable_sqft": 16522,
+            "usable_sqft": 14218,
+            "load_factor_pct": 16.2
+          },
+          "tenant": {
+            "tenant_name": "Harbor Systems",
+            "dba": "Delta Co",
+            "industry": "Government",
+            "credit_rating": "NR",
+            "tenant_since": "2019-02-23",
+            "guarantor": "Forge Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1090",
+            "lease_status": "Vacant",
+            "commencement_date": "2019-06-28",
+            "expiration_date": "2026-05-22",
+            "term_months": 84,
+            "base_rent_annual_usd": 526886,
+            "base_rent_psf_usd": 31.89,
+            "annual_escalation_pct": 3.98,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 4.36,
+            "real_estate_tax_psf_usd": 3.23,
+            "insurance_psf_usd": 2.12,
+            "management_fee_pct": 3.28
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 42.68,
+            "security_deposit_usd": 87814,
+            "letter_of_credit_usd": 65907,
+            "percentage_rent_pct": 6.46
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_92": {
+          "identity": {
+            "unit_number": "Suite 555",
+            "floor": 23,
+            "space_type": "Medical",
+            "rentable_sqft": 39054,
+            "usable_sqft": 35831,
+            "load_factor_pct": 9.0
+          },
+          "tenant": {
+            "tenant_name": "Granite Partners",
+            "dba": "Evergreen Inc",
+            "industry": "Government",
+            "credit_rating": "AA",
+            "tenant_since": "2019-04-14",
+            "guarantor": "Evergreen Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1091",
+            "lease_status": "Vacant",
+            "commencement_date": "2019-05-22",
+            "expiration_date": "2022-05-06",
+            "term_months": 36,
+            "base_rent_annual_usd": 1889432,
+            "base_rent_psf_usd": 48.38,
+            "annual_escalation_pct": 3.14,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 8.22,
+            "real_estate_tax_psf_usd": 5.68,
+            "insurance_psf_usd": 1.23,
+            "management_fee_pct": 2.18
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 71.33,
+            "security_deposit_usd": 157452,
+            "letter_of_credit_usd": 358037,
+            "percentage_rent_pct": 1.15
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_93": {
+          "identity": {
+            "unit_number": "Suite 560",
+            "floor": 16,
+            "space_type": "Flex",
+            "rentable_sqft": 44598,
+            "usable_sqft": 40763,
+            "load_factor_pct": 9.41
+          },
+          "tenant": {
+            "tenant_name": "Cedar Holdings",
+            "dba": "Cedar LLC",
+            "industry": "Technology",
+            "credit_rating": "BBB",
+            "tenant_since": "2018-10-23",
+            "guarantor": "Harbor Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1092",
+            "lease_status": "Vacant",
+            "commencement_date": "2021-01-26",
+            "expiration_date": "2024-01-11",
+            "term_months": 36,
+            "base_rent_annual_usd": 2283863,
+            "base_rent_psf_usd": 51.21,
+            "annual_escalation_pct": 2.45,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 6.9,
+            "real_estate_tax_psf_usd": 5.17,
+            "insurance_psf_usd": 2.13,
+            "management_fee_pct": 3.44
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 71.52,
+            "security_deposit_usd": 570965,
+            "letter_of_credit_usd": 386433,
+            "percentage_rent_pct": 5.88
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_94": {
+          "identity": {
+            "unit_number": "Suite 565",
+            "floor": 32,
+            "space_type": "Flex",
+            "rentable_sqft": 11795,
+            "usable_sqft": 9672,
+            "load_factor_pct": 21.95
+          },
+          "tenant": {
+            "tenant_name": "Delta Partners",
+            "dba": "Granite LLC",
+            "industry": "Finance",
+            "credit_rating": "BB",
+            "tenant_since": "2020-06-26",
+            "guarantor": "Evergreen Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1093",
+            "lease_status": "Pending",
+            "commencement_date": "2021-07-28",
+            "expiration_date": "2028-06-21",
+            "term_months": 84,
+            "base_rent_annual_usd": 583262,
+            "base_rent_psf_usd": 49.45,
+            "annual_escalation_pct": 3.47,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 4.3,
+            "real_estate_tax_psf_usd": 6.39,
+            "insurance_psf_usd": 2.23,
+            "management_fee_pct": 4.18
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 78.71,
+            "security_deposit_usd": 48605,
+            "letter_of_credit_usd": 242351,
+            "percentage_rent_pct": 5.53
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_95": {
+          "identity": {
+            "unit_number": "Suite 570",
+            "floor": 19,
+            "space_type": "Office",
+            "rentable_sqft": 27138,
+            "usable_sqft": 25579,
+            "load_factor_pct": 6.09
+          },
+          "tenant": {
+            "tenant_name": "Granite Industries",
+            "dba": "Delta LLC",
+            "industry": "Finance",
+            "credit_rating": "AAA",
+            "tenant_since": "2019-01-01",
+            "guarantor": "Delta Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1094",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2020-12-12",
+            "expiration_date": "2030-10-21",
+            "term_months": 120,
+            "base_rent_annual_usd": 487669,
+            "base_rent_psf_usd": 17.97,
+            "annual_escalation_pct": 2.88,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 6.29,
+            "real_estate_tax_psf_usd": 2.34,
+            "insurance_psf_usd": 0.77,
+            "management_fee_pct": 3.01
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 15.8,
+            "security_deposit_usd": 81278,
+            "letter_of_credit_usd": 212106,
+            "percentage_rent_pct": 3.36
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 120,
+            "has_termination_option": true
+          }
+        },
+        "unit_96": {
+          "identity": {
+            "unit_number": "Suite 575",
+            "floor": 16,
+            "space_type": "Flex",
+            "rentable_sqft": 4503,
+            "usable_sqft": 3946,
+            "load_factor_pct": 14.12
+          },
+          "tenant": {
+            "tenant_name": "Beacon Partners",
+            "dba": "Harbor Inc",
+            "industry": "Logistics",
+            "credit_rating": "AAA",
+            "tenant_since": "2017-09-26",
+            "guarantor": "Beacon Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1095",
+            "lease_status": "Pending",
+            "commencement_date": "2019-01-29",
+            "expiration_date": "2025-12-23",
+            "term_months": 84,
+            "base_rent_annual_usd": 131442,
+            "base_rent_psf_usd": 29.19,
+            "annual_escalation_pct": 3.31,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 7.38,
+            "real_estate_tax_psf_usd": 2.45,
+            "insurance_psf_usd": 2.2,
+            "management_fee_pct": 4.42
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 10.36,
+            "security_deposit_usd": 10953,
+            "letter_of_credit_usd": 57380,
+            "percentage_rent_pct": 7.9
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 180,
+            "has_termination_option": true
+          }
+        },
+        "unit_97": {
+          "identity": {
+            "unit_number": "Suite 580",
+            "floor": 1,
+            "space_type": "Office",
+            "rentable_sqft": 41433,
+            "usable_sqft": 34105,
+            "load_factor_pct": 21.49
+          },
+          "tenant": {
+            "tenant_name": "Beacon Logistics",
+            "dba": "Delta LLC",
+            "industry": "Finance",
+            "credit_rating": "AA",
+            "tenant_since": "2018-09-24",
+            "guarantor": "Delta Partners"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1096",
+            "lease_status": "Pending",
+            "commencement_date": "2020-11-30",
+            "expiration_date": "2023-11-15",
+            "term_months": 36,
+            "base_rent_annual_usd": 2551444,
+            "base_rent_psf_usd": 61.58,
+            "annual_escalation_pct": 3.26,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 8.79,
+            "real_estate_tax_psf_usd": 2.56,
+            "insurance_psf_usd": 1.89,
+            "management_fee_pct": 2.76
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 40.19,
+            "security_deposit_usd": 637861,
+            "letter_of_credit_usd": 1247541,
+            "percentage_rent_pct": 2.2
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_98": {
+          "identity": {
+            "unit_number": "Suite 585",
+            "floor": 14,
+            "space_type": "Flex",
+            "rentable_sqft": 39478,
+            "usable_sqft": 36666,
+            "load_factor_pct": 7.67
+          },
+          "tenant": {
+            "tenant_name": "Forge Capital",
+            "dba": "Granite Inc",
+            "industry": "Technology",
+            "credit_rating": "NR",
+            "tenant_since": "2020-11-17",
+            "guarantor": "Delta Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1097",
+            "lease_status": "Vacant",
+            "commencement_date": "2021-06-03",
+            "expiration_date": "2031-04-12",
+            "term_months": 120,
+            "base_rent_annual_usd": 2255772,
+            "base_rent_psf_usd": 57.14,
+            "annual_escalation_pct": 3.54,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 7.29,
+            "real_estate_tax_psf_usd": 2.4,
+            "insurance_psf_usd": 1.14,
+            "management_fee_pct": 4.26
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 29.68,
+            "security_deposit_usd": 187981,
+            "letter_of_credit_usd": 287531,
+            "percentage_rent_pct": 5.4
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 180,
+            "has_termination_option": true
+          }
+        },
+        "unit_99": {
+          "identity": {
+            "unit_number": "Suite 590",
+            "floor": 25,
+            "space_type": "Industrial",
+            "rentable_sqft": 29898,
+            "usable_sqft": 28253,
+            "load_factor_pct": 5.82
+          },
+          "tenant": {
+            "tenant_name": "Evergreen Systems",
+            "dba": "Atlas Co",
+            "industry": "Legal",
+            "credit_rating": "B",
+            "tenant_since": "2019-02-05",
+            "guarantor": "Evergreen Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1098",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2021-06-19",
+            "expiration_date": "2031-08-26",
+            "term_months": 124,
+            "base_rent_annual_usd": 1006067,
+            "base_rent_psf_usd": 33.65,
+            "annual_escalation_pct": 2.58,
+            "free_rent_months": 2
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 7.7,
+            "real_estate_tax_psf_usd": 3.02,
+            "insurance_psf_usd": 0.77,
+            "management_fee_pct": 4.7
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 68.39,
+            "security_deposit_usd": 83838,
+            "letter_of_credit_usd": 150497,
+            "percentage_rent_pct": 7.89
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 270,
+            "has_termination_option": true
+          }
+        },
+        "unit_100": {
+          "identity": {
+            "unit_number": "Suite 595",
+            "floor": 26,
+            "space_type": "Medical",
+            "rentable_sqft": 38748,
+            "usable_sqft": 34350,
+            "load_factor_pct": 12.8
+          },
+          "tenant": {
+            "tenant_name": "Harbor Logistics",
+            "dba": "Cedar LLC",
+            "industry": "Finance",
+            "credit_rating": "AA",
+            "tenant_since": "2017-04-19",
+            "guarantor": "Forge Logistics"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1099",
+            "lease_status": "Active",
+            "commencement_date": "2019-08-18",
+            "expiration_date": "2026-07-12",
+            "term_months": 84,
+            "base_rent_annual_usd": 735049,
+            "base_rent_psf_usd": 18.97,
+            "annual_escalation_pct": 3.9,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 8.51,
+            "real_estate_tax_psf_usd": 2.2,
+            "insurance_psf_usd": 0.94,
+            "management_fee_pct": 3.23
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 29.74,
+            "security_deposit_usd": 122508,
+            "letter_of_credit_usd": 366377,
+            "percentage_rent_pct": 0.7
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_101": {
+          "identity": {
+            "unit_number": "Suite 600",
+            "floor": 4,
+            "space_type": "Medical",
+            "rentable_sqft": 24514,
+            "usable_sqft": 20846,
+            "load_factor_pct": 17.6
+          },
+          "tenant": {
+            "tenant_name": "Harbor Group",
+            "dba": "Beacon LLC",
+            "industry": "Technology",
+            "credit_rating": "AA",
+            "tenant_since": "2020-08-02",
+            "guarantor": "Atlas Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1100",
+            "lease_status": "Active",
+            "commencement_date": "2022-05-08",
+            "expiration_date": "2032-03-16",
+            "term_months": 120,
+            "base_rent_annual_usd": 375554,
+            "base_rent_psf_usd": 15.32,
+            "annual_escalation_pct": 2.89,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 5.25,
+            "real_estate_tax_psf_usd": 2.24,
+            "insurance_psf_usd": 0.82,
+            "management_fee_pct": 2.73
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 76.38,
+            "security_deposit_usd": 93888,
+            "letter_of_credit_usd": 168858,
+            "percentage_rent_pct": 0.55
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_102": {
+          "identity": {
+            "unit_number": "Suite 605",
+            "floor": 8,
+            "space_type": "Office",
+            "rentable_sqft": 36257,
+            "usable_sqft": 31243,
+            "load_factor_pct": 16.05
+          },
+          "tenant": {
+            "tenant_name": "Evergreen Holdings",
+            "dba": "Cedar Inc",
+            "industry": "Government",
+            "credit_rating": "AAA",
+            "tenant_since": "2022-09-09",
+            "guarantor": "Delta Holdings"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1101",
+            "lease_status": "HoldOver",
+            "commencement_date": "2022-11-09",
+            "expiration_date": "2027-10-14",
+            "term_months": 60,
+            "base_rent_annual_usd": 1063780,
+            "base_rent_psf_usd": 29.34,
+            "annual_escalation_pct": 2.24,
+            "free_rent_months": 2
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 8.44,
+            "real_estate_tax_psf_usd": 6.41,
+            "insurance_psf_usd": 0.52,
+            "management_fee_pct": 2.27
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 62.9,
+            "security_deposit_usd": 88648,
+            "letter_of_credit_usd": 357734,
+            "percentage_rent_pct": 3.74
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 120,
+            "has_termination_option": true
+          }
+        },
+        "unit_103": {
+          "identity": {
+            "unit_number": "Suite 610",
+            "floor": 23,
+            "space_type": "Medical",
+            "rentable_sqft": 7805,
+            "usable_sqft": 7184,
+            "load_factor_pct": 8.64
+          },
+          "tenant": {
+            "tenant_name": "Beacon Capital",
+            "dba": "Harbor Inc",
+            "industry": "Government",
+            "credit_rating": "B",
+            "tenant_since": "2019-01-20",
+            "guarantor": "Forge Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1102",
+            "lease_status": "Pending",
+            "commencement_date": "2020-04-27",
+            "expiration_date": "2030-03-06",
+            "term_months": 120,
+            "base_rent_annual_usd": 182090,
+            "base_rent_psf_usd": 23.33,
+            "annual_escalation_pct": 3.26,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 8.03,
+            "real_estate_tax_psf_usd": 2.68,
+            "insurance_psf_usd": 1.14,
+            "management_fee_pct": 4.36
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 33.39,
+            "security_deposit_usd": 15174,
+            "letter_of_credit_usd": 78860,
+            "percentage_rent_pct": 7.33
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_104": {
+          "identity": {
+            "unit_number": "Suite 615",
+            "floor": 6,
+            "space_type": "Flex",
+            "rentable_sqft": 38660,
+            "usable_sqft": 35151,
+            "load_factor_pct": 9.98
+          },
+          "tenant": {
+            "tenant_name": "Beacon Systems",
+            "dba": "Delta Co",
+            "industry": "Retail",
+            "credit_rating": "B",
+            "tenant_since": "2020-12-18",
+            "guarantor": "Evergreen Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1103",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2022-05-11",
+            "expiration_date": "2027-04-15",
+            "term_months": 60,
+            "base_rent_annual_usd": 1104129,
+            "base_rent_psf_usd": 28.56,
+            "annual_escalation_pct": 2.29,
+            "free_rent_months": 4
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 3.26,
+            "real_estate_tax_psf_usd": 2.55,
+            "insurance_psf_usd": 0.56,
+            "management_fee_pct": 3.54
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 58.41,
+            "security_deposit_usd": 92010,
+            "letter_of_credit_usd": 325786,
+            "percentage_rent_pct": 4.86
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_105": {
+          "identity": {
+            "unit_number": "Suite 620",
+            "floor": 26,
+            "space_type": "Office",
+            "rentable_sqft": 38197,
+            "usable_sqft": 34587,
+            "load_factor_pct": 10.44
+          },
+          "tenant": {
+            "tenant_name": "Harbor Group",
+            "dba": "Granite LLC",
+            "industry": "Legal",
+            "credit_rating": "A",
+            "tenant_since": "2020-07-18",
+            "guarantor": "Cedar Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1104",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2021-09-17",
+            "expiration_date": "2028-08-11",
+            "term_months": 84,
+            "base_rent_annual_usd": 935444,
+            "base_rent_psf_usd": 24.49,
+            "annual_escalation_pct": 2.22,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 7.65,
+            "real_estate_tax_psf_usd": 3.59,
+            "insurance_psf_usd": 0.66,
+            "management_fee_pct": 4.62
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 35.38,
+            "security_deposit_usd": 77953,
+            "letter_of_credit_usd": 310208,
+            "percentage_rent_pct": 1.45
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_106": {
+          "identity": {
+            "unit_number": "Suite 625",
+            "floor": 5,
+            "space_type": "Retail",
+            "rentable_sqft": 33496,
+            "usable_sqft": 30014,
+            "load_factor_pct": 11.6
+          },
+          "tenant": {
+            "tenant_name": "Atlas Systems",
+            "dba": "Harbor LLC",
+            "industry": "Government",
+            "credit_rating": "NR",
+            "tenant_since": "2023-05-05",
+            "guarantor": "Evergreen Holdings"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1105",
+            "lease_status": "HoldOver",
+            "commencement_date": "2023-08-26",
+            "expiration_date": "2028-07-30",
+            "term_months": 60,
+            "base_rent_annual_usd": 956310,
+            "base_rent_psf_usd": 28.55,
+            "annual_escalation_pct": 2.84,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 3.04,
+            "real_estate_tax_psf_usd": 4.45,
+            "insurance_psf_usd": 0.93,
+            "management_fee_pct": 4.24
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 82.37,
+            "security_deposit_usd": 239077,
+            "letter_of_credit_usd": 423620,
+            "percentage_rent_pct": 6.87
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 180,
+            "has_termination_option": false
+          }
+        },
+        "unit_107": {
+          "identity": {
+            "unit_number": "Suite 630",
+            "floor": 11,
+            "space_type": "Office",
+            "rentable_sqft": 10993,
+            "usable_sqft": 9802,
+            "load_factor_pct": 12.15
+          },
+          "tenant": {
+            "tenant_name": "Cedar Holdings",
+            "dba": "Cedar Inc",
+            "industry": "Finance",
+            "credit_rating": "BBB",
+            "tenant_since": "2019-10-26",
+            "guarantor": "Evergreen Holdings"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1106",
+            "lease_status": "Pending",
+            "commencement_date": "2020-08-27",
+            "expiration_date": "2023-08-12",
+            "term_months": 36,
+            "base_rent_annual_usd": 425868,
+            "base_rent_psf_usd": 38.74,
+            "annual_escalation_pct": 2.43,
+            "free_rent_months": 2
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 4.88,
+            "real_estate_tax_psf_usd": 2.61,
+            "insurance_psf_usd": 1.6,
+            "management_fee_pct": 2.79
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 24.33,
+            "security_deposit_usd": 106467,
+            "letter_of_credit_usd": 142787,
+            "percentage_rent_pct": 4.4
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_108": {
+          "identity": {
+            "unit_number": "Suite 635",
+            "floor": 24,
+            "space_type": "Office",
+            "rentable_sqft": 23010,
+            "usable_sqft": 21163,
+            "load_factor_pct": 8.73
+          },
+          "tenant": {
+            "tenant_name": "Delta Group",
+            "dba": "Harbor Co",
+            "industry": "Logistics",
+            "credit_rating": "NR",
+            "tenant_since": "2021-05-19",
+            "guarantor": "Atlas Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1107",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2021-11-06",
+            "expiration_date": "2024-10-21",
+            "term_months": 36,
+            "base_rent_annual_usd": 365398,
+            "base_rent_psf_usd": 15.88,
+            "annual_escalation_pct": 3.27,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 7.97,
+            "real_estate_tax_psf_usd": 5.39,
+            "insurance_psf_usd": 0.91,
+            "management_fee_pct": 2.59
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 69.39,
+            "security_deposit_usd": 91349,
+            "letter_of_credit_usd": 158472,
+            "percentage_rent_pct": 5.68
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_109": {
+          "identity": {
+            "unit_number": "Suite 640",
+            "floor": 20,
+            "space_type": "Retail",
+            "rentable_sqft": 17159,
+            "usable_sqft": 15677,
+            "load_factor_pct": 9.45
+          },
+          "tenant": {
+            "tenant_name": "Evergreen Group",
+            "dba": "Beacon Inc",
+            "industry": "Government",
+            "credit_rating": "BB",
+            "tenant_since": "2018-10-22",
+            "guarantor": "Delta Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1108",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2020-01-29",
+            "expiration_date": "2025-01-02",
+            "term_months": 60,
+            "base_rent_annual_usd": 476505,
+            "base_rent_psf_usd": 27.77,
+            "annual_escalation_pct": 2.6,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 3.82,
+            "real_estate_tax_psf_usd": 6.63,
+            "insurance_psf_usd": 1.21,
+            "management_fee_pct": 3.33
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 40.74,
+            "security_deposit_usd": 79417,
+            "letter_of_credit_usd": 154503,
+            "percentage_rent_pct": 3.4
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_110": {
+          "identity": {
+            "unit_number": "Suite 645",
+            "floor": 12,
+            "space_type": "Office",
+            "rentable_sqft": 17147,
+            "usable_sqft": 14397,
+            "load_factor_pct": 19.1
+          },
+          "tenant": {
+            "tenant_name": "Beacon Industries",
+            "dba": "Delta Inc",
+            "industry": "Government",
+            "credit_rating": "B",
+            "tenant_since": "2017-06-14",
+            "guarantor": "Beacon Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1109",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2019-03-09",
+            "expiration_date": "2024-02-11",
+            "term_months": 60,
+            "base_rent_annual_usd": 425074,
+            "base_rent_psf_usd": 24.79,
+            "annual_escalation_pct": 3.34,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 3.27,
+            "real_estate_tax_psf_usd": 6.18,
+            "insurance_psf_usd": 1.67,
+            "management_fee_pct": 3.58
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 50.9,
+            "security_deposit_usd": 35422,
+            "letter_of_credit_usd": 206584,
+            "percentage_rent_pct": 1.94
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 90,
+            "has_termination_option": true
+          }
+        },
+        "unit_111": {
+          "identity": {
+            "unit_number": "Suite 650",
+            "floor": 15,
+            "space_type": "Retail",
+            "rentable_sqft": 38049,
+            "usable_sqft": 32914,
+            "load_factor_pct": 15.6
+          },
+          "tenant": {
+            "tenant_name": "Forge Logistics",
+            "dba": "Atlas LLC",
+            "industry": "Technology",
+            "credit_rating": "NR",
+            "tenant_since": "2019-10-30",
+            "guarantor": "Evergreen Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1110",
+            "lease_status": "Pending",
+            "commencement_date": "2020-04-23",
+            "expiration_date": "2030-03-02",
+            "term_months": 120,
+            "base_rent_annual_usd": 925732,
+            "base_rent_psf_usd": 24.33,
+            "annual_escalation_pct": 3.57,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 3.09,
+            "real_estate_tax_psf_usd": 5.21,
+            "insurance_psf_usd": 0.96,
+            "management_fee_pct": 2.64
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 20.57,
+            "security_deposit_usd": 231433,
+            "letter_of_credit_usd": 197396,
+            "percentage_rent_pct": 1.82
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 120,
+            "has_termination_option": true
+          }
+        },
+        "unit_112": {
+          "identity": {
+            "unit_number": "Suite 655",
+            "floor": 2,
+            "space_type": "Medical",
+            "rentable_sqft": 3929,
+            "usable_sqft": 3272,
+            "load_factor_pct": 20.08
+          },
+          "tenant": {
+            "tenant_name": "Evergreen Logistics",
+            "dba": "Beacon Inc",
+            "industry": "Government",
+            "credit_rating": "BB",
+            "tenant_since": "2020-02-10",
+            "guarantor": "Cedar Group"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1111",
+            "lease_status": "Vacant",
+            "commencement_date": "2020-05-25",
+            "expiration_date": "2030-08-01",
+            "term_months": 124,
+            "base_rent_annual_usd": 197392,
+            "base_rent_psf_usd": 50.24,
+            "annual_escalation_pct": 3.87,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 4.71,
+            "real_estate_tax_psf_usd": 5.28,
+            "insurance_psf_usd": 0.84,
+            "management_fee_pct": 2.2
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 82.8,
+            "security_deposit_usd": 49348,
+            "letter_of_credit_usd": 29922,
+            "percentage_rent_pct": 7.78
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 120,
+            "has_termination_option": true
+          }
+        },
+        "unit_113": {
+          "identity": {
+            "unit_number": "Suite 660",
+            "floor": 29,
+            "space_type": "Retail",
+            "rentable_sqft": 17901,
+            "usable_sqft": 15991,
+            "load_factor_pct": 11.94
+          },
+          "tenant": {
+            "tenant_name": "Atlas Partners",
+            "dba": "Atlas Co",
+            "industry": "Logistics",
+            "credit_rating": "B",
+            "tenant_since": "2018-03-04",
+            "guarantor": "Beacon Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1112",
+            "lease_status": "Vacant",
+            "commencement_date": "2020-07-06",
+            "expiration_date": "2030-09-12",
+            "term_months": 124,
+            "base_rent_annual_usd": 353007,
+            "base_rent_psf_usd": 19.72,
+            "annual_escalation_pct": 3.68,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 6.97,
+            "real_estate_tax_psf_usd": 4.22,
+            "insurance_psf_usd": 2.47,
+            "management_fee_pct": 2.5
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 41.05,
+            "security_deposit_usd": 88251,
+            "letter_of_credit_usd": 92797,
+            "percentage_rent_pct": 7.01
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_114": {
+          "identity": {
+            "unit_number": "Suite 665",
+            "floor": 23,
+            "space_type": "Retail",
+            "rentable_sqft": 39427,
+            "usable_sqft": 33762,
+            "load_factor_pct": 16.78
+          },
+          "tenant": {
+            "tenant_name": "Harbor Systems",
+            "dba": "Evergreen Co",
+            "industry": "Legal",
+            "credit_rating": "B",
+            "tenant_since": "2019-12-08",
+            "guarantor": "Granite Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1113",
+            "lease_status": "Pending",
+            "commencement_date": "2020-10-04",
+            "expiration_date": "2027-08-29",
+            "term_months": 84,
+            "base_rent_annual_usd": 2181890,
+            "base_rent_psf_usd": 55.34,
+            "annual_escalation_pct": 2.91,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 4.68,
+            "real_estate_tax_psf_usd": 6.76,
+            "insurance_psf_usd": 1.14,
+            "management_fee_pct": 4.62
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 27.32,
+            "security_deposit_usd": 545472,
+            "letter_of_credit_usd": 792117,
+            "percentage_rent_pct": 3.17
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 270,
+            "has_termination_option": true
+          }
+        },
+        "unit_115": {
+          "identity": {
+            "unit_number": "Suite 670",
+            "floor": 10,
+            "space_type": "Flex",
+            "rentable_sqft": 34695,
+            "usable_sqft": 28511,
+            "load_factor_pct": 21.69
+          },
+          "tenant": {
+            "tenant_name": "Granite Group",
+            "dba": "Cedar Co",
+            "industry": "Logistics",
+            "credit_rating": "AA",
+            "tenant_since": "2022-11-29",
+            "guarantor": "Granite Systems"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1114",
+            "lease_status": "Active",
+            "commencement_date": "2023-10-18",
+            "expiration_date": "2030-09-11",
+            "term_months": 84,
+            "base_rent_annual_usd": 881599,
+            "base_rent_psf_usd": 25.41,
+            "annual_escalation_pct": 2.64,
+            "free_rent_months": 3
+          },
+          "recoveries": {
+            "expense_structure": "Gross",
+            "cam_psf_usd": 8.24,
+            "real_estate_tax_psf_usd": 3.96,
+            "insurance_psf_usd": 2.23,
+            "management_fee_pct": 2.67
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 13.2,
+            "security_deposit_usd": 73466,
+            "letter_of_credit_usd": 289491,
+            "percentage_rent_pct": 5.19
+          },
+          "options": {
+            "renewal_options": 1,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_116": {
+          "identity": {
+            "unit_number": "Suite 675",
+            "floor": 21,
+            "space_type": "Retail",
+            "rentable_sqft": 44240,
+            "usable_sqft": 36664,
+            "load_factor_pct": 20.66
+          },
+          "tenant": {
+            "tenant_name": "Harbor Capital",
+            "dba": "Delta LLC",
+            "industry": "Legal",
+            "credit_rating": "BBB",
+            "tenant_since": "2017-05-05",
+            "guarantor": "Evergreen Logistics"
+          },
+          "lease": {
+            "lease_id": "LSE-2019-1115",
+            "lease_status": "HoldOver",
+            "commencement_date": "2019-02-09",
+            "expiration_date": "2028-12-18",
+            "term_months": 120,
+            "base_rent_annual_usd": 2142100,
+            "base_rent_psf_usd": 48.42,
+            "annual_escalation_pct": 3.41,
+            "free_rent_months": 1
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 8.19,
+            "real_estate_tax_psf_usd": 5.52,
+            "insurance_psf_usd": 0.89,
+            "management_fee_pct": 2.41
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 33.12,
+            "security_deposit_usd": 178508,
+            "letter_of_credit_usd": 393854,
+            "percentage_rent_pct": 7.21
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 270,
+            "has_termination_option": true
+          }
+        },
+        "unit_117": {
+          "identity": {
+            "unit_number": "Suite 680",
+            "floor": 12,
+            "space_type": "Industrial",
+            "rentable_sqft": 44994,
+            "usable_sqft": 41740,
+            "load_factor_pct": 7.8
+          },
+          "tenant": {
+            "tenant_name": "Beacon Industries",
+            "dba": "Beacon Co",
+            "industry": "Government",
+            "credit_rating": "AAA",
+            "tenant_since": "2019-10-11",
+            "guarantor": "Evergreen Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2020-1116",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2022-01-30",
+            "expiration_date": "2025-01-14",
+            "term_months": 36,
+            "base_rent_annual_usd": 1438008,
+            "base_rent_psf_usd": 31.96,
+            "annual_escalation_pct": 3.05,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 7.29,
+            "real_estate_tax_psf_usd": 4.93,
+            "insurance_psf_usd": 0.92,
+            "management_fee_pct": 2.77
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 48.6,
+            "security_deposit_usd": 359502,
+            "letter_of_credit_usd": 212075,
+            "percentage_rent_pct": 1.49
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 270,
+            "has_termination_option": false
+          }
+        },
+        "unit_118": {
+          "identity": {
+            "unit_number": "Suite 685",
+            "floor": 20,
+            "space_type": "Medical",
+            "rentable_sqft": 12001,
+            "usable_sqft": 10662,
+            "load_factor_pct": 12.56
+          },
+          "tenant": {
+            "tenant_name": "Beacon Partners",
+            "dba": "Cedar Inc",
+            "industry": "Legal",
+            "credit_rating": "NR",
+            "tenant_since": "2018-01-16",
+            "guarantor": "Forge Logistics"
+          },
+          "lease": {
+            "lease_id": "LSE-2021-1117",
+            "lease_status": "MonthToMonth",
+            "commencement_date": "2019-06-04",
+            "expiration_date": "2026-04-28",
+            "term_months": 84,
+            "base_rent_annual_usd": 499601,
+            "base_rent_psf_usd": 41.63,
+            "annual_escalation_pct": 3.53,
+            "free_rent_months": 5
+          },
+          "recoveries": {
+            "expense_structure": "BaseYear",
+            "cam_psf_usd": 6.96,
+            "real_estate_tax_psf_usd": 2.6,
+            "insurance_psf_usd": 1.01,
+            "management_fee_pct": 2.78
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 23.15,
+            "security_deposit_usd": 41633,
+            "letter_of_credit_usd": 174049,
+            "percentage_rent_pct": 5.93
+          },
+          "options": {
+            "renewal_options": 0,
+            "renewal_notice_days": 90,
+            "has_termination_option": false
+          }
+        },
+        "unit_119": {
+          "identity": {
+            "unit_number": "Suite 690",
+            "floor": 31,
+            "space_type": "Flex",
+            "rentable_sqft": 1764,
+            "usable_sqft": 1582,
+            "load_factor_pct": 11.5
+          },
+          "tenant": {
+            "tenant_name": "Cedar Industries",
+            "dba": "Beacon Co",
+            "industry": "Logistics",
+            "credit_rating": "BBB",
+            "tenant_since": "2018-06-06",
+            "guarantor": "Atlas Capital"
+          },
+          "lease": {
+            "lease_id": "LSE-2022-1118",
+            "lease_status": "Active",
+            "commencement_date": "2019-02-16",
+            "expiration_date": "2026-01-10",
+            "term_months": 84,
+            "base_rent_annual_usd": 99595,
+            "base_rent_psf_usd": 56.46,
+            "annual_escalation_pct": 2.98,
+            "free_rent_months": 0
+          },
+          "recoveries": {
+            "expense_structure": "ModifiedGross",
+            "cam_psf_usd": 7.91,
+            "real_estate_tax_psf_usd": 3.53,
+            "insurance_psf_usd": 1.08,
+            "management_fee_pct": 4.31
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 63.59,
+            "security_deposit_usd": 8299,
+            "letter_of_credit_usd": 36850,
+            "percentage_rent_pct": 3.53
+          },
+          "options": {
+            "renewal_options": 2,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        },
+        "unit_120": {
+          "identity": {
+            "unit_number": "Suite 695",
+            "floor": 4,
+            "space_type": "Flex",
+            "rentable_sqft": 1812,
+            "usable_sqft": 1490,
+            "load_factor_pct": 21.61
+          },
+          "tenant": {
+            "tenant_name": "Cedar Group",
+            "dba": "Evergreen LLC",
+            "industry": "Healthcare",
+            "credit_rating": "AAA",
+            "tenant_since": "2018-07-18",
+            "guarantor": "Forge Industries"
+          },
+          "lease": {
+            "lease_id": "LSE-2023-1119",
+            "lease_status": "HoldOver",
+            "commencement_date": "2019-05-02",
+            "expiration_date": "2029-03-10",
+            "term_months": 120,
+            "base_rent_annual_usd": 62532,
+            "base_rent_psf_usd": 34.51,
+            "annual_escalation_pct": 2.27,
+            "free_rent_months": 6
+          },
+          "recoveries": {
+            "expense_structure": "NNN",
+            "cam_psf_usd": 5.96,
+            "real_estate_tax_psf_usd": 6.02,
+            "insurance_psf_usd": 2.01,
+            "management_fee_pct": 4.22
+          },
+          "concessions": {
+            "ti_allowance_psf_usd": 31.5,
+            "security_deposit_usd": 5211,
+            "letter_of_credit_usd": 28700,
+            "percentage_rent_pct": 1.94
+          },
+          "options": {
+            "renewal_options": 3,
+            "renewal_notice_days": 120,
+            "has_termination_option": false
+          }
+        }
+      }
+    },
+    "value_accuracy": 1.0,
+    "by_type": {
+      "boolean": 1.0,
+      "enum": 1.0,
+      "integer": 1.0,
+      "number": 1.0,
+      "short_string": 1.0
+    },
+    "outcomes": {
+      "correct": 4000,
+      "accuracy": 0,
+      "omission": 0,
+      "hallucination": 0,
+      "structural": 0
+    }
+  }
+]
