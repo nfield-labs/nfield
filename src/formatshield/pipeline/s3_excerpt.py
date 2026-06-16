@@ -27,7 +27,7 @@ def run_stage_3(state: PipelineState) -> PipelineState:
     For each leaf:
     1. Collect all matched_segments from its groups
     2. Deduplicate by segment_id (same segment may appear in multiple groups)
-    3. Compute B_excerpt = C_usable - overhead - safe_output
+    3. Compute B_excerpt = C_usable - overhead (output uses the window headroom)
     4. Sort by relevance score, trim lowest-scoring segments to fit budget
     5. Reorder remaining by document position (preserve reading order)
     6. Set leaf.document_excerpt
@@ -80,8 +80,10 @@ def _finalize_excerpt(leaf: CapacityLeaf, state: PipelineState) -> str:
     if not seg_score:
         return ""
 
-    # Excerpt budget: B_excerpt = C_usable - overhead - safe_output
-    b_excerpt = max(0.0, state.C_usable - leaf.overhead - leaf.safe_output)
+    # Excerpt budget: B_excerpt = C_usable - overhead. Output is NOT subtracted —
+    # the model's answer generates into the window's headroom (decoupled budgets,
+    # see s2c_packing.output_ceiling), so the excerpt keeps the full input budget.
+    b_excerpt = max(0.0, state.C_usable - leaf.overhead)
     budget_chars = int(b_excerpt * max(state.chars_per_token, 1.0))
 
     # --- Coverage-first selection (CFCS) -------------------------------------

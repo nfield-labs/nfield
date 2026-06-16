@@ -16,6 +16,10 @@ __all__ = ["ExtractionConfig"]
 
 DEFAULT_CONTEXT_UTILIZATION_RATIO: float = 0.50
 DEFAULT_MAX_RETRY_ROUNDS: int = 2
+# Per-call retry budget for transient failures (429/5xx/timeout); distinct from
+# max_retry_rounds (field re-extraction). A TPM limit is a rolling 60s window, so a
+# leaf must outlast it: 60s / ~6s mean backoff ⇒ 10 attempts, each honoring Retry-After.
+DEFAULT_MAX_API_RETRIES: int = 10
 # Max leaf extraction calls in flight at once. Firing every leaf of a round
 # simultaneously overwhelms provider rate limits (429 storms) and, with retries,
 # spirals into far more calls. A bounded concurrency window smooths the burst —
@@ -38,7 +42,7 @@ MIN_RECOVERY_FIELDS_PER_CALL: int = 10
 # drop to ~68% at 500 instructions, biased toward earlier ones), and relevant content
 # in a long packed context is missed (Lost-in-the-Middle, arXiv:2307.03172). The value
 # 50 itself is a production heuristic, not a measured constant from a specific paper;
-# the dynamic per-model calibration that would replace it is deferred (see Plan.md).
+# the dynamic per-model calibration that would replace it is deferred.
 # Yields K = O(load / cap) small, reliably-extractable leaves.
 DEFAULT_MAX_FIELDS_PER_CALL: int = 50
 DEFAULT_Z_TARGET: float = 1.645
@@ -113,6 +117,10 @@ class ExtractionConfig:
             Bounds the concurrency of each execution round so a wide schema does
             not fire dozens of calls simultaneously and trip provider rate limits.
             Default 4 (safe for free tiers); raise for higher-throughput plans.
+        max_api_retries: Per-call retry budget for transient failures (429 / 5xx /
+            timeout), honoring Retry-After. Distinct from ``max_retry_rounds``
+            (field re-extraction). Default 10 (outlasts a rolling-window TPM storm);
+            lower for fail-fast. Must be > 0.
 
     Example:
         >>> cfg = ExtractionConfig(default_model="groq/llama-3.1-8b")
@@ -142,3 +150,7 @@ class ExtractionConfig:
     max_fields_per_call: int = DEFAULT_MAX_FIELDS_PER_CALL
     recovery_budget_shrink: float = DEFAULT_RECOVERY_BUDGET_SHRINK
     max_concurrent_calls: int = DEFAULT_MAX_CONCURRENT_CALLS
+    max_api_retries: int = DEFAULT_MAX_API_RETRIES
+    # When True, validate values exactly as extracted (no lenient normalization of
+    # formatted numbers/booleans). Default lenient: accept "$1,234,568" as 1234568.
+    strict_validation: bool = False

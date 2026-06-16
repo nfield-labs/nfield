@@ -300,6 +300,7 @@ class AsyncFormatShield:
             self._model,
             context_window=context_window,
             max_output_tokens=max_output_tokens,
+            max_retries=self._config.max_api_retries,
             api_key=api_key,
             base_url=base_url,
         )
@@ -353,6 +354,7 @@ class AsyncFormatShield:
         state.instructions = self._instructions
         state.inject_dependencies = config.inject_dependencies
         state.knowledge_fallback = config.knowledge_fallback
+        state.strict_validation = config.strict_validation
         state.max_concurrent_calls = config.max_concurrent_calls
         state = run_stage_1(state, schema_dict)
         state = run_stage_2a(state)

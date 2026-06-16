@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING, Any
 from formatshield.extraction._papt import select_template
 from formatshield.extraction._prompt import build_extraction_prompt
 from formatshield.extraction._sfep import NEEDS_REVALIDATION, parse_sfep
+from formatshield.validation._normalize import normalize_value
 
 if TYPE_CHECKING:
     from formatshield.pipeline._state import PipelineState
@@ -245,4 +246,10 @@ def _write_extracted_to_blackboard(
         elif value is None:
             state.blackboard.mark_failed(path, "field not found in document (LLM output NULL)")
         else:
+            # Canonicalize a formatted value to its schema type before storing, so a
+            # number field holds a number (schema-valid output) and validation does not
+            # reject it on format alone. Lossless-or-decline; skipped in strict mode.
+            field = state.field_by_path.get(path)
+            if field is not None and not state.strict_validation:
+                value = normalize_value(value, field)
             state.blackboard.write(path, value)

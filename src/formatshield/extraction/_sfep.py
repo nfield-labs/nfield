@@ -26,6 +26,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from formatshield.exceptions import ExtractionError
+from formatshield.validation._normalize import coerce_number
 
 if TYPE_CHECKING:
     from formatshield.schema._types import Field
@@ -286,16 +287,23 @@ def _cast_integer(raw: str, field: Field) -> int:
     Raises:
         ExtractionError: If the value cannot be interpreted as an integer.
     """
+    # Exact parse first — keeps precision for very large integers that float() rounds.
     try:
         return int(raw)
     except ValueError:
-        # Try float truncation (LLM may output "30.0" for integer fields)
-        try:
-            as_float = float(raw)
-            if as_float == int(as_float):
-                return int(as_float)
-        except ValueError:
-            pass
+        pass
+    # Then strip formatting (commas/currency/percent/parens), so a figure the model
+    # copied verbatim from the document ("2,264,331,000") is not dropped on cast.
+    num = coerce_number(raw)
+    if num is not None and float(num).is_integer():
+        return int(num)
+    # Float truncation (LLM may output "30.0" for integer fields).
+    try:
+        as_float = float(raw)
+        if as_float == int(as_float):
+            return int(as_float)
+    except ValueError:
+        pass
     raise ExtractionError(
         f"Cannot cast {raw!r} to integer",
         field=field.path,
@@ -315,8 +323,11 @@ def _cast_number(raw: str, field: Field) -> float:
     Raises:
         ExtractionError: If the value cannot be interpreted as a number.
     """
+    num = coerce_number(raw)
+    if num is not None:
+        return num
     try:
-        return float(raw)
+        return float(raw)  # fallback for forms coerce_number declines (e.g. "1e3")
     except ValueError:
         raise ExtractionError(
             f"Cannot cast {raw!r} to number",

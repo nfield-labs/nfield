@@ -56,6 +56,8 @@ __all__ = [
 _Z_HEAVY_TAIL_FACTOR: float = 1.5
 # Floor so a call's output budget never collapses to zero.
 _MIN_SAFE_OUTPUT_TOKENS: int = 50
+# Sort key for shared/global fields (no record): packs them after all records.
+_UNGROUPED: int = 1 << 30
 # Min document room per leaf = one chunk (chunker target). Stage 3 trims larger pools.
 _MIN_EXCERPT_TOKENS: int = _DEFAULT_TARGET_TOKENS
 # Format-only wrapper around a field's dynamic schema-description text (the
@@ -233,8 +235,11 @@ def fits(
         return False
     # The document is shared and trimmed to the leftover budget, so only its
     # small-group portion binds; a large retrieval pool is capped at MIN_EXCERPT.
+    # Output is NOT charged against C_usable: it generates into the window's
+    # headroom (see ``output_ceiling``), so only the prompt (overhead + excerpt)
+    # is held under the reliability ceiling — input and output are decoupled.
     doc_needed = min(D_cost, _MIN_EXCERPT_TOKENS)
-    return overhead + doc_needed + output_needed <= C_usable
+    return overhead + doc_needed <= C_usable
 
 
 def _coverage_fits(
@@ -270,8 +275,10 @@ def _coverage_fits(
     output_needed = sum(_field_output_tokens(f, chars_per_token) for f in leaf_fields)
     if output_needed > output_ceiling:
         return False
+    # Only the prompt (overhead + the evidence coverage floor) is charged against
+    # C_usable; output generates into the window headroom (decoupled budgets).
     floor = coverage_tokens(groups, {f.path for f in leaf_fields}, chars_per_token)
-    return overhead + output_needed + floor <= c_usable
+    return overhead + floor <= c_usable
 
 
 def tarjan_scc(graph: dict[str, set[str]]) -> list[list[str]]:
@@ -463,15 +470,19 @@ def run_stage_2c(state: PipelineState, config: ExtractionConfig) -> PipelineStat
     """
     z_eff = config.z_target * _Z_HEAVY_TAIL_FACTOR
 
-    # The output ceiling is the most any single call may safely emit: the model
-    # output limit minus the heavy-tail margin over all fields. fits() and K_min
-    # check against this shared ceiling, while each leaf separately reserves only
-    # what its own fields need (see _leaf_safe_output) so the document excerpt
-    # keeps the bulk of the input budget.
+    # The output ceiling is the most any single call may safely emit. Output is
+    # DECOUPLED from the input budget: the prompt (overhead + excerpt) is capped at
+    # C_usable for reliability (lost-in-the-middle), but the model generates its
+    # answer into the window's *headroom* (C_eff - C_usable), not out of the input
+    # budget. So the ceiling is the model output limit (minus the heavy-tail
+    # margin) bounded by that headroom — guaranteeing prompt + output <= C_eff
+    # without ever stealing excerpt space (the truncation-vs-starvation trade-off
+    # the coupled budget forced on verbose, instruction-driven values).
     sum_var_all = sum(f.var_tau for f in state.fields)
+    headroom = max(float(_MIN_SAFE_OUTPUT_TOKENS), state.C_eff - state.C_usable)
     output_ceiling = max(
         float(_MIN_SAFE_OUTPUT_TOKENS),
-        state.M_O - z_eff * math.sqrt(sum_var_all),
+        min(state.M_O - z_eff * math.sqrt(sum_var_all), headroom),
     )
 
     cpt = state.chars_per_token or _FALLBACK_CHARS_PER_TOKEN
@@ -488,15 +499,29 @@ def run_stage_2c(state: PipelineState, config: ExtractionConfig) -> PipelineStat
     fixed_prompt_chars = len(builtin_sys) + len(state.instructions)
     prompt_overhead = math.ceil(fixed_prompt_chars / cpt)
 
-    leaves = _greedy_ffd(
-        state.groups,
-        state,
-        z_eff=z_eff,
-        output_ceiling=output_ceiling,
-        prompt_overhead=prompt_overhead,
-        inject_dependencies=config.inject_dependencies,
-        max_fields_per_call=cap,
-    )
+    # Record-aware packing when the document has a record structure (Group Bin
+    # Packing): one record's fields share a leaf, so each leaf maps to <=2 adjacent
+    # blocks. Otherwise the lexical First-Fit Decreasing packer.
+    if state.record_ordinal:
+        leaves = _greedy_record_ffd(
+            state.groups,
+            state,
+            output_ceiling=output_ceiling,
+            z_eff=z_eff,
+            prompt_overhead=prompt_overhead,
+            inject_dependencies=config.inject_dependencies,
+            max_fields_per_call=cap,
+        )
+    else:
+        leaves = _greedy_ffd(
+            state.groups,
+            state,
+            output_ceiling=output_ceiling,
+            z_eff=z_eff,
+            prompt_overhead=prompt_overhead,
+            inject_dependencies=config.inject_dependencies,
+            max_fields_per_call=cap,
+        )
     state.leaves = leaves
     state.execution_order = compute_execution_order(leaves, state.dep_dag)
     return state
@@ -573,39 +598,43 @@ def _injection_cost(
     return total
 
 
-def _leaf_safe_output(fields: list[Field], z_eff: float, m_o: int, chars_per_token: float) -> int:
-    """Output tokens to reserve for one leaf: predicted output + safety margin.
+def _leaf_safe_output(
+    fields: list[Field],
+    output_ceiling: float,
+    z_eff: float,
+    chars_per_token: float,
+) -> int:
+    """Output reservation for ONE leaf: its predicted output, not the model max.
 
-    This is the per-leaf reservation that sets ``max_tokens`` for the call —
-    only what this leaf's fields need (predicted output plus a heavy-tail margin),
-    leaving the remainder of the input budget for the document excerpt. It is
-    capped at the model's output ceiling ``m_o``: a call can never be allowed to
-    emit more than the model itself permits, and ``fits()`` already guarantees a
-    leaf's predicted output stays under ``m_o`` minus the margin.
+    Each call reserves ``max_tokens`` against the provider's tokens-per-minute
+    budget, so reserving the full ceiling on every call starves the rate limit
+    (a leaf emitting ~50 short fields would book the whole model output anyway).
+    Reserve what THIS leaf is predicted to emit — ``Σ output(f)`` plus the same
+    heavy-tail margin ``z·√Σ var(f)`` used for the global ceiling — capped at the
+    ceiling (never exceed it, so ``fits()`` stays valid) and floored so a tiny
+    leaf keeps usable room.
 
     Args:
-        fields: Fields packed into the leaf.
-        z_eff: Heavy-tail-inflated z-score (z_target * 1.5).
-        m_o: The model's maximum output tokens (upper bound on the reservation).
-        chars_per_token: Calibrated characters-per-token ratio (Stage 0), used to
-            cost each field's echoed path in the output line.
+        fields: The leaf's fields, each carrying tau and var_tau.
+        output_ceiling: Upper bound any single call may emit (M_O - margin).
+        z_eff: Heavy-tail-inflated z-score (same as the global ceiling).
+        chars_per_token: Calibrated characters-per-token ratio (Stage 0).
 
     Returns:
-        Reserved output token count, in ``[_MIN_SAFE_OUTPUT_TOKENS, m_o]``.
+        Per-leaf ``max_tokens`` in ``[_MIN_SAFE_OUTPUT_TOKENS, output_ceiling]``.
     """
-    output_needed = sum(_field_output_tokens(f, chars_per_token) for f in fields)
-    margin = z_eff * math.sqrt(sum(f.var_tau for f in fields))
-    reservation = math.ceil(output_needed + margin)
-    capped = min(reservation, m_o) if m_o > 0 else reservation
-    return max(_MIN_SAFE_OUTPUT_TOKENS, capped)
+    need = sum(_field_output_tokens(f, chars_per_token) for f in fields)
+    variance = sum(f.var_tau for f in fields)
+    sized = math.ceil(need + z_eff * math.sqrt(variance))
+    return max(_MIN_SAFE_OUTPUT_TOKENS, min(int(output_ceiling), sized))
 
 
 def _greedy_ffd(
     groups: list[FieldGroup],
     state: PipelineState,
     *,
-    z_eff: float,
     output_ceiling: float,
+    z_eff: float,
     prompt_overhead: int = 0,
     inject_dependencies: bool = False,
     max_fields_per_call: int = 50,
@@ -654,7 +683,7 @@ def _greedy_ffd(
                 fields=list(fields),
                 groups=[group],
                 overhead=_overhead(fields),
-                safe_output=_leaf_safe_output(fields, z_eff, state.M_O, cpt),
+                safe_output=_leaf_safe_output(fields, output_ceiling, z_eff, cpt),
                 leaf_id=len(leaves),
             )
         )
@@ -685,7 +714,7 @@ def _greedy_ffd(
                 leaf.fields.extend(group.fields)
                 leaf.groups.append(group)
                 leaf.overhead = overhead
-                leaf.safe_output = _leaf_safe_output(leaf.fields, z_eff, state.M_O, cpt)
+                leaf.safe_output = _leaf_safe_output(leaf.fields, output_ceiling, z_eff, cpt)
                 placed = True
                 break
         if placed:
@@ -725,11 +754,116 @@ def _greedy_ffd(
                 fields=list(state.fields),
                 groups=list(state.groups),
                 overhead=_overhead(state.fields),
-                safe_output=_leaf_safe_output(state.fields, z_eff, state.M_O, cpt),
+                safe_output=_leaf_safe_output(state.fields, output_ceiling, z_eff, cpt),
                 leaf_id=0,
             )
         ]
     )
+
+
+def _greedy_record_ffd(
+    groups: list[FieldGroup],
+    state: PipelineState,
+    *,
+    output_ceiling: float,
+    z_eff: float,
+    prompt_overhead: int = 0,
+    inject_dependencies: bool = False,
+    max_fields_per_call: int = 50,
+) -> list[CapacityLeaf]:
+    """Record-aware Next-Fit packing: one record's fields land in adjacent leaves.
+
+    Group Bin Packing (Gilmore-Gomory set-partitioning): the record is the group
+    whose items must share a bin. Fields are taken in record (document) order and
+    Next-Fit packed (Johnson 1974, <=2x OPT) — only the open leaf is tried, so each
+    leaf holds a contiguous run of records and never scatters. A leaf closes when
+    either the reliability load exceeds the cap (so K stays at its floor) or the
+    leaf's records' blocks no longer fit ``C_usable`` (so the prompt cannot
+    overflow). Result: each leaf maps to <=2 adjacent blocks.
+
+    Args:
+        groups: FieldGroups from Stage 2A.
+        state: PipelineState with ``record_ordinal`` and ``record_block_tokens``.
+        output_ceiling: Max tokens any single call may emit (M_O - margin).
+        z_eff: Heavy-tail-inflated z-score, for per-leaf output reservation.
+        prompt_overhead: Fixed system/user prompt token cost.
+        inject_dependencies: Whether resolved dependency values are injected.
+        max_fields_per_call: Reliability cap on difficulty-weighted load per leaf.
+
+    Returns:
+        List of CapacityLeaf objects in document order.
+    """
+    cpt = state.chars_per_token
+    record_of = state.record_ordinal
+    block_tokens = state.record_block_tokens
+
+    def group_record(group: FieldGroup) -> int:
+        for f in group.fields:
+            if f.path in record_of:
+                return record_of[f.path]
+        return -1  # global/shared fields (e.g. a document-level header section)
+
+    def overhead(fields: list[Field]) -> int:
+        total = _compute_leaf_overhead(fields, cpt, prompt_overhead)
+        if inject_dependencies:
+            total += _injection_cost(fields, state.dep_dag, state.field_by_path, cpt)
+        return total
+
+    def block_cost(records: set[int]) -> int:
+        return sum(block_tokens.get(r, 0) for r in records if r >= 0)
+
+    # Document order: by record index, shared fields (-1) last so they pack together.
+    ordered = sorted(groups, key=lambda g: group_record(g) if group_record(g) >= 0 else _UNGROUPED)
+
+    leaves: list[CapacityLeaf] = []
+    cur_fields: list[Field] = []
+    cur_groups: list[FieldGroup] = []
+    cur_records: set[int] = set()
+
+    def close() -> None:
+        if cur_fields:
+            leaves.append(
+                CapacityLeaf(
+                    fields=list(cur_fields),
+                    groups=list(cur_groups),
+                    overhead=overhead(cur_fields),
+                    safe_output=_leaf_safe_output(cur_fields, output_ceiling, z_eff, cpt),
+                    leaf_id=len(leaves),
+                )
+            )
+
+    for group in ordered:
+        rec = group_record(group)
+        for f in group.fields:
+            candidate = [*cur_fields, f]
+            candidate_records = cur_records | ({rec} if rec >= 0 else set())
+            over_cap = _reliability_load(candidate) > max_fields_per_call
+            # Only a NEW record may overflow the budget: a single record bigger than
+            # the budget keeps packing by the field cap (Stage 3 trims its block),
+            # rather than degenerating to one field per leaf.
+            adds_record = bool(candidate_records - cur_records)
+            over_budget = adds_record and (
+                overhead(candidate) + block_cost(candidate_records) > state.C_usable
+            )
+            if cur_fields and (over_cap or over_budget):
+                close()
+                cur_fields, cur_groups, cur_records = [f], [group], ({rec} if rec >= 0 else set())
+            else:
+                cur_fields = candidate
+                if not cur_groups or cur_groups[-1] is not group:
+                    cur_groups.append(group)
+                cur_records = candidate_records
+    close()
+
+    return leaves or [
+        CapacityLeaf(
+            fields=list(state.fields),
+            groups=list(state.groups),
+            overhead=overhead(state.fields),
+            safe_output=_leaf_safe_output(state.fields, output_ceiling, z_eff, cpt),
+            leaf_id=0,
+        )
+    ]
 
 
 def _aggregate_dcost(groups: list[FieldGroup], chars_per_token: float) -> int:

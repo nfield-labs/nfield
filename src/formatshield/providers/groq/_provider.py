@@ -99,6 +99,7 @@ class GroqProvider(BaseProvider):
         *,
         context_window: int | None = None,
         max_output_tokens: int | None = None,
+        max_retries: int | None = None,
         api_key: str | None = None,
         base_url: str | None = None,
     ) -> None:
@@ -111,6 +112,8 @@ class GroqProvider(BaseProvider):
                 for your model.
             max_output_tokens: Maximum output tokens. If None, uses default 8192.
                 Provide this if you know the actual limit for your model.
+            max_retries: Transient-failure retry budget per call. If None, the
+                base provider default applies.
             api_key: Groq API key. If None (default), the SDK reads ``GROQ_API_KEY``
                 from the environment — the recommended path. Pass it explicitly only
                 for secret-vault / multi-tenant setups. It is stored solely to build
@@ -135,6 +138,8 @@ class GroqProvider(BaseProvider):
             model_name,
             context_window=context_window,
             max_output_tokens=max_output_tokens,
+            # Override the base default only when the caller set it.
+            **({} if max_retries is None else {"max_retries": max_retries}),
         )
         self._client: Any = None
         # Stored only to construct the SDK client below. None for either means the

@@ -24,9 +24,19 @@ T = TypeVar("T")
 # Constants
 # ---------------------------------------------------------------------------
 
-_DEFAULT_RETRY_ATTEMPTS: int = 3
+# Floor for direct provider use; the engine sets this from
+# ExtractionConfig.max_api_retries. 10 attempts (each honoring Retry-After) outlast a
+# rolling-window TPM storm; too few surrenders a field while the minute is still capped.
+_DEFAULT_RETRY_ATTEMPTS: int = 10
 _DEFAULT_BACKOFF_BASE: float = 2.0
-_DEFAULT_BACKOFF_MAX: float = 30.0
+_DEFAULT_BACKOFF_MAX: float = 60.0
+# A TPM 429's Retry-After reports when the FULL token window resets (~60s), but a
+# token bucket refills continuously at limit/60 tokens per second, so one call's
+# tokens free up in a few seconds — not a whole window. Cap the rate-limit wait
+# here so throughput tracks the steady-state limit instead of sleeping a full
+# window per throttled call. The attempt still counts, so a genuinely exhausted
+# quota still backs off across the retry budget.
+_DEFAULT_RATE_LIMIT_BACKOFF_MAX: float = 8.0
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +68,7 @@ class BaseProvider(ABC):
         max_retries: int = _DEFAULT_RETRY_ATTEMPTS,
         backoff_base: float = _DEFAULT_BACKOFF_BASE,
         backoff_max: float = _DEFAULT_BACKOFF_MAX,
+        rate_limit_backoff_max: float = _DEFAULT_RATE_LIMIT_BACKOFF_MAX,
         context_window: int | None = None,
         max_output_tokens: int | None = None,
     ) -> None:
@@ -69,6 +80,9 @@ class BaseProvider(ABC):
                 Must be > 0.
             backoff_base: Base for exponential backoff (seconds). Must be > 0.
             backoff_max: Maximum backoff duration (seconds). Must be >= backoff_base.
+            rate_limit_backoff_max: Cap on the wait for a rate-limit (429)
+                Retry-After (seconds). Must be > 0. Short because a TPM bucket
+                refills continuously; see ``_DEFAULT_RATE_LIMIT_BACKOFF_MAX``.
             context_window: Total context window size in tokens (input + output).
                 If None, uses provider-specific default or conservative 8192.
             max_output_tokens: Maximum output tokens for a single API call.
@@ -86,11 +100,14 @@ class BaseProvider(ABC):
             raise ValueError(
                 f"backoff_max ({backoff_max}) must be >= backoff_base ({backoff_base})"
             )
+        if rate_limit_backoff_max <= 0:
+            raise ValueError(f"rate_limit_backoff_max must be > 0, got {rate_limit_backoff_max}")
 
         self.model_name = model_name
         self._max_retries = max_retries
         self._backoff_base = backoff_base
         self._backoff_max = backoff_max
+        self._rate_limit_backoff_max = rate_limit_backoff_max
         self._context_window = context_window
         self._max_output_tokens = max_output_tokens
         self._chars_per_token_cache: float | None = None
@@ -255,10 +272,13 @@ class BaseProvider(ABC):
                         f"{operation_name} failed (attempt {attempt + 1}/{self._max_retries}): {e}"
                     )
                     raise
-                # Retryable: wait the server's Retry-After if given, else exponential
-                # backoff with full jitter — both capped at backoff_max.
+                # Retryable: a rate-limit Retry-After is capped short (the TPM
+                # bucket refills continuously), else exponential backoff. Both add
+                # full jitter so concurrent calls don't retry in lockstep.
                 if e.retry_after is not None:
-                    backoff = min(e.retry_after, self._backoff_max)
+                    backoff = min(e.retry_after, self._rate_limit_backoff_max) + random.uniform(
+                        0, 1
+                    )
                 else:
                     backoff = min(
                         self._backoff_base**attempt + random.uniform(0, 1),

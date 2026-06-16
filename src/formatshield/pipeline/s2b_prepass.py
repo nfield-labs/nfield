@@ -16,6 +16,11 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
+from formatshield.pipeline._structure import (
+    RecordSegments,
+    group_record_ordinal,
+    record_segments,
+)
 from formatshield.retrieval._chunker import chunk_document
 from formatshield.retrieval._glean import build_glean_index, field_best_segments, glean_rescore
 
@@ -69,6 +74,13 @@ def run_stage_2b(
         >>> callable(run_stage_2b)
         True
     """
+    # Record document: parent-child hybrid. Structure routes each group to its
+    # record's block (parent); GLEAN ranks the chunks within it (child). Replaces
+    # the small/large doc branch for record docs. Heterogeneous docs fall through.
+    record = record_segments(state.fields, document, state.chars_per_token, state.C_usable)
+    if record is not None:
+        return _run_record_hybrid(state, record)
+
     total_doc_tokens = _estimate_tokens(document, state.chars_per_token)
 
     # Small-doc fast path: entire document fits in the usable context window.
@@ -112,6 +124,50 @@ def run_stage_2b(
         g_top_k = _group_top_k(g, segments, state.C_usable, state.chars_per_token)
         ranked = glean_rescore(glean_index, g.fields, query, top_k=g_top_k)
         _apply_ranking(g, ranked, state.chars_per_token)
+        g.field_best_segment = field_best_segments(glean_index, g.fields, g.matched_segments)
+
+    return state
+
+
+def _run_record_hybrid(state: PipelineState, record: RecordSegments) -> PipelineState:
+    """Parent-child retrieval for a record document.
+
+    Each record's block is chunked into child segments; a group is restricted to its
+    own record's children (plus the shared header) and GLEAN-ranks within them. A
+    small block keeps all its children (Stage 3 fits it whole = no starvation); a big
+    block keeps the top field-relevant children. The wrong record is structurally
+    unreachable, so identical records never confuse retrieval.
+
+    Args:
+        state: Pipeline state from Stage 2A.
+        record: The document's parent-child structure from ``record_segments``.
+
+    Returns:
+        Updated ``PipelineState``.
+    """
+    state.record_ordinal = record.field_ordinal
+    state.record_block_tokens = record.block_tokens
+    state.segments = record.segments
+    state.record_block_segments = record.by_record
+    state.record_header_segments = record.header_segments
+
+    glean_index = build_glean_index(record.segments)
+    state.lexical_index = glean_index.lexical
+
+    for g in state.groups:
+        rec = group_record_ordinal([f.path for f in g.fields], record.field_ordinal)
+        # Structure decides INCLUSION: the group's own record block (+ shared header)
+        # are always candidates. Retrieval only decides ORDER, so a block GLEAN scores
+        # zero (snake_case field names vs spaced prose) is still kept — Stage 3 keeps
+        # all that fit, trimming an oversized block to its top-ranked children.
+        candidates = [*record.by_record.get(rec, []), *record.header_segments]
+        query = _build_group_query(g)
+        scored = glean_rescore(glean_index, g.fields, query, top_k=len(record.segments))
+        score_by_id = {seg.segment_id: score for seg, score in scored}
+        ranked = sorted(candidates, key=lambda s: score_by_id.get(s.segment_id, 0.0), reverse=True)
+        _apply_ranking(
+            g, [(s, score_by_id.get(s.segment_id, 0.0)) for s in ranked], state.chars_per_token
+        )
         g.field_best_segment = field_best_segments(glean_index, g.fields, g.matched_segments)
 
     return state

@@ -45,6 +45,10 @@ class PipelineState:
     # document does not state (from ExtractionConfig).
     knowledge_fallback: bool = False
 
+    # When True, store values exactly as extracted; when False (default), normalize
+    # formatted values to the schema type before writing (from ExtractionConfig).
+    strict_validation: bool = False
+
     # Max leaf extraction calls in flight at once (from ExtractionConfig); bounds
     # Stage 4 concurrency so wide schemas do not trip provider rate limits.
     max_concurrent_calls: int = 4
@@ -61,6 +65,16 @@ class PipelineState:
     # Stage 2.5: document pre-pass
     segments: list[Segment] = field(default_factory=list)
     lexical_index: BMXIndex | None = None
+
+    # Record structure: field -> record index, record -> block token cost. Drives
+    # record-aware (Group Bin Packing) packing in Stage 2C. Empty = no record axis.
+    record_ordinal: dict[str, int] = field(default_factory=dict)
+    record_block_tokens: dict[int, int] = field(default_factory=dict)
+    # Record blocks as segments (record index -> its segments; shared header segments).
+    # Let Stage 5 rebuild a failed field's record block for a small, record-local retry
+    # excerpt — independent of the leaf, so it works for recovery leaves too.
+    record_block_segments: dict[int, list[Segment]] = field(default_factory=dict)
+    record_header_segments: list[Segment] = field(default_factory=list)
 
     # Stage 2C: capacity packing
     leaves: list[CapacityLeaf] = field(default_factory=list)

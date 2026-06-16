@@ -35,6 +35,7 @@ def from_model(
     *,
     context_window: int | None = None,
     max_output_tokens: int | None = None,
+    max_retries: int | None = None,
     api_key: str | None = None,
     base_url: str | None = None,
 ) -> LLMProvider:
@@ -62,6 +63,8 @@ def from_model(
             the provider default.
         max_output_tokens: Maximum output tokens per call (M_O). ``None`` keeps
             the provider default.
+        max_retries: Transient-failure retry budget per call. ``None`` keeps the
+            provider default.
         api_key: Provider API key. ``None`` (default) → read from the
             environment by the provider SDK. Never logged.
         base_url: Override the provider API base URL. ``None`` → SDK default.
@@ -122,6 +125,8 @@ def from_model(
         kwargs["context_window"] = context_window
     if max_output_tokens is not None:
         kwargs["max_output_tokens"] = max_output_tokens
+    if max_retries is not None:
+        kwargs["max_retries"] = max_retries
     if api_key is not None:
         kwargs["api_key"] = api_key
     if base_url is not None:

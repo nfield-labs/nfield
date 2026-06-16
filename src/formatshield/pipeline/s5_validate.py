@@ -12,6 +12,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from formatshield.retrieval._retarget import targeted_excerpt
+from formatshield.validation._normalize import normalize_value
 from formatshield.validation._retry import cascade_invalidate, orchestrate_retry
 from formatshield.validation._type_check import validate_field
 
@@ -92,6 +93,11 @@ async def _validate_leaf(
 
     # --- Step 1: collect failures (single get_filled() snapshot, not per field) ---
     filled = bb.get_filled()
+    # Fields whose call itself errored (429 / transport) are not re-extracted here:
+    # firing a surgical retry into a rate-limited API just adds load and 429s again
+    # (the retry-storm that turns one 429 into a coverage collapse). They stay an
+    # honest call-failure; the provider's backoff is what retries the request.
+    call_failed = set(bb.get_call_failed())
     failed_fields: list[Field] = []
     errors: dict[str, str] = {}
     # Paths reopened from a settled/terminal state (FAILED is write-able again, but
@@ -113,13 +119,17 @@ async def _validate_leaf(
             failed_fields.append(f)
             errors[f.path] = "field not extracted"
         elif field_state == FieldState.FAILED:
-            # Flaw A: Stage 4 marked this FAILED (usually NULL). Retry it — with
-            # fresh re-retrieval below it can still be recovered.
+            if f.path in call_failed:
+                # Transient call/API failure (e.g. 429): leave it for the provider's
+                # backoff, do not re-fire SFR into a throttled API.
+                continue
+            # Stage 4 marked this FAILED (usually NULL). Retry it — with fresh
+            # re-retrieval below it can still be recovered.
             failed_fields.append(f)
             errors[f.path] = bb.get_error(f.path) or "field not found in document"
         elif field_state == FieldState.CONFLICT:
-            # Flaw D: leaves disagreed — adjudicate (show candidates, model picks the
-            # grounded one; self-consistency, Wang arXiv:2203.11171). Reopen for write.
+            # Leaves disagreed — adjudicate (show candidates, model picks the grounded
+            # one; self-consistency, Wang arXiv:2203.11171). Reopen for write.
             cand_text = " | ".join(str(c) for c in bb.get_conflict_values(f.path))
             errors[f.path] = (
                 f"conflicting values were extracted ({cand_text}); choose the one "
@@ -129,7 +139,7 @@ async def _validate_leaf(
             reopened.add(f.path)
             failed_fields.append(f)
         elif field_state == FieldState.NEEDS_REVALIDATION:
-            # Flaw D: model was uncertain — re-extract with fresh evidence.
+            # Model was uncertain — re-extract with fresh evidence.
             errors[f.path] = "previously uncertain — re-extract the exact value, or NULL"
             bb.reopen_for_retry(f.path)
             reopened.add(f.path)
@@ -138,11 +148,18 @@ async def _validate_leaf(
     if not failed_fields:
         return
 
-    # Flaw B: re-retrieve a fresh excerpt for the failed fields, so the retry sees
-    # different text than the trimmed context that already missed. No-op for small docs.
+    # Re-retrieve a fresh excerpt for the failed fields so the retry sees different
+    # text than the context that already missed. No-op for small docs.
     retry_excerpt: str | None = None
-    if state.lexical_index is not None and state.segments:
-        budget = max(_MIN_RETRY_EXCERPT_TOKENS, state.C_usable - leaf.overhead - leaf.safe_output)
+    if state.record_block_segments:
+        # Record doc: rebuild the failed fields' own record blocks (small, record-local)
+        # — independent of the leaf, so it is correct for recovery leaves too and never
+        # floods ~C_usable tokens like a full re-retrieval would.
+        retry_excerpt = _record_retry_excerpt(failed_fields, state, leaf.overhead)
+    elif state.lexical_index is not None and state.segments:
+        # Output is not subtracted — it generates into the window headroom
+        # (decoupled budgets); the retry excerpt keeps the full input budget.
+        budget = max(_MIN_RETRY_EXCERPT_TOKENS, state.C_usable - leaf.overhead)
         retry_excerpt = (
             targeted_excerpt(
                 failed_fields,
@@ -185,6 +202,8 @@ async def _validate_leaf(
         field = state.field_by_path.get(path)
         if field is None:
             continue
+        if not state.strict_validation:
+            value = normalize_value(value, field)
         valid, err = validate_field(value, field)
         if valid:
             bb.write(path, value)
@@ -217,3 +236,43 @@ async def _validate_leaf(
             bb.mark_needs_revalidation(f.path)
         else:
             bb.mark_failed(f.path, "field absent after retry")
+
+
+def _record_retry_excerpt(
+    failed_fields: list[Field],
+    state: PipelineState,
+    overhead: int,
+) -> str | None:
+    """Build a record-local retry excerpt from the failed fields' own record blocks.
+
+    Gathers the shared header plus each failed field's record block (in document
+    order), capped at the leaf's input budget. Independent of any leaf's excerpt, so
+    it is correct for recovery leaves too and stays small — never a full re-retrieval.
+
+    Args:
+        failed_fields: Fields being retried.
+        state: Pipeline state (record block segments + calibration).
+        overhead: The leaf's fixed prompt overhead in tokens.
+
+    Returns:
+        The retry excerpt, or ``None`` when no record block applies.
+    """
+    ordinals = sorted(
+        {state.record_ordinal[f.path] for f in failed_fields if f.path in state.record_ordinal}
+    )
+    segments = list(state.record_header_segments)
+    for ordinal in ordinals:
+        segments.extend(state.record_block_segments.get(ordinal, []))
+    if not segments:
+        return None
+    segments.sort(key=lambda s: s.start)
+    budget = max(_MIN_RETRY_EXCERPT_TOKENS, state.C_usable - overhead)
+    budget_chars = int(budget * max(state.chars_per_token, 1.0))
+    kept: list[str] = []
+    used = 0
+    for seg in segments:
+        if kept and used + len(seg.text) > budget_chars:
+            continue
+        kept.append(seg.text)
+        used += len(seg.text)
+    return "\n\n".join(kept) or None

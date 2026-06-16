@@ -94,7 +94,14 @@ async def run_recovery_pass(
         return state
 
     bb = state.blackboard
-    missing_paths = bb.get_missing() + bb.get_failed()
+    # Recover fields that failed *extraction* (absent / invalid / truncated), but
+    # NOT fields whose call itself errored (429 / transport). A rate-limit casualty
+    # re-split into finer leaves just fires more requests into the same throttled
+    # API — the storm that amplifies a 429 into a coverage collapse. Those are the
+    # provider's backoff to retry (or an honest call-failure), never recovery's to
+    # re-decompose.
+    call_failed = set(bb.get_call_failed())
+    missing_paths = bb.get_missing() + [p for p in bb.get_failed() if p not in call_failed]
     if not missing_paths:
         return state
 
