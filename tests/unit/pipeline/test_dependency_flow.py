@@ -16,8 +16,8 @@ from formatshield.extraction._prompt import build_extraction_prompt
 from formatshield.pipeline._state import PipelineState
 from formatshield.pipeline.s2c_packing import _injection_cost, run_stage_2c
 from formatshield.pipeline.s4_extract import _resolved_dependencies
-from formatshield.pipeline.s5_validate import run_stage_5
-from formatshield.schema._types import CapacityLeaf, Field, FieldGroup
+from formatshield.pipeline.s5b_recover import run_recovery_pass
+from formatshield.schema._types import CapacityLeaf, Field, FieldGroup, Segment
 from formatshield.validation._retry import cascade_invalidate
 
 
@@ -162,21 +162,32 @@ class TestCascadeInvalidate:
         assert bb.get_state("b") == FieldState.FILLED
 
 
-class TestCascadeThroughStage5:
-    """run_stage_5: a retry that recovers an upstream field cascades to dependents."""
+class TestCascadeThroughRecovery:
+    """recovery: re-extracting an upstream field cascades revalidation to dependents."""
 
     def _state(self) -> PipelineState:
         up, dep = _field("up"), _field("dep")
+        seg = Segment(
+            text="up is recovered", start=0, end=15, segment_type="unstructured", segment_id=0
+        )
         state = PipelineState(
             fields=[up, dep],
             field_by_path={"up": up, "dep": dep},
             dep_dag={"dep": {"up"}},  # dep depends on up
+            chars_per_token=4.0,
+            C_eff=8192,
+            M_O=2048,
+            C_usable=4000.0,
         )
+        state.groups = [
+            FieldGroup(
+                parent_path="", fields=[up, dep], matched_segments=[seg], segment_scores=[1.0]
+            )
+        ]
+        state.segments = [seg]
         state.blackboard = Blackboard(["up", "dep"])
         state.blackboard.write("dep", "dval")  # dep already extracted in Stage 4
-        # 'up' stays EMPTY → Stage 5 will retry and recover it.
-        leaf = CapacityLeaf(fields=[up, dep], groups=[], document_excerpt="d", safe_output=100)
-        state.leaves = [leaf]
+        # 'up' stays EMPTY → recovery re-extracts and recovers it.
         return state
 
     async def test_recovered_upstream_invalidates_dependent(self):
@@ -184,7 +195,7 @@ class TestCascadeThroughStage5:
         cfg = ExtractionConfig(
             max_retry_rounds=1, inject_dependencies=True, cascade_dependency_invalidation=True
         )
-        await run_stage_5(state, _RecoverProvider(), cfg)
+        await run_recovery_pass(state, _RecoverProvider(), cfg)
         assert state.blackboard.get_state("up") == FieldState.FILLED
         assert state.blackboard.get_state("dep") == FieldState.NEEDS_REVALIDATION
 
@@ -193,7 +204,7 @@ class TestCascadeThroughStage5:
         cfg = ExtractionConfig(
             max_retry_rounds=1, inject_dependencies=False, cascade_dependency_invalidation=True
         )
-        await run_stage_5(state, _RecoverProvider(), cfg)
+        await run_recovery_pass(state, _RecoverProvider(), cfg)
         assert state.blackboard.get_state("up") == FieldState.FILLED
         # dep keeps its independently-extracted value (no injection → not stale).
         assert state.blackboard.get_state("dep") == FieldState.FILLED

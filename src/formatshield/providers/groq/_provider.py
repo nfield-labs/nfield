@@ -30,6 +30,24 @@ _TRANSIENT_ERROR_NAMES: frozenset[str] = frozenset(
 )
 _TRANSIENT_ERROR_KEYWORDS: tuple[str, ...] = ("timed out", "timeout", "connection")
 
+# Model-name fragments for Groq reasoning models that accept ``reasoning_effort``.
+# Setting it to ``"none"`` returns the answer without a <think> block.
+_REASONING_MODEL_MARKERS: tuple[str, ...] = ("qwen3", "qwen/qwen")
+
+
+def _supports_reasoning_effort(model_name: str) -> bool:
+    """Whether *model_name* accepts the ``reasoning_effort`` parameter.
+
+    Args:
+        model_name: The Groq model identifier.
+
+    Returns:
+        ``True`` for reasoning models (Qwen3 family) where reasoning can be
+        disabled for direct, parseable output.
+    """
+    lowered = model_name.lower()
+    return any(marker in lowered for marker in _REASONING_MODEL_MARKERS)
+
 
 def _is_transient_error(exc: Exception) -> bool | None:
     """Whether *exc* is a transient network failure that should be retried.
@@ -200,6 +218,18 @@ class GroqProvider(BaseProvider):
         """
         client = self._get_client()
 
+        create_kwargs: dict[str, Any] = {
+            "model": self.model_name,
+            "messages": messages,
+            "max_tokens": max_tokens,
+        }
+        # Reasoning models (e.g. Qwen3) emit a <think> block before the answer by
+        # default. For structured extraction that block bloats the output, consumes
+        # the output-token rate limit, and breaks the line-based SFEP parser, so
+        # reasoning is disabled where the model accepts the parameter.
+        if _supports_reasoning_effort(self.model_name):
+            create_kwargs["reasoning_effort"] = "none"
+
         try:
             # The groq SDK client is synchronous, so run the blocking call in a
             # worker thread. Without this, awaiting it would still block the event
@@ -208,9 +238,7 @@ class GroqProvider(BaseProvider):
             # the SDK) is thread-safe, and the semaphore bounds the thread count.
             response = await asyncio.to_thread(
                 client.chat.completions.create,
-                model=self.model_name,
-                messages=messages,
-                max_tokens=max_tokens,
+                **create_kwargs,
             )
             return response.choices[0].message.content or ""
         except Exception as e:

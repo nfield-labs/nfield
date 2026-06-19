@@ -85,3 +85,29 @@ class PipelineState:
     blackboard: Blackboard | None = None
     K: int = 0
     retry_rounds: int = 0
+
+    # API call counts grouped by call site, so K can be attributed to extraction,
+    # validation retry, or recovery. ``in_recovery`` marks calls issued by the
+    # recovery pass, which reuses the extraction and validation stages.
+    in_recovery: bool = False
+    calls_by_origin: dict[str, int] = field(default_factory=dict)
+
+    # Per-field guidance for a re-extraction call: ``field path -> reason`` describing
+    # why the previous attempt failed (invalid value, conflict, absence). Populated by
+    # the recovery pass and rendered into the extraction prompt; empty on the first pass.
+    field_reasons: dict[str, str] = field(default_factory=dict)
+
+    def record_calls(self, origin: str, n: int = 1) -> None:
+        """Count *n* API calls under *origin*, updating K and the breakdown.
+
+        While the recovery pass runs (``in_recovery``), the origin is prefixed
+        ``recovery_`` so the recovery wave's reuse of Stages 4-5 is attributed to
+        recovery rather than the primary pass.
+
+        Args:
+            origin: Call-site label (e.g. ``"extract"``, ``"s5_retry"``).
+            n: Number of calls to record. Default 1.
+        """
+        key = f"recovery_{origin}" if self.in_recovery else origin
+        self.K += n
+        self.calls_by_origin[key] = self.calls_by_origin.get(key, 0) + n

@@ -128,7 +128,7 @@ async def _extract_leaf(
 
     extracted = parse_sfep(raw_text, leaf.fields)
     _write_extracted_to_blackboard(extracted, state)
-    state.K += 1
+    state.record_calls("extract")
 
 
 async def _call_provider(leaf: CapacityLeaf, provider: LLMProvider, state: PipelineState) -> str:
@@ -150,6 +150,7 @@ async def _call_provider(leaf: CapacityLeaf, provider: LLMProvider, state: Pipel
         instructions=state.instructions,
         dependency_values=_resolved_dependencies(leaf, state),
         knowledge_fallback=state.knowledge_fallback,
+        field_reasons=state.field_reasons or None,
     )
     return await provider.complete(messages, max_tokens=leaf.safe_output)
 
@@ -216,7 +217,7 @@ async def _emergency_split(
             raw_text = await _call_provider(split_leaf, provider, state)
             extracted = parse_sfep(raw_text, chunk_fields)
             _write_extracted_to_blackboard(extracted, state)
-            state.K += 1
+            state.record_calls("emergency_split")
         except Exception as exc:
             logger.warning("Emergency split leaf failed: %s", exc)
             for f in chunk_fields:

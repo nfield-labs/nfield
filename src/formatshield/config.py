@@ -27,14 +27,6 @@ DEFAULT_MAX_API_RETRIES: int = 10
 # (rate-limiting systems, arXiv:2602.11741; LLM batching guidance). Conservative
 # default for free tiers; raise it on higher-throughput plans.
 DEFAULT_MAX_CONCURRENT_CALLS: int = 4
-# Recovery re-decomposes finer than the primary pass: fields that failed the first
-# attempt are re-packed at this fraction of the reliability budget, so the retry
-# leaves are smaller and more reliable. Closed-loop "smallest subtask + error
-# correction" (MAKER, arXiv:2511.09030; adaptive granularity, arXiv:2510.17922).
-DEFAULT_RECOVERY_BUDGET_SHRINK: float = 0.5
-# Floor on the shrunk recovery budget (in difficulty-weighted units), so finer
-# decomposition never collapses to absurdly tiny single-field calls.
-MIN_RECOVERY_FIELDS_PER_CALL: int = 10
 # Hard cap on fields per leaf (one API call), enforced as a difficulty-weighted load
 # (see _reliability_load): ~50 easy fields, fewer hard ones. Cramming many fields into
 # one call degrades reliability — instruction-following accuracy falls as the number
@@ -108,11 +100,6 @@ class ExtractionConfig:
             count or token budget alone (a large window cannot cram hundreds of
             fields into one unreliable call). Default 50 (the production
             reliability heuristic); forces K = O(load / budget) small leaves.
-        recovery_budget_shrink: Fraction of the reliability budget used when the
-            recovery pass re-packs fields that failed the first attempt. < 1 makes
-            recovery decompose FINER (smaller, more reliable leaves) where the
-            primary pass struggled — closed-loop "smallest subtask + error
-            correction". Default 0.5; floored at ``MIN_RECOVERY_FIELDS_PER_CALL``.
         max_concurrent_calls: Maximum leaf extraction calls in flight at once.
             Bounds the concurrency of each execution round so a wide schema does
             not fire dozens of calls simultaneously and trip provider rate limits.
@@ -148,9 +135,11 @@ class ExtractionConfig:
     cascade_dependency_invalidation: bool = False
     knowledge_fallback: bool = False
     max_fields_per_call: int = DEFAULT_MAX_FIELDS_PER_CALL
-    recovery_budget_shrink: float = DEFAULT_RECOVERY_BUDGET_SHRINK
     max_concurrent_calls: int = DEFAULT_MAX_CONCURRENT_CALLS
     max_api_retries: int = DEFAULT_MAX_API_RETRIES
     # When True, validate values exactly as extracted (no lenient normalization of
     # formatted numbers/booleans). Default lenient: accept "$1,234,568" as 1234568.
     strict_validation: bool = False
+    # Re-extract conflicting and revalidation-flagged fields during the recovery pass
+    # rather than reporting them unresolved.
+    recover_conflicts: bool = True

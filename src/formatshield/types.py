@@ -70,6 +70,10 @@ class Metadata:
         fields_call_failed: Number of fields left unextracted because an API/call
             error never returned (transient), as distinct from fields genuinely
             absent from the document. ``0`` when every call succeeded.
+        calls_by_origin: Breakdown of ``K`` by call site — e.g.
+            ``{"extract": 120, "s5_retry": 30, "recovery_extract": 8}``. Lets a
+            run attribute its API cost to first-pass extraction vs Stage 5 retry
+            vs the recovery pass. Empty when no calls were made.
 
     Example:
         >>> meta = Metadata(
@@ -96,6 +100,7 @@ class Metadata:
     retry_rounds: int
     cost: float | None = None
     fields_call_failed: int = 0
+    calls_by_origin: dict[str, int] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)

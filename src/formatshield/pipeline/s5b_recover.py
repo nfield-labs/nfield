@@ -20,19 +20,19 @@ self-correction risks.
 
 from __future__ import annotations
 
-import dataclasses
 import logging
 from typing import TYPE_CHECKING
 
-from formatshield.config import MIN_RECOVERY_FIELDS_PER_CALL
 from formatshield.pipeline.s2c_packing import run_stage_2c
 from formatshield.pipeline.s3_excerpt import run_stage_3
 from formatshield.pipeline.s4_extract import run_stage_4
 from formatshield.pipeline.s5_validate import run_stage_5
+from formatshield.retrieval._retarget import record_block_excerpt, targeted_excerpt
 from formatshield.schema._types import CapacityLeaf, FieldGroup
-from formatshield.validation._retry import handle_missing_fields
+from formatshield.validation._retry import cascade_invalidate, handle_missing_fields
 
 if TYPE_CHECKING:
+    from formatshield.assembly._blackboard import Blackboard
     from formatshield.config import ExtractionConfig
     from formatshield.pipeline._state import PipelineState
     from formatshield.providers._protocol import LLMProvider
@@ -43,26 +43,10 @@ __all__ = ["run_recovery_pass"]
 logger = logging.getLogger(__name__)
 
 _RECOVERY_LEAF_ID: int = -1
-
-
-def _shrink_budget(config: ExtractionConfig) -> ExtractionConfig:
-    """Return a copy of *config* with the reliability budget shrunk for recovery.
-
-    Fields reaching recovery already failed once, so they are re-packed at
-    ``recovery_budget_shrink`` of the primary budget (floored at
-    ``MIN_RECOVERY_FIELDS_PER_CALL``) — finer decomposition for a more reliable
-    retry. A shrink of 1.0 (or larger) is a no-op.
-
-    Args:
-        config: The active extraction configuration.
-
-    Returns:
-        A config whose ``max_fields_per_call`` is the shrunk recovery budget.
-    """
-    shrunk = int(config.max_fields_per_call * config.recovery_budget_shrink)
-    recovery_cap = max(MIN_RECOVERY_FIELDS_PER_CALL, shrunk)
-    recovery_cap = min(recovery_cap, config.max_fields_per_call)
-    return dataclasses.replace(config, max_fields_per_call=recovery_cap)
+# Recovery re-extracts every failing field once. Repeating the wave multiplies call
+# volume and pressures provider rate limits without a commensurate quality gain, so
+# the pooled re-extraction runs a single round.
+_RECOVERY_ROUNDS: int = 1
 
 
 async def run_recovery_pass(
@@ -92,65 +76,193 @@ async def run_recovery_pass(
     """
     if state.blackboard is None:
         return state
+    return await _run_consolidated_recovery(state, provider, config)
 
+
+async def _run_consolidated_recovery(
+    state: PipelineState,
+    provider: LLMProvider,
+    config: ExtractionConfig,
+) -> PipelineState:
+    """Recover every non-filled field in one pooled, bounded retry loop.
+
+    The single retry path for the consolidated configuration. Since validation made
+    no API calls, this pass pools all fields that are absent, invalid, conflicting,
+    or flagged for revalidation; re-extracts them with a fresh path-aware excerpt and
+    a per-field reason; and re-validates — repeating up to ``config.max_retry_rounds``
+    times. A child whose ancestor is itself missing is written ``None`` rather than
+    re-queried.
+
+    Args:
+        state: Pipeline state after validation (blackboard populated).
+        provider: LLM provider for recovery extraction calls.
+        config: Extraction configuration (retry rounds, conflict handling).
+
+    Returns:
+        The same ``PipelineState`` with any recovered values written.
+    """
     bb = state.blackboard
-    # Recover fields that failed *extraction* (absent / invalid / truncated), but
-    # NOT fields whose call itself errored (429 / transport). A rate-limit casualty
-    # re-split into finer leaves just fires more requests into the same throttled
-    # API — the storm that amplifies a 429 into a coverage collapse. Those are the
-    # provider's backoff to retry (or an honest call-failure), never recovery's to
-    # re-decompose.
+    if bb is None:
+        return state
+
+    # Pool every recoverable field. Fields whose call itself errored (429 / transport)
+    # are excluded, since re-extracting them only pressures an already-throttled API.
     call_failed = set(bb.get_call_failed())
-    missing_paths = bb.get_missing() + [p for p in bb.get_failed() if p not in call_failed]
-    if not missing_paths:
+    pool: set[str] = set(bb.get_missing())
+    pool |= {p for p in bb.get_failed() if p not in call_failed}
+    if config.recover_conflicts:
+        pool |= set(bb.get_conflicts())
+        pool |= set(bb.get_needs_revalidation())
+    if not pool:
         return state
 
-    # 1. Tree-backtrack: a child whose ancestor is itself missing cannot exist, so
-    # it is confirmed absent (None) rather than re-queried. Top-level fields have
-    # no ancestor and remain eligible for recovery re-extraction.
-    missing_set = set(missing_paths)
-    orphaned = {p for p in missing_paths if _has_missing_ancestor(p, missing_set)}
-    if orphaned:
-        backtracked = handle_missing_fields(sorted(orphaned), _all_leaf(state), state.fields)
-        for path, value in backtracked.items():
-            bb.write_raw(path, value)
-    else:
-        backtracked = {}
+    # Capture each field's failure reason before reopening clears the stored errors.
+    reasons = {p: _failure_reason(bb, p) for p in pool}
 
-    recover_fields = [
-        state.field_by_path[p]
-        for p in missing_paths
-        if p not in backtracked and p in state.field_by_path
-    ]
-    if not recover_fields:
+    # A child whose ancestor is itself missing cannot exist: confirm it absent.
+    orphaned = {p for p in pool if _has_missing_ancestor(p, pool)}
+    backtracked = (
+        handle_missing_fields(sorted(orphaned), _all_leaf(state), state.fields) if orphaned else {}
+    )
+    for path, value in backtracked.items():
+        bb.write_raw(path, value)
+
+    recover_paths = [p for p in sorted(pool) if p not in backtracked and p in state.field_by_path]
+    if not recover_paths:
         return state
 
-    logger.debug("MFRP: recovering %d missing field(s)", len(recover_fields))
+    # Reopen settled or terminal fields so a recovered value can be written.
+    for p in recover_paths:
+        bb.reopen_for_retry(p)
 
-    # 2. Re-pack the missed-only set into capacity-bounded leaves and run it
-    #    through Stages 2C-5. Re-packing (not one giant leaf) is essential: a real
-    #    document leaves many fields legitimately absent, so a single unsplit
-    #    recovery leaf would overflow output and truncate exactly like a mis-packed
-    #    primary leaf — re-triggering a per-field retry storm. This mirrors the
-    #    architecture engine §5.3 "split_node if the retry node is too large".
-    #
-    #    Closed-loop adaptive decomposition: these fields already failed once, so
-    #    re-pack them FINER than the primary pass (reliability budget shrunk by
-    #    recovery_budget_shrink, floored) — smaller, more reliable retry leaves
-    #    (MAKER smallest-subtask + error correction, arXiv:2511.09030).
-    recovery_config = _shrink_budget(config)
-    saved = (state.fields, state.groups, state.leaves, state.execution_order, state.K_min)
+    logger.debug("Consolidated recovery: %d field(s)", len(recover_paths))
+
+    saved = (
+        state.fields,
+        state.groups,
+        state.leaves,
+        state.execution_order,
+        state.K_min,
+        dict(state.field_reasons),
+    )
+    state.in_recovery = True
     try:
-        state.fields = recover_fields
-        state.groups = _subgroups_for(recover_fields, state)
-        run_stage_2c(state, recovery_config)  # repack missed-only, finer-grained
-        run_stage_3(state)
-        await run_stage_4(state, provider)
-        await run_stage_5(state, provider, config)
+        still = [state.field_by_path[p] for p in recover_paths]
+        for round_index in range(_RECOVERY_ROUNDS):
+            if not still:
+                break
+            state.fields = still
+            state.groups = _subgroups_for(still, state)
+            state.field_reasons = {f.path: reasons[f.path] for f in still if f.path in reasons}
+            run_stage_2c(state, config)
+            run_stage_3(state)
+            _refresh_excerpts(state)
+            await run_stage_4(state, provider)
+            await run_stage_5(state, provider, config)
+            state.retry_rounds = max(state.retry_rounds, round_index + 1)
+            recovered = set(bb.get_filled())
+            still = [f for f in still if f.path not in recovered]
     finally:
-        state.fields, state.groups, state.leaves, state.execution_order, state.K_min = saved
+        (
+            state.fields,
+            state.groups,
+            state.leaves,
+            state.execution_order,
+            state.K_min,
+            state.field_reasons,
+        ) = saved
+        state.in_recovery = False
+
+    # A recovered upstream value may make a dependent that consumed it (via injection)
+    # stale; flag those dependents for revalidation (CADTR). No-op without injection,
+    # since dependents were then extracted independently.
+    if config.cascade_dependency_invalidation and config.inject_dependencies:
+        recovered_now = {p for p in recover_paths if p in bb.get_filled()}
+        if recovered_now:
+            cascade_invalidate(bb, state.dep_dag, recovered_now)
 
     return state
+
+
+def _failure_reason(bb: Blackboard, path: str) -> str:
+    """Describe why *path* needs recovery, for the re-extraction prompt.
+
+    Args:
+        bb: The run's blackboard.
+        path: The field path whose failure to describe.
+
+    Returns:
+        A short reason string drawn from the field's current state and error.
+    """
+    from formatshield.assembly._blackboard import FieldState
+
+    field_state = bb.get_state(path)
+    if field_state == FieldState.CONFLICT:
+        candidates = " | ".join(str(c) for c in bb.get_conflict_values(path))
+        return (
+            f"a previous attempt produced conflicting values ({candidates}); extract "
+            "the one the document supports, or NULL"
+        )
+    if field_state == FieldState.NEEDS_REVALIDATION:
+        return "a previous attempt was uncertain; extract the exact value, or NULL"
+    error = bb.get_error(path)
+    if error:
+        return f"a previous attempt failed validation: {error}"
+    return "a previous attempt did not find this field; re-extract it, or NULL"
+
+
+def _refresh_excerpts(state: PipelineState) -> None:
+    """Replace each recovery leaf's excerpt with a fresh, path-aware one.
+
+    Args:
+        state: Pipeline state holding the recovery leaves and document segments.
+    """
+    for leaf in state.leaves:
+        fresh = _recover_excerpt(leaf.fields, state, leaf.overhead)
+        if fresh:
+            leaf.document_excerpt = fresh
+
+
+def _recover_excerpt(fields: list[Field], state: PipelineState, overhead: int) -> str | None:
+    """Build a fresh excerpt for *fields*, matching the document's routing path.
+
+    A record document re-routes each field to its own block; a large document
+    re-ranks every segment for the field set; a small document keeps the Stage 3
+    excerpt (the whole document is already in context), signalled by ``None``.
+
+    Args:
+        fields: The fields being recovered.
+        state: Pipeline state (segments, indices, calibration).
+        overhead: The leaf's fixed prompt overhead in tokens.
+
+    Returns:
+        A fresh excerpt, or ``None`` to keep the existing leaf excerpt.
+    """
+    # Per-leaf excerpt budget B_excerpt, identical to Stage 3 (s3_excerpt); packing
+    # guarantees overhead < C_usable, and the retrieval helpers clamp and keep at
+    # least one segment, so the fresh excerpt matches the pipeline's own sizing.
+    budget = state.C_usable - overhead
+    if state.record_block_segments:
+        return record_block_excerpt(
+            fields,
+            state.record_ordinal,
+            state.record_header_segments,
+            state.record_block_segments,
+            budget_tokens=budget,
+            chars_per_token=state.chars_per_token,
+        )
+    if state.lexical_index is not None and state.segments:
+        return (
+            targeted_excerpt(
+                fields,
+                state.lexical_index,
+                state.segments,
+                budget_tokens=budget,
+                chars_per_token=state.chars_per_token,
+            )
+            or None
+        )
+    return None
 
 
 # ---------------------------------------------------------------------------

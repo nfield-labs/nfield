@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from formatshield.retrieval._bmx import BMXIndex
     from formatshield.schema._types import Field, Segment
 
-__all__ = ["build_field_query", "targeted_excerpt"]
+__all__ = ["build_field_query", "record_block_excerpt", "targeted_excerpt"]
 
 # Words taken from each field's description to enrich its retrieval query — a few
 # more than the group-query pre-pass uses, since a targeted retry wants the field's
@@ -97,3 +97,49 @@ def targeted_excerpt(
         selected = [ranked[0][0]]
     selected.sort(key=lambda s: s.start)
     return _EXCERPT_SEPARATOR.join(s.text for s in selected)
+
+
+def record_block_excerpt(
+    fields: list[Field],
+    record_ordinal: dict[str, int],
+    header_segments: list[Segment],
+    block_segments: dict[int, list[Segment]],
+    *,
+    budget_tokens: float,
+    chars_per_token: float,
+) -> str | None:
+    """Build a record-local excerpt from *fields*' own record blocks.
+
+    Gathers the shared header plus each field's record block (in document order),
+    capped at *budget_tokens*. Used by the record document path, where structure
+    routes each field to its own block; identical sibling records are kept apart by
+    ordinal rather than by lexical similarity.
+
+    Args:
+        fields: The fields whose record blocks supply the evidence.
+        record_ordinal: ``field path -> record index`` from the record pre-pass.
+        header_segments: The shared header segments common to every record.
+        block_segments: ``record index -> that record's segments``.
+        budget_tokens: Token budget for the excerpt.
+        chars_per_token: Calibrated characters-per-token ratio (Stage 0).
+
+    Returns:
+        The record-local excerpt, or ``None`` when no record block applies.
+    """
+    ordinals = sorted({record_ordinal[f.path] for f in fields if f.path in record_ordinal})
+    segments: list[Segment] = list(header_segments)
+    for ordinal in ordinals:
+        segments.extend(block_segments.get(ordinal, []))
+    if not segments:
+        return None
+    segments.sort(key=lambda s: s.start)
+    cpt = chars_per_token if chars_per_token > 0 else _FALLBACK_CHARS_PER_TOKEN
+    budget_chars = int(max(0.0, budget_tokens) * cpt)
+    kept: list[str] = []
+    used = 0
+    for seg in segments:
+        if kept and budget_chars > 0 and used + len(seg.text) > budget_chars:
+            continue
+        kept.append(seg.text)
+        used += len(seg.text)
+    return _EXCERPT_SEPARATOR.join(kept) or None

@@ -185,7 +185,7 @@ class TestKnowledgeFallback:
         f = make_field("name", "string")
         msgs = build_extraction_prompt([f], "doc", TemplateType.STANDARD)
         system = msgs[0]["content"]
-        assert "Use NULL if a field is not found in the document" in system
+        assert "Use NULL only when" in system
         assert "well-established knowledge" not in system
 
     def test_knowledge_fallback_changes_sourcing_rule(self):

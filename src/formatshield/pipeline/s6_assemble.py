@@ -84,6 +84,7 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
         per_field_confidence=report.per_field_confidence,
         retry_rounds=state.retry_rounds,
         fields_call_failed=len(bb.get_call_failed()),
+        calls_by_origin=dict(state.calls_by_origin),
     )
 
     # --- 5. Determine status ---

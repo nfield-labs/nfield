@@ -1,7 +1,7 @@
 """Tests for the Stage 5.5 missing-field recovery pass (MFRP).
 
 Covers, deterministically and without network:
-- no-op when the flag is off or nothing is missing,
+- no-op when nothing is missing,
 - a missed field is recovered by the second pass,
 - validated fields are never re-touched,
 - the pass is bounded to one round (a permanently-missing field stays FAILED),
@@ -141,32 +141,3 @@ class TestRecoveryPass:
         await run_recovery_pass(state, _RecoverProvider(), cfg)
         assert state.leaves == [original_leaf]
         assert state.execution_order == [[original_leaf]]
-
-
-# ---------------------------------------------------------------------------
-# Closed-loop adaptive decomposition: recovery re-packs FINER than primary
-# ---------------------------------------------------------------------------
-from formatshield.config import MIN_RECOVERY_FIELDS_PER_CALL  # noqa: E402
-from formatshield.pipeline.s5b_recover import _shrink_budget  # noqa: E402
-
-
-class TestRecoveryBudgetShrink:
-    def test_shrinks_below_primary(self):
-        cfg = ExtractionConfig(max_fields_per_call=50, recovery_budget_shrink=0.5)
-        assert _shrink_budget(cfg).max_fields_per_call == 25
-
-    def test_floored_at_minimum(self):
-        cfg = ExtractionConfig(max_fields_per_call=12, recovery_budget_shrink=0.1)
-        assert _shrink_budget(cfg).max_fields_per_call == MIN_RECOVERY_FIELDS_PER_CALL
-
-    def test_never_exceeds_primary(self):
-        cfg = ExtractionConfig(max_fields_per_call=30, recovery_budget_shrink=2.0)
-        assert _shrink_budget(cfg).max_fields_per_call == 30
-
-    def test_other_config_fields_preserved(self):
-        cfg = ExtractionConfig(
-            max_fields_per_call=50, recovery_budget_shrink=0.5, max_retry_rounds=3
-        )
-        shrunk = _shrink_budget(cfg)
-        assert shrunk.max_retry_rounds == 3
-        assert shrunk.recovery_budget_shrink == 0.5

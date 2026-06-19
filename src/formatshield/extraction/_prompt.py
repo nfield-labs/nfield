@@ -45,36 +45,40 @@ __all__ = [
 # Constants
 # ---------------------------------------------------------------------------
 
-_SFEP_SYSTEM_PROMPT_TEMPLATE: str = """\
-You are a structured data extraction assistant. Extract the specified fields \
-from the provided document.
+# The document is presented first and the field list last, so the fields are the most
+# recent context when the model answers. The task is framed as the value being present
+# (countering under-extraction), and a worked example shows the exact line format
+# including how an absent field is written.
+_SFEP_SYSTEM_PROMPT: str = """\
+You are a structured data extraction assistant. The document is given first, then the \
+list of fields to extract from it.
 
 OUTPUT FORMAT — follow exactly:
-- Output exactly one line for EVERY field listed below, in the order given. Do \
-not stop early or end your response until every listed field has its own line — \
-a field you cannot find still gets a line (use the sourcing rule below). Never \
-silently skip or omit a field.
-- Write one field per line using: field.path = value
-{sourcing_rule}
-- Use NEEDS_REVALIDATION if you find the field but cannot determine its value confidently
+- Output exactly one line for EVERY field listed, in the order given: field.path = value
+- Every listed field's value appears in the document above. Read it out exactly as \
+written. {sourcing_rule}
 - For boolean fields: use true or false (lowercase)
-- For integer fields: write the number without quotes (e.g., 42)
-- For number fields: write with decimals if needed (e.g., 3.14)
+- For integer fields: write the number without quotes or thousands separators (e.g. 42)
+- For number fields: write with decimals if needed (e.g. 3.14)
 - For array fields: use [item1, item2, item3] notation
 - For enum fields: use one of the exact allowed values listed in the schema
 - Preserve exact string values — do not paraphrase or translate
 - Do not include explanations, only output field = value lines
 
+Example (for two fields named a.x and a.y):
+a.x = 42
+a.y = NULL
+
 --- BEGIN EXTRACTION ---"""
 
-# Default: the value must be in the document, else NULL.
-_SOURCING_RULE_STRICT: str = "- Use NULL if a field is not found in the document"
-# Opt-in: let the model use its own knowledge when the document is silent.
+# Anti-null sourcing rules: the value is assumed present, NULL is the checked exception.
+_SOURCING_RULE_STRICT: str = (
+    "Use NULL only when, after checking the document, the field is genuinely not stated."
+)
 _SOURCING_RULE_KNOWLEDGE: str = (
-    "- Prefer the value as stated in the document. If the document does not state "
-    "a field but you can determine it confidently from well-established knowledge "
-    "of the subject, provide that value. Use NULL only when you can neither find "
-    "it in the document nor infer it confidently"
+    "If the document does not state a field but you know it confidently from "
+    "well-established knowledge of the subject, provide that value; use NULL only when "
+    "you can neither find nor confidently infer it."
 )
 
 _RETRY_SYSTEM_PROMPT_TEMPLATE: str = """\
@@ -105,6 +109,7 @@ def build_extraction_prompt(
     instructions: str = "",
     dependency_values: dict[str, Any] | None = None,
     knowledge_fallback: bool = False,
+    field_reasons: dict[str, str] | None = None,
 ) -> list[dict[str, str]]:
     """Build the messages list for a single SFEP extraction call.
 
@@ -129,6 +134,9 @@ def build_extraction_prompt(
             before the field list so the model reuses them.
         knowledge_fallback: When ``True``, let the model use its own knowledge for
             fields the document does not state. Default ``False`` (strict grounding).
+        field_reasons: Optional ``{path: reason}`` describing why a previous attempt
+            failed for a field; each reason is appended to that field's line to guide
+            re-extraction. ``None`` produces the plain field list (first-pass form).
 
     Returns:
         List of ``{"role": ..., "content": ...}`` dicts:
@@ -159,9 +167,13 @@ def build_extraction_prompt(
     # pure SFEP output contract; the caller's domain instructions frame the task at
     # the top of the user message, right above the fields and document.
     system_content = _build_system_message(cluster_type, knowledge_fallback=knowledge_fallback)
-    user_core = _build_user_message(fields, document_excerpt, template_type)
-    user_content = _prepend(
-        instructions, _prepend(_format_dependency_block(dependency_values), user_core)
+    user_content = _build_user_message(
+        fields,
+        document_excerpt,
+        template_type,
+        instructions=instructions,
+        dependency_values=dependency_values,
+        field_reasons=field_reasons,
     )
 
     return [
@@ -309,40 +321,72 @@ def _build_system_message(
     # In MVP all cluster types use the same system prompt.
     # Post-MVP: COMPLEX cluster gets TEP two-phase instructions.
     sourcing_rule = _SOURCING_RULE_KNOWLEDGE if knowledge_fallback else _SOURCING_RULE_STRICT
-    return _SFEP_SYSTEM_PROMPT_TEMPLATE.format(sourcing_rule=sourcing_rule)
+    return _SFEP_SYSTEM_PROMPT.format(sourcing_rule=sourcing_rule)
 
 
 def _build_user_message(
     fields: list[Field],
     document_excerpt: str,
     template_type: TemplateType,
+    *,
+    instructions: str = "",
+    dependency_values: dict[str, Any] | None = None,
+    field_reasons: dict[str, str] | None = None,
 ) -> str:
-    """Build the user message containing field descriptions and document.
+    """Build the user message: document first, field list last.
+
+    Order: caller instructions, then the document, then any resolved dependency
+    values, then the field list — so the fields are the most recent context when
+    the model produces its answer.
 
     Args:
         fields: Fields to extract, ordered by schema depth.
         document_excerpt: Trimmed document text for this extraction call.
         template_type: Controls how much schema detail to include per field.
+        instructions: Optional caller steering, placed first.
+        dependency_values: Optional resolved upstream values, placed before the fields.
+        field_reasons: Optional ``{path: reason}`` appended per field to guide
+            re-extraction.
 
     Returns:
         Formatted user message string.
     """
-    field_lines = _format_field_list(fields, template_type)
-    excerpt_block = _format_document_excerpt(document_excerpt)
-    return f"Fields to extract:\n{field_lines}\n\n{excerpt_block}"
+    parts: list[str] = []
+    if instructions.strip():
+        parts.append(instructions.strip())
+    parts.append(_format_document_excerpt(document_excerpt))
+    dependency_block = _format_dependency_block(dependency_values)
+    if dependency_block:
+        parts.append(dependency_block)
+    field_lines = _format_field_list(fields, template_type, field_reasons)
+    parts.append(
+        f"Fields to extract (every value is in the document above, in order):\n{field_lines}"
+    )
+    return "\n\n".join(parts)
 
 
-def _format_field_list(fields: list[Field], template_type: TemplateType) -> str:
+def _format_field_list(
+    fields: list[Field],
+    template_type: TemplateType,
+    field_reasons: dict[str, str] | None = None,
+) -> str:
     """Format the fields list block for the user message.
 
     Args:
         fields: Fields to describe.
         template_type: Verbosity level for each field description.
+        field_reasons: Optional ``{path: reason}``; a present reason is appended to
+            its field's line in square brackets to steer re-extraction.
 
     Returns:
         Multi-line string with one field description per line.
     """
-    lines = [describe_field(f, template_type) for f in fields]
+    reasons = field_reasons or {}
+    lines: list[str] = []
+    for f in fields:
+        line = describe_field(f, template_type)
+        reason = reasons.get(f.path)
+        lines.append(f"{line}  [{reason}]" if reason else line)
     return "\n".join(lines)
 
 
