@@ -79,6 +79,18 @@ _MIN_AXIS_DOMINANCE: float = 0.5
 _MAX_SPACING_CV: float = 0.5
 _DIGIT_RUN: re.Pattern[str] = re.compile(r"\d+")
 _WHITESPACE_RUN: re.Pattern[str] = re.compile(r"\s+")
+# A run of words (letters joined by name punctuation), collapsed to one token so a
+# record header keeps the same SHAPE while its identifier (a name, code, title)
+# varies. Masking only digits is not enough: a header like "SUBSIDIARY 4 OF 30 --
+# Brookstone Dynamics Corp." carries a unique name, so the digit-masked line never
+# recurs and the true boundary is missed. Shape-masking lets all R headers share one
+# signature regardless of the name's word count or trailing punctuation.
+_NAME_RUN: re.Pattern[str] = re.compile(r"[a-z][a-z .,'&/-]*[a-z]\.?")
+# A record header carries the record's identity, so its text differs across the R
+# occurrences (distinct count ~ R); a constant divider or section label repeats
+# verbatim (distinct count = 1). The two are far apart, so any threshold in
+# (1/R, 1) separates them; 0.5 sits in that gap with a wide margin on both sides.
+_MIN_IDENTIFIER_DISTINCT_FRAC: float = 0.5
 
 
 def detect_record_axis(fields: list[Field]) -> tuple[dict[str, int], int] | None:
@@ -183,9 +195,14 @@ def detect_blocks(document: str, count: int) -> tuple[str, list[str]] | None:
 def _block_starts(document: str, count: int) -> list[int] | None:
     """Character offsets of the ``count`` per-record boundary lines, or ``None``.
 
-    A line shape (digits masked) that recurs exactly ``count`` times and is evenly
-    spaced marks the record boundaries; the earliest-first-occurrence candidate is
-    the line at the top of each record.
+    A line *shape* (digits and word-runs masked) that recurs exactly ``count`` times
+    and is evenly spaced marks the record boundaries. Among such families, the record
+    header is the one whose raw text VARIES across occurrences — it carries each
+    record's identity — so it is preferred over a constant divider or section label
+    that also recurs. Cutting at the header makes every block lead with its own
+    identity, which is what lets the model bind values to the right record. When no
+    family varies (records delimited by a constant marker), the earliest periodic
+    family is used.
 
     Args:
         document: Raw document text.
@@ -197,17 +214,29 @@ def _block_starts(document: str, count: int) -> list[int] | None:
     if count < _MIN_RECORD_BLOCKS:
         return None
     positions: dict[str, list[int]] = defaultdict(list)
+    distinct: dict[str, set[str]] = defaultdict(set)
     pos = 0
     for line in document.splitlines(keepends=True):
-        sig = _normalize_line(line)
+        stripped = line.strip()
+        sig = _block_signature(stripped)
         if sig:
             positions[sig].append(pos)
+            distinct[sig].add(stripped)
         pos += len(line)
-    candidates = [starts for starts in positions.values() if len(starts) == count]
-    even = [s for s in candidates if _spacing_cv(s) < _MAX_SPACING_CV]
+    even = [
+        sig
+        for sig, starts in positions.items()
+        if len(starts) == count and _spacing_cv(starts) < _MAX_SPACING_CV
+    ]
     if not even:
         return None
-    return min(even, key=lambda s: s[0])
+    # Prefer the identifier header (text varies across records) over a constant
+    # divider/label; fall back to all periodic families when none varies.
+    threshold = max(2, int(count * _MIN_IDENTIFIER_DISTINCT_FRAC))
+    identifiers = [sig for sig in even if len(distinct[sig]) >= threshold]
+    pool = identifiers or even
+    best = min(pool, key=lambda sig: positions[sig][0])
+    return sorted(positions[best])
 
 
 def record_segments(
@@ -318,16 +347,22 @@ def group_record_ordinal(field_paths: list[str], field_ordinal: dict[str, int]) 
 # ---------------------------------------------------------------------------
 
 
-def _normalize_line(line: str) -> str:
-    """Mask digit runs and collapse whitespace so ``RECORD 1``/``RECORD 2`` match.
+def _block_signature(line: str) -> str:
+    """Coarse SHAPE of a line: digit runs and word-runs masked, whitespace collapsed.
+
+    Two record headers that differ only in their identifier (``RECORD 1 -- Acme`` vs
+    ``RECORD 2 -- Globex``) collapse to the same signature, so the header family is
+    detectable even though no two header lines are textually identical. Digit-only
+    masking cannot do this — the name survives and the header never recurs.
 
     Args:
-        line: A single document line.
+        line: A single (already stripped) document line.
 
     Returns:
         Normalized signature; empty for blank lines.
     """
-    return _WHITESPACE_RUN.sub(" ", _DIGIT_RUN.sub("0", line.strip().lower()))
+    masked = _NAME_RUN.sub("A", _DIGIT_RUN.sub("0", line.lower()))
+    return _WHITESPACE_RUN.sub(" ", masked).strip()
 
 
 def _spacing_cv(starts: list[int]) -> float:

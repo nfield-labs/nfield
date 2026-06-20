@@ -58,7 +58,8 @@ OUTPUT FORMAT — follow exactly:
 - Every listed field's value appears in the document above. Read it out exactly as \
 written. {sourcing_rule}
 - For boolean fields: use true or false (lowercase)
-- For integer fields: write the number without quotes or thousands separators (e.g. 42)
+- For integer fields: write ALL digits with no quotes, commas, or units, keeping every \
+trailing zero (e.g. 42; and 2,042,137,000 USD becomes 2042137000, not 2042137)
 - For number fields: write with decimals if needed (e.g. 3.14)
 - For array fields: use [item1, item2, item3] notation
 - For enum fields: use one of the exact allowed values listed in the schema
