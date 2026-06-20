@@ -1,0 +1,7 @@
+budget,method,fixture,seed,n_fields,coverage,value_accuracy,k,k_min,optimality_gap,elapsed_seconds,error_category,error
+constrained,nfield,clinical_registry,0,2523,1.0,1.0,62,61,0.01639344262295082,39.389,,
+constrained,nfield,cre_rent_roll,0,4000,1.0,1.0,95,94,0.010638297872340425,53.995,,
+constrained,nfield,financial_consolidation,0,5641,1.0,0.9739407906399574,127,124,0.024193548387096774,188.671,,
+native,nfield,clinical_registry,0,2523,1.0,1.0,62,61,0.01639344262295082,25.541,,
+native,nfield,cre_rent_roll,0,4000,1.0,1.0,95,94,0.010638297872340425,38.498,,
+native,nfield,financial_consolidation,0,5641,1.0,0.9659634816521894,126,124,0.016129032258064516,180.599,,

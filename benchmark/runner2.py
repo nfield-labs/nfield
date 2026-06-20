@@ -1,4 +1,4 @@
-"""Scale benchmark — nfield on the large in-house fixtures (2.5k, 4k, and future).
+"""Scale benchmark — nfield on the large in-house fixtures (2.5k, 4k, 5.6k, and future).
 
 Separate from :mod:`benchmark.runner` (which pits nfield against the competitor
 baselines on the standard fixtures). These are big, record-structured documents that
@@ -35,6 +35,10 @@ _FIXTURES: tuple[Dataset, ...] = (
     Dataset(
         "cre_rent_roll",
         instructions=f"The document is a commercial real estate rent roll and lease abstract. {_FAITHFULNESS}",
+    ),
+    Dataset(
+        "financial_consolidation",
+        instructions=f"The document is a consolidated multi-subsidiary financial annual report. {_FAITHFULNESS}",
     ),
 )
 

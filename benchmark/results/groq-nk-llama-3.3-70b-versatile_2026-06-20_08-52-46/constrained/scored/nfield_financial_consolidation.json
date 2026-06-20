@@ -1,0 +1,19 @@
+{
+  "method": "nfield",
+  "fixture": "financial_consolidation",
+  "n_fields": 5641,
+  "runs": 1,
+  "coverage_mean": 1.0,
+  "fields_covered_mean": 5641.0,
+  "value_accuracy_mean": 0.9739407906399574,
+  "value_accuracy_std": 0.0,
+  "json_pass_all": true,
+  "by_type_mean": {
+    "boolean": 1.0,
+    "enum": 0.991869918699187,
+    "integer": 0.9689130434782609,
+    "number": 0.9948979591836735,
+    "short_string": 1.0
+  },
+  "call_failed_mean": 0.0
+}
