@@ -18,6 +18,9 @@ from typing import TYPE_CHECKING
 
 from formatshield.pipeline._structure import (
     RecordSegments,
+    SectionStructure,
+    align_path_to_section,
+    detect_section_structure,
     group_record_ordinal,
     record_segments,
 )
@@ -46,6 +49,11 @@ _GROUP_QUERY_MAX_DESC_WORDS: int = 5
 # English-average characters per token; used only if the calibrated ratio is
 # missing when sizing the dynamic retrieval depth.
 _FALLBACK_CHARS_PER_TOKEN: float = 4.0
+# The heading route is taken only when at least this fraction of groups align to a
+# section. Below it the schema does not mirror the document's headings, so the doc
+# descends to the paragraph tier — structural routing is used only when it is the
+# better mechanism (DeepRead arXiv:2602.05014).
+_MIN_ALIGN_COVERAGE: float = 0.5
 
 
 def run_stage_2b(
@@ -74,9 +82,9 @@ def run_stage_2b(
         >>> callable(run_stage_2b)
         True
     """
-    # Record document: parent-child hybrid. Structure routes each group to its
-    # record's block (parent); GLEAN ranks the chunks within it (child). Replaces
-    # the small/large doc branch for record docs. Heterogeneous docs fall through.
+    # Hybrid tier 1 — record axis. Structure routes each group to its record block;
+    # GLEAN orders the chunks within it (wrapper induction TWIX arXiv:2501.06659).
+    # Non-record docs descend to the heading tier.
     record = record_segments(state.fields, document, state.chars_per_token, state.C_usable)
     if record is not None:
         return _run_record_hybrid(state, record)
@@ -103,7 +111,17 @@ def run_stage_2b(
         ]
         return state
 
-    # Full pre-pass: chunk, index, score per group
+    # Hybrid tier 2 — heading hierarchy. A non-record doc may still be organised by
+    # headings; route each group to the section its path names (UniHDSA arXiv:2503.15893;
+    # locate-then-read DeepRead arXiv:2602.05014). Used only when the schema aligns to
+    # the headings; otherwise the document descends to the paragraph tier below.
+    structure = detect_section_structure(document, state.chars_per_token, state.C_usable)
+    if structure is not None and _run_heading_hybrid(state, structure):
+        return state
+
+    # Hybrid tier 3 — paragraph base case. No record/heading structure: chunk the whole
+    # document and let GLEAN order the segments per group. Retrieval is the within-tier
+    # scorer here, not a separate fallback.
     segments = chunk_document(document)
     state.segments = segments
 
@@ -171,6 +189,54 @@ def _run_record_hybrid(state: PipelineState, record: RecordSegments) -> Pipeline
         g.field_best_segment = field_best_segments(glean_index, g.fields, g.matched_segments)
 
     return state
+
+
+def _run_heading_hybrid(state: PipelineState, structure: SectionStructure) -> bool:
+    """Route groups to their heading sections; the heterogeneous twin of the record path.
+
+    Each group is aligned to the section its field paths name (``align_path_to_section``);
+    the section's chunks (plus the shared preamble) are the candidates GLEAN orders
+    within. Mutates state only when the schema aligns to the headings — at least
+    ``_MIN_ALIGN_COVERAGE`` of groups must match a section — so a document whose schema
+    does not mirror its headings is left untouched for the paragraph tier (do-no-harm).
+
+    Args:
+        state: Pipeline state from Stage 2A (must have ``state.groups``).
+        structure: Detected heading structure from ``detect_section_structure``.
+
+    Returns:
+        ``True`` when the heading route was applied; ``False`` to leave state unchanged.
+    """
+    if not state.groups:
+        return False
+    alignments = [
+        align_path_to_section([f.path for f in g.fields], structure.sections) for g in state.groups
+    ]
+    aligned = sum(1 for index, _ in alignments if index >= 0)
+    if aligned / len(state.groups) < _MIN_ALIGN_COVERAGE:
+        return False
+
+    glean_index = build_glean_index(structure.segments)
+    state.segments = structure.segments
+    state.lexical_index = glean_index.lexical
+    for g, (index, _score) in zip(state.groups, alignments, strict=True):
+        # Structure decides inclusion: the aligned section + shared preamble are the
+        # candidates; an unaligned group falls back to the whole document within this
+        # tier (never starved). Retrieval only decides ORDER.
+        candidates = (
+            [*structure.by_section.get(index, []), *structure.preamble_segments]
+            if index >= 0
+            else list(structure.segments)
+        )
+        query = _build_group_query(g)
+        scored = glean_rescore(glean_index, g.fields, query, top_k=len(structure.segments))
+        score_by_id = {seg.segment_id: score for seg, score in scored}
+        ranked = sorted(candidates, key=lambda s: score_by_id.get(s.segment_id, 0.0), reverse=True)
+        _apply_ranking(
+            g, [(s, score_by_id.get(s.segment_id, 0.0)) for s in ranked], state.chars_per_token
+        )
+        g.field_best_segment = field_best_segments(glean_index, g.fields, g.matched_segments)
+    return True
 
 
 def _apply_ranking(
