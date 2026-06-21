@@ -54,3 +54,4 @@ tests/fixtures/documents/clinical_note.txt
 # Benchmark results ARE committed — raw outputs are the reproducibility evidence
 # (honest-claims charter, rule 3) — so benchmark/results/ is deliberately tracked.
 benchmark/datasets/real/war_and_peace/document.txt
+/leaf/*
