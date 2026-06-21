@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from formatshield.pipeline._structure import (
+    align_path_to_section,
     detect_blocks,
     detect_record_axis,
+    detect_section_structure,
     group_record_ordinal,
     record_segments,
 )
@@ -146,3 +148,110 @@ class TestGroupRecordOrdinal:
     def test_minus_one_for_non_record_fields(self):
         field_ordinal, _ = detect_record_axis(_record_fields(4))  # type: ignore[misc]
         assert group_record_ordinal(["study.title"], field_ordinal) == -1
+
+
+# A heterogeneous (non-record) document: a preamble, then four enumerated headings,
+# each introducing denser body lines. No repeating record axis exists.
+_HETERO_DOC = (
+    "This filing summarises the consolidated results for the year under review in full.\n"
+    "1. Income Statement\n"
+    "Total revenue reached 1,234,567 dollars and net income was 89,000 dollars after taxes.\n"
+    "Operating expenses totalled 500,000 dollars across every division for the period.\n"
+    "2. Balance Sheet\n"
+    "Total assets stood at 9,876,543 dollars while liabilities were 4,000,000 dollars.\n"
+    "Cash and equivalents amounted to 250,000 dollars across operating accounts.\n"
+    "3. Cash Flow Statement\n"
+    "Net cash from operating activities was 750,000 dollars during the period reviewed.\n"
+    "Capital expenditures consumed 300,000 dollars for plant and equipment that year.\n"
+    "4. Governance\n"
+    "The board comprised nine directors who met quarterly to review the strategy.\n"
+    "The audit committee oversaw financial reporting and internal controls all year.\n"
+)
+
+
+class TestDetectSectionStructure:
+    def test_finds_enumerated_headings(self):
+        structure = detect_section_structure(_HETERO_DOC, 4.0, 4096.0)
+        assert structure is not None
+        headings = [s.heading for s in structure.sections]
+        assert headings == [
+            "1. Income Statement",
+            "2. Balance Sheet",
+            "3. Cash Flow Statement",
+            "4. Governance",
+        ]
+
+    def test_preamble_kept_separate(self):
+        structure = detect_section_structure(_HETERO_DOC, 4.0, 4096.0)
+        assert structure is not None
+        preamble = " ".join(s.text for s in structure.preamble_segments)
+        assert "consolidated results" in preamble
+        assert "Income Statement" not in preamble  # body before the first heading only
+
+    def test_section_segments_are_local(self):
+        structure = detect_section_structure(_HETERO_DOC, 4.0, 4096.0)
+        assert structure is not None
+        income = " ".join(s.text for s in structure.by_section[0])
+        assert "revenue" in income
+        assert "directors" not in income  # governance content never leaks into section 0
+
+    def test_offsets_are_absolute(self):
+        structure = detect_section_structure(_HETERO_DOC, 4.0, 4096.0)
+        assert structure is not None
+        for seg in structure.segments:
+            assert _HETERO_DOC[seg.start : seg.end] == seg.text
+
+    def test_oversized_section_is_chunked(self):
+        # A section large enough to exceed the chunker's own size splits into children.
+        big = (
+            "Preamble line of body text that is comfortably long enough to be prose.\n"
+            "1. Income Statement\n" + ("revenue and income detail line. " * 600) + "\n"
+            "2. Balance Sheet\nassets and liabilities summary line follows here now.\n"
+            "3. Cash Flow Statement\noperating and investing cash detail line here now.\n"
+            "4. Governance\nthe board of directors met to review strategy this year.\n"
+        )
+        structure = detect_section_structure(big, 4.0, 1.0)  # tiny budget
+        assert structure is not None
+        assert any(len(segs) > 1 for segs in structure.by_section.values())
+
+    def test_none_without_headings(self):
+        flat = "A long paragraph of plain prose. " * 40
+        assert detect_section_structure(flat, 4.0, 4096.0) is None
+
+    def test_none_when_too_few_headings(self):
+        doc = "Intro line of body text here.\n1. Only Section\nSome longer body content follows.\n"
+        assert detect_section_structure(doc, 4.0, 4096.0) is None
+
+    def test_none_when_headings_not_distinct(self):
+        # A boilerplate line that repeats verbatim is a divider, not a heading family.
+        doc = "".join(
+            "Section\nA longer line of body content beneath the repeated label here.\n"
+            for _ in range(6)
+        )
+        assert detect_section_structure(doc, 4.0, 4096.0) is None
+
+
+class TestAlignPathToSection:
+    def _sections(self):
+        structure = detect_section_structure(_HETERO_DOC, 4.0, 4096.0)
+        assert structure is not None
+        return structure.sections
+
+    def test_path_aligns_to_matching_heading(self):
+        index, score = align_path_to_section(
+            ["income_statement.total_revenue", "income_statement.net_income"], self._sections()
+        )
+        assert index == 0
+        assert score >= 0.5
+
+    def test_distinct_path_aligns_to_its_section(self):
+        index, _ = align_path_to_section(["governance.board_size"], self._sections())
+        assert index == 3
+
+    def test_no_match_returns_minus_one(self):
+        index, score = align_path_to_section(["unrelated.identifier_code"], self._sections())
+        assert index == -1
+        assert score == 0.0
+
+    def test_empty_paths_return_minus_one(self):
+        assert align_path_to_section([], self._sections()) == (-1, 0.0)

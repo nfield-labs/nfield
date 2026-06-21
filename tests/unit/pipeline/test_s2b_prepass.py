@@ -127,3 +127,108 @@ class TestGroupTopK:
         segs = self._segs(3)
         depth = _group_top_k(self._group(50), segs, c_usable=100_000.0, chars_per_token=4.0)
         assert depth <= 3, "cannot retrieve more segments than exist"
+
+
+# A nested schema whose object keys mirror a heterogeneous document's headings, so
+# each group (one per parent_path) aligns to its own section.
+_HETERO_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "income_statement": {
+            "type": "object",
+            "properties": {
+                "total_revenue": {"type": "number", "description": "total revenue"},
+                "net_income": {"type": "number", "description": "net income"},
+            },
+        },
+        "balance_sheet": {
+            "type": "object",
+            "properties": {
+                "total_assets": {"type": "number", "description": "total assets"},
+                "cash": {"type": "number", "description": "cash and equivalents"},
+            },
+        },
+        "cash_flow_statement": {
+            "type": "object",
+            "properties": {"operating_activities": {"type": "number", "description": "operating"}},
+        },
+        "governance": {
+            "type": "object",
+            "properties": {"directors": {"type": "integer", "description": "board directors"}},
+        },
+    },
+}
+
+_HETERO_DOC = (
+    "This filing summarises the consolidated results for the year under review in full.\n"
+    "1. Income Statement\n"
+    "Total revenue reached 1,234,567 dollars and net income was 89,000 dollars after taxes.\n"
+    "Operating expenses totalled 500,000 dollars across every division for the period.\n"
+    "2. Balance Sheet\n"
+    "Total assets stood at 9,876,543 dollars while liabilities were 4,000,000 dollars.\n"
+    "Cash and equivalents amounted to 250,000 dollars across operating accounts.\n"
+    "3. Cash Flow Statement\n"
+    "Net cash from operating activities was 750,000 dollars during the period reviewed.\n"
+    "Capital expenditures consumed 300,000 dollars for plant and equipment that year.\n"
+    "4. Governance\n"
+    "The board comprised nine directors who met quarterly to review the strategy.\n"
+    "The audit committee oversaw financial reporting and internal controls all year.\n"
+)
+
+
+class TestHeadingHybridRoute:
+    """STAR tier 2: a heterogeneous doc too large for the fast path routes by headings."""
+
+    def _hetero_state(self) -> tuple[PipelineState, str]:
+        state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=40.0)
+        state = run_stage_1(state, _HETERO_SCHEMA)
+        state = run_stage_2a(state)
+        return state, _HETERO_DOC
+
+    def test_heading_route_builds_index(self):
+        state, doc = self._hetero_state()
+        state = run_stage_2b(state, doc, ExtractionConfig())
+        # The heading route (tier 2) builds a lexical index, unlike the fast path.
+        assert state.lexical_index is not None
+        assert len(state.segments) >= 4
+
+    def test_groups_routed_to_their_section(self):
+        state, doc = self._hetero_state()
+        state = run_stage_2b(state, doc, ExtractionConfig())
+        by_parent = {g.parent_path: g for g in state.groups}
+        income_top = by_parent["income_statement"].matched_segments[0].text
+        gov_top = by_parent["governance"].matched_segments[0].text
+        # Structure routed each group to its own section, not a sibling's.
+        assert "revenue" in income_top
+        assert "directors" in gov_top
+
+    def test_record_doc_still_takes_record_path(self):
+        # Do-no-harm: a record document is unaffected by the heading tier.
+        record_schema = {
+            "type": "object",
+            "properties": {
+                "recs": {
+                    "type": "object",
+                    "properties": {
+                        f"rec_{i}": {
+                            "type": "object",
+                            "properties": {"name": {"type": "string"}, "age": {"type": "integer"}},
+                        }
+                        for i in range(1, 5)
+                    },
+                }
+            },
+        }
+        doc = (
+            "HEADER LINE\n"
+            "RECORD 1\nname: Ann\nage: 30\n"
+            "RECORD 2\nname: Ben\nage: 41\n"
+            "RECORD 3\nname: Cleo\nage: 52\n"
+            "RECORD 4\nname: Dan\nage: 63\n"
+        )
+        state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=40.0)
+        state = run_stage_1(state, record_schema)
+        state = run_stage_2a(state)
+        state = run_stage_2b(state, doc, ExtractionConfig())
+        # The record path populates record_ordinal; the heading tier never does.
+        assert state.record_ordinal
