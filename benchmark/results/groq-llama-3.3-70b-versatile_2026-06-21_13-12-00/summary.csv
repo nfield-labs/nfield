@@ -1,0 +1,41 @@
+budget,method,fixture,seed,n_fields,coverage,value_accuracy,k,k_min,optimality_gap,elapsed_seconds,error_category,error
+constrained,instructor,clinicaltrial,0,304,0.0,0.0,0,0,0.0,23.578,output_truncated,output_truncated: output truncated at the token limit; the method returned no usable object
+constrained,instructor,factbook_multi,0,1045,0.0,0.0,0,0,0.0,1.667,request_exceeds_context,request_exceeds_context: request exceeds the context window (messages + max_tokens too large for one call)
+constrained,instructor,factbook_us,0,335,0.0,0.0,0,0,0.0,33.247,output_truncated,output_truncated: output truncated at the token limit; the method returned no usable object
+constrained,instructor,war_and_peace,0,200,0.985,,1,1,0.0,8.093,,
+constrained,langchain,clinicaltrial,0,304,0.5032894736842105,0.48355263157894735,1,1,0.0,21.649,,
+constrained,langchain,factbook_multi,0,1045,0.18181818181818182,0.16172248803827752,1,1,0.0,33.327,,
+constrained,langchain,factbook_us,0,335,0.7402985074626866,0.6686567164179105,1,1,0.0,30.322,,
+constrained,langchain,war_and_peace,0,200,0.98,,1,1,0.0,8.128,,
+constrained,native_json,clinicaltrial,0,304,0.5032894736842105,0.48355263157894735,1,1,0.0,21.872,,
+constrained,native_json,factbook_multi,0,1045,0.19712918660287082,0.17033492822966506,1,1,0.0,31.97,,
+constrained,native_json,factbook_us,0,335,0.7402985074626866,0.6686567164179105,1,1,0.0,30.565,,
+constrained,native_json,war_and_peace,0,200,0.99,,1,1,0.0,7.358,,
+constrained,nfield,clinicaltrial,0,304,0.930921052631579,0.8947368421052632,10,9,0.1111111111111111,17.315,,
+constrained,nfield,factbook_multi,0,1045,0.9933014354066986,0.8009569377990431,31,29,0.06896551724137931,80.055,,
+constrained,nfield,factbook_us,0,335,1.0,0.9074626865671642,10,10,0.0,13.083,,
+constrained,nfield,war_and_peace,0,200,0.995,,7,6,0.16666666666666666,14.496,,
+constrained,raw_prompt,clinicaltrial,0,304,0.0,0.0,0,0,0.0,21.452,json_truncated,json_truncated: model output was not valid JSON (truncated or malformed)
+constrained,raw_prompt,factbook_multi,0,1045,0.0,0.0,0,0,0.0,32.315,json_truncated,json_truncated: model output was not valid JSON (truncated or malformed)
+constrained,raw_prompt,factbook_us,0,335,0.0,0.0,0,0,0.0,29.634,json_truncated,json_truncated: model output was not valid JSON (truncated or malformed)
+constrained,raw_prompt,war_and_peace,0,200,0.98,,1,1,0.0,7.566,,
+native,instructor,clinicaltrial,0,304,0.930921052631579,0.9276315789473685,1,1,0.0,39.128,,
+native,instructor,factbook_multi,0,1045,0.0,0.0,0,0,0.0,1.676,request_exceeds_context,request_exceeds_context: request exceeds the context window (messages + max_tokens too large for one call)
+native,instructor,factbook_us,0,335,0.0,0.0,0,0,0.0,44.453,schema_validation_failed,schema_validation_failed: output rejected by schema validation
+native,instructor,war_and_peace,0,200,0.005,,1,1,0.0,31.257,,
+native,langchain,clinicaltrial,0,304,0.930921052631579,0.8519736842105263,1,1,0.0,38.2,,
+native,langchain,factbook_multi,0,1045,0.6114832535885167,0.5483253588516747,1,1,0.0,92.594,,
+native,langchain,factbook_us,0,335,0.9970149253731343,0.9223880597014925,1,1,0.0,42.821,,
+native,langchain,war_and_peace,0,200,0.945,,1,1,0.0,16.468,,
+native,native_json,clinicaltrial,0,304,0.930921052631579,0.9111842105263158,1,1,0.0,41.297,,
+native,native_json,factbook_multi,0,1045,0.6105263157894737,0.5311004784688995,1,1,0.0,96.017,,
+native,native_json,factbook_us,0,335,0.9432835820895522,0.8626865671641791,1,1,0.0,44.207,,
+native,native_json,war_and_peace,0,200,0.945,,1,1,0.0,18.06,,
+native,nfield,clinicaltrial,0,304,0.930921052631579,0.8914473684210527,10,9,0.1111111111111111,15.811,,
+native,nfield,factbook_multi,0,1045,1.0,0.7942583732057417,29,29,0.0,168.352,,
+native,nfield,factbook_us,0,335,1.0,0.9104477611940298,10,10,0.0,14.555,,
+native,nfield,war_and_peace,0,200,0.995,,7,6,0.16666666666666666,45.516,,
+native,raw_prompt,clinicaltrial,0,304,0.930921052631579,0.9276315789473685,1,1,0.0,36.895,,
+native,raw_prompt,factbook_multi,0,1045,0.0,0.0,0,0,0.0,94.598,json_truncated,json_truncated: model output was not valid JSON (truncated or malformed)
+native,raw_prompt,factbook_us,0,335,0.9970149253731343,0.9223880597014925,1,1,0.0,44.002,,
+native,raw_prompt,war_and_peace,0,200,0.0,,0,0,0.0,35.575,json_truncated,json_truncated: model output was not valid JSON (truncated or malformed)
