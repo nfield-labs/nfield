@@ -42,9 +42,13 @@ _FIXTURES = datasets.available()
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="benchmark.runner3", description=__doc__)
-    parser.add_argument("--methods", default=",".join(ADAPTERS), help="comma-separated method names")
+    parser.add_argument(
+        "--methods", default=",".join(ADAPTERS), help="comma-separated method names"
+    )
     parser.add_argument("--fixtures", default=",".join(_FIXTURES), help="comma-separated fixtures")
-    parser.add_argument("--budgets", default=",".join(BUDGET_MODES), help="comma-separated budgets")
+    parser.add_argument(
+        "--budgets", default=",".join(BUDGET_MODES), help="comma-separated budgets"
+    )
     args = parser.parse_args(argv)
     methods = [m.strip() for m in args.methods.split(",") if m.strip()]
     fixtures = [f.strip() for f in args.fixtures.split(",") if f.strip()]

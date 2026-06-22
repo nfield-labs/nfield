@@ -16,12 +16,11 @@ import time
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
-import langextract as lx
-from langextract.providers.openai import OpenAILanguageModel
-
 from . import _common
 
 if TYPE_CHECKING:
+    import langextract as lx
+
     from ._base import AdapterOutput
 
 _GROQ_OPENAI_BASE = "https://api.groq.com/openai/v1"
@@ -55,6 +54,9 @@ class LangExtractAdapter:
         instructions: str = "",
     ) -> AdapterOutput:
         """Extract entities for the schema's leaf names and fold them into its shape."""
+        import langextract as lx
+        from langextract.providers.openai import OpenAILanguageModel
+
         started = time.perf_counter()
         try:
             fitted = _common._fit_document(document, context_window, max_output_tokens)
@@ -103,6 +105,8 @@ def _prompt(instructions: str, leaves: list[str]) -> str:
 
 def _example(leaves: list[str]) -> lx.data.ExampleData:
     """A synthetic example teaching the class=field-name pattern with aligned spans."""
+    import langextract as lx
+
     sample = list(dict.fromkeys(leaves))[:_MAX_EXAMPLE_LEAVES] or ["field"]
     pairs = [(name, f"value{i}") for i, name in enumerate(sample)]
     text = " ".join(f"{name} is {value}." for name, value in pairs)

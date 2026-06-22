@@ -34,7 +34,9 @@ _PATH_SEP = "__"  # joins a leaf's path into one valid identifier (dots are ille
 _NUM_RETRIES = _common.MAX_TRANSIENT_RETRIES
 
 
-def _leaf_paths(node: dict[str, Any], prefix: tuple[str, ...] = ()) -> list[tuple[tuple[str, ...], type]]:
+def _leaf_paths(
+    node: dict[str, Any], prefix: tuple[str, ...] = ()
+) -> list[tuple[tuple[str, ...], type]]:
     """Flatten a JSON Schema to ``(path, python_type)`` pairs, one per leaf.
 
     Mirrors ``schema_field_count``: nested objects recurse; arrays and scalars are
