@@ -1,0 +1,181 @@
+{
+  "type": "object",
+  "properties": {
+    "network": {
+      "type": "object",
+      "properties": {
+        "technology": {"type": "string", "description": "Cellular technologies"},
+        "gsm_bands": {"type": "string", "description": "2G GSM bands"},
+        "cdma_bands": {"type": "string", "description": "2G CDMA bands"},
+        "hspa_bands": {"type": "string", "description": "3G HSPA bands"},
+        "lte_bands_intl": {"type": "string", "description": "4G LTE bands, international"},
+        "lte_bands_usa": {"type": "string", "description": "4G LTE bands, USA"},
+        "nr_5g_bands_intl": {"type": "string", "description": "5G NR bands, international"},
+        "nr_5g_bands_usa": {"type": "string", "description": "5G NR bands, USA"},
+        "speed": {"type": "string", "description": "Data speed technologies"}
+      }
+    },
+    "launch": {
+      "type": "object",
+      "properties": {
+        "announced_date": {"type": "string", "description": "Announcement date"},
+        "release_date": {"type": "string", "description": "Release date"},
+        "status": {"type": "string", "description": "Availability status"}
+      }
+    },
+    "body": {
+      "type": "object",
+      "properties": {
+        "length_mm": {"type": "string", "description": "Length in millimeters"},
+        "width_mm": {"type": "string", "description": "Width in millimeters"},
+        "thickness_mm": {"type": "string", "description": "Thickness in millimeters"},
+        "weight_g": {"type": "string", "description": "Weight in grams"},
+        "build_front": {"type": "string", "description": "Front build material"},
+        "build_back": {"type": "string", "description": "Back build material"},
+        "frame_material": {"type": "string", "description": "Frame material"},
+        "sim_intl": {"type": "string", "description": "SIM configuration, international"},
+        "sim_usa": {"type": "string", "description": "SIM configuration, USA"},
+        "ip_rating": {"type": "string", "description": "Ingress protection rating"},
+        "stylus": {"type": "string", "description": "Stylus support"}
+      }
+    },
+    "display": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string", "description": "Display panel type"},
+        "refresh_rate": {"type": "string", "description": "Refresh rate"},
+        "hdr": {"type": "string", "description": "HDR support"},
+        "peak_brightness_nits": {"type": "string", "description": "Peak brightness"},
+        "size_inches": {"type": "string", "description": "Diagonal size in inches"},
+        "area_cm2": {"type": "string", "description": "Display area"},
+        "screen_to_body_ratio": {"type": "string", "description": "Screen-to-body ratio"},
+        "resolution_px": {"type": "string", "description": "Resolution in pixels"},
+        "aspect_ratio": {"type": "string", "description": "Aspect ratio"},
+        "ppi_density": {"type": "string", "description": "Pixel density"},
+        "protection": {"type": "string", "description": "Glass protection"},
+        "coating": {"type": "string", "description": "Surface coating"},
+        "always_on": {"type": "string", "description": "Always-on display support"}
+      }
+    },
+    "platform": {
+      "type": "object",
+      "properties": {
+        "os": {"type": "string", "description": "Operating system"},
+        "android_upgrades": {"type": "string", "description": "Promised major OS upgrades"},
+        "ui_version": {"type": "string", "description": "Manufacturer UI version"},
+        "chipset": {"type": "string", "description": "System-on-chip"},
+        "fabrication_nm": {"type": "string", "description": "Process node"},
+        "cpu_config": {"type": "string", "description": "CPU core configuration"},
+        "gpu": {"type": "string", "description": "Graphics processor"}
+      }
+    },
+    "memory": {
+      "type": "object",
+      "properties": {
+        "card_slot": {"type": "string", "description": "Memory card slot support"},
+        "storage_256gb": {"type": "string", "description": "256GB variant"},
+        "storage_512gb": {"type": "string", "description": "512GB variant"},
+        "storage_1tb": {"type": "string", "description": "1TB variant"},
+        "ram": {"type": "string", "description": "RAM amount"},
+        "storage_tech": {"type": "string", "description": "Storage technology"}
+      }
+    },
+    "main_camera": {
+      "type": "object",
+      "properties": {
+        "configuration": {"type": "string", "description": "Camera configuration"},
+        "wide_resolution": {"type": "string", "description": "Wide camera resolution"},
+        "wide_aperture": {"type": "string", "description": "Wide camera aperture"},
+        "wide_focal_length": {"type": "string", "description": "Wide camera focal length"},
+        "wide_sensor_size": {"type": "string", "description": "Wide camera sensor size"},
+        "wide_ois": {"type": "string", "description": "Wide camera stabilization"},
+        "telephoto_resolution": {"type": "string", "description": "Telephoto resolution"},
+        "telephoto_aperture": {"type": "string", "description": "Telephoto aperture"},
+        "telephoto_focal_length": {"type": "string", "description": "Telephoto focal length"},
+        "telephoto_sensor_size": {"type": "string", "description": "Telephoto sensor size"},
+        "telephoto_zoom": {"type": "string", "description": "Telephoto optical zoom"},
+        "periscope_resolution": {"type": "string", "description": "Periscope resolution"},
+        "periscope_aperture": {"type": "string", "description": "Periscope aperture"},
+        "periscope_focal_length": {"type": "string", "description": "Periscope focal length"},
+        "periscope_sensor_size": {"type": "string", "description": "Periscope sensor size"},
+        "periscope_zoom": {"type": "string", "description": "Periscope optical zoom"},
+        "periscope_ois": {"type": "string", "description": "Periscope stabilization"},
+        "ultrawide_resolution": {"type": "string", "description": "Ultrawide resolution"},
+        "ultrawide_aperture": {"type": "string", "description": "Ultrawide aperture"},
+        "ultrawide_fov": {"type": "string", "description": "Ultrawide field of view"},
+        "ultrawide_sensor_size": {"type": "string", "description": "Ultrawide sensor size"},
+        "main_flash": {"type": "string", "description": "Flash type"},
+        "main_autofocus": {"type": "string", "description": "Autofocus technology"},
+        "camera_features": {"type": "string", "description": "Other camera features"},
+        "video_recording": {"type": "string", "description": "Video recording modes"}
+      }
+    },
+    "selfie_camera": {
+      "type": "object",
+      "properties": {
+        "resolution": {"type": "string", "description": "Selfie camera resolution"},
+        "aperture": {"type": "string", "description": "Selfie camera aperture"},
+        "focal_length": {"type": "string", "description": "Selfie camera focal length"},
+        "sensor_size": {"type": "string", "description": "Selfie camera sensor size"},
+        "features": {"type": "string", "description": "Selfie camera features"},
+        "video_recording": {"type": "string", "description": "Selfie video modes"}
+      }
+    },
+    "sound": {
+      "type": "object",
+      "properties": {
+        "loudspeaker": {"type": "string", "description": "Loudspeaker presence"},
+        "stereo_speakers": {"type": "string", "description": "Stereo speaker support"},
+        "headphone_jack": {"type": "string", "description": "3.5mm jack presence"},
+        "audio_support": {"type": "string", "description": "Audio codec support"}
+      }
+    },
+    "comms": {
+      "type": "object",
+      "properties": {
+        "wlan": {"type": "string", "description": "Wi-Fi support"},
+        "bluetooth": {"type": "string", "description": "Bluetooth version and profiles"},
+        "positioning": {"type": "string", "description": "Satellite positioning"},
+        "nfc": {"type": "string", "description": "NFC support"},
+        "radio": {"type": "string", "description": "FM radio support"},
+        "usb_type": {"type": "string", "description": "USB connector type"},
+        "usb_features": {"type": "string", "description": "USB features"},
+        "displayport": {"type": "string", "description": "DisplayPort support"}
+      }
+    },
+    "features": {
+      "type": "object",
+      "properties": {
+        "sensors": {"type": "string", "description": "Onboard sensors"},
+        "fingerprint_type": {"type": "string", "description": "Fingerprint sensor type"},
+        "samsung_dex": {"type": "string", "description": "Desktop experience support"},
+        "uwb_support": {"type": "string", "description": "Ultra wideband support"}
+      }
+    },
+    "battery": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string", "description": "Battery type"},
+        "capacity_mah": {"type": "string", "description": "Battery capacity"},
+        "wired_charging": {"type": "string", "description": "Wired charging power"},
+        "wired_charge_speed": {"type": "string", "description": "Wired charge speed claim"},
+        "wireless_charging": {"type": "string", "description": "Wireless charging power"},
+        "reverse_wireless": {"type": "string", "description": "Reverse wireless charging"}
+      }
+    },
+    "misc": {
+      "type": "object",
+      "properties": {
+        "color_options": {"type": "string", "description": "Available colors"},
+        "models": {"type": "string", "description": "Model numbers"},
+        "sar_head_us": {"type": "string", "description": "SAR head, US"},
+        "sar_body_us": {"type": "string", "description": "SAR body, US"},
+        "sar_head_eu": {"type": "string", "description": "SAR head, EU"},
+        "sar_body_eu": {"type": "string", "description": "SAR body, EU"},
+        "price_usd": {"type": "string", "description": "Price in USD"},
+        "price_gbp": {"type": "string", "description": "Price in GBP"},
+        "price_eur": {"type": "string", "description": "Price in EUR"}
+      }
+    }
+  }
+}

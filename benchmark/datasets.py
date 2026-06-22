@@ -49,6 +49,8 @@ _INSTRUCTIONS: dict[str, str] = {
         "events; do not infer beyond the text, and leave a field null if the novel "
         "does not state it."
     ),
+    "chemical_element": f"The document is a periodic-table element profile. {_FAITHFULNESS}",
+    "smartphone_spec": f"The document is a smartphone specification sheet. {_FAITHFULNESS}",
 }
 
 
@@ -121,7 +123,14 @@ class Dataset:
 
 _REGISTRY: dict[str, Dataset] = {
     name: Dataset(name, instructions=_INSTRUCTIONS.get(name, ""))
-    for name in ("clinicaltrial", "factbook_us", "factbook_multi", "war_and_peace")
+    for name in (
+        "clinicaltrial",
+        "factbook_us",
+        "factbook_multi",
+        "war_and_peace",
+        "chemical_element",
+        "smartphone_spec",
+    )
 }
 
 
