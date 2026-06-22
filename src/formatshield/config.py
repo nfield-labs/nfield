@@ -41,6 +41,9 @@ DEFAULT_Z_TARGET: float = 1.645
 DEFAULT_THINK_PHASE_BUDGET_MIN: int = 100
 DEFAULT_THINK_PHASE_BUDGET_MAX: int = 150
 DEFAULT_EVIDENCE_SCORE_THRESHOLD: float = 0.3
+# Grounding accept threshold in [0, 1]: 0.5 admits exact (1.0) / all-words (0.85) / fuzzy
+# (0.7) and rejects partial (0.4) / absent (0.0) — the natural cut in the score ladder.
+DEFAULT_GROUNDING_MIN_SCORE: float = 0.5
 
 
 # ---------------------------------------------------------------------------
@@ -108,6 +111,19 @@ class ExtractionConfig:
             timeout), honoring Retry-After. Distinct from ``max_retry_rounds``
             (field re-extraction). Default 10 (outlasts a rolling-window TPM storm);
             lower for fail-fast. Must be > 0.
+        ground_values: When ``True``, every filled value of a groundable type (string /
+            number / integer / enum) is checked against the excerpt the model was shown;
+            a value the text does not support (score below ``grounding_min_score``) is
+            marked ``FAILED`` so the recovery pass re-extracts it, and the run reports a
+            ``hallucination_rate``. Booleans and structural types are never grounded
+            (they are inferred, not quoted). Default ``False`` (no behaviour change).
+        grounding_min_score: Minimum grounding score in ``[0, 1]`` for a value to count
+            as supported by the source. Only consulted when ``ground_values`` is
+            ``True``. Default 0.5.
+        fallback_model: Optional stronger model to escalate to. After the recovery pass
+            exhausts its retries, any field still failing is re-extracted **once** on
+            this model (e.g. a larger model the primary could not satisfy). ``None``
+            (default) disables escalation, keeping the run single-model.
 
     Example:
         >>> cfg = ExtractionConfig(default_model="groq/llama-3.1-8b")
@@ -143,3 +159,8 @@ class ExtractionConfig:
     # Re-extract conflicting and revalidation-flagged fields during the recovery pass
     # rather than reporting them unresolved.
     recover_conflicts: bool = True
+    # Grounding gate (anti-hallucination): off by default so behaviour is unchanged.
+    ground_values: bool = False
+    grounding_min_score: float = DEFAULT_GROUNDING_MIN_SCORE
+    # Stronger model to escalate still-failing fields to after recovery; None disables.
+    fallback_model: str | None = None

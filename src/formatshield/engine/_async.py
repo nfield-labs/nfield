@@ -304,6 +304,18 @@ class AsyncFormatShield:
             api_key=api_key,
             base_url=base_url,
         )
+        # Optional stronger model the recovery pass escalates stragglers to. Built once
+        # here (not per call); it uses its own default specs and the same credentials.
+        self._fallback_provider: LLMProvider | None = (
+            from_model(
+                self._config.fallback_model,
+                max_retries=self._config.max_api_retries,
+                api_key=api_key,
+                base_url=base_url,
+            )
+            if self._config.fallback_model
+            else None
+        )
         self._instructions = instructions
         self._schema: dict[str, Any] | None = (
             _normalize_schema(schema) if schema is not None else None
@@ -355,6 +367,8 @@ class AsyncFormatShield:
         state.inject_dependencies = config.inject_dependencies
         state.knowledge_fallback = config.knowledge_fallback
         state.strict_validation = config.strict_validation
+        state.ground_values = config.ground_values
+        state.grounding_min_score = config.grounding_min_score
         state.max_concurrent_calls = config.max_concurrent_calls
         state = run_stage_1(state, schema_dict)
         state = run_stage_2a(state)
@@ -363,7 +377,9 @@ class AsyncFormatShield:
         state = run_stage_3(state)
         state = await run_stage_4(state, provider)
         state = await run_stage_5(state, provider, config)
-        state = await run_recovery_pass(state, provider, config)
+        state = await run_recovery_pass(
+            state, provider, config, fallback_provider=self._fallback_provider
+        )
         return run_stage_6(state)
 
     def _resolve_schema(self, schema: object | None) -> dict[str, Any]:

@@ -47,12 +47,17 @@ _RECOVERY_LEAF_ID: int = -1
 # volume and pressures provider rate limits without a commensurate quality gain, so
 # the pooled re-extraction runs a single round.
 _RECOVERY_ROUNDS: int = 1
+# The fallback escalation is a single extra round on the stronger model: one more chance
+# for the stragglers, not an unbounded loop (avoids self-correction oscillation).
+_FALLBACK_ROUNDS: int = 1
 
 
 async def run_recovery_pass(
     state: PipelineState,
     provider: LLMProvider,
     config: ExtractionConfig,
+    *,
+    fallback_provider: LLMProvider | None = None,
 ) -> PipelineState:
     """Recover still-missing fields in one bounded pass (Stage 5.5).
 
@@ -64,6 +69,9 @@ async def run_recovery_pass(
         state: Pipeline state after Stage 5 (blackboard populated).
         provider: LLM provider for the single recovery extraction call.
         config: Extraction configuration (retry rounds for the recovery leaf).
+        fallback_provider: Optional stronger model. Any field still failing after the
+            primary recovery round is re-extracted once on this provider (escalation).
+            ``None`` keeps recovery single-model.
 
     Returns:
         The same ``PipelineState`` with any recovered fields written to the
@@ -76,13 +84,14 @@ async def run_recovery_pass(
     """
     if state.blackboard is None:
         return state
-    return await _run_consolidated_recovery(state, provider, config)
+    return await _run_consolidated_recovery(state, provider, config, fallback_provider)
 
 
 async def _run_consolidated_recovery(
     state: PipelineState,
     provider: LLMProvider,
     config: ExtractionConfig,
+    fallback_provider: LLMProvider | None,
 ) -> PipelineState:
     """Recover every non-filled field in one pooled, bounded retry loop.
 
@@ -148,20 +157,26 @@ async def _run_consolidated_recovery(
     state.in_recovery = True
     try:
         still = [state.field_by_path[p] for p in recover_paths]
-        for round_index in range(_RECOVERY_ROUNDS):
-            if not still:
-                break
-            state.fields = still
-            state.groups = _subgroups_for(still, state)
-            state.field_reasons = {f.path: reasons[f.path] for f in still if f.path in reasons}
-            run_stage_2c(state, config)
-            run_stage_3(state)
-            _refresh_excerpts(state)
-            await run_stage_4(state, provider)
-            await run_stage_5(state, provider, config)
-            state.retry_rounds = max(state.retry_rounds, round_index + 1)
-            recovered = set(bb.get_filled())
-            still = [f for f in still if f.path not in recovered]
+        still = await _recover_rounds(
+            state, provider, config, bb, still, reasons, rounds=_RECOVERY_ROUNDS
+        )
+        # Escalation: re-extract whatever the primary still could not produce on a
+        # stronger fallback model, once — only the stragglers pay the higher cost, not
+        # the whole document.
+        if fallback_provider is not None and still:
+            logger.debug(
+                "Recovery fallback: escalating %d field(s) to a stronger model", len(still)
+            )
+            still = await _recover_rounds(
+                state,
+                fallback_provider,
+                config,
+                bb,
+                still,
+                reasons,
+                rounds=_FALLBACK_ROUNDS,
+                round_offset=_RECOVERY_ROUNDS,
+            )
     finally:
         (
             state.fields,
@@ -182,6 +197,55 @@ async def _run_consolidated_recovery(
             cascade_invalidate(bb, state.dep_dag, recovered_now)
 
     return state
+
+
+async def _recover_rounds(
+    state: PipelineState,
+    provider: LLMProvider,
+    config: ExtractionConfig,
+    bb: Blackboard,
+    still: list[Field],
+    reasons: dict[str, str],
+    *,
+    rounds: int,
+    round_offset: int = 0,
+) -> list[Field]:
+    """Re-extract the *still*-failing fields for up to *rounds* on *provider*.
+
+    Each round re-packs the remaining fields, finalises a fresh path-aware excerpt,
+    re-extracts, and re-validates (reusing Stages 2C-5); fields that recover drop out
+    of the next round. Shared by the primary recovery loop and the fallback escalation,
+    so both use the identical re-extraction path on whichever provider they are given.
+
+    Args:
+        state: Pipeline state (mutated: ``fields``/``groups``/``leaves`` for the round).
+        provider: LLM provider to re-extract with (primary or fallback).
+        config: Extraction configuration.
+        bb: The run's blackboard.
+        still: Fields to attempt this call (the not-yet-recovered set).
+        reasons: ``path -> failure reason`` for the re-extraction prompt.
+        rounds: Maximum re-extraction rounds to run.
+        round_offset: Added to the round index when updating ``state.retry_rounds`` so
+            the fallback round counts beyond the primary rounds. Default 0.
+
+    Returns:
+        The fields still failing after these rounds.
+    """
+    for round_index in range(rounds):
+        if not still:
+            break
+        state.fields = still
+        state.groups = _subgroups_for(still, state)
+        state.field_reasons = {f.path: reasons[f.path] for f in still if f.path in reasons}
+        run_stage_2c(state, config)
+        run_stage_3(state)
+        _refresh_excerpts(state)
+        await run_stage_4(state, provider)
+        await run_stage_5(state, provider, config)
+        state.retry_rounds = max(state.retry_rounds, round_offset + round_index + 1)
+        recovered = set(bb.get_filled())
+        still = [f for f in still if f.path not in recovered]
+    return still
 
 
 def _failure_reason(bb: Blackboard, path: str) -> str:

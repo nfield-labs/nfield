@@ -70,6 +70,9 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
         0, fields_total - fields_extracted - fields_conflicted - fields_needs_revalidation
     )
 
+    # --- 4a. Grounding metric (only meaningful when grounding ran) ---
+    grounded, ungrounded, hallucination_rate = _grounding_metric(state)
+
     metadata = Metadata(
         K=state.K,
         K_min=state.K_min,
@@ -85,12 +88,41 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
         retry_rounds=state.retry_rounds,
         fields_call_failed=len(bb.get_call_failed()),
         calls_by_origin=dict(state.calls_by_origin),
+        fields_grounded=grounded,
+        fields_ungrounded=ungrounded,
+        hallucination_rate=hallucination_rate,
     )
 
     # --- 5. Determine status ---
     status = _determine_status(fields_extracted, fields_total, fields_missing)
 
     return ExtractionResult(data=data, metadata=metadata, status=status)
+
+
+def _grounding_metric(state: PipelineState) -> tuple[int, int, float | None]:
+    """Summarise the per-field grounding scores into the run's hallucination metric.
+
+    Counts every grounding-checked value (those Stage 5 scored when grounding was
+    enabled) as grounded or ungrounded by the same threshold the gate used, then
+    reports the unsupported fraction. A value counts as ungrounded if the source did
+    not support it on its best excerpt, even if it was later dropped — that is exactly
+    the model's hallucination signal.
+
+    Args:
+        state: Pipeline state carrying ``grounding_scores`` and the threshold.
+
+    Returns:
+        ``(fields_grounded, fields_ungrounded, hallucination_rate)``; the rate is
+        ``None`` when nothing was grounding-checked (grounding off or no groundable
+        field).
+    """
+    scores = state.grounding_scores
+    if not scores:
+        return 0, 0, None
+    threshold = state.grounding_min_score
+    grounded = sum(1 for s in scores.values() if s >= threshold)
+    ungrounded = len(scores) - grounded
+    return grounded, ungrounded, ungrounded / len(scores)
 
 
 def _determine_status(

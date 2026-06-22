@@ -49,6 +49,12 @@ class PipelineState:
     # formatted values to the schema type before writing (from ExtractionConfig).
     strict_validation: bool = False
 
+    # When True, Stage 5 scores each filled value against the excerpt the model saw and
+    # marks an unsupported value FAILED (anti-hallucination; from ExtractionConfig).
+    ground_values: bool = False
+    # Accept threshold for the grounding score (from ExtractionConfig).
+    grounding_min_score: float = 0.5
+
     # Max leaf extraction calls in flight at once (from ExtractionConfig); bounds
     # Stage 4 concurrency so wide schemas do not trip provider rate limits.
     max_concurrent_calls: int = 4
@@ -85,6 +91,11 @@ class PipelineState:
     blackboard: Blackboard | None = None
     K: int = 0
     retry_rounds: int = 0
+
+    # Grounding score in [0, 1] per filled groundable field, written by Stage 5 when
+    # ``ground_values`` is set; read by Stage 6 to report the hallucination rate. A path
+    # is present only if it was grounding-checked (filled and of a groundable type).
+    grounding_scores: dict[str, float] = field(default_factory=dict)
 
     # API call counts grouped by call site, so K can be attributed to extraction,
     # validation retry, or recovery. ``in_recovery`` marks calls issued by the

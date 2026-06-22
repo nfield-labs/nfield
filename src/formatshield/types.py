@@ -74,6 +74,13 @@ class Metadata:
             ``{"extract": 120, "s5_retry": 30, "recovery_extract": 8}``. Lets a
             run attribute its API cost to first-pass extraction vs Stage 5 retry
             vs the recovery pass. Empty when no calls were made.
+        fields_grounded: Number of filled values whose grounding score met the
+            threshold (supported by the source). ``0`` when grounding is disabled.
+        fields_ungrounded: Number of grounding-checked values the source did not
+            support (likely hallucinations). ``0`` when grounding is disabled.
+        hallucination_rate: ``fields_ungrounded / (fields_grounded + fields_ungrounded)``
+            — the fraction of grounding-checked values that were unsupported. ``None``
+            when grounding was disabled or no value was groundable.
 
     Example:
         >>> meta = Metadata(
@@ -101,6 +108,9 @@ class Metadata:
     cost: float | None = None
     fields_call_failed: int = 0
     calls_by_origin: dict[str, int] = field(default_factory=dict)
+    fields_grounded: int = 0
+    fields_ungrounded: int = 0
+    hallucination_rate: float | None = None
 
 
 @dataclass(frozen=True, slots=True)
