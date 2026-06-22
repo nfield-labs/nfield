@@ -1,0 +1,1645 @@
+[
+  {
+    "method": "langextract",
+    "fixture": "factbook_multi",
+    "budget": "constrained",
+    "seed": 0,
+    "fields_total": 1045,
+    "fields_extracted": 6,
+    "coverage": 0.005741626794258373,
+    "k": 1,
+    "k_min": 1,
+    "optimality_gap": 0.0,
+    "call_failed": 0,
+    "elapsed_seconds": 156.818,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "usa": {
+        "introduction": {
+          "background": "India Taxes and other revenues: 6.7% (of GDP) (2022 est.)"
+        },
+        "geography": {
+          "location": "India",
+          "geographic_coordinates": null,
+          "map_references": null,
+          "area": {
+            "total": null,
+            "land": null,
+            "water": null
+          },
+          "area_comparative": null,
+          "land_boundaries": {
+            "total": null,
+            "border_countries": null
+          },
+          "coastline": null,
+          "maritime_claims": {
+            "territorial_sea": null,
+            "contiguous_zone": null,
+            "exclusive_economic_zone": null,
+            "continental_shelf": null
+          },
+          "climate": null,
+          "terrain": null,
+          "elevation": {
+            "highest_point": null,
+            "lowest_point": null,
+            "mean_elevation": null
+          },
+          "natural_resources": null,
+          "land_use": {
+            "agricultural_land": null,
+            "agricultural_land_arable_land": null,
+            "agricultural_land_permanent_crops": null,
+            "agricultural_land_permanent_pasture": null,
+            "forest": null,
+            "other": null
+          },
+          "irrigated_land": null,
+          "major_lakes_area_sq_km": {
+            "fresh_water_lake_s": null,
+            "salt_water_lake_s": null
+          },
+          "major_rivers_by_length_in_km": null,
+          "major_watersheds_area_sq_km": {
+            "atlantic_ocean_drainage": null,
+            "pacific_ocean_drainage": null
+          },
+          "major_aquifers": null,
+          "population_distribution": null,
+          "natural_hazards": null,
+          "geography_note": null
+        },
+        "people_and_society": {
+          "population": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "nationality": {
+            "noun": null,
+            "adjective": null
+          },
+          "ethnic_groups": null,
+          "languages": null,
+          "religions": null,
+          "age_structure": {
+            "0_14_years": null,
+            "15_64_years": null,
+            "65_years_and_over": null
+          },
+          "dependency_ratios": {
+            "total_dependency_ratio": null,
+            "youth_dependency_ratio": null,
+            "elderly_dependency_ratio": null,
+            "potential_support_ratio": null
+          },
+          "median_age": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "population_growth_rate": null,
+          "birth_rate": null,
+          "death_rate": null,
+          "net_migration_rate": null,
+          "population_distribution": null,
+          "urbanization": {
+            "urban_population": null,
+            "rate_of_urbanization": null
+          },
+          "major_urban_areas_population": null,
+          "sex_ratio": {
+            "at_birth": null,
+            "0_14_years": null,
+            "15_64_years": null,
+            "65_years_and_over": null,
+            "total_population": null
+          },
+          "mother_s_mean_age_at_first_birth": null,
+          "maternal_mortality_ratio": null,
+          "infant_mortality_rate": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "life_expectancy_at_birth": {
+            "total_population": null,
+            "male": null,
+            "female": null
+          },
+          "total_fertility_rate": null,
+          "gross_reproduction_rate": null,
+          "drinking_water_source": {
+            "improved_urban": null,
+            "improved_rural": null,
+            "improved_total": null,
+            "unimproved_urban": null,
+            "unimproved_rural": null,
+            "unimproved_total": null
+          },
+          "health_expenditure": {
+            "health_expenditure_as_of_gdp": null,
+            "health_expenditure_as_of_national_budget": null
+          },
+          "physician_density": null,
+          "hospital_bed_density": null,
+          "sanitation_facility_access": {
+            "improved_urban": null,
+            "improved_rural": null,
+            "improved_total": null,
+            "unimproved_urban": null,
+            "unimproved_rural": null,
+            "unimproved_total": null
+          },
+          "obesity_adult_prevalence_rate": null,
+          "alcohol_consumption_per_capita": {
+            "total": null,
+            "beer": null,
+            "wine": null,
+            "spirits": null,
+            "other_alcohols": null
+          },
+          "tobacco_use": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "children_under_the_age_of_5_years_underweight": null,
+          "currently_married_women_ages_15_49": null,
+          "education_expenditure": {
+            "education_expenditure_gdp": null,
+            "education_expenditure_national_budget": null
+          },
+          "school_life_expectancy_primary_to_tertiary_education": {
+            "total": null,
+            "male": null,
+            "female": null
+          }
+        },
+        "environment": {
+          "environmental_issues": null,
+          "international_environmental_agreements": {
+            "party_to": null,
+            "signed_but_not_ratified": null
+          },
+          "climate": null,
+          "land_use": {
+            "agricultural_land": null,
+            "agricultural_land_arable_land": null,
+            "agricultural_land_permanent_crops": null,
+            "agricultural_land_permanent_pasture": null,
+            "forest": null,
+            "other": null
+          },
+          "urbanization": {
+            "urban_population": null,
+            "rate_of_urbanization": null
+          },
+          "carbon_dioxide_emissions": {
+            "total_emissions": null,
+            "from_coal_and_metallurgical_coke": null,
+            "from_petroleum_and_other_liquids": null,
+            "from_consumed_natural_gas": null
+          },
+          "particulate_matter_emissions": null,
+          "methane_emissions": {
+            "energy": null,
+            "agriculture": null,
+            "waste": null,
+            "other": null
+          },
+          "waste_and_recycling": {
+            "municipal_solid_waste_generated_annually": null,
+            "percent_of_municipal_solid_waste_recycled": null
+          },
+          "total_water_withdrawal": {
+            "municipal": null,
+            "industrial": null,
+            "agricultural": null
+          },
+          "total_renewable_water_resources": null
+        },
+        "government": {
+          "country_name": {
+            "conventional_long_form": null,
+            "conventional_short_form": null,
+            "abbreviation": null,
+            "etymology": null
+          },
+          "government_type": null,
+          "capital": {
+            "name": null,
+            "geographic_coordinates": null,
+            "time_difference": null,
+            "daylight_saving_time": null,
+            "time_zone_note": null,
+            "etymology": null
+          },
+          "administrative_divisions": null,
+          "dependent_areas": null,
+          "legal_system": null,
+          "constitution": {
+            "history": null,
+            "amendment_process": null
+          },
+          "international_law_organization_participation": null,
+          "citizenship": {
+            "citizenship_by_birth": null,
+            "citizenship_by_descent_only": null,
+            "dual_citizenship_recognized": null,
+            "residency_requirement_for_naturalization": null
+          },
+          "suffrage": null,
+          "executive_branch": {
+            "chief_of_state": null,
+            "head_of_government": null,
+            "cabinet": null,
+            "election_appointment_process": null,
+            "most_recent_election_date": null,
+            "election_results": null,
+            "expected_date_of_next_election": null
+          },
+          "legislative_branch": {
+            "legislature_name": null,
+            "legislative_structure": null
+          },
+          "legislative_branch_lower_chamber": {
+            "chamber_name": null,
+            "number_of_seats": null,
+            "electoral_system": null,
+            "scope_of_elections": null,
+            "term_in_office": null,
+            "most_recent_election_date": null,
+            "parties_elected_and_seats_per_party": null,
+            "percentage_of_women_in_chamber": null,
+            "expected_date_of_next_election": null
+          },
+          "legislative_branch_upper_chamber": {
+            "chamber_name": null,
+            "number_of_seats": null,
+            "electoral_system": null,
+            "scope_of_elections": null,
+            "term_in_office": null,
+            "most_recent_election_date": null,
+            "parties_elected_and_seats_per_party": null,
+            "percentage_of_women_in_chamber": null,
+            "expected_date_of_next_election": null
+          },
+          "judicial_branch": {
+            "highest_court_s": null,
+            "judge_selection_and_term_of_office": null,
+            "subordinate_courts": null
+          },
+          "political_parties": null,
+          "international_organization_participation": null,
+          "independence": null,
+          "national_holiday": null,
+          "flag": null,
+          "national_symbol_s": null,
+          "national_color_s": null,
+          "national_anthem_s": {
+            "title": null,
+            "lyrics_music": null,
+            "history": null
+          },
+          "national_heritage": {
+            "total_world_heritage_sites": null,
+            "selected_world_heritage_site_locales": null
+          }
+        },
+        "economy": {
+          "economic_overview": null,
+          "real_gdp_purchasing_power_parity": {
+            "real_gdp_purchasing_power_parity_2024": null,
+            "real_gdp_purchasing_power_parity_2023": null,
+            "real_gdp_purchasing_power_parity_2022": null
+          },
+          "real_gdp_growth_rate": {
+            "real_gdp_growth_rate_2024": null,
+            "real_gdp_growth_rate_2023": null,
+            "real_gdp_growth_rate_2022": null
+          },
+          "real_gdp_per_capita": {
+            "real_gdp_per_capita_2024": null,
+            "real_gdp_per_capita_2023": null,
+            "real_gdp_per_capita_2022": null
+          },
+          "gdp_official_exchange_rate": null,
+          "inflation_rate_consumer_prices": {
+            "inflation_rate_consumer_prices_2024": null,
+            "inflation_rate_consumer_prices_2023": null,
+            "inflation_rate_consumer_prices_2022": null
+          },
+          "gdp_composition_by_sector_of_origin": {
+            "agriculture": null,
+            "industry": null,
+            "services": null
+          },
+          "gdp_composition_by_end_use": {
+            "household_consumption": null,
+            "government_consumption": null,
+            "investment_in_fixed_capital": null,
+            "investment_in_inventories": null,
+            "exports_of_goods_and_services": null,
+            "imports_of_goods_and_services": null
+          },
+          "agricultural_products": null,
+          "industries": null,
+          "industrial_production_growth_rate": null,
+          "labor_force": null,
+          "unemployment_rate": {
+            "unemployment_rate_2024": null,
+            "unemployment_rate_2023": null,
+            "unemployment_rate_2022": null
+          },
+          "youth_unemployment_rate_ages_15_24": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "gini_index_coefficient_distribution_of_family_income": {
+            "gini_index_coefficient_distribution_of_family_income_2023": null
+          },
+          "average_household_expenditures": {
+            "on_food": null,
+            "on_alcohol_and_tobacco": null
+          },
+          "household_income_or_consumption_by_percentage_share": {
+            "lowest_10": null,
+            "highest_10": null
+          },
+          "remittances": {
+            "remittances_2024": null,
+            "remittances_2023": null,
+            "remittances_2022": null
+          },
+          "budget": {
+            "revenues": null,
+            "expenditures": null
+          },
+          "public_debt": {
+            "public_debt_2023": null
+          },
+          "taxes_and_other_revenues": null,
+          "current_account_balance": {
+            "current_account_balance_2024": null,
+            "current_account_balance_2023": null,
+            "current_account_balance_2022": null
+          },
+          "exports": {
+            "exports_2024": null,
+            "exports_2023": null,
+            "exports_2022": null
+          },
+          "exports_partners": null,
+          "exports_commodities": null,
+          "imports": {
+            "imports_2024": null,
+            "imports_2023": null,
+            "imports_2022": null
+          },
+          "imports_partners": null,
+          "imports_commodities": null,
+          "reserves_of_foreign_exchange_and_gold": {
+            "reserves_of_foreign_exchange_and_gold_2024": null,
+            "reserves_of_foreign_exchange_and_gold_2023": null,
+            "reserves_of_foreign_exchange_and_gold_2022": null
+          },
+          "exchange_rates": null
+        },
+        "energy": {
+          "electricity_access": {
+            "electrification_total_population": null
+          },
+          "electricity": {
+            "installed_generating_capacity": null,
+            "consumption": null,
+            "exports": null,
+            "imports": null,
+            "transmission_distribution_losses": null
+          },
+          "electricity_generation_sources": {
+            "fossil_fuels": null,
+            "nuclear": null,
+            "solar": null,
+            "wind": null,
+            "hydroelectricity": null,
+            "geothermal": null,
+            "biomass_and_waste": null
+          },
+          "nuclear_energy": {
+            "number_of_operational_nuclear_reactors": null,
+            "net_capacity_of_operational_nuclear_reactors": null,
+            "percent_of_total_electricity_production": null,
+            "number_of_nuclear_reactors_permanently_shut_down": null
+          },
+          "coal": {
+            "production": null,
+            "consumption": null,
+            "exports": null,
+            "imports": null,
+            "proven_reserves": null
+          },
+          "petroleum": {
+            "total_petroleum_production": null,
+            "refined_petroleum_consumption": null,
+            "crude_oil_estimated_reserves": null
+          },
+          "natural_gas": {
+            "production": null,
+            "consumption": null,
+            "exports": null,
+            "imports": null,
+            "proven_reserves": null
+          },
+          "energy_consumption_per_capita": {
+            "total_energy_consumption_per_capita_2023": null
+          }
+        },
+        "communications": {
+          "telephones_fixed_lines": {
+            "total_subscriptions": null,
+            "subscriptions_per_100_inhabitants": null
+          },
+          "telephones_mobile_cellular": {
+            "total_subscriptions": null,
+            "subscriptions_per_100_inhabitants": null
+          },
+          "broadcast_media": null,
+          "internet_country_code": null,
+          "internet_users": {
+            "percent_of_population": null
+          },
+          "broadband_fixed_subscriptions": {
+            "total": null,
+            "subscriptions_per_100_inhabitants": null
+          }
+        },
+        "transportation": {
+          "civil_aircraft_registration_country_code_prefix": null,
+          "airports": null,
+          "heliports": null,
+          "railways": {
+            "total": null,
+            "standard_gauge": null
+          },
+          "merchant_marine": {
+            "total": null,
+            "by_type": null
+          },
+          "ports": {
+            "total_ports": null,
+            "large": null,
+            "medium": null,
+            "small": null,
+            "very_small": null,
+            "ports_with_oil_terminals": null,
+            "key_ports": null
+          }
+        },
+        "military_and_security": {
+          "military_and_security_forces": null,
+          "military_expenditures": {
+            "military_expenditures_2025": null,
+            "military_expenditures_2024": null,
+            "military_expenditures_2023": null,
+            "military_expenditures_2022": null,
+            "military_expenditures_2021": null
+          },
+          "military_and_security_service_personnel_strengths": null,
+          "military_equipment_inventories_and_acquisitions": null,
+          "military_service_age_and_obligation": null,
+          "military_deployments": null,
+          "military_note": null
+        },
+        "space": {
+          "space_agency_agencies": null,
+          "space_launch_site_s": null,
+          "space_program_overview": null,
+          "key_space_program_milestones": null
+        },
+        "terrorism": {
+          "terrorist_group_s": null
+        },
+        "transnational_issues": {
+          "refugees_and_internally_displaced_persons": {
+            "refugees": null,
+            "idps": null
+          }
+        }
+      },
+      "china": {
+        "introduction": {
+          "background": "India Taxes and other revenues: 6.7% (of GDP) (2022 est.)"
+        },
+        "geography": {
+          "location": "India",
+          "geographic_coordinates": null,
+          "map_references": null,
+          "area": {
+            "total": null,
+            "land": null,
+            "water": null
+          },
+          "area_comparative": null,
+          "land_boundaries": {
+            "total": null,
+            "border_countries": null
+          },
+          "coastline": null,
+          "maritime_claims": {
+            "territorial_sea": null,
+            "contiguous_zone": null,
+            "exclusive_economic_zone": null,
+            "continental_shelf": null
+          },
+          "climate": null,
+          "terrain": null,
+          "elevation": {
+            "highest_point": null,
+            "lowest_point": null,
+            "mean_elevation": null
+          },
+          "natural_resources": null,
+          "land_use": {
+            "agricultural_land": null,
+            "agricultural_land_arable_land": null,
+            "agricultural_land_permanent_crops": null,
+            "agricultural_land_permanent_pasture": null,
+            "forest": null,
+            "other": null
+          },
+          "irrigated_land": null,
+          "major_lakes_area_sq_km": {
+            "fresh_water_lake_s": null,
+            "salt_water_lake_s": null
+          },
+          "major_rivers_by_length_in_km": null,
+          "major_watersheds_area_sq_km": {
+            "arctic_ocean_drainage": null,
+            "indian_ocean_drainage": null,
+            "pacific_ocean_drainage": null,
+            "internal_endorheic_basin_drainage": null
+          },
+          "major_aquifers": null,
+          "population_distribution": null,
+          "natural_hazards": null,
+          "geography_note": null
+        },
+        "people_and_society": {
+          "population": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "nationality": {
+            "noun": null,
+            "adjective": null
+          },
+          "ethnic_groups": null,
+          "languages": {
+            "languages": null,
+            "major_language_sample_s": null
+          },
+          "religions": null,
+          "age_structure": {
+            "0_14_years": null,
+            "15_64_years": null,
+            "65_years_and_over": null
+          },
+          "dependency_ratios": {
+            "total_dependency_ratio": null,
+            "youth_dependency_ratio": null,
+            "elderly_dependency_ratio": null,
+            "potential_support_ratio": null
+          },
+          "median_age": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "population_growth_rate": null,
+          "birth_rate": null,
+          "death_rate": null,
+          "net_migration_rate": null,
+          "population_distribution": null,
+          "urbanization": {
+            "urban_population": null,
+            "rate_of_urbanization": null
+          },
+          "major_urban_areas_population": null,
+          "sex_ratio": {
+            "at_birth": null,
+            "0_14_years": null,
+            "15_64_years": null,
+            "65_years_and_over": null,
+            "total_population": null
+          },
+          "maternal_mortality_ratio": null,
+          "infant_mortality_rate": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "life_expectancy_at_birth": {
+            "total_population": null,
+            "male": null,
+            "female": null
+          },
+          "total_fertility_rate": null,
+          "gross_reproduction_rate": null,
+          "drinking_water_source": {
+            "improved_urban": null,
+            "improved_rural": null,
+            "improved_total": null,
+            "unimproved_urban": null,
+            "unimproved_rural": null,
+            "unimproved_total": null
+          },
+          "health_expenditure": {
+            "health_expenditure_as_of_gdp": null,
+            "health_expenditure_as_of_national_budget": null
+          },
+          "physician_density": null,
+          "hospital_bed_density": null,
+          "sanitation_facility_access": {
+            "improved_urban": null,
+            "improved_rural": null,
+            "improved_total": null,
+            "unimproved_urban": null,
+            "unimproved_rural": null,
+            "unimproved_total": null
+          },
+          "obesity_adult_prevalence_rate": null,
+          "alcohol_consumption_per_capita": {
+            "total": null,
+            "beer": null,
+            "wine": null,
+            "spirits": null,
+            "other_alcohols": null
+          },
+          "tobacco_use": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "children_under_the_age_of_5_years_underweight": null,
+          "currently_married_women_ages_15_49": null,
+          "child_marriage": {
+            "women_married_by_age_15": null,
+            "women_married_by_age_18": null,
+            "men_married_by_age_18": null
+          },
+          "education_expenditure": {
+            "education_expenditure_gdp": null,
+            "education_expenditure_national_budget": null
+          },
+          "literacy": {
+            "total_population": null,
+            "male": null,
+            "female": null
+          },
+          "people_note": null
+        },
+        "environment": {
+          "environmental_issues": null,
+          "international_environmental_agreements": {
+            "party_to": null,
+            "signed_but_not_ratified": null
+          },
+          "climate": null,
+          "land_use": {
+            "agricultural_land": null,
+            "agricultural_land_arable_land": null,
+            "agricultural_land_permanent_crops": null,
+            "agricultural_land_permanent_pasture": null,
+            "forest": null,
+            "other": null
+          },
+          "urbanization": {
+            "urban_population": null,
+            "rate_of_urbanization": null
+          },
+          "carbon_dioxide_emissions": {
+            "total_emissions": null,
+            "from_coal_and_metallurgical_coke": null,
+            "from_petroleum_and_other_liquids": null,
+            "from_consumed_natural_gas": null
+          },
+          "particulate_matter_emissions": null,
+          "methane_emissions": {
+            "energy": null,
+            "agriculture": null,
+            "waste": null,
+            "other": null
+          },
+          "waste_and_recycling": {
+            "municipal_solid_waste_generated_annually": null,
+            "percent_of_municipal_solid_waste_recycled": null
+          },
+          "total_water_withdrawal": {
+            "municipal": null,
+            "industrial": null,
+            "agricultural": null
+          },
+          "total_renewable_water_resources": null,
+          "geoparks": {
+            "total_global_geoparks_and_regional_networks": null,
+            "global_geoparks_and_regional_networks": null
+          }
+        },
+        "government": {
+          "country_name": {
+            "conventional_long_form": null,
+            "conventional_short_form": null,
+            "local_long_form": null,
+            "local_short_form": null,
+            "abbreviation": null,
+            "etymology": null
+          },
+          "government_type": null,
+          "capital": {
+            "name": null,
+            "geographic_coordinates": null,
+            "time_difference": null,
+            "time_zone_note": null,
+            "etymology": null
+          },
+          "administrative_divisions": null,
+          "legal_system": null,
+          "constitution": {
+            "history": null,
+            "amendment_process": null
+          },
+          "international_law_organization_participation": null,
+          "citizenship": {
+            "citizenship_by_birth": null,
+            "citizenship_by_descent_only": null,
+            "dual_citizenship_recognized": null,
+            "residency_requirement_for_naturalization": null
+          },
+          "suffrage": null,
+          "executive_branch": {
+            "chief_of_state": null,
+            "head_of_government": null,
+            "cabinet": null,
+            "election_appointment_process": null,
+            "most_recent_election_date": null,
+            "election_results": null,
+            "expected_date_of_next_election": null
+          },
+          "legislative_branch": {
+            "legislature_name": null,
+            "legislative_structure": null,
+            "number_of_seats": null,
+            "scope_of_elections": null,
+            "term_in_office": null,
+            "most_recent_election_date": null,
+            "percentage_of_women_in_chamber": null,
+            "expected_date_of_next_election": null
+          },
+          "judicial_branch": {
+            "highest_court_s": null,
+            "judge_selection_and_term_of_office": null,
+            "subordinate_courts": null
+          },
+          "political_parties": null,
+          "diplomatic_representation_in_the_us": {
+            "chief_of_mission": null,
+            "chancery": null,
+            "telephone": null,
+            "fax": null,
+            "email_address_and_website": null,
+            "consulate_s_general": null
+          },
+          "diplomatic_representation_from_the_us": {
+            "chief_of_mission": null,
+            "embassy": null,
+            "mailing_address": null,
+            "telephone": null,
+            "fax": null,
+            "email_address_and_website": null,
+            "consulate_s_general": null
+          },
+          "international_organization_participation": null,
+          "independence": null,
+          "national_holiday": null,
+          "flag": null,
+          "national_symbol_s": null,
+          "national_color_s": null,
+          "national_anthem_s": {
+            "title": null,
+            "lyrics_music": null,
+            "history": null
+          },
+          "national_heritage": {
+            "total_world_heritage_sites": null,
+            "selected_world_heritage_site_locales": null
+          }
+        },
+        "economy": {
+          "economic_overview": null,
+          "real_gdp_purchasing_power_parity": {
+            "real_gdp_purchasing_power_parity_2024": null,
+            "real_gdp_purchasing_power_parity_2023": null,
+            "real_gdp_purchasing_power_parity_2022": null
+          },
+          "real_gdp_growth_rate": {
+            "real_gdp_growth_rate_2024": null,
+            "real_gdp_growth_rate_2023": null,
+            "real_gdp_growth_rate_2022": null
+          },
+          "real_gdp_per_capita": {
+            "real_gdp_per_capita_2024": null,
+            "real_gdp_per_capita_2023": null,
+            "real_gdp_per_capita_2022": null
+          },
+          "gdp_official_exchange_rate": null,
+          "inflation_rate_consumer_prices": {
+            "inflation_rate_consumer_prices_2024": null,
+            "inflation_rate_consumer_prices_2023": null,
+            "inflation_rate_consumer_prices_2022": null
+          },
+          "gdp_composition_by_sector_of_origin": {
+            "agriculture": null,
+            "industry": null,
+            "services": null
+          },
+          "gdp_composition_by_end_use": {
+            "household_consumption": null,
+            "government_consumption": null,
+            "investment_in_fixed_capital": null,
+            "investment_in_inventories": null,
+            "exports_of_goods_and_services": null,
+            "imports_of_goods_and_services": null
+          },
+          "agricultural_products": null,
+          "industries": null,
+          "industrial_production_growth_rate": null,
+          "labor_force": null,
+          "unemployment_rate": {
+            "unemployment_rate_2024": null,
+            "unemployment_rate_2023": null,
+            "unemployment_rate_2022": null
+          },
+          "youth_unemployment_rate_ages_15_24": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "population_below_poverty_line": null,
+          "gini_index_coefficient_distribution_of_family_income": {
+            "gini_index_coefficient_distribution_of_family_income_2021": null
+          },
+          "average_household_expenditures": {
+            "on_food": null,
+            "on_alcohol_and_tobacco": null
+          },
+          "household_income_or_consumption_by_percentage_share": {
+            "lowest_10": null,
+            "highest_10": null
+          },
+          "remittances": {
+            "remittances_2024": null,
+            "remittances_2023": null,
+            "remittances_2022": null
+          },
+          "budget": {
+            "revenues": null,
+            "expenditures": null
+          },
+          "public_debt": {
+            "public_debt_2017": null
+          },
+          "taxes_and_other_revenues": null,
+          "current_account_balance": {
+            "current_account_balance_2024": null,
+            "current_account_balance_2023": null,
+            "current_account_balance_2022": null
+          },
+          "exports": {
+            "exports_2024": null,
+            "exports_2023": null,
+            "exports_2022": null
+          },
+          "exports_partners": null,
+          "exports_commodities": null,
+          "imports": {
+            "imports_2024": null,
+            "imports_2023": null,
+            "imports_2022": null
+          },
+          "imports_partners": null,
+          "imports_commodities": null,
+          "reserves_of_foreign_exchange_and_gold": {
+            "reserves_of_foreign_exchange_and_gold_2024": null,
+            "reserves_of_foreign_exchange_and_gold_2023": null,
+            "reserves_of_foreign_exchange_and_gold_2022": null
+          },
+          "debt_external": {
+            "debt_external_2023": null
+          },
+          "exchange_rates": {
+            "currency": null,
+            "exchange_rates_2024": null,
+            "exchange_rates_2023": null,
+            "exchange_rates_2022": null,
+            "exchange_rates_2021": null,
+            "exchange_rates_2020": null
+          }
+        },
+        "energy": {
+          "electricity_access": {
+            "electrification_total_population": null
+          },
+          "electricity": {
+            "installed_generating_capacity": null,
+            "consumption": null,
+            "exports": null,
+            "imports": null,
+            "transmission_distribution_losses": null
+          },
+          "electricity_generation_sources": {
+            "fossil_fuels": null,
+            "nuclear": null,
+            "solar": null,
+            "wind": null,
+            "hydroelectricity": null,
+            "biomass_and_waste": null
+          },
+          "nuclear_energy": {
+            "number_of_operational_nuclear_reactors": null,
+            "number_of_nuclear_reactors_under_construction": null,
+            "net_capacity_of_operational_nuclear_reactors": null,
+            "percent_of_total_electricity_production": null
+          },
+          "coal": {
+            "production": null,
+            "consumption": null,
+            "exports": null,
+            "imports": null,
+            "proven_reserves": null
+          },
+          "petroleum": {
+            "total_petroleum_production": null,
+            "refined_petroleum_consumption": null,
+            "crude_oil_estimated_reserves": null
+          },
+          "natural_gas": {
+            "production": null,
+            "consumption": null,
+            "exports": null,
+            "imports": null,
+            "proven_reserves": null
+          },
+          "energy_consumption_per_capita": {
+            "total_energy_consumption_per_capita_2023": null
+          }
+        },
+        "communications": {
+          "telephones_fixed_lines": {
+            "total_subscriptions": null,
+            "subscriptions_per_100_inhabitants": null
+          },
+          "telephones_mobile_cellular": {
+            "total_subscriptions": null,
+            "subscriptions_per_100_inhabitants": null
+          },
+          "broadcast_media": null,
+          "internet_country_code": null,
+          "internet_users": {
+            "percent_of_population": null
+          },
+          "broadband_fixed_subscriptions": {
+            "total": null,
+            "subscriptions_per_100_inhabitants": null
+          }
+        },
+        "transportation": {
+          "civil_aircraft_registration_country_code_prefix": null,
+          "airports": null,
+          "heliports": null,
+          "railways": {
+            "total": null
+          },
+          "merchant_marine": {
+            "total": null,
+            "by_type": null
+          },
+          "ports": {
+            "total_ports": null,
+            "large": null,
+            "medium": null,
+            "small": null,
+            "very_small": null,
+            "ports_with_oil_terminals": null,
+            "key_ports": null
+          }
+        },
+        "military_and_security": {
+          "military_and_security_forces": null,
+          "military_expenditures": {
+            "military_expenditures_2024": null,
+            "military_expenditures_2023": null,
+            "military_expenditures_2022": null,
+            "military_expenditures_2021": null,
+            "military_expenditures_2020": null
+          },
+          "military_and_security_service_personnel_strengths": null,
+          "military_equipment_inventories_and_acquisitions": null,
+          "military_service_age_and_obligation": null,
+          "military_deployments": null,
+          "military_note": null
+        },
+        "space": {
+          "space_agency_agencies": null,
+          "space_launch_site_s": null,
+          "space_program_overview": null,
+          "key_space_program_milestones": null
+        },
+        "transnational_issues": {
+          "refugees_and_internally_displaced_persons": {
+            "refugees": null,
+            "idps": null
+          },
+          "trafficking_in_persons": {
+            "tier_rating": null
+          },
+          "illicit_drugs": {
+            "usg_identification": null
+          }
+        }
+      },
+      "india": {
+        "introduction": {
+          "background": "India Taxes and other revenues: 6.7% (of GDP) (2022 est.)"
+        },
+        "geography": {
+          "location": "India",
+          "geographic_coordinates": null,
+          "map_references": null,
+          "area": {
+            "total": null,
+            "land": null,
+            "water": null
+          },
+          "area_comparative": null,
+          "land_boundaries": {
+            "total": null,
+            "border_countries": null
+          },
+          "coastline": null,
+          "maritime_claims": {
+            "territorial_sea": null,
+            "contiguous_zone": null,
+            "exclusive_economic_zone": null,
+            "continental_shelf": null
+          },
+          "climate": null,
+          "terrain": null,
+          "elevation": {
+            "highest_point": null,
+            "lowest_point": null,
+            "mean_elevation": null
+          },
+          "natural_resources": null,
+          "land_use": {
+            "agricultural_land": null,
+            "agricultural_land_arable_land": null,
+            "agricultural_land_permanent_crops": null,
+            "agricultural_land_permanent_pasture": null,
+            "forest": null,
+            "other": null
+          },
+          "irrigated_land": null,
+          "major_lakes_area_sq_km": {
+            "salt_water_lake_s": null
+          },
+          "major_rivers_by_length_in_km": null,
+          "major_watersheds_area_sq_km": {
+            "indian_ocean_drainage": null
+          },
+          "major_aquifers": null,
+          "population_distribution": null,
+          "natural_hazards": null,
+          "geography_note": null
+        },
+        "people_and_society": {
+          "population": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "nationality": {
+            "noun": null,
+            "adjective": null
+          },
+          "ethnic_groups": null,
+          "languages": {
+            "languages": null,
+            "major_language_sample_s": null
+          },
+          "religions": null,
+          "age_structure": {
+            "0_14_years": null,
+            "15_64_years": null,
+            "65_years_and_over": null
+          },
+          "dependency_ratios": {
+            "total_dependency_ratio": null,
+            "youth_dependency_ratio": null,
+            "elderly_dependency_ratio": null,
+            "potential_support_ratio": null
+          },
+          "median_age": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "population_growth_rate": null,
+          "birth_rate": null,
+          "death_rate": null,
+          "net_migration_rate": null,
+          "population_distribution": null,
+          "urbanization": {
+            "urban_population": null,
+            "rate_of_urbanization": null
+          },
+          "major_urban_areas_population": null,
+          "sex_ratio": {
+            "at_birth": null,
+            "0_14_years": null,
+            "15_64_years": null,
+            "65_years_and_over": null,
+            "total_population": null
+          },
+          "mother_s_mean_age_at_first_birth": null,
+          "maternal_mortality_ratio": null,
+          "infant_mortality_rate": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "life_expectancy_at_birth": {
+            "total_population": null,
+            "male": null,
+            "female": null
+          },
+          "total_fertility_rate": null,
+          "gross_reproduction_rate": null,
+          "drinking_water_source": {
+            "improved_urban": null,
+            "improved_rural": null,
+            "improved_total": null,
+            "unimproved_urban": null,
+            "unimproved_rural": null,
+            "unimproved_total": null
+          },
+          "health_expenditure": {
+            "health_expenditure_as_of_gdp": null,
+            "health_expenditure_as_of_national_budget": null
+          },
+          "physician_density": null,
+          "hospital_bed_density": null,
+          "sanitation_facility_access": {
+            "improved_urban": null,
+            "improved_rural": null,
+            "improved_total": null,
+            "unimproved_urban": null,
+            "unimproved_rural": null,
+            "unimproved_total": null
+          },
+          "obesity_adult_prevalence_rate": null,
+          "alcohol_consumption_per_capita": {
+            "total": null,
+            "beer": null,
+            "wine": null,
+            "spirits": null,
+            "other_alcohols": null
+          },
+          "tobacco_use": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "children_under_the_age_of_5_years_underweight": null,
+          "currently_married_women_ages_15_49": null,
+          "child_marriage": {
+            "women_married_by_age_15": null,
+            "women_married_by_age_18": null,
+            "men_married_by_age_18": null
+          },
+          "education_expenditure": {
+            "education_expenditure_gdp": null,
+            "education_expenditure_national_budget": null
+          },
+          "literacy": {
+            "total_population": null,
+            "male": null,
+            "female": null
+          },
+          "school_life_expectancy_primary_to_tertiary_education": {
+            "total": null,
+            "male": null,
+            "female": null
+          }
+        },
+        "environment": {
+          "environmental_issues": null,
+          "international_environmental_agreements": {
+            "party_to": null,
+            "signed_but_not_ratified": null
+          },
+          "climate": null,
+          "land_use": {
+            "agricultural_land": null,
+            "agricultural_land_arable_land": null,
+            "agricultural_land_permanent_crops": null,
+            "agricultural_land_permanent_pasture": null,
+            "forest": null,
+            "other": null
+          },
+          "urbanization": {
+            "urban_population": null,
+            "rate_of_urbanization": null
+          },
+          "carbon_dioxide_emissions": {
+            "total_emissions": null,
+            "from_coal_and_metallurgical_coke": null,
+            "from_petroleum_and_other_liquids": null,
+            "from_consumed_natural_gas": null
+          },
+          "particulate_matter_emissions": null,
+          "methane_emissions": {
+            "energy": null,
+            "agriculture": null,
+            "waste": null,
+            "other": null
+          },
+          "waste_and_recycling": {
+            "municipal_solid_waste_generated_annually": null,
+            "percent_of_municipal_solid_waste_recycled": null
+          },
+          "total_water_withdrawal": {
+            "municipal": null,
+            "industrial": null,
+            "agricultural": null
+          },
+          "total_renewable_water_resources": null
+        },
+        "government": {
+          "country_name": {
+            "conventional_long_form": null,
+            "conventional_short_form": null,
+            "local_long_form": null,
+            "local_short_form": null,
+            "etymology": null
+          },
+          "government_type": null,
+          "capital": {
+            "name": null,
+            "geographic_coordinates": null,
+            "time_difference": null,
+            "etymology": null
+          },
+          "administrative_divisions": null,
+          "legal_system": null,
+          "constitution": {
+            "history": null,
+            "amendment_process": null
+          },
+          "international_law_organization_participation": null,
+          "citizenship": {
+            "citizenship_by_birth": null,
+            "citizenship_by_descent_only": null,
+            "dual_citizenship_recognized": null,
+            "residency_requirement_for_naturalization": null
+          },
+          "suffrage": null,
+          "executive_branch": {
+            "chief_of_state": null,
+            "head_of_government": null,
+            "cabinet": null,
+            "election_appointment_process": null,
+            "most_recent_election_date": null,
+            "election_results": null,
+            "expected_date_of_next_election": null
+          },
+          "legislative_branch": {
+            "legislature_name": null,
+            "legislative_structure": null
+          },
+          "legislative_branch_lower_chamber": {
+            "chamber_name": null,
+            "number_of_seats": null,
+            "electoral_system": null,
+            "scope_of_elections": null,
+            "term_in_office": null,
+            "most_recent_election_date": null,
+            "parties_elected_and_seats_per_party": null,
+            "percentage_of_women_in_chamber": null,
+            "expected_date_of_next_election": null
+          },
+          "legislative_branch_upper_chamber": {
+            "chamber_name": null,
+            "number_of_seats": null,
+            "scope_of_elections": null,
+            "term_in_office": null,
+            "most_recent_election_date": null,
+            "percentage_of_women_in_chamber": null,
+            "expected_date_of_next_election": null
+          },
+          "judicial_branch": {
+            "highest_court_s": null,
+            "judge_selection_and_term_of_office": null,
+            "subordinate_courts": null
+          },
+          "political_parties": null,
+          "diplomatic_representation_in_the_us": {
+            "chief_of_mission": null,
+            "chancery": null,
+            "telephone": null,
+            "fax": null,
+            "email_address_and_website": null,
+            "consulate_s_general": null
+          },
+          "diplomatic_representation_from_the_us": {
+            "chief_of_mission": null,
+            "embassy": null,
+            "mailing_address": null,
+            "telephone": null,
+            "fax": null,
+            "email_address_and_website": null,
+            "consulate_s_general": null
+          },
+          "international_organization_participation": null,
+          "independence": null,
+          "national_holiday": null,
+          "flag": null,
+          "national_symbol_s": null,
+          "national_color_s": null,
+          "national_anthem_s": {
+            "title": null,
+            "lyrics_music": null,
+            "history": null
+          },
+          "national_heritage": {
+            "total_world_heritage_sites": null,
+            "selected_world_heritage_site_locales": null
+          }
+        },
+        "economy": {
+          "economic_overview": null,
+          "real_gdp_purchasing_power_parity": {
+            "real_gdp_purchasing_power_parity_2024": null,
+            "real_gdp_purchasing_power_parity_2023": null,
+            "real_gdp_purchasing_power_parity_2022": null
+          },
+          "real_gdp_growth_rate": {
+            "real_gdp_growth_rate_2024": null,
+            "real_gdp_growth_rate_2023": null,
+            "real_gdp_growth_rate_2022": null
+          },
+          "real_gdp_per_capita": {
+            "real_gdp_per_capita_2024": null,
+            "real_gdp_per_capita_2023": null,
+            "real_gdp_per_capita_2022": null
+          },
+          "gdp_official_exchange_rate": null,
+          "inflation_rate_consumer_prices": {
+            "inflation_rate_consumer_prices_2024": null,
+            "inflation_rate_consumer_prices_2023": null,
+            "inflation_rate_consumer_prices_2022": null
+          },
+          "gdp_composition_by_sector_of_origin": {
+            "agriculture": null,
+            "industry": null,
+            "services": null
+          },
+          "gdp_composition_by_end_use": {
+            "household_consumption": null,
+            "government_consumption": null,
+            "investment_in_fixed_capital": null,
+            "investment_in_inventories": null,
+            "exports_of_goods_and_services": null,
+            "imports_of_goods_and_services": null
+          },
+          "agricultural_products": null,
+          "industries": null,
+          "industrial_production_growth_rate": null,
+          "labor_force": null,
+          "unemployment_rate": {
+            "unemployment_rate_2024": null,
+            "unemployment_rate_2023": null,
+            "unemployment_rate_2022": null
+          },
+          "youth_unemployment_rate_ages_15_24": {
+            "total": null,
+            "male": null,
+            "female": null
+          },
+          "gini_index_coefficient_distribution_of_family_income": {
+            "gini_index_coefficient_distribution_of_family_income_2022": null
+          },
+          "average_household_expenditures": {
+            "on_food": null,
+            "on_alcohol_and_tobacco": null
+          },
+          "household_income_or_consumption_by_percentage_share": {
+            "lowest_10": null,
+            "highest_10": null
+          },
+          "remittances": {
+            "remittances_2024": null,
+            "remittances_2023": null,
+            "remittances_2022": null
+          },
+          "budget": {
+            "revenues": null,
+            "expenditures": null
+          },
+          "public_debt": {
+            "public_debt_2018": null
+          },
+          "taxes_and_other_revenues": null,
+          "current_account_balance": {
+            "current_account_balance_2024": null,
+            "current_account_balance_2023": null,
+            "current_account_balance_2022": null
+          },
+          "exports": {
+            "exports_2024": null,
+            "exports_2023": null,
+            "exports_2022": null
+          },
+          "exports_partners": null,
+          "exports_commodities": null,
+          "imports": {
+            "imports_2024": null,
+            "imports_2023": null,
+            "imports_2022": null
+          },
+          "imports_partners": null,
+          "imports_commodities": null,
+          "reserves_of_foreign_exchange_and_gold": {
+            "reserves_of_foreign_exchange_and_gold_2024": null,
+            "reserves_of_foreign_exchange_and_gold_2023": null,
+            "reserves_of_foreign_exchange_and_gold_2022": null
+          },
+          "debt_external": {
+            "debt_external_2023": null
+          },
+          "exchange_rates": {
+            "currency": null,
+            "exchange_rates_2024": null,
+            "exchange_rates_2023": null,
+            "exchange_rates_2022": null,
+            "exchange_rates_2021": null,
+            "exchange_rates_2020": null
+          }
+        },
+        "energy": {
+          "electricity_access": {
+            "electrification_total_population": null,
+            "electrification_urban_areas": null,
+            "electrification_rural_areas": null
+          },
+          "electricity": {
+            "installed_generating_capacity": null,
+            "consumption": null,
+            "exports": null,
+            "imports": null,
+            "transmission_distribution_losses": null
+          },
+          "electricity_generation_sources": {
+            "fossil_fuels": null,
+            "nuclear": null,
+            "solar": null,
+            "wind": null,
+            "hydroelectricity": null,
+            "biomass_and_waste": null
+          },
+          "nuclear_energy": {
+            "number_of_operational_nuclear_reactors": null,
+            "number_of_nuclear_reactors_under_construction": null,
+            "net_capacity_of_operational_nuclear_reactors": null,
+            "percent_of_total_electricity_production": null
+          },
+          "coal": {
+            "production": null,
+            "consumption": null,
+            "exports": null,
+            "imports": null,
+            "proven_reserves": null
+          },
+          "petroleum": {
+            "total_petroleum_production": null,
+            "refined_petroleum_consumption": null,
+            "crude_oil_estimated_reserves": null
+          },
+          "natural_gas": {
+            "production": null,
+            "consumption": null,
+            "exports": null,
+            "imports": null,
+            "proven_reserves": null
+          },
+          "energy_consumption_per_capita": {
+            "total_energy_consumption_per_capita_2023": null
+          }
+        },
+        "communications": {
+          "telephones_fixed_lines": {
+            "total_subscriptions": null,
+            "subscriptions_per_100_inhabitants": null
+          },
+          "telephones_mobile_cellular": {
+            "total_subscriptions": null,
+            "subscriptions_per_100_inhabitants": null
+          },
+          "broadcast_media": null,
+          "internet_country_code": null,
+          "internet_users": {
+            "percent_of_population": null
+          },
+          "broadband_fixed_subscriptions": {
+            "total": null,
+            "subscriptions_per_100_inhabitants": null
+          }
+        },
+        "transportation": {
+          "civil_aircraft_registration_country_code_prefix": null,
+          "airports": null,
+          "heliports": null,
+          "railways": {
+            "total": null,
+            "narrow_gauge": null,
+            "broad_gauge": null
+          },
+          "merchant_marine": {
+            "total": null,
+            "by_type": null
+          },
+          "ports": {
+            "total_ports": null,
+            "large": null,
+            "medium": null,
+            "small": null,
+            "very_small": null,
+            "size_unknown": null,
+            "ports_with_oil_terminals": null,
+            "key_ports": null
+          }
+        },
+        "military_and_security": {
+          "military_and_security_forces": null,
+          "military_expenditures": {
+            "military_expenditures_2024": null,
+            "military_expenditures_2023": null,
+            "military_expenditures_2022": null,
+            "military_expenditures_2021": null,
+            "military_expenditures_2020": null
+          },
+          "military_and_security_service_personnel_strengths": null,
+          "military_equipment_inventories_and_acquisitions": null,
+          "military_service_age_and_obligation": null,
+          "military_deployments": null,
+          "military_note": null
+        },
+        "space": {
+          "space_agency_agencies": null,
+          "space_launch_site_s": null,
+          "space_program_overview": null,
+          "key_space_program_milestones": null
+        },
+        "terrorism": {
+          "terrorist_group_s": null
+        },
+        "transnational_issues": {
+          "refugees_and_internally_displaced_persons": {
+            "refugees": null,
+            "idps": null,
+            "stateless_persons": null
+          },
+          "illicit_drugs": {
+            "usg_identification": null
+          }
+        }
+      }
+    },
+    "value_accuracy": 0.0,
+    "by_type": {
+      "short_string": 0.0,
+      "long_string": 0.0
+    },
+    "outcomes": {
+      "correct": 0,
+      "accuracy": 6,
+      "omission": 1039,
+      "hallucination": 0,
+      "structural": 0
+    }
+  }
+]

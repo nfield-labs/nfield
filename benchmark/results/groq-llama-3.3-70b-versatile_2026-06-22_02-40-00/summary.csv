@@ -1,0 +1,5 @@
+budget,method,fixture,seed,n_fields,coverage,value_accuracy,k,k_min,optimality_gap,elapsed_seconds,error_category,error
+constrained,contextgem,factbook_multi,0,1045,0.0,0.0,0,0,0.0,6.303,other,"other: ValueError: Input messages contain 152361 tokens, which exceeds the model's maximum input tokens of 128000 for model `groq/llama-3.3-70b-versatile`. For …"
+constrained,langextract,factbook_multi,0,1045,0.005741626794258373,0.0,1,1,0.0,156.818,,
+constrained,langstruct,factbook_multi,0,1045,0.04401913875598086,0.0009569377990430622,1,1,0.0,941.5,,
+constrained,nfield,factbook_multi,0,1045,1.0,0.7665071770334928,30,29,0.034482758620689655,78.998,,

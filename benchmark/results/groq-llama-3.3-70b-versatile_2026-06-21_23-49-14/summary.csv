@@ -1,0 +1,7 @@
+budget,method,fixture,seed,n_fields,coverage,value_accuracy,k,k_min,optimality_gap,elapsed_seconds,error_category,error
+constrained,langextract,chemical_element,0,20,1.0,1.0,1,1,0.0,2.751,,
+constrained,langextract,smartphone_spec,0,111,0.7387387387387387,0.6216216216216216,1,1,0.0,4.442,,
+constrained,langstruct,chemical_element,0,20,1.0,1.0,1,1,0.0,2.417,,
+constrained,langstruct,smartphone_spec,0,111,1.0,0.8918918918918919,1,1,0.0,0.389,,
+constrained,nfield,chemical_element,0,20,1.0,1.0,1,1,0.0,2.15,,
+constrained,nfield,smartphone_spec,0,111,1.0,1.0,4,3,0.3333333333333333,2.1,,
