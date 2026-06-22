@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING, Any
 
 from formatshield.extraction._papt import select_template
 from formatshield.extraction._prompt import build_extraction_prompt
-from formatshield.extraction._sfep import NEEDS_REVALIDATION, parse_sfep
+from formatshield.extraction._sfep import NEEDS_REVALIDATION, count_unknown_paths, parse_sfep
 from formatshield.validation._normalize import normalize_value
 
 if TYPE_CHECKING:
@@ -126,6 +126,7 @@ async def _extract_leaf(
             state.blackboard.mark_failed(f.path, f"provider error: {exc}", transient=True)
         return
 
+    state.unknown_lines += count_unknown_paths(raw_text, leaf.fields)
     extracted = parse_sfep(raw_text, leaf.fields)
     _write_extracted_to_blackboard(extracted, state)
     state.record_calls("extract")

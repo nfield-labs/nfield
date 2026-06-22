@@ -97,6 +97,11 @@ class PipelineState:
     # is present only if it was grounding-checked (filled and of a groundable type).
     grounding_scores: dict[str, float] = field(default_factory=dict)
 
+    # Count of SFEP output lines whose path was not in the schema (the model emitted a
+    # field outside the requested set) — a format-drift signal accumulated across all
+    # extraction calls and reported in Metadata.
+    unknown_lines: int = 0
+
     # API call counts grouped by call site, so K can be attributed to extraction,
     # validation retry, or recovery. ``in_recovery`` marks calls issued by the
     # recovery pass, which reuses the extraction and validation stages.

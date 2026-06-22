@@ -33,6 +33,7 @@ if TYPE_CHECKING:
 
 __all__ = [
     "NEEDS_REVALIDATION",
+    "count_unknown_paths",
     "parse_sfep",
     "parse_sfep_line",
     "typecast",
@@ -136,6 +137,37 @@ def parse_sfep(text: str, fields: list[Field]) -> dict[str, Any]:
             continue
 
     return result
+
+
+def count_unknown_paths(text: str, fields: list[Field]) -> int:
+    """Count SFEP lines whose ``path`` is not a known schema field.
+
+    A line that parses as ``path = value`` but whose path is absent from *fields* is the
+    model emitting a field outside the schema — a format-drift / hallucination signal (the
+    ContextGem ``extra="forbid"`` analog). Unparseable lines (no separator) are *not*
+    counted: those are prose/noise, not invented fields. Extraction is unaffected; this is
+    a measurement only.
+
+    Args:
+        text: Raw LLM output in SFEP format.
+        fields: The schema fields the call requested (the known paths).
+
+    Returns:
+        The number of parseable lines whose path is not in *fields*.
+
+    Example:
+        >>> from formatshield.schema._types import Field
+        >>> f = Field("name", "string", {}, "", {})
+        >>> count_unknown_paths("name = Alice\\nfavorite_color = blue", [f])
+        1
+    """
+    known = {f.path for f in fields}
+    unknown = 0
+    for line in text.splitlines():
+        pair = parse_sfep_line(line)
+        if pair is not None and pair[0] not in known:
+            unknown += 1
+    return unknown
 
 
 def parse_sfep_line(line: str) -> tuple[str, str] | None:

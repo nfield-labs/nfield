@@ -271,6 +271,14 @@ def _failure_reason(bb: Blackboard, path: str) -> str:
         return "a previous attempt was uncertain; extract the exact value, or NULL"
     error = bb.get_error(path)
     if error:
+        # Show the model the exact value it returned alongside the objective error.
+        # An external, verifiable signal (the validation error) plus the prior output
+        # measurably improves correction (DSPy Assertions, arXiv:2312.13382); the error
+        # is objective, not self-critique, which is the regime where feedback helps
+        # rather than hurts (arXiv:2310.01798).
+        prior = bb.get_value(path)
+        if prior is not None:
+            return f"you previously returned {prior!r}, which failed validation: {error}"
         return f"a previous attempt failed validation: {error}"
     return "a previous attempt did not find this field; re-extract it, or NULL"
 

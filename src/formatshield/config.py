@@ -124,6 +124,11 @@ class ExtractionConfig:
             exhausts its retries, any field still failing is re-extracted **once** on
             this model (e.g. a larger model the primary could not satisfy). ``None``
             (default) disables escalation, keeping the run single-model.
+        validate_schema: When ``True`` (default), a provably-unsatisfiable schema
+            (``minimum > maximum``, empty ``enum``, ``minLength > maxLength``,
+            uncompilable ``pattern``, …) raises a ``SchemaError`` before any API call,
+            with the field path and a fix hint. The checks are *necessary*
+            contradictions, so a valid schema is never rejected. Set ``False`` to skip.
 
     Example:
         >>> cfg = ExtractionConfig(default_model="groq/llama-3.1-8b")
@@ -159,6 +164,10 @@ class ExtractionConfig:
     # Re-extract conflicting and revalidation-flagged fields during the recovery pass
     # rather than reporting them unresolved.
     recover_conflicts: bool = True
+    # Reject a provably-unsatisfiable schema (e.g. minimum > maximum, empty enum) before
+    # any API call. On by default: the checks are necessary contradictions, so a valid
+    # schema is never rejected; set False to skip the preflight entirely.
+    validate_schema: bool = True
     # Grounding gate (anti-hallucination): off by default so behaviour is unchanged.
     ground_values: bool = False
     grounding_min_score: float = DEFAULT_GROUNDING_MIN_SCORE

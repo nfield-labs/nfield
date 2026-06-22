@@ -91,6 +91,7 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
         fields_grounded=grounded,
         fields_ungrounded=ungrounded,
         hallucination_rate=hallucination_rate,
+        unknown_output_lines=state.unknown_lines,
     )
 
     # --- 5. Determine status ---

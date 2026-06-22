@@ -389,6 +389,21 @@ class Blackboard:
             if s == FieldState.FILLED and self._values.get(p) is not None
         }
 
+    def get_value(self, path: str) -> Any:
+        """Return the last value written for a field, regardless of its state.
+
+        Unlike :meth:`get_filled`, this returns the stored value even for a ``FAILED``
+        or ``NEEDS_REVALIDATION`` field, so a retry can show the model the exact value
+        its previous attempt produced. Returns ``None`` if nothing was ever written.
+
+        Args:
+            path: Dot-notation field path.
+
+        Returns:
+            The stored value, or ``None`` if the field has no recorded value.
+        """
+        return self._values.get(path)
+
     def get_conflict_values(self, path: str) -> list[Any]:
         """Return all conflicting values seen for a field.
 

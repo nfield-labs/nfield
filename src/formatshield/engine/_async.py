@@ -32,6 +32,7 @@ from formatshield.pipeline.s5_validate import run_stage_5
 from formatshield.pipeline.s5b_recover import run_recovery_pass
 from formatshield.pipeline.s6_assemble import run_stage_6
 from formatshield.providers import from_model
+from formatshield.schema._preflight import preflight_schema
 
 if TYPE_CHECKING:
     from formatshield.providers._protocol import LLMProvider
@@ -361,6 +362,10 @@ class AsyncFormatShield:
         schema_dict = self._resolve_schema(schema)
         config = self._config
         provider = self._provider
+
+        # Reject a provably-unsatisfiable schema before spending any API call.
+        if config.validate_schema:
+            preflight_schema(schema_dict)
 
         state = await self._calibrated_state()
         state.instructions = self._instructions

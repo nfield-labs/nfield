@@ -81,6 +81,9 @@ class Metadata:
         hallucination_rate: ``fields_ungrounded / (fields_grounded + fields_ungrounded)``
             — the fraction of grounding-checked values that were unsupported. ``None``
             when grounding was disabled or no value was groundable.
+        unknown_output_lines: Count of extracted lines whose field path was not in the
+            schema (the model emitted a field outside the requested set) — a format-drift
+            signal. ``0`` when the model stayed within the schema.
 
     Example:
         >>> meta = Metadata(
@@ -111,6 +114,7 @@ class Metadata:
     fields_grounded: int = 0
     fields_ungrounded: int = 0
     hallucination_rate: float | None = None
+    unknown_output_lines: int = 0
 
 
 @dataclass(frozen=True, slots=True)
