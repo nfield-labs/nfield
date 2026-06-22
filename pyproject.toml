@@ -98,6 +98,12 @@ ignore_missing_imports = true
 module = ["matplotlib.*"]
 ignore_missing_imports = true
 
+# Competitor libraries driven by the head-to-head benchmark (runner3); they ship no
+# type stubs and are imported lazily inside the adapters, never by the library.
+[[tool.mypy.overrides]]
+module = ["dspy.*", "langstruct.*", "langextract.*", "contextgem.*"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 minversion = "9.0"
 addopts = ["-ra", "--strict-markers", "--strict-config", "--tb=short"]
