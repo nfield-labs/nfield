@@ -6,6 +6,7 @@ import pytest
 
 from formatshield.extraction._sfep import (
     NEEDS_REVALIDATION,
+    count_unknown_paths,
     parse_sfep,
     parse_sfep_line,
     typecast,
@@ -25,6 +26,27 @@ def make_field(path: str, ftype: str, constraints: dict | None = None) -> Field:
         parent_path="",
         schema_node={},
     )
+
+
+class TestCountUnknownPaths:
+    """count_unknown_paths — the ContextGem extra=forbid format-drift signal."""
+
+    def test_no_unknowns_when_all_paths_known(self) -> None:
+        fields = [make_field("name", "string"), make_field("age", "integer")]
+        assert count_unknown_paths("name = Alice\nage = 30", fields) == 0
+
+    def test_counts_path_outside_schema(self) -> None:
+        fields = [make_field("name", "string")]
+        assert count_unknown_paths("name = Alice\nfavorite_color = blue", fields) == 1
+
+    def test_unparseable_lines_are_not_counted(self) -> None:
+        # Prose / lines without a separator are noise, not invented fields.
+        fields = [make_field("name", "string")]
+        assert count_unknown_paths("name = Alice\nhere is some prose\n\n", fields) == 0
+
+    def test_multiple_unknowns(self) -> None:
+        fields = [make_field("a", "string")]
+        assert count_unknown_paths("a = 1\nb = 2\nc = 3", fields) == 2
 
 
 # ---------------------------------------------------------------------------
