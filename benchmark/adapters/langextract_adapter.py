@@ -4,9 +4,10 @@ LangExtract (https://github.com/google/langextract) is entity/span oriented: giv
 a prompt and few-shot examples it returns a flat list of ``Extraction`` objects
 (an ``extraction_class`` + the literal source span). It has no Groq provider, so we
 drive it through its OpenAI-compatible provider pointed at the Groq endpoint, on the
-same model and budget as every other method. Our JSON Schema's leaf names become the
-extraction classes; the returned classes are mapped back onto the schema's nested
-leaf shape so the scorer counts coverage fairly.
+same model and budget as every other method. Each schema leaf's full dotted path is
+an extraction class (so leaves that share a local name in different branches stay
+distinct); the returned classes are re-nested onto the schema's leaf shape so the
+scorer counts coverage fairly.
 """
 
 from __future__ import annotations
@@ -33,6 +34,7 @@ _MAX_EXAMPLE_LEAVES = 8
 # Listing every class name in the prompt is what steers an entity extractor at a
 # fixed schema; cap it so the instruction stays well within the input window.
 _MAX_PROMPT_CLASSES = 80
+_PATH_SEP = "."  # full dotted path is the unique extraction class and the re-nest key
 
 
 @dataclass(frozen=True, slots=True)
@@ -60,18 +62,20 @@ class LangExtractAdapter:
         started = time.perf_counter()
         try:
             fitted = _common._fit_document(document, context_window, max_output_tokens)
-            leaves = _leaf_names(schema)
+            paths = _leaf_paths(schema)
+            classes = [_PATH_SEP.join(p) for p in paths]
             language_model = OpenAILanguageModel(
                 model_id=_common.model_id(model),
                 api_key=self.api_key or os.environ.get("GROQ_API_KEY"),
                 base_url=self.base_url,
                 temperature=0.0,
                 max_workers=_MAX_WORKERS,
+                max_tokens=max_output_tokens,  # shared output budget (fairness)
             )
             result = lx.extract(
                 text_or_documents=fitted,
-                prompt_description=_prompt(instructions, leaves),
-                examples=[_example(leaves)],
+                prompt_description=_prompt(instructions, classes),
+                examples=[_example(classes)],
                 model=language_model,
                 use_schema_constraints=False,  # OpenAI-compat endpoint: no Gemini schema
                 fence_output=True,
@@ -79,35 +83,39 @@ class LangExtractAdapter:
                 show_progress=False,
             )
             got = {ext.extraction_class: ext.extraction_text for ext in result.extractions}
-            data = _fold(schema, got)
+            data = _nest(paths, got)
         except Exception as exc:  # record fairly, never abort the sweep
             return _common.failure_output(schema, round(time.perf_counter() - started, 3), exc)
         return _common.success_output(data, schema, round(time.perf_counter() - started, 3))
 
 
-def _leaf_names(schema: dict[str, Any]) -> list[str]:
-    """Leaf field names (last path segment), mirroring ``schema_field_count``."""
-    out: list[str] = []
-    for key, child in schema.get("properties", {}).items():
+def _leaf_paths(node: dict[str, Any], prefix: tuple[str, ...] = ()) -> list[tuple[str, ...]]:
+    """Full dotted paths of the schema's leaves, mirroring ``schema_field_count``.
+
+    Nested objects recurse; arrays and scalars are single leaves. The full path
+    keeps leaves with the same local name in different branches distinct.
+    """
+    out: list[tuple[str, ...]] = []
+    for key, child in node.get("properties", {}).items():
         if isinstance(child, dict) and child.get("type") == "object":
-            out.extend(_leaf_names(child))
+            out.extend(_leaf_paths(child, (*prefix, key)))
         else:
-            out.append(key)
+            out.append((*prefix, key))
     return out
 
 
-def _prompt(instructions: str, leaves: list[str]) -> str:
-    """Prompt steering the extractor at our fields as the extraction classes."""
-    classes = ", ".join(list(dict.fromkeys(leaves))[:_MAX_PROMPT_CLASSES])  # de-dup, keep order
+def _prompt(instructions: str, classes: list[str]) -> str:
+    """Prompt steering the extractor at our field paths as the extraction classes."""
+    listed = ", ".join(classes[:_MAX_PROMPT_CLASSES])
     head = instructions or "Extract the requested fields from the document."
-    return f"{head} Use these exact extraction classes: {classes}."
+    return f"{head} Use these exact extraction classes: {listed}."
 
 
-def _example(leaves: list[str]) -> lx.data.ExampleData:
-    """A synthetic example teaching the class=field-name pattern with aligned spans."""
+def _example(classes: list[str]) -> lx.data.ExampleData:
+    """A synthetic example teaching the class=field-path pattern with aligned spans."""
     import langextract as lx
 
-    sample = list(dict.fromkeys(leaves))[:_MAX_EXAMPLE_LEAVES] or ["field"]
+    sample = classes[:_MAX_EXAMPLE_LEAVES] or ["field"]
     pairs = [(name, f"value{i}") for i, name in enumerate(sample)]
     text = " ".join(f"{name} is {value}." for name, value in pairs)
     return lx.data.ExampleData(
@@ -119,13 +127,15 @@ def _example(leaves: list[str]) -> lx.data.ExampleData:
     )
 
 
-def _fold(schema: dict[str, Any], got: dict[str, str]) -> dict[str, Any]:
-    """Fold the flat class->value map back onto the schema's nested leaf shape."""
-    result: dict[str, Any] = {}
-    for key, child in schema.get("properties", {}).items():
-        if isinstance(child, dict) and child.get("type") == "object":
-            result[key] = _fold(child, got)
-        else:
-            value = got.get(key)
-            result[key] = value if value not in (None, "") else None
-    return result
+def _nest(paths: list[tuple[str, ...]], got: dict[str, str]) -> dict[str, Any]:
+    """Re-nest the flat class->value map (keyed by dotted path) onto the schema shape."""
+    nested: dict[str, Any] = {}
+    for path in paths:
+        value = got.get(_PATH_SEP.join(path))
+        if value in (None, "", [], {}):
+            continue
+        cursor = nested
+        for segment in path[:-1]:
+            cursor = cursor.setdefault(segment, {})
+        cursor[path[-1]] = value
+    return nested

@@ -5,13 +5,13 @@
     "budget": "constrained",
     "seed": 0,
     "fields_total": 111,
-    "fields_extracted": 82,
-    "coverage": 0.7387387387387387,
+    "fields_extracted": 80,
+    "coverage": 0.7207207207207207,
     "k": 1,
     "k_min": 1,
     "optimality_gap": 0.0,
     "call_failed": 0,
-    "elapsed_seconds": 4.865,
+    "elapsed_seconds": 5.23,
     "error": null,
     "error_category": null,
     "data": {
@@ -32,10 +32,10 @@
         "status": "Available"
       },
       "body": {
-        "length_mm": "162.3",
-        "width_mm": "79",
-        "thickness_mm": "8.6",
-        "weight_g": "233",
+        "length_mm": "162.3 mm",
+        "width_mm": "79 mm",
+        "thickness_mm": "8.6 mm",
+        "weight_g": "233 g",
         "build_front": "Glass front (Corning Gorilla Armor)",
         "build_back": "glass back (Corning Gorilla Armor)",
         "frame_material": "titanium frame (grade 2)",
@@ -48,13 +48,13 @@
         "type": "Dynamic LTPO AMOLED 2X",
         "refresh_rate": "120Hz",
         "hdr": "HDR10+",
-        "peak_brightness_nits": "2600",
-        "size_inches": "6.8",
-        "area_cm2": "113.5",
+        "peak_brightness_nits": "2600 nits (peak)",
+        "size_inches": "6.8 inches",
+        "area_cm2": "113.5 cm²",
         "screen_to_body_ratio": "~88.5%",
-        "resolution_px": "1440 x 3120",
-        "aspect_ratio": "19.5:9",
-        "ppi_density": "~505",
+        "resolution_px": "1440 x 3120 pixels",
+        "aspect_ratio": "19.5:9 ratio",
+        "ppi_density": "~505 ppi density",
         "protection": "Corning Gorilla Armor",
         "coating": "DX anti-reflective coating",
         "always_on": "Yes"
@@ -64,7 +64,7 @@
         "android_upgrades": "up to 7 major Android upgrades",
         "ui_version": "One UI 8.5",
         "chipset": "Qualcomm SM8650-AC Snapdragon 8 Gen 3",
-        "fabrication_nm": "4",
+        "fabrication_nm": "4 nm",
         "cpu_config": "8-core (1x3.39GHz Cortex-X4 & 3x3.1GHz Cortex-A720 & 2x2.9GHz Cortex-A720 & 2x2.2GHz Cortex-A520)",
         "gpu": "Adreno 750 (1 GHz)"
       },
@@ -109,59 +109,18 @@
         "focal_length": "26mm",
         "sensor_size": "1/3.2\"",
         "features": "HDR, HDR10+",
-        "video_recording": "8K@24/30fps, 4K@30/60/120fps, 1080p@30/60/120/240fps"
-      },
-      "sound": {
-        "loudspeaker": "Yes",
-        "stereo_speakers": null,
-        "headphone_jack": null,
-        "audio_support": null
-      },
-      "comms": {
-        "wlan": null,
-        "bluetooth": null,
-        "positioning": null,
-        "nfc": null,
-        "radio": null,
-        "usb_type": null,
-        "usb_features": null,
-        "displayport": null
-      },
-      "features": {
-        "sensors": null,
-        "fingerprint_type": null,
-        "samsung_dex": null,
-        "uwb_support": null
-      },
-      "battery": {
-        "type": "Dynamic LTPO AMOLED 2X",
-        "capacity_mah": null,
-        "wired_charging": null,
-        "wired_charge_speed": null,
-        "wireless_charging": null,
-        "reverse_wireless": null
-      },
-      "misc": {
-        "color_options": null,
-        "models": null,
-        "sar_head_us": null,
-        "sar_body_us": null,
-        "sar_head_eu": null,
-        "sar_body_eu": null,
-        "price_usd": null,
-        "price_gbp": null,
-        "price_eur": null
+        "video_recording": "4K@30/60fps, 1080p@30fps"
       }
     },
-    "value_accuracy": 0.6216216216216216,
+    "value_accuracy": 0.7207207207207207,
     "by_type": {
-      "short_string": 0.6320754716981132,
+      "short_string": 0.7358490566037735,
       "long_string": 0.4
     },
     "outcomes": {
-      "correct": 69,
-      "accuracy": 13,
-      "omission": 29,
+      "correct": 80,
+      "accuracy": 0,
+      "omission": 31,
       "hallucination": 0,
       "structural": 0
     }

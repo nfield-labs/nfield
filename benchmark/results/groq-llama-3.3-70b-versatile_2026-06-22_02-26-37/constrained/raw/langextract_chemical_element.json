@@ -11,7 +11,7 @@
     "k_min": 1,
     "optimality_gap": 0.0,
     "call_failed": 0,
-    "elapsed_seconds": 5.987,
+    "elapsed_seconds": 4.298,
     "error": null,
     "error_category": null,
     "data": {
@@ -24,7 +24,7 @@
       "classification": {
         "group": "11",
         "period": "6",
-        "block": "d",
+        "block": "d block",
         "element_category": "transition metal",
         "electron_configuration": "[Xe] 4f14 5d10 6s1"
       },
@@ -46,14 +46,14 @@
       "cas_number": "7440-57-5",
       "common_uses": "jewelry, coinage, electroplating, dental work, industrial catalyst"
     },
-    "value_accuracy": 1.0,
+    "value_accuracy": 0.95,
     "by_type": {
       "integer": 1.0,
-      "short_string": 1.0
+      "short_string": 0.9411764705882353
     },
     "outcomes": {
-      "correct": 20,
-      "accuracy": 0,
+      "correct": 19,
+      "accuracy": 1,
       "omission": 0,
       "hallucination": 0,
       "structural": 0
