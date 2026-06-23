@@ -88,6 +88,17 @@ def test_missing_field_reason_unchanged() -> None:
     assert "did not find this field" in reason
 
 
+def test_transient_reason_is_neutral_no_prior_value() -> None:
+    # A call-failed field's request never reached the model, so the reason must not claim
+    # a prior output or a validation failure — it asks for a fresh extraction.
+    bb = Blackboard(["age"])
+    bb.mark_failed("age", "provider error: 429 rate limit", transient=True)
+    reason = _failure_reason(bb, "age", transient=True)
+    assert "did not complete" in reason
+    assert "previously returned" not in reason
+    assert "failed validation" not in reason
+
+
 # ---------------------------------------------------------------------------
 # Unknown-output-line metric surfaces in Metadata via Stage 6
 # ---------------------------------------------------------------------------

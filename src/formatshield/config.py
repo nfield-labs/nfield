@@ -164,6 +164,10 @@ class ExtractionConfig:
     # Re-extract conflicting and revalidation-flagged fields during the recovery pass
     # rather than reporting them unresolved.
     recover_conflicts: bool = True
+    # Give fields whose Stage 4 call exhausted its transient budget (429 / timeout) one
+    # more try in recovery — the rolling-window rate limit has refilled by then. Set False
+    # to leave them unrecovered (no extra load on a still-throttled API).
+    recover_call_failed: bool = True
     # Reject a provably-unsatisfiable schema (e.g. minimum > maximum, empty enum) before
     # any API call. On by default: the checks are necessary contradictions, so a valid
     # schema is never rejected; set False to skip the preflight entirely.

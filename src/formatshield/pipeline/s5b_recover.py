@@ -114,19 +114,25 @@ async def _run_consolidated_recovery(
     if bb is None:
         return state
 
-    # Pool every recoverable field. Fields whose call itself errored (429 / transport)
-    # are excluded, since re-extracting them only pressures an already-throttled API.
+    # Pool every recoverable field. A call-failed (429 / timeout) field is included by
+    # default (config.recover_call_failed): the rate-limit window has refilled by now, so
+    # one more attempt usually lands. With the flag off it is left unrecovered.
     call_failed = set(bb.get_call_failed())
     pool: set[str] = set(bb.get_missing())
-    pool |= {p for p in bb.get_failed() if p not in call_failed}
+    if config.recover_call_failed:
+        pool |= set(bb.get_failed())
+    else:
+        pool |= {p for p in bb.get_failed() if p not in call_failed}
     if config.recover_conflicts:
         pool |= set(bb.get_conflicts())
         pool |= set(bb.get_needs_revalidation())
     if not pool:
         return state
 
-    # Capture each field's failure reason before reopening clears the stored errors.
-    reasons = {p: _failure_reason(bb, p) for p in pool}
+    # Capture each field's failure reason before reopening clears the stored errors. A
+    # call-failed field gets a neutral reason: its Stage 4 call never reached the model,
+    # so there is no prior output to correct.
+    reasons = {p: _failure_reason(bb, p, transient=p in call_failed) for p in pool}
 
     # A child whose ancestor is itself missing cannot exist: confirm it absent.
     orphaned = {p for p in pool if _has_missing_ancestor(p, pool)}
@@ -248,17 +254,27 @@ async def _recover_rounds(
     return still
 
 
-def _failure_reason(bb: Blackboard, path: str) -> str:
+def _failure_reason(bb: Blackboard, path: str, *, transient: bool = False) -> str:
     """Describe why *path* needs recovery, for the re-extraction prompt.
 
     Args:
         bb: The run's blackboard.
         path: The field path whose failure to describe.
+        transient: ``True`` when the Stage 4 call itself never completed (429 /
+            timeout). The model produced no output to correct, so a neutral
+            "extract it fresh" reason is returned instead of a correction prompt.
 
     Returns:
         A short reason string drawn from the field's current state and error.
     """
     from formatshield.assembly._blackboard import FieldState
+
+    if transient:
+        # The Stage 4 call never reached the model, so there is no prior output to
+        # correct — ask for a fresh extraction.
+        return (
+            "the previous request did not complete; extract this field from the document, or NULL"
+        )
 
     field_state = bb.get_state(path)
     if field_state == FieldState.CONFLICT:
@@ -271,11 +287,9 @@ def _failure_reason(bb: Blackboard, path: str) -> str:
         return "a previous attempt was uncertain; extract the exact value, or NULL"
     error = bb.get_error(path)
     if error:
-        # Show the model the exact value it returned alongside the objective error.
-        # An external, verifiable signal (the validation error) plus the prior output
-        # measurably improves correction (DSPy Assertions, arXiv:2312.13382); the error
-        # is objective, not self-critique, which is the regime where feedback helps
-        # rather than hurts (arXiv:2310.01798).
+        # Show the model its own rejected value with the objective error: an external,
+        # verifiable signal improves correction (DSPy Assertions, arXiv:2312.13382) where
+        # self-critique would not (arXiv:2310.01798).
         prior = bb.get_value(path)
         if prior is not None:
             return f"you previously returned {prior!r}, which failed validation: {error}"
