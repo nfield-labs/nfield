@@ -17,13 +17,18 @@ from typing import TYPE_CHECKING, Any
 
 from formatshield.extraction._papt import select_template
 from formatshield.extraction._prompt import build_extraction_prompt
-from formatshield.extraction._sfep import NEEDS_REVALIDATION, count_unknown_paths, parse_sfep
+from formatshield.extraction._sfep import (
+    NEEDS_REVALIDATION,
+    count_unknown_paths,
+    parse_sfep,
+    parse_sfep_failures,
+)
 from formatshield.validation._normalize import normalize_value
 
 if TYPE_CHECKING:
     from formatshield.pipeline._state import PipelineState
     from formatshield.providers._protocol import LLMProvider
-    from formatshield.schema._types import CapacityLeaf
+    from formatshield.schema._types import CapacityLeaf, Field
 
 __all__ = ["run_stage_4"]
 
@@ -129,6 +134,7 @@ async def _extract_leaf(
     state.unknown_lines += count_unknown_paths(raw_text, leaf.fields)
     extracted = parse_sfep(raw_text, leaf.fields)
     _write_extracted_to_blackboard(extracted, state)
+    _mark_cast_failures(raw_text, leaf.fields, extracted, state)
     state.record_calls("extract")
 
 
@@ -218,6 +224,7 @@ async def _emergency_split(
             raw_text = await _call_provider(split_leaf, provider, state)
             extracted = parse_sfep(raw_text, chunk_fields)
             _write_extracted_to_blackboard(extracted, state)
+            _mark_cast_failures(raw_text, chunk_fields, extracted, state)
             state.record_calls("emergency_split")
         except Exception as exc:
             logger.warning("Emergency split leaf failed: %s", exc)
@@ -225,6 +232,36 @@ async def _emergency_split(
                 state.blackboard.mark_failed(
                     f.path, f"extraction failed after split: {exc}", transient=True
                 )
+
+
+def _mark_cast_failures(
+    raw_text: str,
+    fields: list[Field],
+    extracted: dict[str, Any],
+    state: PipelineState,
+) -> None:
+    """Mark fields whose emitted value could not be cast as FAILED with the raw text.
+
+    parse_sfep drops an uncastable value, leaving the field PENDING with no record of it.
+    Recording the raw string in the failure message lets recovery show the model its own
+    rejected output (DSPy Assertions, arXiv:2312.13382). A field that also produced a
+    castable value (it is in *extracted*) keeps that value.
+
+    Args:
+        raw_text: The leaf's raw SFEP output.
+        fields: The fields this call requested.
+        extracted: The successfully parsed ``{path: value}`` for this call.
+        state: Pipeline state (blackboard, field lookup).
+    """
+    assert state.blackboard is not None
+    for path, raw in parse_sfep_failures(raw_text, fields).items():
+        if path in extracted:
+            continue
+        field = state.field_by_path.get(path)
+        type_name = field.type if field is not None else "value"
+        state.blackboard.mark_failed(
+            path, f"the value {raw!r} could not be read as a valid {type_name}"
+        )
 
 
 def _write_extracted_to_blackboard(

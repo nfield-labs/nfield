@@ -8,6 +8,7 @@ from formatshield.extraction._sfep import (
     NEEDS_REVALIDATION,
     count_unknown_paths,
     parse_sfep,
+    parse_sfep_failures,
     parse_sfep_line,
     typecast,
 )
@@ -47,6 +48,36 @@ class TestCountUnknownPaths:
     def test_multiple_unknowns(self) -> None:
         fields = [make_field("a", "string")]
         assert count_unknown_paths("a = 1\nb = 2\nc = 3", fields) == 2
+
+
+class TestParseSfepFailures:
+    """parse_sfep_failures — capture the raw text of values that could not be cast."""
+
+    def test_uncastable_value_is_captured(self) -> None:
+        fields = [make_field("age", "integer")]
+        assert parse_sfep_failures("age = abc", fields) == {"age": "abc"}
+
+    def test_castable_value_is_not_a_failure(self) -> None:
+        fields = [make_field("age", "integer")]
+        assert parse_sfep_failures("age = 30", fields) == {}
+
+    def test_null_is_not_a_failure(self) -> None:
+        # NULL coerces to None for every type — it never fails the cast.
+        fields = [make_field("age", "integer")]
+        assert parse_sfep_failures("age = NULL", fields) == {}
+
+    def test_unknown_path_is_not_a_failure(self) -> None:
+        # A path outside the schema is format drift (count_unknown_paths), not a cast error.
+        fields = [make_field("age", "integer")]
+        assert parse_sfep_failures("weight = abc", fields) == {}
+
+    def test_invalid_enum_member_is_captured(self) -> None:
+        fields = [make_field("status", "enum", {"enum": ["open", "closed"]})]
+        assert parse_sfep_failures("status = pending", fields) == {"status": "pending"}
+
+    def test_mixed_good_and_bad(self) -> None:
+        fields = [make_field("name", "string"), make_field("age", "integer")]
+        assert parse_sfep_failures("name = Alice\nage = abc", fields) == {"age": "abc"}
 
 
 # ---------------------------------------------------------------------------

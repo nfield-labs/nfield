@@ -100,6 +100,53 @@ def test_transient_reason_is_neutral_no_prior_value() -> None:
 
 
 # ---------------------------------------------------------------------------
+# An uncastable value is surfaced into the retry reason (not silently dropped)
+# ---------------------------------------------------------------------------
+
+
+def test_cast_failure_is_marked_failed_with_raw_value() -> None:
+    # "age = abc" cannot be cast to integer; parse_sfep drops it. Stage 4 must instead
+    # mark the field FAILED carrying the raw text, so recovery can show it to the model.
+    from formatshield.pipeline._state import PipelineState
+    from formatshield.pipeline.s4_extract import _mark_cast_failures
+    from formatshield.schema._types import Field
+
+    f = Field("age", "integer", {}, "", {})
+    state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)
+    state.fields = [f]
+    state.field_by_path = {"age": f}
+    state.blackboard = Blackboard(["age"])
+    state.blackboard.mark_pending("age")
+
+    _mark_cast_failures("age = abc", [f], extracted={}, state=state)
+
+    reason = _failure_reason(state.blackboard, "age")
+    assert "abc" in reason
+    assert "integer" in reason
+
+
+def test_cast_failure_not_marked_when_value_also_parses() -> None:
+    # If the same field also produced a castable value (it is in `extracted`), the good
+    # value must win — the field is not clobbered to FAILED.
+    from formatshield.assembly._blackboard import FieldState
+    from formatshield.pipeline._state import PipelineState
+    from formatshield.pipeline.s4_extract import _mark_cast_failures
+    from formatshield.schema._types import Field
+
+    f = Field("age", "integer", {}, "", {})
+    state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)
+    state.fields = [f]
+    state.field_by_path = {"age": f}
+    state.blackboard = Blackboard(["age"])
+    state.blackboard.write("age", 30)
+
+    _mark_cast_failures("age = abc", [f], extracted={"age": 30}, state=state)
+
+    assert state.blackboard.get_state("age") == FieldState.FILLED
+    assert state.blackboard.get_value("age") == 30
+
+
+# ---------------------------------------------------------------------------
 # Unknown-output-line metric surfaces in Metadata via Stage 6
 # ---------------------------------------------------------------------------
 

@@ -35,6 +35,7 @@ __all__ = [
     "NEEDS_REVALIDATION",
     "count_unknown_paths",
     "parse_sfep",
+    "parse_sfep_failures",
     "parse_sfep_line",
     "typecast",
 ]
@@ -168,6 +169,44 @@ def count_unknown_paths(text: str, fields: list[Field]) -> int:
         if pair is not None and pair[0] not in known:
             unknown += 1
     return unknown
+
+
+def parse_sfep_failures(text: str, fields: list[Field]) -> dict[str, str]:
+    """Return the raw value of each known-path line whose typecast failed.
+
+    ``parse_sfep`` drops a value it cannot coerce (e.g. ``age = abc`` for an integer).
+    This scan keeps the raw string so the recovery prompt can show the model what it
+    produced (DSPy Assertions, arXiv:2312.13382). Only genuine cast failures appear —
+    NULL, NEEDS_REVALIDATION, empty, unknown paths, and clean casts are excluded.
+
+    Args:
+        text: Raw LLM output in SFEP format.
+        fields: The schema fields the call requested.
+
+    Returns:
+        Dict mapping field path to the raw (uncast) string for each cast failure.
+
+    Example:
+        >>> from formatshield.schema._types import Field
+        >>> f = Field("age", "integer", {}, "", {})
+        >>> parse_sfep_failures("age = abc", [f])
+        {'age': 'abc'}
+    """
+    field_map: dict[str, Field] = {f.path: f for f in fields}
+    failures: dict[str, str] = {}
+    for line in text.splitlines():
+        pair = parse_sfep_line(line)
+        if pair is None:
+            continue
+        path, raw_value = pair
+        field = field_map.get(path)
+        if field is None:
+            continue
+        try:
+            typecast(raw_value, field)
+        except ExtractionError:
+            failures[path] = raw_value
+    return failures
 
 
 def parse_sfep_line(line: str) -> tuple[str, str] | None:
