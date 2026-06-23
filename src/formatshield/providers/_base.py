@@ -37,6 +37,9 @@ _DEFAULT_BACKOFF_MAX: float = 60.0
 # window per throttled call. The attempt still counts, so a genuinely exhausted
 # quota still backs off across the retry budget.
 _DEFAULT_RATE_LIMIT_BACKOFF_MAX: float = 8.0
+# Jitter (s) added to a server Retry-After wait so concurrent calls don't retry in
+# lockstep. Added, not full jitter: it must never undercut the server's requested wait.
+_RETRY_AFTER_JITTER_MAX: float = 1.0
 
 logger = logging.getLogger(__name__)
 
@@ -242,9 +245,10 @@ class BaseProvider(ABC):
 
         Takes a *factory* that produces a fresh awaitable per attempt — a coroutine
         can only be awaited once, so each retry must call the API anew. Retries only
-        ``ProviderError.retryable`` failures (429, 5xx, timeouts) with exponential
-        backoff + full jitter; permanent errors raise immediately (Retry Strategies
-        for LLM APIs; transient-vs-permanent classification, AWS/Google guidance).
+        ``ProviderError.retryable`` failures (429, 5xx, timeouts): a server ``Retry-After``
+        is honored (capped) with a small decorrelation jitter, otherwise the wait is
+        exponential backoff with **full jitter**; permanent errors raise immediately
+        (transient-vs-permanent classification, AWS/Google retry guidance).
 
         Args:
             factory: Zero-arg callable returning a fresh awaitable for each attempt.
@@ -272,18 +276,16 @@ class BaseProvider(ABC):
                         f"{operation_name} failed (attempt {attempt + 1}/{self._max_retries}): {e}"
                     )
                     raise
-                # Retryable: a rate-limit Retry-After is capped short (the TPM
-                # bucket refills continuously), else exponential backoff. Both add
-                # full jitter so concurrent calls don't retry in lockstep.
+                # Honor a server Retry-After (capped) + small jitter — NOT full jitter,
+                # since we must not retry before the server is ready. Otherwise full
+                # jitter: a uniform wait in [0, exponential ceiling] spreads concurrent
+                # retries and minimizes collisions (AWS Exponential Backoff and Jitter).
                 if e.retry_after is not None:
-                    backoff = min(e.retry_after, self._rate_limit_backoff_max) + random.uniform(
-                        0, 1
-                    )
+                    ceiling = min(e.retry_after, self._rate_limit_backoff_max)
+                    backoff = ceiling + random.uniform(0, _RETRY_AFTER_JITTER_MAX)
                 else:
-                    backoff = min(
-                        self._backoff_base**attempt + random.uniform(0, 1),
-                        self._backoff_max,
-                    )
+                    ceiling = min(self._backoff_base**attempt, self._backoff_max)
+                    backoff = random.uniform(0, ceiling)
                 logger.warning(
                     f"{operation_name} failed (attempt {attempt + 1}/{self._max_retries}), "
                     f"retrying in {backoff:.2f}s: {e}"

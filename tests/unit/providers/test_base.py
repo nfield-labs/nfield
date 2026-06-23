@@ -245,7 +245,7 @@ class TestRetryBehavior:
         err = ProviderError("rate", status_code=429, retry_after=5.0)
         provider = _FlakyProvider(fail_times=1, error=err)
         await provider.complete([], max_tokens=10)
-        # Retry-After below the cap is honored, plus full jitter (< 1s).
+        # Retry-After below the cap is honored, plus a small decorrelation jitter (< 1s).
         assert len(sleeps) == 1
         assert 5.0 <= sleeps[0] < 6.0
 
@@ -263,6 +263,31 @@ class TestRetryBehavior:
         await provider.complete([], max_tokens=10)
         assert len(sleeps) == 1
         assert 8.0 <= sleeps[0] < 9.0
+
+    async def test_full_jitter_on_exponential_branch(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        # A 5xx has no Retry-After → exponential branch, which uses FULL jitter:
+        # uniform(0, ceiling) where ceiling = min(base**attempt, backoff_max). The old
+        # code did additive uniform(0, 1) on top of base**attempt; capturing the jitter
+        # range proves the new wait spans the whole [0, ceiling] window.
+        ranges: list[tuple[float, float]] = []
+        sleeps: list[float] = []
+
+        def fake_uniform(low: float, high: float) -> float:
+            ranges.append((low, high))
+            return high  # deterministic: take the top of the range
+
+        async def record(seconds: float) -> None:
+            sleeps.append(seconds)
+
+        monkeypatch.setattr(_base.random, "uniform", fake_uniform)
+        monkeypatch.setattr(_base.asyncio, "sleep", record)
+        provider = _FlakyProvider(fail_times=2, error=ProviderError("server", status_code=503))
+        assert await provider.complete([], max_tokens=10) == "ok"
+        # base=2.0 → ceilings min(2**0, 30)=1, min(2**1, 30)=2; full jitter = uniform(0, ceiling).
+        assert ranges == [(0, 1.0), (0, 2.0)]
+        assert sleeps == [1.0, 2.0]
 
 
 def _no_sleep():
