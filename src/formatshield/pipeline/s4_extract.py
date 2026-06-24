@@ -116,6 +116,10 @@ async def _extract_leaf(
     for f in leaf.fields:
         state.blackboard.mark_pending(f.path)
 
+    if state.closed_book and state.self_consistency:
+        await _extract_leaf_self_consistent(leaf, provider, state)
+        return
+
     try:
         raw_text = await _call_provider(leaf, provider, state)
     except Exception as exc:
@@ -138,6 +142,56 @@ async def _extract_leaf(
     state.record_calls("extract")
 
 
+async def _extract_leaf_self_consistent(
+    leaf: CapacityLeaf,
+    provider: LLMProvider,
+    state: PipelineState,
+) -> None:
+    """Sample the leaf twice and keep only agreed values; abstain (NULL) on disagreement.
+
+    Opt-in stronger closed-book abstention (arXiv:2602.04853). Plain closed-book uses the
+    single-pass path.
+
+    Args:
+        leaf: The leaf to extract (its excerpt is empty in closed-book mode).
+        provider: LLM provider.
+        state: Pipeline state (blackboard, closed_book flag).
+    """
+    assert state.blackboard is not None
+    try:
+        raw_a = await _call_provider(leaf, provider, state)
+        raw_b = await _call_provider(leaf, provider, state)
+    except Exception as exc:
+        # The call failed after retries — a transient call failure, not absence.
+        for f in leaf.fields:
+            state.blackboard.mark_failed(f.path, f"provider error: {exc}", transient=True)
+        return
+
+    agreed = _self_consistent(parse_sfep(raw_a, leaf.fields), parse_sfep(raw_b, leaf.fields))
+    _write_extracted_to_blackboard(agreed, state)
+    # Non-agreed fields are abstentions; record for the recovery skip.
+    state.abstained.update(f.path for f in leaf.fields if f.path not in agreed)
+    state.record_calls("extract")
+    state.record_calls("extract")
+
+
+def _self_consistent(first: dict[str, Any], second: dict[str, Any]) -> dict[str, Any]:
+    """Keep fields both samples agree on a concrete value for; drop NULL, sentinel, mismatch.
+
+    Args:
+        first: Parsed ``{path: value}`` from the first sample.
+        second: Parsed ``{path: value}`` from the second sample.
+
+    Returns:
+        The agreed ``{path: value}`` subset.
+    """
+    return {
+        path: value
+        for path, value in first.items()
+        if value is not None and value is not NEEDS_REVALIDATION and second.get(path) == value
+    }
+
+
 async def _call_provider(leaf: CapacityLeaf, provider: LLMProvider, state: PipelineState) -> str:
     """Build prompt and call provider for a single leaf.
 
@@ -157,6 +211,7 @@ async def _call_provider(leaf: CapacityLeaf, provider: LLMProvider, state: Pipel
         instructions=state.instructions,
         dependency_values=_resolved_dependencies(leaf, state),
         knowledge_fallback=state.knowledge_fallback,
+        closed_book=state.closed_book,
         field_reasons=state.field_reasons or None,
     )
     return await provider.complete(messages, max_tokens=leaf.safe_output)
@@ -283,6 +338,9 @@ def _write_extracted_to_blackboard(
         if value is NEEDS_REVALIDATION:
             state.blackboard.mark_needs_revalidation(path)
         elif value is None:
+            # Closed-book NULL = abstention; record it so recovery skips it.
+            if state.closed_book:
+                state.abstained.add(path)
             state.blackboard.mark_failed(path, "field not found in document (LLM output NULL)")
         else:
             # Canonicalize a formatted value to its schema type before storing, so a

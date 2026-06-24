@@ -126,6 +126,8 @@ async def _run_consolidated_recovery(
     if config.recover_conflicts:
         pool |= set(bb.get_conflicts())
         pool |= set(bb.get_needs_revalidation())
+    # Drop deliberate abstentions; genuine failures (bad cast / dropped line) stay recoverable.
+    pool -= state.abstained
     if not pool:
         return state
 

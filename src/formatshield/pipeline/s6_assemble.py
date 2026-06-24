@@ -73,6 +73,13 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
     # --- 4a. Grounding metric (only meaningful when grounding ran) ---
     grounded, ungrounded, hallucination_rate = _grounding_metric(state)
 
+    # --- 4b. Closed-book answer/abstain rates (only when closed_book) ---
+    answer_rate: float | None = None
+    abstain_rate: float | None = None
+    if state.closed_book and fields_total:
+        answer_rate = fields_extracted / fields_total
+        abstain_rate = fields_missing / fields_total
+
     metadata = Metadata(
         K=state.K,
         K_min=state.K_min,
@@ -92,6 +99,8 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
         fields_ungrounded=ungrounded,
         hallucination_rate=hallucination_rate,
         unknown_output_lines=state.unknown_lines,
+        answer_rate=answer_rate,
+        abstain_rate=abstain_rate,
     )
 
     # --- 5. Determine status ---

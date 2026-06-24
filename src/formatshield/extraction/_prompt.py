@@ -82,6 +82,29 @@ _SOURCING_RULE_KNOWLEDGE: str = (
     "you can neither find nor confidently infer it."
 )
 
+# Closed-book prompt: answer from knowledge, NULL when unsure (arXiv:2404.10960).
+# Framed as a positive knowledge task; kept separate from the document-grounded prompt.
+_CLOSED_BOOK_SYSTEM_PROMPT: str = """\
+You are an expert assistant with broad, accurate factual knowledge. Provide the value of \
+each field listed below for the subject described, drawing on what you reliably know.
+
+OUTPUT FORMAT — follow exactly:
+- Output exactly one line for EVERY field listed, in the order given: field.path = value
+- Give a value only when you are confident it is correct. If you are not certain, write NULL \
+— do not guess.
+- For boolean fields: use true or false (lowercase)
+- For integer fields: write ALL digits with no quotes, commas, or units (e.g. 42)
+- For number fields: write with decimals if needed (e.g. 3.14)
+- For array fields: use [item1, item2, item3] notation
+- For enum fields: use one of the exact allowed values listed in the schema
+- Do not include explanations, only output field = value lines
+
+Example (for two fields named a.x and a.y):
+a.x = 42
+a.y = NULL
+
+--- BEGIN EXTRACTION ---"""
+
 _RETRY_SYSTEM_PROMPT_TEMPLATE: str = """\
 You are a structured data extraction assistant performing targeted re-extraction.
 
@@ -110,6 +133,7 @@ def build_extraction_prompt(
     instructions: str = "",
     dependency_values: dict[str, Any] | None = None,
     knowledge_fallback: bool = False,
+    closed_book: bool = False,
     field_reasons: dict[str, str] | None = None,
 ) -> list[dict[str, str]]:
     """Build the messages list for a single SFEP extraction call.
@@ -167,7 +191,9 @@ def build_extraction_prompt(
     # guidance puts task instructions in the user turn). The system message stays the
     # pure SFEP output contract; the caller's domain instructions frame the task at
     # the top of the user message, right above the fields and document.
-    system_content = _build_system_message(cluster_type, knowledge_fallback=knowledge_fallback)
+    system_content = _build_system_message(
+        cluster_type, knowledge_fallback=knowledge_fallback, closed_book=closed_book
+    )
     user_content = _build_user_message(
         fields,
         document_excerpt,
@@ -175,6 +201,7 @@ def build_extraction_prompt(
         instructions=instructions,
         dependency_values=dependency_values,
         field_reasons=field_reasons,
+        closed_book=closed_book,
     )
 
     return [
@@ -308,6 +335,7 @@ def _build_system_message(
     cluster_type: ClusterType,
     *,
     knowledge_fallback: bool = False,
+    closed_book: bool = False,
 ) -> str:
     """Build the system prompt for a given cluster type.
 
@@ -315,12 +343,16 @@ def _build_system_message(
         cluster_type: Structural classification; reserved for post-MVP TEP routing.
         knowledge_fallback: Select the knowledge-fallback sourcing rule instead of
             strict document grounding when ``True``.
+        closed_book: Use the closed-book prompt (no document; answer from knowledge,
+            abstain with NULL when unsure) when ``True``.
 
     Returns:
         System prompt string with SFEP format contract.
     """
     # In MVP all cluster types use the same system prompt.
     # Post-MVP: COMPLEX cluster gets TEP two-phase instructions.
+    if closed_book:
+        return _CLOSED_BOOK_SYSTEM_PROMPT
     sourcing_rule = _SOURCING_RULE_KNOWLEDGE if knowledge_fallback else _SOURCING_RULE_STRICT
     return _SFEP_SYSTEM_PROMPT.format(sourcing_rule=sourcing_rule)
 
@@ -333,6 +365,7 @@ def _build_user_message(
     instructions: str = "",
     dependency_values: dict[str, Any] | None = None,
     field_reasons: dict[str, str] | None = None,
+    closed_book: bool = False,
 ) -> str:
     """Build the user message: document first, field list last.
 
@@ -355,14 +388,21 @@ def _build_user_message(
     parts: list[str] = []
     if instructions.strip():
         parts.append(instructions.strip())
-    parts.append(_format_document_excerpt(document_excerpt))
+    # Closed-book has no document: omit the excerpt block and the "in the document above"
+    # framing, which would otherwise tell the model the answer is in a document that does
+    # not exist and degrade recall.
+    if not closed_book:
+        parts.append(_format_document_excerpt(document_excerpt))
     dependency_block = _format_dependency_block(dependency_values)
     if dependency_block:
         parts.append(dependency_block)
     field_lines = _format_field_list(fields, template_type, field_reasons)
-    parts.append(
-        f"Fields to extract (every value is in the document above, in order):\n{field_lines}"
+    header = (
+        "Fields to provide, in order:"
+        if closed_book
+        else "Fields to extract (every value is in the document above, in order):"
     )
+    parts.append(f"{header}\n{field_lines}")
     return "\n\n".join(parts)
 
 

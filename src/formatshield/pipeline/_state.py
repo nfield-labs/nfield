@@ -54,6 +54,12 @@ class PipelineState:
     ground_values: bool = False
     # Accept threshold for the grounding score (from ExtractionConfig).
     grounding_min_score: float = 0.5
+    # Closed-book mode: extract from model knowledge, no document (from ExtractionConfig).
+    closed_book: bool = False
+    # Opt-in two-sample self-consistency abstention for closed-book (from ExtractionConfig).
+    self_consistency: bool = False
+    # Closed-book paths the model abstained on (NULL or no sample agreement); recovery skips them.
+    abstained: set[str] = field(default_factory=set)
 
     # Max leaf extraction calls in flight at once (from ExtractionConfig); bounds
     # Stage 4 concurrency so wide schemas do not trip provider rate limits.

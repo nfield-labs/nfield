@@ -115,6 +115,10 @@ class Metadata:
     fields_ungrounded: int = 0
     hallucination_rate: float | None = None
     unknown_output_lines: int = 0
+    # Closed-book reporting: fraction of fields answered vs left NULL by abstention.
+    # Both ``None`` for document extraction.
+    answer_rate: float | None = None
+    abstain_rate: float | None = None
 
 
 @dataclass(frozen=True, slots=True)

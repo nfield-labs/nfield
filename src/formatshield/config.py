@@ -177,3 +177,9 @@ class ExtractionConfig:
     grounding_min_score: float = DEFAULT_GROUNDING_MIN_SCORE
     # Stronger model to escalate still-failing fields to after recovery; None disables.
     fallback_model: str | None = None
+    # Fill the schema from model knowledge, no document; the prompt answers NULL when
+    # unsure (arXiv:2404.10960). Grounding off; reports answer/abstain rates. One call/leaf.
+    closed_book: bool = False
+    # Opt-in stronger abstention: sample each leaf twice, keep a value only if both agree
+    # (arXiv:2602.04853). Doubles calls; no-op unless closed_book is set.
+    self_consistency: bool = False

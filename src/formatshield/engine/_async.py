@@ -415,12 +415,17 @@ class AsyncFormatShield:
         state.inject_dependencies = config.inject_dependencies
         state.knowledge_fallback = config.knowledge_fallback
         state.strict_validation = config.strict_validation
-        state.ground_values = config.ground_values
+        # Closed-book has no source to ground against, so grounding is forced off.
+        state.ground_values = config.ground_values and not config.closed_book
         state.grounding_min_score = config.grounding_min_score
         state.max_concurrent_calls = config.max_concurrent_calls
+        state.closed_book = config.closed_book
+        state.self_consistency = config.self_consistency
+        # Closed-book ignores the document: feed retrieval an empty source.
+        source = "" if config.closed_book else document
         state = run_stage_1(state, schema_dict)
         state = run_stage_2a(state)
-        state = run_stage_2b(state, document, config)
+        state = run_stage_2b(state, source, config)
         state = run_stage_2c(state, config)
         state = run_stage_3(state)
         state = await run_stage_4(state, provider)
