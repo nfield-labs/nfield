@@ -1,0 +1,18 @@
+{
+  "method": "langchain",
+  "fixture": "countries_205",
+  "n_fields": 205,
+  "runs": 3,
+  "coverage_mean": 1.0,
+  "fields_covered_mean": 205.0,
+  "value_accuracy_mean": 0.9479674796747967,
+  "value_accuracy_std": 0.011265371106139049,
+  "precision_mean": 0.9479674796747967,
+  "reliability_mean": 0.8959349593495936,
+  "json_pass_all": true,
+  "by_type_mean": {
+    "boolean": 0.9743589743589743,
+    "short_string": 0.931758530183727
+  },
+  "call_failed_mean": 0.0
+}

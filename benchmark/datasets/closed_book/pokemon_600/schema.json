@@ -1,0 +1,2305 @@
+{
+  "type": "object",
+  "properties": {
+    "Bulbasaur": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Ivysaur": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Venusaur": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Charmander": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Charmeleon": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Charizard": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Squirtle": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Wartortle": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Blastoise": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Caterpie": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Metapod": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Butterfree": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Weedle": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Kakuna": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Beedrill": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Pidgey": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Pidgeotto": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Pidgeot": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Rattata": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Raticate": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Spearow": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Fearow": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Ekans": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Arbok": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Pikachu": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Raichu": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Sandshrew": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Sandslash": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Nidoran\u2640": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Nidorina": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Nidoqueen": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Nidoran\u2642": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Nidorino": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Nidoking": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Clefairy": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Clefable": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Vulpix": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Ninetales": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Jigglypuff": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Wigglytuff": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Zubat": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Golbat": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Oddish": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Gloom": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Vileplume": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Paras": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Parasect": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Venonat": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Venomoth": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Diglett": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Dugtrio": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Meowth": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Persian": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Psyduck": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Golduck": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Mankey": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Primeape": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Growlithe": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Arcanine": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Poliwag": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Poliwhirl": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Poliwrath": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Abra": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Kadabra": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Alakazam": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Machop": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Machoke": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Machamp": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Bellsprout": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Weepinbell": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Victreebel": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Tentacool": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Tentacruel": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Geodude": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Graveler": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Golem": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Ponyta": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Rapidash": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Slowpoke": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Slowbro": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Magnemite": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Magneton": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Farfetch'd": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Doduo": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Dodrio": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Seel": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Dewgong": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Grimer": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Muk": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Shellder": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Cloyster": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Gastly": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Haunter": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Gengar": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Onix": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Drowzee": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Hypno": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Krabby": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Kingler": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    },
+    "Voltorb": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "HP": {
+          "type": "integer"
+        },
+        "Attack": {
+          "type": "integer"
+        },
+        "Defense": {
+          "type": "integer"
+        },
+        "Speed": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

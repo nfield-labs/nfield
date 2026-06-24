@@ -1,0 +1,759 @@
+{
+  "type": "object",
+  "properties": {
+    "Aruba": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Afghanistan": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Angola": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Anguilla": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "\u00c5land Islands": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Albania": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Andorra": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "United Arab Emirates": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Argentina": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Armenia": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "American Samoa": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Antarctica": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "French Southern and Antarctic Lands": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Antigua and Barbuda": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Australia": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Austria": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Azerbaijan": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Burundi": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Belgium": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Benin": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Burkina Faso": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Bangladesh": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Bulgaria": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Bahrain": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Bahamas": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Bosnia and Herzegovina": {
+      "type": "object",
+      "properties": {
+        "cca2": {
+          "type": "string"
+        },
+        "cca3": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "subregion": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "landlocked": {
+          "type": "boolean"
+        },
+        "unMember": {
+          "type": "boolean"
+        },
+        "independent": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

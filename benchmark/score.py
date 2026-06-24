@@ -154,6 +154,24 @@ class ScoreReport:
     outcomes: dict[Outcome, int]
     fields: tuple[FieldScore, ...]
 
+    @property
+    def precision(self) -> float:
+        """Fraction of *answered* fields that are correct (abstentions excluded)."""
+        answered = self.outcomes[Outcome.CORRECT] + self.outcomes[Outcome.ACCURACY]
+        return self.outcomes[Outcome.CORRECT] / answered if answered else 0.0
+
+    @property
+    def reliability(self) -> float:
+        """``(correct - wrong) / n_fields``: rewards abstention, penalises confident error.
+
+        The closed-book headline. Unlike value accuracy, a wrong answer scores worse than an
+        abstention, so confidently filling fields the model does not know lowers the score
+        (accuracy-only scoring instead rewards that guessing — Nature s41586-026-10549-w).
+        """
+        if not self.n_fields:
+            return 0.0
+        return (self.outcomes[Outcome.CORRECT] - self.outcomes[Outcome.ACCURACY]) / self.n_fields
+
 
 def score(
     extracted: dict[str, Any],

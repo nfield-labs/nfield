@@ -1,0 +1,18 @@
+{
+  "method": "nfield",
+  "fixture": "pokemon_600",
+  "n_fields": 600,
+  "runs": 3,
+  "coverage_mean": 0.9705555555555555,
+  "fields_covered_mean": 582.3,
+  "value_accuracy_mean": 0.7416666666666667,
+  "value_accuracy_std": 0.010137937550497012,
+  "precision_mean": 0.7642166568943379,
+  "reliability_mean": 0.5127777777777778,
+  "json_pass_all": true,
+  "by_type_mean": {
+    "integer": 0.8316666666666667,
+    "short_string": 0.5616666666666666
+  },
+  "call_failed_mean": 0.0
+}

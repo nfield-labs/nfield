@@ -1,0 +1,4813 @@
+[
+  {
+    "method": "nfield",
+    "fixture": "airports_1002",
+    "budget": "constrained",
+    "seed": 0,
+    "fields_total": 1002,
+    "fields_extracted": 926,
+    "coverage": 0.9151696606786427,
+    "k": 29,
+    "k_min": 28,
+    "optimality_gap": 0.03571428571428571,
+    "call_failed": 0,
+    "elapsed_seconds": 9.294,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "GKA": {
+        "city": "Goroka",
+        "country": "Papua New Guinea",
+        "name": "Goroka Airport"
+      },
+      "MAG": {
+        "city": "Madang",
+        "country": "Papua New Guinea",
+        "name": "Madang Airport"
+      },
+      "HGU": {
+        "city": "Mount Hagen",
+        "country": "Papua New Guinea",
+        "name": "Mount Hagen Airport"
+      },
+      "LAE": {
+        "city": "Lae",
+        "country": "Papua New Guinea",
+        "name": "Lae Airport"
+      },
+      "POM": {
+        "city": "Port Moresby",
+        "country": "Papua New Guinea",
+        "name": "Port Moresby Jacksons International Airport"
+      },
+      "WWK": {
+        "city": "Wewak",
+        "country": "Papua New Guinea",
+        "name": "Wewak Airport"
+      },
+      "UAK": {
+        "city": "Narsarsuaq",
+        "country": "Greenland",
+        "name": "Narsarsuaq Airport"
+      },
+      "GOH": {
+        "city": "Nuuk",
+        "country": "Greenland",
+        "name": "Nuuk Airport"
+      },
+      "SFJ": {
+        "city": "Kangerlussuaq",
+        "country": "Greenland",
+        "name": "Kangerlussuaq Airport"
+      },
+      "THU": {
+        "city": "Pituffik",
+        "country": "Greenland",
+        "name": "Thule Air Base"
+      },
+      "AEY": {
+        "city": "Akureyri",
+        "country": "Iceland",
+        "name": "Akureyri Airport"
+      },
+      "EGS": {
+        "city": "Egilsstadir",
+        "country": "Iceland",
+        "name": "Egilsstadir Airport"
+      },
+      "HFN": {
+        "city": "Höfn",
+        "country": "Iceland",
+        "name": "Hornafjörður Airport"
+      },
+      "HZK": {
+        "city": "Húsavík",
+        "country": "Iceland",
+        "name": "Húsavík Airport"
+      },
+      "IFJ": {
+        "city": "Ísafjörður",
+        "country": "Iceland",
+        "name": "Ísafjörður Airport"
+      },
+      "KEF": {
+        "city": "Keflavík",
+        "country": "Iceland",
+        "name": "Keflavík International Airport"
+      },
+      "PFJ": {
+        "city": "Patterson"
+      },
+      "RKV": {
+        "city": "Reykjavík",
+        "country": "Iceland",
+        "name": "Reykjavík Airport"
+      },
+      "SIJ": {
+        "city": "Siglufjörður",
+        "country": "Iceland",
+        "name": "Siglufjörður Airport"
+      },
+      "VEY": {
+        "city": "Vestmannaeyjar",
+        "country": "Iceland",
+        "name": "Vestmannaeyjar Airport"
+      },
+      "YAM": {
+        "city": "Sault Ste. Marie",
+        "country": "Canada",
+        "name": "Sault Ste. Marie Airport"
+      },
+      "YAY": {
+        "city": "St. Anthony",
+        "country": "Canada",
+        "name": "St. Anthony Airport"
+      },
+      "YAZ": {
+        "city": "Tofino",
+        "country": "Canada",
+        "name": "Tofino Airport"
+      },
+      "YBB": {
+        "city": "Pelly Bay",
+        "country": "Canada",
+        "name": "Kugaaruk Airport"
+      },
+      "YBC": {
+        "city": "Baie Comeau",
+        "country": "Canada",
+        "name": "Baie-Comeau Airport"
+      },
+      "YBG": {
+        "city": "Saguenay",
+        "country": "Canada",
+        "name": "Saguenay Bagotville Airport"
+      },
+      "YBK": {
+        "city": "Baker Lake",
+        "country": "Canada",
+        "name": "Baker Lake Airport"
+      },
+      "YBL": {
+        "city": "Campbell River",
+        "country": "Canada",
+        "name": "Campbell River Airport"
+      },
+      "YBR": {
+        "city": "Brandon",
+        "country": "Canada",
+        "name": "Brandon Municipal Airport"
+      },
+      "YCB": {
+        "city": "Cambridge Bay",
+        "country": "Canada",
+        "name": "Cambridge Bay Airport"
+      },
+      "YCD": {
+        "city": "Nanaimo",
+        "country": "Canada",
+        "name": "Nanaimo Airport"
+      },
+      "YCG": {
+        "city": "Castlegar",
+        "country": "Canada",
+        "name": "West Kootenay Regional Airport"
+      },
+      "YCH": {
+        "city": "Chatham",
+        "country": "Canada",
+        "name": "Chatham Airport"
+      },
+      "YCL": {
+        "city": "Charlo",
+        "country": "Canada",
+        "name": "Charlo Airport"
+      },
+      "YCO": {
+        "city": "Coppermine",
+        "country": "Canada",
+        "name": "Kugluktuk Airport"
+      },
+      "YCT": {
+        "city": "Coronation",
+        "country": "Canada",
+        "name": "Coronation Airport"
+      },
+      "YCW": {
+        "city": "Chicago",
+        "country": "Canada"
+      },
+      "YCY": {
+        "city": "Clarence Creek",
+        "country": "Canada",
+        "name": "Clarence Creek Airport"
+      },
+      "YZS": {
+        "city": "Coral Harbour",
+        "country": "Canada",
+        "name": "Coral Harbour Airport"
+      },
+      "YDA": {
+        "city": "Dawson City",
+        "country": "Canada",
+        "name": "Dawson City Airport"
+      },
+      "YDB": {
+        "city": "Burwash Landing",
+        "country": "Canada",
+        "name": "Burwash Airport"
+      },
+      "YDF": {
+        "city": "Deer Lake",
+        "country": "Canada",
+        "name": "Deer Lake Regional Airport"
+      },
+      "YDL": {
+        "city": "Dease Lake",
+        "country": "Canada",
+        "name": "Dease Lake Airport"
+      },
+      "YDN": {
+        "city": "Dauphin",
+        "country": "Canada",
+        "name": "Dauphin Barker Airport"
+      },
+      "YDQ": {
+        "city": "Dawson Creek",
+        "country": "Canada",
+        "name": "Dawson Creek Airport"
+      },
+      "YEG": {
+        "city": "Edmonton",
+        "country": "Canada",
+        "name": "Edmonton International Airport"
+      },
+      "YEK": {
+        "city": "Arviat",
+        "country": "Canada",
+        "name": "Arviat Airport"
+      },
+      "YEN": {
+        "city": "North Spirit Lake",
+        "country": "Canada",
+        "name": "North Spirit Lake Airport"
+      },
+      "YET": {
+        "city": "Yellowknife",
+        "country": "Canada",
+        "name": "Yellowknife Airport"
+      },
+      "YEU": {
+        "city": "",
+        "country": "",
+        "name": ""
+      },
+      "YEV": {
+        "city": "Inuvik",
+        "country": "Canada",
+        "name": "Inuvik (Mike Zubko) Airport"
+      },
+      "YFB": {
+        "city": "Iqaluit",
+        "country": "Canada",
+        "name": "Iqaluit Airport"
+      },
+      "YFC": {
+        "city": "Fredericton",
+        "country": "Canada",
+        "name": "Fredericton International Airport"
+      },
+      "YFE": {
+        "city": "Forestville",
+        "country": "Canada",
+        "name": "Forestville Airport"
+      },
+      "YFO": {
+        "city": "Flin Flon",
+        "country": "Canada",
+        "name": "Flin Flon Airport"
+      },
+      "YFR": {
+        "city": "Fort Resolution",
+        "country": "Canada",
+        "name": "Fort Resolution Airport"
+      },
+      "YFS": {
+        "city": "Fort Simpson",
+        "country": "Canada",
+        "name": "Fort Simpson Airport"
+      },
+      "YGK": {
+        "city": "Kingston",
+        "country": "Canada",
+        "name": "Kingston/Norman Rogers Airport"
+      },
+      "YGL": {
+        "city": "La Grande Riviere",
+        "country": "Canada",
+        "name": "La Grande Riviere Airport"
+      },
+      "YGP": {
+        "city": "Gaspe",
+        "country": "Canada",
+        "name": "Michel-Pouliot Gaspé Airport"
+      },
+      "YGQ": {
+        "city": "Windsor",
+        "country": "Canada",
+        "name": "Windsor International Airport"
+      },
+      "YGR": {
+        "city": "Îles-de-la-Madeleine",
+        "country": "Canada",
+        "name": "Îles-de-la-Madeleine Airport"
+      },
+      "YHB": {
+        "city": "Hudson Bay",
+        "country": "Canada",
+        "name": "Hudson Bay Airport"
+      },
+      "YHD": {
+        "city": "Dryden",
+        "country": "Canada",
+        "name": "Dryden Regional Airport"
+      },
+      "YHI": {
+        "city": "Ulukhaktok",
+        "country": "Canada",
+        "name": "Ulukhaktok/Holman Airport"
+      },
+      "YHK": {
+        "city": "Gjoa Haven",
+        "country": "Canada",
+        "name": "Gjoa Haven Airport"
+      },
+      "YHM": {
+        "city": "Hamilton",
+        "country": "Canada",
+        "name": "John C. Munro Hamilton International Airport"
+      },
+      "YHU": {
+        "city": "Montréal",
+        "country": "Canada",
+        "name": "Montréal/Saint-Hubert Airport"
+      },
+      "YHY": {
+        "city": "North Bay",
+        "country": "Canada",
+        "name": "North Bay/Jack Garland Airport"
+      },
+      "YHZ": {
+        "city": "Halifax",
+        "country": "Canada",
+        "name": "Halifax Stanfield International Airport"
+      },
+      "YIB": {
+        "city": "Atikokan",
+        "country": "Canada",
+        "name": "Atikokan Municipal Airport"
+      },
+      "YIO": {
+        "city": "North Spirit Lake",
+        "country": "Canada",
+        "name": "North Spirit Lake Airport"
+      },
+      "YKA": {
+        "city": "Kamloops",
+        "country": "Canada",
+        "name": "Kamloops Airport"
+      },
+      "YKF": {
+        "city": "Kitchener",
+        "country": "Canada",
+        "name": "Region of Waterloo International Airport"
+      },
+      "YKL": {
+        "city": "Schefferville",
+        "country": "Canada",
+        "name": "Schefferville Airport"
+      },
+      "YKY": {
+        "city": "Kindersley",
+        "country": "Canada",
+        "name": "Kindersley Regional Airport"
+      },
+      "YKZ": {
+        "city": "Toronto",
+        "country": "Canada",
+        "name": "Toronto-Buttonville Municipal Airport"
+      },
+      "YLD": {
+        "city": "Chapleau",
+        "country": "Canada",
+        "name": "Chapleau Airport"
+      },
+      "YLJ": {
+        "city": "Lloydminster",
+        "country": "Canada",
+        "name": "Lloydminster Airport"
+      },
+      "YLL": {
+        "city": "Lloydminster",
+        "country": "Canada",
+        "name": "Lloydminster Airport"
+      },
+      "YLT": {
+        "city": "Alert",
+        "country": "Canada",
+        "name": "Alert Airport"
+      },
+      "YLW": {
+        "city": "Kelowna",
+        "country": "Canada",
+        "name": "Kelowna International Airport"
+      },
+      "YMA": {
+        "city": "Mayo",
+        "country": "Canada",
+        "name": "Mayo Airport"
+      },
+      "YMM": {
+        "city": "Fort McMurray",
+        "country": "Canada",
+        "name": "Fort McMurray Airport"
+      },
+      "YMO": {
+        "city": "Moosonee",
+        "country": "Canada",
+        "name": "Moosonee Airport"
+      },
+      "YMW": {
+        "city": "Maniwaki",
+        "country": "Canada",
+        "name": "Maniwaki Airport"
+      },
+      "YMX": {
+        "city": "Montreal",
+        "country": "Canada",
+        "name": "Montreal-Mirabel International Airport"
+      },
+      "YNA": {
+        "city": "Natashquan",
+        "country": "Canada",
+        "name": "Natashquan Airport"
+      },
+      "YND": {
+        "city": "Ottawa",
+        "country": "Canada",
+        "name": "Ottawa Downtown Heliport"
+      },
+      "YNM": {
+        "city": "Matagami",
+        "country": "Canada",
+        "name": "Matagami Airport"
+      },
+      "YOC": {
+        "city": "Old Crow",
+        "country": "Canada",
+        "name": "Old Crow Airport"
+      },
+      "YOD": {
+        "city": "Cold Lake",
+        "country": "Canada",
+        "name": "Cold Lake/Group Captain R.W. McNair Airport"
+      },
+      "YOJ": {
+        "city": "High Level",
+        "country": "Canada",
+        "name": "North Peace Regional Airport"
+      },
+      "YOW": {
+        "city": "Ottawa",
+        "country": "Canada",
+        "name": "Ottawa Macdonald-Cartier International Airport"
+      },
+      "YPA": {
+        "city": "Prince Albert",
+        "country": "Canada",
+        "name": "Prince Albert Glass Field"
+      },
+      "YPE": {
+        "city": "Peace River",
+        "country": "Canada",
+        "name": "Peace River Airport"
+      },
+      "YPG": {
+        "city": "Portage la Prairie",
+        "country": "Canada",
+        "name": "Portage la Prairie/Southport Airport"
+      },
+      "YPL": {
+        "city": "Pickle Lake",
+        "country": "Canada",
+        "name": "Pickle Lake Airport"
+      },
+      "YPN": {
+        "city": "Port McNicoll",
+        "country": "Canada",
+        "name": "Port McNicoll Airport"
+      },
+      "YPQ": {
+        "city": "Peterborough",
+        "country": "Canada",
+        "name": "Peterborough Airport"
+      },
+      "YPR": {
+        "city": "Prince Rupert",
+        "country": "Canada",
+        "name": "Prince Rupert Airport"
+      },
+      "YPY": {
+        "city": "Fort Chipewyan",
+        "country": "Canada",
+        "name": "Fort Chipewyan Airport"
+      },
+      "YQA": {
+        "city": "Muskoka",
+        "country": "Canada",
+        "name": "Muskoka Airport"
+      },
+      "YQB": {
+        "city": "Quebec City",
+        "country": "Canada",
+        "name": "Quebec City Jean Lesage International Airport"
+      },
+      "YQF": {
+        "city": "Red Deer",
+        "country": "Canada",
+        "name": "Red Deer Regional Airport"
+      },
+      "YQG": {
+        "city": "Windsor",
+        "country": "Canada",
+        "name": "Windsor International Airport"
+      },
+      "YQK": {
+        "city": "Kenora",
+        "country": "Canada",
+        "name": "Kenora Airport"
+      },
+      "YQL": {
+        "city": "Lethbridge",
+        "country": "Canada",
+        "name": "Lethbridge Airport"
+      },
+      "YQM": {
+        "city": "Moncton",
+        "country": "Canada",
+        "name": "Greater Moncton International Airport"
+      },
+      "YQQ": {
+        "city": "Comox",
+        "country": "Canada",
+        "name": "Comox Valley Airport"
+      },
+      "YQR": {
+        "city": "Regina",
+        "country": "Canada",
+        "name": "Regina International Airport"
+      },
+      "YQT": {
+        "city": "Thunder Bay",
+        "country": "Canada",
+        "name": "Thunder Bay International Airport"
+      },
+      "YQU": {
+        "city": "Grande Prairie",
+        "country": "Canada",
+        "name": "Grande Prairie Airport"
+      },
+      "YQV": {
+        "city": "Yorkton",
+        "country": "Canada",
+        "name": "Yorkton Municipal Airport"
+      },
+      "YQW": {
+        "city": "North Battleford",
+        "country": "Canada",
+        "name": "North Battleford Airport"
+      },
+      "YQX": {
+        "city": "Gander",
+        "country": "Canada",
+        "name": "Gander International Airport"
+      },
+      "YQY": {
+        "city": "Sydney",
+        "country": "Canada",
+        "name": "J.A. Douglas McCurdy Sydney Airport"
+      },
+      "YQZ": {
+        "city": "Quesnel",
+        "country": "Canada",
+        "name": "Quesnel Airport"
+      },
+      "YRB": {
+        "city": "Resolute",
+        "country": "Canada",
+        "name": "Resolute Bay Airport"
+      },
+      "YRI": {
+        "city": "Rivière-du-Loup",
+        "country": "Canada",
+        "name": "Rivière-du-Loup Airport"
+      },
+      "YRJ": {
+        "city": "Roberval",
+        "country": "Canada",
+        "name": "Roberval Airport"
+      },
+      "YRM": {
+        "city": "Rocky Mountain House",
+        "country": "Canada",
+        "name": "Rocky Mountain House Airport"
+      },
+      "YRT": {
+        "city": "Rankin Inlet",
+        "country": "Canada",
+        "name": "Rankin Inlet Airport"
+      },
+      "YSB": {
+        "city": "Sudbury",
+        "country": "Canada",
+        "name": "Sudbury Airport"
+      },
+      "YSC": {
+        "city": "Sherbrooke",
+        "country": "Canada",
+        "name": "Sherbrooke Airport"
+      },
+      "YSJ": {
+        "city": "Saint John",
+        "country": "Canada",
+        "name": "Saint John Airport"
+      },
+      "YSM": {
+        "city": "Fort Smith",
+        "country": "Canada",
+        "name": "Fort Smith Airport"
+      },
+      "YSR": {
+        "city": "Nanisivik",
+        "country": "Canada",
+        "name": "Nanisivik Airport"
+      },
+      "YSU": {
+        "city": "Summerside",
+        "country": "Canada",
+        "name": "Summerside Airport"
+      },
+      "YSY": {
+        "city": "Sachs Harbour",
+        "country": "Canada",
+        "name": "Sachs Harbour Airport"
+      },
+      "YTE": {
+        "city": "Cape Dorset",
+        "country": "Canada",
+        "name": "Cape Dorset Airport"
+      },
+      "YTH": {
+        "city": "Thompson",
+        "country": "Canada",
+        "name": "Thompson Airport"
+      },
+      "YTR": {
+        "city": "Trenton",
+        "country": "Canada",
+        "name": "Trenton Airport"
+      },
+      "YTS": {
+        "city": "Timmins",
+        "country": "Canada",
+        "name": "Timmins/Victor M. Power Airport"
+      },
+      "YTZ": {
+        "city": "Toronto",
+        "country": "Canada",
+        "name": "Billy Bishop Toronto City Airport"
+      },
+      "YUB": {
+        "city": "Tuktoyaktuk",
+        "country": "Canada",
+        "name": "Tuktoyaktuk Airport"
+      },
+      "YUL": {
+        "city": "Montreal",
+        "country": "Canada",
+        "name": "Montréal-Pierre Elliott Trudeau International Airport"
+      },
+      "YUT": {
+        "city": "Repulse Bay",
+        "country": "Canada",
+        "name": "Repulse Bay Airport"
+      },
+      "YUX": {
+        "city": "Hall Beach",
+        "country": "Canada",
+        "name": "Hall Beach Airport"
+      },
+      "YUY": {
+        "city": "Rouyn-Noranda",
+        "country": "Canada",
+        "name": "Rouyn-Noranda Airport"
+      },
+      "YVC": {
+        "city": "Cartwright",
+        "country": "Canada",
+        "name": "Cartwright Airport"
+      },
+      "YVG": {
+        "city": "Vermilion",
+        "country": "Canada",
+        "name": "Vermilion Airport"
+      },
+      "YVM": {
+        "city": "Qikiqtarjuaq",
+        "country": "Canada",
+        "name": "Qikiqtarjuaq Airport"
+      },
+      "YVO": {
+        "city": "Val-d'Or",
+        "country": "Canada",
+        "name": "Val-d'Or Airport"
+      },
+      "YVP": {
+        "city": "Kuujjuaq",
+        "country": "Canada",
+        "name": "Kuujjuaq Airport"
+      },
+      "YVQ": {
+        "city": "Norman Wells",
+        "country": "Canada",
+        "name": "Norman Wells Airport"
+      },
+      "YVR": {
+        "city": "Vancouver",
+        "country": "Canada",
+        "name": "Vancouver International Airport"
+      },
+      "YVT": {
+        "city": "Buffalo Narrows",
+        "country": "Canada",
+        "name": "Buffalo Narrows Airport"
+      },
+      "YVV": {
+        "city": "Wiarton",
+        "country": "Canada",
+        "name": "Wiarton Airport"
+      },
+      "YWA": {
+        "city": "Petawawa",
+        "country": "Canada",
+        "name": "Petawawa Airport"
+      },
+      "YWG": {
+        "city": "Winnipeg",
+        "country": "Canada",
+        "name": "Winnipeg James Armstrong Richardson International Airport"
+      },
+      "YWK": {
+        "city": "Wabush",
+        "country": "Canada",
+        "name": "Wabush Airport"
+      },
+      "YWL": {
+        "city": "Williams Lake",
+        "country": "Canada",
+        "name": "Williams Lake Airport"
+      },
+      "YWY": {
+        "city": "Wrigley",
+        "country": "Canada",
+        "name": "Wrigley Airport"
+      },
+      "YXC": {
+        "city": "Cranbrook",
+        "country": "Canada",
+        "name": "Canadian Rockies International Airport"
+      },
+      "YXD": {
+        "city": "Edmonton",
+        "country": "Canada",
+        "name": "Edmonton City Centre Airport"
+      },
+      "YXE": {
+        "city": "Saskatoon",
+        "country": "Canada",
+        "name": "Saskatoon John G. Diefenbaker International Airport"
+      },
+      "YXH": {
+        "city": "Medicine Hat",
+        "country": "Canada",
+        "name": "Medicine Hat Airport"
+      },
+      "YXJ": {
+        "city": "Fort St. John",
+        "country": "Canada",
+        "name": "Fort St. John Airport"
+      },
+      "YXL": {
+        "city": "Sioux Lookout",
+        "country": "Canada",
+        "name": "Sioux Lookout Airport"
+      },
+      "YXP": {
+        "city": "Pangnirtung",
+        "country": "Canada",
+        "name": "Pangnirtung Airport"
+      },
+      "YXR": {
+        "city": "Earlsfield"
+      },
+      "YXS": {
+        "city": "Prince George",
+        "country": "Canada",
+        "name": "Prince George Airport"
+      },
+      "YXT": {
+        "city": "Terrace",
+        "country": "Canada",
+        "name": "Northwest Regional Airport Terrace-Kitimat"
+      },
+      "YXU": {
+        "city": "London",
+        "country": "Canada",
+        "name": "London International Airport"
+      },
+      "YXX": {
+        "city": "Abbotsford",
+        "country": "Canada",
+        "name": "Abbotsford International Airport"
+      },
+      "YXY": {
+        "city": "Whitehorse",
+        "country": "Canada",
+        "name": "Erik Nielsen Whitehorse International Airport"
+      },
+      "YYB": {
+        "city": "North Bay",
+        "country": "Canada",
+        "name": "North Bay/Jack Garland Airport"
+      },
+      "YYC": {
+        "city": "Calgary",
+        "country": "Canada",
+        "name": "Calgary International Airport"
+      },
+      "YYD": {
+        "city": "Smiths Falls",
+        "country": "Canada",
+        "name": "Smiths Falls-Montague Airport"
+      },
+      "YYE": {
+        "city": "Fort Nelson",
+        "country": "Canada",
+        "name": "Fort Nelson Airport"
+      },
+      "YYF": {
+        "city": "Penticton",
+        "country": "Canada",
+        "name": "Penticton Regional Airport"
+      },
+      "YYG": {
+        "city": "Charlottetown",
+        "country": "Canada",
+        "name": "Charlottetown Airport"
+      },
+      "YYH": {
+        "city": "Spence Bay",
+        "country": "Canada",
+        "name": "Spence Bay Airport"
+      },
+      "YYJ": {
+        "city": "Victoria",
+        "country": "Canada",
+        "name": "Victoria International Airport"
+      },
+      "YYL": {
+        "city": "Lynn Lake",
+        "country": "Canada",
+        "name": "Lynn Lake Airport"
+      },
+      "YYR": {
+        "city": "Goose Bay",
+        "country": "Canada",
+        "name": "Goose Bay Airport"
+      },
+      "YYT": {
+        "city": "St. John's",
+        "country": "Canada",
+        "name": "St. John's International Airport"
+      },
+      "YYU": {
+        "city": "Kapuskasing",
+        "country": "Canada",
+        "name": "Kapuskasing Airport"
+      },
+      "YYW": {
+        "city": "Armstrong",
+        "country": "Canada",
+        "name": "Armstrong Airport"
+      },
+      "YYY": {
+        "city": "Mont-Joli",
+        "country": "Canada",
+        "name": "Mont-Joli Airport"
+      },
+      "YYZ": {
+        "city": "Toronto",
+        "country": "Canada",
+        "name": "Toronto Pearson International Airport"
+      },
+      "YZD": {
+        "city": "Toronto",
+        "country": "Canada",
+        "name": "Toronto Downsview Airport"
+      },
+      "YZE": {
+        "city": "Gore Bay",
+        "country": "Canada",
+        "name": "Gore Bay-Manitoulin Airport"
+      },
+      "YZF": {
+        "city": "Yellowknife",
+        "country": "Canada",
+        "name": "Yellowknife Airport"
+      },
+      "YZH": {
+        "city": "Slave Lake",
+        "country": "Canada",
+        "name": "Slave Lake Airport"
+      },
+      "YZP": {
+        "city": "Sandspit",
+        "country": "Canada",
+        "name": "Sandspit Airport"
+      },
+      "YZR": {
+        "city": "Sarnia",
+        "country": "Canada",
+        "name": "Sarnia Chris Hadfield Airport"
+      },
+      "YZT": {
+        "city": "Port Hardy",
+        "country": "Canada",
+        "name": "Port Hardy Airport"
+      },
+      "YZU": {
+        "city": "Whitecourt",
+        "country": "Canada",
+        "name": "Whitecourt Airport"
+      },
+      "YZV": {
+        "city": "Sept-Îles",
+        "country": "Canada",
+        "name": "Sept-Îles Airport"
+      },
+      "YZW": {
+        "city": "Teslin",
+        "country": "Canada",
+        "name": "Teslin Airport"
+      },
+      "YZX": {
+        "city": "Yellowknife",
+        "country": "Canada",
+        "name": "Yellowknife Airport"
+      },
+      "ZFA": {
+        "city": "Faro",
+        "country": "Canada",
+        "name": "Faro Airport"
+      },
+      "ZFM": {
+        "city": "Fort Mcpherson",
+        "country": "Canada",
+        "name": "Fort McPherson Airport"
+      },
+      "BUJ": {
+        "city": "Bou Saada",
+        "country": "Algeria",
+        "name": "Ain Eddis Airport"
+      },
+      "BJA": {
+        "city": "Bejaia",
+        "country": "Algeria",
+        "name": "Abane Ramdane Airport"
+      },
+      "ALG": {
+        "city": "Algiers",
+        "country": "Algeria",
+        "name": "Houari Boumediene Airport"
+      },
+      "DJG": {
+        "city": "Djanet",
+        "country": "Algeria",
+        "name": "Djanet Inedbirenne Airport"
+      },
+      "VVZ": {
+        "city": "Illizi",
+        "country": "Algeria",
+        "name": "Takhamalt Airport"
+      },
+      "TMR": {
+        "city": "Tamanrasset",
+        "country": "Algeria",
+        "name": "Aguenar – Hadj Bey Akhamok Airport"
+      },
+      "GJL": {
+        "city": "Jijel",
+        "country": "Algeria",
+        "name": "Jijel Ferhat Abbas Airport"
+      },
+      "MZW": {
+        "city": "Mezagran"
+      },
+      "AAE": {
+        "city": "Annaba",
+        "country": "Algeria",
+        "name": "Rabah Bitat Airport"
+      },
+      "CZL": {
+        "city": "Constantine",
+        "country": "Algeria",
+        "name": "Mohamed Boudiaf International Airport"
+      },
+      "TEE": {
+        "city": "Tebessa",
+        "country": "Algeria",
+        "name": "Cheikh Larbi Tebessi Airport"
+      },
+      "HRM": {
+        "city": "Hassi R'Mel",
+        "country": "Algeria",
+        "name": "Hassi R'Mel Airport"
+      },
+      "TID": {
+        "city": "Tiaret"
+      },
+      "TIN": {
+        "city": "Tindouf",
+        "country": "Algeria",
+        "name": "Tindouf Airport"
+      },
+      "TLM": {
+        "city": "Tlemcen",
+        "country": "Algeria",
+        "name": "Zenata – Messali El Hadj Airport"
+      },
+      "ORN": {
+        "city": "Oran",
+        "country": "Algeria",
+        "name": "Es-Sénia Airport"
+      },
+      "AZR": {
+        "city": "Adrar",
+        "country": "Algeria",
+        "name": "Touat-Cheikh Sidi Mohamed Belkebir Airport"
+      },
+      "BSK": {
+        "city": "Biskra",
+        "country": "Algeria",
+        "name": "Biskra Airport"
+      },
+      "ELG": {
+        "city": "El Goléa",
+        "country": "Algeria",
+        "name": "El Goléa Airport"
+      },
+      "GHA": {
+        "city": "Ghardaïa",
+        "country": "Algeria",
+        "name": "Noumérat – Moufdi Zakaria Airport"
+      },
+      "HME": {
+        "city": "Hassi Messaoud",
+        "country": "Algeria",
+        "name": "Oued Irara Airport"
+      },
+      "INZ": {
+        "city": "In Salah",
+        "country": "Algeria",
+        "name": "In Salah Airport"
+      },
+      "TGR": {
+        "city": "Tebessa",
+        "country": "Algeria",
+        "name": "Cheikh Larbi Tebessi Airport"
+      },
+      "LOO": {
+        "city": "Laghouat",
+        "country": "Algeria",
+        "name": "Laghouat Airport"
+      },
+      "TMX": {
+        "city": "Timimoun",
+        "country": "Algeria",
+        "name": "Timimoun Airport"
+      },
+      "OGX": {
+        "city": "Ouargla",
+        "country": "Algeria",
+        "name": "Ain Beida Airport"
+      },
+      "IAM": {
+        "city": "In Amenas",
+        "country": "Algeria",
+        "name": "In Amenas Airport"
+      },
+      "COO": {
+        "city": "Cotonou",
+        "country": "Benin",
+        "name": "Cadjehoun Airport"
+      },
+      "OUA": {
+        "city": "Ouagadougou",
+        "country": "Burkina Faso",
+        "name": "Thomas Sankara International Airport"
+      },
+      "BOY": {
+        "city": "Bouake",
+        "country": "Ivory Coast",
+        "name": "Bouaké Airport"
+      },
+      "ACC": {
+        "city": "Accra",
+        "country": "Ghana",
+        "name": "Kotoka International Airport"
+      },
+      "TML": {
+        "city": "Tamale",
+        "country": "Ghana",
+        "name": "Tamale Airport"
+      },
+      "NYI": {
+        "city": "Sunyani",
+        "country": "Ghana",
+        "name": "Sunyani Airport"
+      },
+      "TKD": {
+        "city": "Takoradi",
+        "country": "Ghana",
+        "name": "Takoradi Airport"
+      },
+      "ABJ": {
+        "city": "Bouake",
+        "country": "Cote d'Ivoire",
+        "name": "Bouake Airport"
+      },
+      "BYK": {
+        "city": "Bouake"
+      },
+      "DJO": {
+        "city": "Djoemba"
+      },
+      "HGO": {
+        "city": "Korhogo",
+        "country": "Cote d'Ivoire",
+        "name": "Korhogo Airport"
+      },
+      "MJC": {
+        "city": "Man",
+        "country": "Cote d'Ivoire",
+        "name": "Man Airport"
+      },
+      "SPY": {
+        "city": "San Pedro",
+        "country": "Cote d'Ivoire",
+        "name": "San Pedro Airport"
+      },
+      "ASK": {
+        "city": "Yamoussoukro"
+      },
+      "ABV": {
+        "city": "Abuja",
+        "country": "Nigeria",
+        "name": "Nnamdi Azikiwe International Airport"
+      },
+      "AKR": {
+        "city": "Akure",
+        "country": "Nigeria",
+        "name": "Akure Airport"
+      },
+      "BNI": {
+        "city": "Benin City",
+        "country": "Nigeria",
+        "name": "Benin Airport"
+      },
+      "CBQ": {
+        "city": "Calabar",
+        "country": "Nigeria",
+        "name": "Margaret Ekpo International Airport"
+      },
+      "ENU": {
+        "city": "Enugu",
+        "country": "Nigeria",
+        "name": "Akanu Ibiam International Airport"
+      },
+      "IBA": {
+        "city": "Ibadan",
+        "country": "Nigeria",
+        "name": "Ibadan Airport"
+      },
+      "ILR": {
+        "city": "Ilorin",
+        "country": "Nigeria",
+        "name": "Ilorin International Airport"
+      },
+      "JOS": {
+        "city": "Jos",
+        "country": "Nigeria",
+        "name": "Yakubu Gowon Airport"
+      },
+      "KAD": {
+        "city": "Kaduna",
+        "country": "Nigeria",
+        "name": "Kaduna International Airport"
+      },
+      "KAN": {
+        "city": "Kano",
+        "country": "Nigeria",
+        "name": "Mallam Aminu Kano International Airport"
+      },
+      "MIU": {
+        "city": "Mauritania",
+        "country": "Mauritania",
+        "name": "Mauritania International Airport"
+      },
+      "MDI": {
+        "city": "Makurdi",
+        "country": "Nigeria",
+        "name": "Makurdi Airport"
+      },
+      "LOS": {
+        "city": "Lagos",
+        "country": "Nigeria",
+        "name": "Murtala Muhammed International Airport"
+      },
+      "MXJ": {
+        "city": "Minna",
+        "country": "Nigeria",
+        "name": "Minna Airport"
+      },
+      "PHC": {
+        "city": "Port Harcourt",
+        "country": "Nigeria",
+        "name": "Port Harcourt International Airport"
+      },
+      "SKO": {
+        "city": "Sokoto",
+        "country": "Nigeria",
+        "name": "Sadiq Abubakar III International Airport"
+      },
+      "YOL": {
+        "city": "Yola",
+        "country": "Nigeria",
+        "name": "Yola Airport"
+      },
+      "MFQ": {
+        "city": "Moussoro",
+        "country": "Chad",
+        "name": "Mousorro Airport"
+      },
+      "NIM": {
+        "city": "Niamey",
+        "country": "Niger",
+        "name": "Diori Hamani International Airport"
+      },
+      "THZ": {
+        "city": "Tahoua",
+        "country": "Niger",
+        "name": "Tahoua Airport"
+      },
+      "AJY": {
+        "city": "Agades",
+        "country": "Niger",
+        "name": "Mano Dayak International Airport"
+      },
+      "ZND": {
+        "city": "Zinder",
+        "country": "Niger",
+        "name": "Zinder Airport"
+      },
+      "MIR": {
+        "city": "Monastir",
+        "country": "Tunisia",
+        "name": "Monastir Habib Bourguiba International Airport"
+      },
+      "TUN": {
+        "city": "Tunis",
+        "country": "Tunisia",
+        "name": "Tunis–Carthage International Airport"
+      },
+      "GAF": {
+        "city": "Gafsa",
+        "country": "Tunisia",
+        "name": "Gafsa–Ksar International Airport"
+      },
+      "GAE": {
+        "city": "Gabès",
+        "country": "Tunisia",
+        "name": "Gabès–Matmata International Airport"
+      },
+      "DJE": {
+        "city": "Djerba",
+        "country": "Tunisia",
+        "name": "Djerba–Zarzis International Airport"
+      },
+      "EBM": {
+        "city": "El Borma",
+        "country": "Tunisia",
+        "name": "El Borma Airport"
+      },
+      "LFW": {
+        "city": "Lomé",
+        "country": "Togo",
+        "name": "Lomé-Tokoin International Airport"
+      },
+      "ANR": {
+        "city": "Antwerp",
+        "country": "Belgium",
+        "name": "Antwerp International Airport"
+      },
+      "BRU": {
+        "city": "Brussels",
+        "country": "Belgium",
+        "name": "Brussels Airport"
+      },
+      "CRL": {
+        "city": "Charleroi",
+        "country": "Belgium",
+        "name": "Brussels South Charleroi Airport"
+      },
+      "LGG": {
+        "city": "Liège",
+        "country": "Belgium",
+        "name": "Liège Airport"
+      },
+      "OST": {
+        "city": "Ostend",
+        "country": "Belgium",
+        "name": "Ostend-Bruges International Airport"
+      },
+      "OBL": {
+        "city": "Zouar"
+      },
+      "AOC": {
+        "city": "Altenburg",
+        "country": "Germany",
+        "name": "Leipzig-Altenburg Airport"
+      },
+      "IES": {
+        "city": "Rhyl",
+        "country": "United Kingdom",
+        "name": "Rhyl Airport"
+      },
+      "REB": {
+        "city": "Rebosy"
+      },
+      "BBH": {
+        "city": "Burgas",
+        "country": "Bulgaria",
+        "name": "Burgas Airport"
+      },
+      "CBU": {
+        "city": "Cottbus",
+        "country": "Germany",
+        "name": "Cottbus-Drewitz Airport"
+      },
+      "SXF": {
+        "city": "Berlin",
+        "country": "Germany",
+        "name": "Berlin Schönefeld Airport"
+      },
+      "DRS": {
+        "city": "Dresden",
+        "country": "Germany",
+        "name": "Dresden Airport"
+      },
+      "ERF": {
+        "city": "Erfurt",
+        "country": "Germany",
+        "name": "Erfurt Airport"
+      },
+      "FRA": {
+        "city": "Frankfurt",
+        "country": "Germany",
+        "name": "Frankfurt Airport"
+      },
+      "FMO": {
+        "city": "Münster",
+        "country": "Germany",
+        "name": "Münster Osnabrück International Airport"
+      },
+      "HAM": {
+        "city": "Hamburg",
+        "country": "Germany",
+        "name": "Hamburg Airport"
+      },
+      "THF": {
+        "city": "Berlin",
+        "country": "Germany",
+        "name": "Berlin Tempelhof"
+      },
+      "CGN": {
+        "city": "Cologne",
+        "country": "Germany",
+        "name": "Cologne Bonn Airport"
+      },
+      "DUS": {
+        "city": "Düsseldorf",
+        "country": "Germany",
+        "name": "Düsseldorf Airport"
+      },
+      "MUC": {
+        "city": "Munich",
+        "country": "Germany",
+        "name": "Munich Airport"
+      },
+      "NUE": {
+        "city": "Nuremberg",
+        "country": "Germany",
+        "name": "Nuremberg Airport"
+      },
+      "LEJ": {
+        "city": "Leipzig",
+        "country": "Germany",
+        "name": "Leipzig/Halle Airport"
+      },
+      "SCN": {
+        "city": "Saarbrücken",
+        "country": "Germany",
+        "name": "Saarbrücken Airport"
+      },
+      "STR": {
+        "city": "Stuttgart",
+        "country": "Germany",
+        "name": "Stuttgart Airport"
+      },
+      "TXL": {
+        "city": "Berlin",
+        "country": "Germany",
+        "name": "Berlin Tegel"
+      },
+      "HAJ": {
+        "city": "Hanover",
+        "country": "Germany",
+        "name": "Hannover Airport"
+      },
+      "BRE": {
+        "city": "Bremen",
+        "country": "Germany",
+        "name": "Bremen Airport"
+      },
+      "HHN": {
+        "city": "Frankfurt",
+        "country": "Germany",
+        "name": "Frankfurt-Hahn Airport"
+      },
+      "MHG": {
+        "city": "Mannheim",
+        "country": "Germany",
+        "name": "Mannheim City Airport"
+      },
+      "EIB": {
+        "city": "Eisenach",
+        "country": "Germany",
+        "name": "Eisenach-Kindel Airport"
+      },
+      "SGE": {
+        "city": "Siegen",
+        "country": "Germany",
+        "name": "Siegerland Airport"
+      },
+      "XFW": {
+        "city": "Hamburg",
+        "country": "Germany",
+        "name": "Hamburg Finkenwerder Airport"
+      },
+      "KEL": {
+        "city": "Kiel",
+        "country": "Germany",
+        "name": "Kiel Airport"
+      },
+      "LBC": {
+        "city": "Lübeck",
+        "country": "Germany",
+        "name": "Lübeck Airport"
+      },
+      "ESS": {
+        "city": "Essen",
+        "country": "Germany",
+        "name": "Essen/Mülheim Airport"
+      },
+      "BFE": {
+        "city": "Bielefeld",
+        "country": "Germany",
+        "name": "Bielefeld Airport"
+      },
+      "MGL": {
+        "city": "Mönchengladbach",
+        "country": "Germany",
+        "name": "Mönchengladbach Airport"
+      },
+      "PAD": {
+        "city": "Paderborn",
+        "country": "Germany",
+        "name": "Paderborn/Lippstadt Airport"
+      },
+      "DTM": {
+        "city": "Dortmund",
+        "country": "Germany",
+        "name": "Dortmund Airport"
+      },
+      "AGB": {
+        "city": "Augusta",
+        "country": "United States",
+        "name": "Augusta Regional Airport"
+      },
+      "OBF": {
+        "city": "Rouen",
+        "country": "France",
+        "name": ""
+      },
+      "RBM": {
+        "city": "Straubing",
+        "country": "Germany",
+        "name": "Straubing Wallmuhle Airport"
+      },
+      "FDH": {
+        "city": "Friedrichshafen",
+        "country": "Germany",
+        "name": "Friedrichshafen Airport"
+      },
+      "SZW": {
+        "city": "Schwerin",
+        "country": "Germany",
+        "name": ""
+      },
+      "BYU": {
+        "city": "Bayreuth",
+        "country": "Germany",
+        "name": ""
+      },
+      "URD": {
+        "city": "Burbach",
+        "country": "Germany",
+        "name": ""
+      },
+      "HOQ": {
+        "city": "Hof",
+        "country": "Germany",
+        "name": "Hof Airport"
+      },
+      "ZQW": {
+        "city": "Zweibrucken",
+        "country": "Germany",
+        "name": "Zweibrucken Airport"
+      },
+      "ZQL": {
+        "city": "",
+        "country": "",
+        "name": "Zenith Airport eoq, no -  ZQL.name = Mainz Finthen Airport"
+      }
+    },
+    "value_accuracy": 0.7295409181636726,
+    "by_type": {
+      "short_string": 0.7295409181636726
+    },
+    "outcomes": {
+      "correct": 731,
+      "accuracy": 186,
+      "omission": 85,
+      "hallucination": 0,
+      "structural": 0
+    }
+  },
+  {
+    "method": "nfield",
+    "fixture": "airports_1002",
+    "budget": "constrained",
+    "seed": 1,
+    "fields_total": 1002,
+    "fields_extracted": 946,
+    "coverage": 0.9311377245508982,
+    "k": 29,
+    "k_min": 28,
+    "optimality_gap": 0.03571428571428571,
+    "call_failed": 0,
+    "elapsed_seconds": 7.184,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "GKA": {
+        "city": "Goroka",
+        "country": "Papua New Guinea",
+        "name": "Goroka Airport"
+      },
+      "MAG": {
+        "city": "Madang",
+        "country": "Papua New Guinea",
+        "name": "Madang Airport"
+      },
+      "HGU": {
+        "city": "Mount Hagen",
+        "country": "Papua New Guinea",
+        "name": "Mount Hagen Airport"
+      },
+      "LAE": {
+        "city": "Lae",
+        "country": "Papua New Guinea",
+        "name": "Lae Nadzab Airport"
+      },
+      "POM": {
+        "city": "Port Moresby",
+        "country": "Papua New Guinea",
+        "name": "Jacksons International Airport"
+      },
+      "WWK": {
+        "city": "Wewak",
+        "country": "Papua New Guinea",
+        "name": "Wewak International Airport"
+      },
+      "UAK": {
+        "city": "Narsarsuaq",
+        "country": "Greenland",
+        "name": "Narsarsuaq Airport"
+      },
+      "GOH": {
+        "city": "Nuuk",
+        "country": "Greenland",
+        "name": "Nuuk Airport"
+      },
+      "SFJ": {
+        "city": "Kangerlussuaq",
+        "country": "Greenland",
+        "name": "Kangerlussuaq Airport"
+      },
+      "THU": {
+        "city": "Pituffik",
+        "country": "Greenland",
+        "name": "Thule Air Base"
+      },
+      "AEY": {
+        "city": "Akureyri",
+        "country": "Iceland",
+        "name": "Akureyri Airport"
+      },
+      "EGS": {
+        "city": "Egilsstadir",
+        "country": "Iceland",
+        "name": "Egilsstadir Airport"
+      },
+      "HFN": {
+        "city": "Höfn",
+        "country": "Iceland",
+        "name": "Hornafjörður Airport"
+      },
+      "HZK": {
+        "city": "Husavik",
+        "country": "Iceland",
+        "name": "Húsavík Airport"
+      },
+      "IFJ": {
+        "city": "Ísafjörður",
+        "country": "Iceland",
+        "name": "Ísafjörður Airport"
+      },
+      "KEF": {
+        "city": "Keflavík",
+        "country": "Iceland",
+        "name": "Keflavík International Airport"
+      },
+      "PFJ": {
+        "city": "Patreksfjörður",
+        "country": "Iceland",
+        "name": "Patreksfjörður Airport"
+      },
+      "RKV": {
+        "city": "Reykjavík",
+        "country": "Iceland",
+        "name": "Reykjavik Airport"
+      },
+      "SIJ": {
+        "city": "Siglufjörður",
+        "country": "Iceland",
+        "name": "Siglufjörður Airport"
+      },
+      "VEY": {
+        "city": "Vestmannaeyjar",
+        "country": "Iceland",
+        "name": "Vestmannaeyjar Airport"
+      },
+      "YAM": {
+        "city": "Sault Ste. Marie",
+        "country": "Canada",
+        "name": "Sault Ste. Marie Airport"
+      },
+      "YAY": {
+        "city": "St. Anthony",
+        "country": "Canada",
+        "name": "St. Anthony Airport"
+      },
+      "YAZ": {
+        "city": "Tofino",
+        "country": "Canada",
+        "name": "Tofino Airport"
+      },
+      "YBB": {
+        "city": "Pelly Bay",
+        "country": "Canada",
+        "name": "Kugaaruk Airport"
+      },
+      "YBC": {
+        "city": "Baie Comeau",
+        "country": "Canada",
+        "name": "Baie Comeau Airport"
+      },
+      "YBG": {
+        "city": "Saguenay",
+        "country": "Canada",
+        "name": "Saguenay Bagotville Airport"
+      },
+      "YBK": {
+        "city": "Baker Lake",
+        "country": "Canada",
+        "name": "Baker Lake Airport"
+      },
+      "YBL": {
+        "city": "Campbell River",
+        "country": "Canada",
+        "name": "Campbell River Airport"
+      },
+      "YBR": {
+        "city": "Brandon",
+        "country": "Canada",
+        "name": "Brandon Municipal Airport"
+      },
+      "YCB": {
+        "city": "Cambridge Bay",
+        "country": "Canada",
+        "name": "Cambridge Bay Airport"
+      },
+      "YCD": {
+        "city": "Nanaimo",
+        "country": "Canada",
+        "name": "Nanaimo Airport"
+      },
+      "YCG": {
+        "city": "Castlegar",
+        "country": "Canada",
+        "name": "West Kootenay Regional Airport"
+      },
+      "YCH": {
+        "city": "Chatham",
+        "country": "Canada",
+        "name": "Miramichi Airport"
+      },
+      "YCL": {
+        "city": "Charlo",
+        "country": "Canada",
+        "name": "Charlo Airport"
+      },
+      "YCO": {
+        "city": "Coppermine",
+        "country": "Canada",
+        "name": "Kugluktuk Airport"
+      },
+      "YCT": {
+        "city": "Coronation",
+        "country": "Canada",
+        "name": "Coronation Airport"
+      },
+      "YCW": {
+        "city": "Chicago",
+        "country": "Canada"
+      },
+      "YCY": {
+        "city": "Clayoquot",
+        "country": "Canada",
+        "name": "Clayoquot Sound"
+      },
+      "YZS": {
+        "city": "Coral Harbour",
+        "country": "Canada",
+        "name": "Coral Harbour Airport"
+      },
+      "YDA": {
+        "city": "Dawson City",
+        "country": "Canada",
+        "name": "Dawson City Airport"
+      },
+      "YDB": {
+        "city": "Burdett",
+        "country": "Canada",
+        "name": "Burdett Airport"
+      },
+      "YDF": {
+        "city": "Deer Lake",
+        "country": "Canada",
+        "name": "Deer Lake Regional Airport"
+      },
+      "YDL": {
+        "city": "Dease Lake",
+        "country": "Canada",
+        "name": "Dease Lake Airport"
+      },
+      "YDN": {
+        "city": "Dauphin",
+        "country": "Canada",
+        "name": "Dauphin Barker Airport"
+      },
+      "YDQ": {
+        "city": "Dawson Creek",
+        "country": "Canada",
+        "name": "Dawson Creek Airport"
+      },
+      "YEG": {
+        "city": "Edmonton",
+        "country": "Canada",
+        "name": "Edmonton International Airport"
+      },
+      "YEK": {
+        "city": "Arviat",
+        "country": "Canada",
+        "name": "Arviat Airport"
+      },
+      "YEN": {
+        "city": "North Spirit Lake",
+        "country": "Canada",
+        "name": "North Spirit Lake Airport"
+      },
+      "YET": {
+        "city": "Yellowknife",
+        "country": "Canada",
+        "name": "Yellowknife Airport"
+      },
+      "YEV": {
+        "city": "Inuvik",
+        "country": "Canada",
+        "name": "Inuvik (Mike Zubko) Airport"
+      },
+      "YFB": {
+        "city": "Iqaluit",
+        "country": "Canada",
+        "name": "Iqaluit Airport"
+      },
+      "YFC": {
+        "city": "Fredericton",
+        "country": "Canada",
+        "name": "Fredericton International Airport"
+      },
+      "YFE": {
+        "city": "Forestville",
+        "country": "Canada",
+        "name": "Forestville Airport"
+      },
+      "YFO": {
+        "city": "Flin Flon",
+        "country": "Canada",
+        "name": "Flin Flon Airport"
+      },
+      "YFR": {
+        "city": "Fort Resolution",
+        "country": "Canada",
+        "name": "Fort Resolution Airport"
+      },
+      "YFS": {
+        "city": "Fort Simpson",
+        "country": "Canada",
+        "name": "Fort Simpson Airport"
+      },
+      "YGK": {
+        "city": "Kingston",
+        "country": "Canada",
+        "name": "Kingston/Norman Rogers Airport"
+      },
+      "YGL": {
+        "city": "La Grande Riviere",
+        "country": "Canada",
+        "name": "La Grande Rivière Airport"
+      },
+      "YGP": {
+        "city": "Gaspe",
+        "country": "Canada",
+        "name": "Gaspé Airport"
+      },
+      "YGQ": {
+        "city": "Windsor",
+        "country": "Canada",
+        "name": "Windsor Airport"
+      },
+      "YGR": {
+        "city": "Îles-de-la-Madeleine",
+        "country": "Canada",
+        "name": "Îles-de-la-Madeleine Airport"
+      },
+      "YHB": {
+        "city": "Hudson Bay",
+        "country": "Canada",
+        "name": "Hudson Bay Airport"
+      },
+      "YHD": {
+        "city": "Dryden",
+        "country": "Canada",
+        "name": "Dryden Regional Airport"
+      },
+      "YHI": {
+        "city": "Ulukhaktok",
+        "country": "Canada",
+        "name": "Ulukhaktok/Holman Airport"
+      },
+      "YHK": {
+        "city": "Gjoa Haven",
+        "country": "Canada",
+        "name": "Gjoa Haven Airport"
+      },
+      "YHM": {
+        "city": "Hamilton",
+        "country": "Canada",
+        "name": "John C. Munro Hamilton International Airport"
+      },
+      "YHU": {
+        "city": "Montreal",
+        "country": "Canada",
+        "name": "Montréal/Saint-Hubert Airport"
+      },
+      "YHY": {
+        "city": "Hay River",
+        "country": "Canada",
+        "name": "Hay River/Merlyn Carter Airport"
+      },
+      "YHZ": {
+        "city": "Halifax",
+        "country": "Canada",
+        "name": "Halifax Stanfield International Airport"
+      },
+      "YIB": {
+        "city": "Atikokan",
+        "country": "Canada",
+        "name": "Atikokan Municipal Airport"
+      },
+      "YIO": {
+        "city": "North Spirit Lake",
+        "country": "Canada",
+        "name": "North Spirit Lake Airport"
+      },
+      "YKA": {
+        "city": "Kamloops",
+        "country": "Canada",
+        "name": "Kamloops Airport"
+      },
+      "YKF": {
+        "city": "Kitchener",
+        "country": "Canada",
+        "name": "Region of Waterloo International Airport"
+      },
+      "YKL": {
+        "city": "Schefferville",
+        "country": "Canada",
+        "name": "Schefferville Airport"
+      },
+      "YKY": {
+        "city": "Kindersley",
+        "country": "Canada",
+        "name": "Kindersley Regional Airport"
+      },
+      "YKZ": {
+        "city": "Toronto",
+        "country": "Canada",
+        "name": "Toronto/Buttonville Municipal Airport"
+      },
+      "YLD": {
+        "city": "Chapleau",
+        "country": "Canada",
+        "name": "Chapleau Airport"
+      },
+      "YLJ": {
+        "city": "Lloydminster",
+        "country": "Canada",
+        "name": "Lloydminster Airport"
+      },
+      "YLL": {
+        "city": "Lloydminster",
+        "country": "Canada",
+        "name": "Lloydminster Airport"
+      },
+      "YLT": {
+        "city": "Alert",
+        "country": "Canada",
+        "name": "Alert Airport"
+      },
+      "YLW": {
+        "city": "Kelowna",
+        "country": "Canada",
+        "name": "Kelowna International Airport"
+      },
+      "YMA": {
+        "city": "Mayo",
+        "country": "Canada",
+        "name": "Mayo Airport"
+      },
+      "YMJ": {
+        "city": "Moose Jaw",
+        "country": "Canada",
+        "name": "Moose Jaw Air Vice Marshal C.M. McEwen Airport"
+      },
+      "YMM": {
+        "city": "Fort McMurray",
+        "country": "Canada",
+        "name": "Fort McMurray International Airport"
+      },
+      "YMO": {
+        "city": "Moosonee",
+        "country": "Canada",
+        "name": "Moosonee Airport"
+      },
+      "YMW": {
+        "city": "Maniwaki",
+        "country": "Canada",
+        "name": "Maniwaki Airport"
+      },
+      "YMX": {
+        "city": "Montreal",
+        "country": "Canada",
+        "name": "Montréal–Mirabel International Airport"
+      },
+      "YNA": {
+        "city": "Natashquan",
+        "country": "Canada",
+        "name": "Natashquan Airport"
+      },
+      "YND": {
+        "city": "Ottawa",
+        "country": "Canada",
+        "name": "Gatineau Airport"
+      },
+      "YNM": {
+        "city": "Matagami",
+        "country": "Canada",
+        "name": "Matagami Airport"
+      },
+      "YOC": {
+        "city": "Old Crow",
+        "country": "Canada",
+        "name": "Old Crow Airport"
+      },
+      "YOD": {
+        "city": "Cold Lake",
+        "country": "Canada",
+        "name": "Cold Lake/Group Captain R.W. McNair Airport"
+      },
+      "YOJ": {
+        "city": "High Level",
+        "country": "Canada",
+        "name": "North Spirit Lake Airport"
+      },
+      "YOW": {
+        "city": "Ottawa",
+        "country": "Canada",
+        "name": "Ottawa Macdonald-Cartier International Airport"
+      },
+      "YPA": {
+        "city": "Prince Albert",
+        "country": "Canada",
+        "name": "Prince Albert Glass Field"
+      },
+      "YPE": {
+        "city": "Peace River",
+        "country": "Canada",
+        "name": "Peace River Airport"
+      },
+      "YPG": {
+        "city": "Portage la Prairie",
+        "country": "Canada",
+        "name": "Portage la Prairie/Southport Airport"
+      },
+      "YPL": {
+        "city": "Pickle Lake",
+        "country": "Canada",
+        "name": "Pickle Lake Airport"
+      },
+      "YPN": {
+        "city": "Port Menier",
+        "country": "Canada",
+        "name": "Port-Menier Airport"
+      },
+      "YPQ": {
+        "city": "Peterborough",
+        "country": "Canada",
+        "name": "Peterborough Airport"
+      },
+      "YPR": {
+        "city": "Prince Rupert",
+        "country": "Canada",
+        "name": "Prince Rupert Airport"
+      },
+      "YPY": {
+        "city": "Fort Chipewyan",
+        "country": "Canada",
+        "name": "Fort Chipewyan Airport"
+      },
+      "YQA": {
+        "city": "Muskoka",
+        "country": "Canada",
+        "name": "Muskoka Airport"
+      },
+      "YQB": {
+        "city": "Quebec City",
+        "country": "Canada",
+        "name": "Quebec City Jean Lesage International Airport"
+      },
+      "YQF": {
+        "city": "Red Deer",
+        "country": "Canada",
+        "name": "Red Deer Regional Airport"
+      },
+      "YQG": {
+        "city": "Windsor",
+        "country": "Canada",
+        "name": "Windsor International Airport"
+      },
+      "YQK": {
+        "city": "Kenora",
+        "country": "Canada",
+        "name": "Kenora Airport"
+      },
+      "YQL": {
+        "city": "Lethbridge",
+        "country": "Canada",
+        "name": "Lethbridge Airport"
+      },
+      "YQM": {
+        "city": "Moncton",
+        "country": "Canada",
+        "name": "Greater Moncton Roméo LeBlanc International Airport"
+      },
+      "YQQ": {
+        "city": "Comox",
+        "country": "Canada",
+        "name": "CFB Comox"
+      },
+      "YQR": {
+        "city": "Regina",
+        "country": "Canada",
+        "name": "Regina International Airport"
+      },
+      "YQT": {
+        "city": "Thunder Bay",
+        "country": "Canada",
+        "name": "Thunder Bay International Airport"
+      },
+      "YQU": {
+        "city": "Grande Prairie",
+        "country": "Canada",
+        "name": "Grande Prairie Airport"
+      },
+      "YQV": {
+        "city": "Yorkton",
+        "country": "Canada",
+        "name": "Yorkton Municipal Airport"
+      },
+      "YQW": {
+        "city": "North Battleford",
+        "country": "Canada",
+        "name": "North Battleford Airport"
+      },
+      "YQX": {
+        "city": "Gander",
+        "country": "Canada",
+        "name": "Gander International Airport"
+      },
+      "YQY": {
+        "city": "Sydney",
+        "country": "Canada",
+        "name": "J.A. Douglas McCurdy Sydney Airport"
+      },
+      "YQZ": {
+        "city": "Quesnel",
+        "country": "Canada",
+        "name": "Quesnel Airport"
+      },
+      "YRB": {
+        "city": "Resolute",
+        "country": "Canada",
+        "name": "Resolute Bay Airport"
+      },
+      "YRI": {
+        "city": "Rivière-du-Loup",
+        "country": "Canada",
+        "name": "Rivière-du-Loup Airport"
+      },
+      "YRJ": {
+        "city": "Roberval",
+        "country": "Canada",
+        "name": "Roberval Airport"
+      },
+      "YRM": {
+        "city": "Rocky Mountain House",
+        "country": "Canada",
+        "name": "Rocky Mountain House Airport"
+      },
+      "YRT": {
+        "city": "Rankin Inlet",
+        "country": "Canada",
+        "name": "Rankin Inlet Airport"
+      },
+      "YSB": {
+        "city": "Sudbury",
+        "country": "Canada",
+        "name": "Sudbury Airport"
+      },
+      "YSC": {
+        "city": "Sherbrooke",
+        "country": "Canada",
+        "name": "Sherbrooke Airport"
+      },
+      "YSJ": {
+        "city": "Saint John",
+        "country": "Canada",
+        "name": "Saint John Airport"
+      },
+      "YSM": {
+        "city": "Fort Smith",
+        "country": "Canada",
+        "name": "Fort Smith Airport"
+      },
+      "YSR": {
+        "city": "Nanisivik",
+        "country": "Canada",
+        "name": "Nanisivik Airport"
+      },
+      "YSU": {
+        "city": "Sudbury",
+        "country": "Canada",
+        "name": "Sudbury Airport"
+      },
+      "YSY": {
+        "city": "Sachs Harbour",
+        "country": "Canada",
+        "name": "Sachs Harbour Airport"
+      },
+      "YTE": {
+        "city": "Cape Dorset",
+        "country": "Canada",
+        "name": "Cape Dorset Airport"
+      },
+      "YTH": {
+        "city": "Thompson",
+        "country": "Canada",
+        "name": "Thompson Airport"
+      },
+      "YTR": {
+        "city": "Trenton",
+        "country": "Canada",
+        "name": "Trenton Airport"
+      },
+      "YTS": {
+        "city": "Timmins",
+        "country": "Canada",
+        "name": "Timmins/Victor M Power Airport"
+      },
+      "YTZ": {
+        "city": "Toronto",
+        "country": "Canada",
+        "name": "Billy Bishop Toronto City Airport"
+      },
+      "YUB": {
+        "city": "Tuktoyaktuk",
+        "country": "Canada",
+        "name": "Tuktoyaktuk Airport"
+      },
+      "YUL": {
+        "city": "Montreal",
+        "country": "Canada",
+        "name": "Montréal-Pierre Elliott Trudeau International Airport"
+      },
+      "YUT": {
+        "city": "Repulse Bay",
+        "country": "Canada",
+        "name": "Repulse Bay Airport"
+      },
+      "YUX": {
+        "city": "Hall Beach",
+        "country": "Canada",
+        "name": "Hall Beach Airport"
+      },
+      "YUY": {
+        "city": "Rouyn-Noranda",
+        "country": "Canada",
+        "name": "Rouyn-Noranda Airport"
+      },
+      "YVC": {
+        "city": "Cartwright",
+        "country": "Canada",
+        "name": "Cartwright Airport"
+      },
+      "YVG": {
+        "city": "Vermilion",
+        "country": "Canada",
+        "name": "Vermilion Airport"
+      },
+      "YVM": {
+        "city": "Quesnel",
+        "country": "Canada",
+        "name": "Quesnel Airport"
+      },
+      "YVO": {
+        "city": "Val-d'Or",
+        "country": "Canada",
+        "name": "Val-d'Or Airport"
+      },
+      "YVP": {
+        "city": "Kuujjuaq",
+        "country": "Canada",
+        "name": "Kuujjuaq Airport"
+      },
+      "YVQ": {
+        "city": "Norman Wells",
+        "country": "Canada",
+        "name": "Norman Wells Airport"
+      },
+      "YVR": {
+        "city": "Vancouver",
+        "country": "Canada",
+        "name": "Vancouver International Airport"
+      },
+      "YVT": {
+        "city": "Buffalo Narrows",
+        "country": "Canada",
+        "name": "Buffalo Narrows Airport"
+      },
+      "YVV": {
+        "city": "Wiarton",
+        "country": "Canada",
+        "name": "Wiarton Airport"
+      },
+      "YWA": {
+        "city": "Petawawa",
+        "country": "Canada",
+        "name": "Petawawa Airport"
+      },
+      "YWG": {
+        "city": "Winnipeg",
+        "country": "Canada",
+        "name": "Winnipeg James Armstrong Richardson International Airport"
+      },
+      "YWK": {
+        "city": "Wabush",
+        "country": "Canada",
+        "name": "Wabush Airport"
+      },
+      "YWL": {
+        "city": "Williams Lake",
+        "country": "Canada",
+        "name": "Williams Lake Airport"
+      },
+      "YWY": {
+        "city": "Wrigley",
+        "country": "Canada",
+        "name": "Wrigley Airport"
+      },
+      "YXC": {
+        "city": "Cranbrook",
+        "country": "Canada",
+        "name": "Cranbrook/Canadian Rockies International Airport"
+      },
+      "YXD": {
+        "city": "Edmonton",
+        "country": "Canada",
+        "name": "Edmonton City Centre Airport"
+      },
+      "YXE": {
+        "city": "Saskatoon",
+        "country": "Canada",
+        "name": "Saskatoon John G. Diefenbaker International Airport"
+      },
+      "YXH": {
+        "city": "Medicine Hat",
+        "country": "Canada",
+        "name": "Medicine Hat Airport"
+      },
+      "YXJ": {
+        "city": "Fort St. John",
+        "country": "Canada",
+        "name": "Fort St. John Airport"
+      },
+      "YXL": {
+        "city": "Sioux Lookout",
+        "country": "Canada",
+        "name": "Sioux Lookout Airport"
+      },
+      "YXP": {
+        "city": "Punta Cana"
+      },
+      "YXR": {
+        "city": "Earlsfield"
+      },
+      "YXS": {
+        "city": "Prince George",
+        "country": "Canada",
+        "name": "Prince George Airport"
+      },
+      "YXT": {
+        "city": "Terrace",
+        "country": "Canada",
+        "name": "Northwest Regional Airport Terrace-Kitimat"
+      },
+      "YXU": {
+        "city": "London",
+        "country": "Canada",
+        "name": "London International Airport"
+      },
+      "YXX": {
+        "city": "Abbotsford",
+        "country": "Canada",
+        "name": "Abbotsford International Airport"
+      },
+      "YXY": {
+        "city": "Whitehorse",
+        "country": "Canada",
+        "name": "Erik Nielsen Whitehorse International Airport"
+      },
+      "YYB": {
+        "city": "North Bay",
+        "country": "Canada",
+        "name": "North Bay/Jack Garland Airport"
+      },
+      "YYC": {
+        "city": "Calgary",
+        "country": "Canada",
+        "name": "Calgary International Airport"
+      },
+      "YYD": {
+        "city": "Smiths Falls",
+        "country": "Canada",
+        "name": "Smiths Falls-Montague Airport"
+      },
+      "YYE": {
+        "city": "Fort Nelson",
+        "country": "Canada",
+        "name": "Fort Nelson Airport"
+      },
+      "YYF": {
+        "city": "Penticton",
+        "country": "Canada",
+        "name": "Penticton Regional Airport"
+      },
+      "YYG": {
+        "city": "Charlottetown",
+        "country": "Canada",
+        "name": "Charlottetown Airport"
+      },
+      "YYH": {
+        "city": "Spence Bay",
+        "country": "Canada",
+        "name": "Spence Bay Airport"
+      },
+      "YYJ": {
+        "city": "Victoria",
+        "country": "Canada",
+        "name": "Victoria International Airport"
+      },
+      "YYL": {
+        "city": "Lynn Lake",
+        "country": "Canada",
+        "name": "Lynn Lake Airport"
+      },
+      "YYN": {
+        "city": "Swift Current",
+        "country": "Canada",
+        "name": "Swift Current Airport"
+      },
+      "YYQ": {
+        "city": "Churchill",
+        "country": "Canada",
+        "name": "Churchill Airport"
+      },
+      "YYR": {
+        "city": "Goose Bay",
+        "country": "Canada",
+        "name": "Goose Bay Airport"
+      },
+      "YYT": {
+        "city": "St. John's",
+        "country": "Canada",
+        "name": "St. John's International Airport"
+      },
+      "YYU": {
+        "city": "Kapuskasing",
+        "country": "Canada",
+        "name": "Kapuskasing Airport"
+      },
+      "YYW": {
+        "city": "Armstrong",
+        "country": "Canada",
+        "name": "Armstrong Airport"
+      },
+      "YYY": {
+        "city": "Mont-Joli",
+        "country": "Canada",
+        "name": "Mont-Joli Airport"
+      },
+      "YYZ": {
+        "city": "Toronto",
+        "country": "Canada",
+        "name": "Toronto Pearson International Airport"
+      },
+      "YZD": {
+        "city": "Downsview",
+        "country": "Canada",
+        "name": ""
+      },
+      "YZE": {
+        "city": "Gore Bay",
+        "country": "Canada",
+        "name": "Gore Bay-Manitoulin Airport"
+      },
+      "YZF": {
+        "city": "Yellowknife",
+        "country": "Canada",
+        "name": "Yellowknife Airport"
+      },
+      "YZH": {
+        "city": "Slave Lake",
+        "country": "Canada",
+        "name": "Slave Lake Airport"
+      },
+      "YZP": {
+        "city": "Sandspit",
+        "country": "Canada",
+        "name": "Sandspit Airport"
+      },
+      "YZR": {
+        "city": "Sarnia",
+        "country": "Canada",
+        "name": "Sarnia Chris Hadfield Airport"
+      },
+      "YZT": {
+        "city": "Port Hardy",
+        "country": "Canada",
+        "name": "Port Hardy Airport"
+      },
+      "YZU": {
+        "city": "Whitecourt",
+        "country": "Canada",
+        "name": "Whitecourt Airport"
+      },
+      "YZV": {
+        "city": "Sept-Îles",
+        "country": "Canada",
+        "name": "Sept-Îles Airport"
+      },
+      "YZW": {
+        "city": "Teslin",
+        "country": "Canada",
+        "name": "Teslin Airport"
+      },
+      "YZX": {
+        "city": "North Bay",
+        "country": "Canada",
+        "name": "North Bay/Jack Garland Airport"
+      },
+      "ZFA": {
+        "city": "Faro",
+        "country": "Canada",
+        "name": "Faro Airport"
+      },
+      "ZFM": {
+        "city": "Fort McPherson",
+        "country": "Canada",
+        "name": "Fort McPherson Airport"
+      },
+      "BUJ": {
+        "city": "Bou Saada",
+        "country": "Algeria",
+        "name": "Ain Eddis Airport"
+      },
+      "BJA": {
+        "city": "Bejaia",
+        "country": "Algeria",
+        "name": "Abane Ramdane Airport"
+      },
+      "ALG": {
+        "city": "Algiers",
+        "country": "Algeria",
+        "name": "Houari Boumediene Airport"
+      },
+      "DJG": {
+        "city": "Djanet",
+        "country": "Algeria",
+        "name": "Djanet Inedbirene Airport"
+      },
+      "VVZ": {
+        "city": "Illizi",
+        "country": "Algeria",
+        "name": "Illizi Takhamalt Airport"
+      },
+      "TMR": {
+        "city": "Tamanrasset",
+        "country": "Algeria",
+        "name": "Aguenar – Hadj Bey Akhamok Airport"
+      },
+      "GJL": {
+        "city": "Jijel",
+        "country": "Algeria",
+        "name": "Jijel Ferhat Abbas Airport"
+      },
+      "MZW": {
+        "city": "Mezziona"
+      },
+      "AAE": {
+        "city": "Annaba",
+        "country": "Algeria",
+        "name": "Rabah Bitat Airport"
+      },
+      "CZL": {
+        "city": "Constantine",
+        "country": "Algeria",
+        "name": "Mohamed Boudiaf International Airport"
+      },
+      "TEE": {
+        "city": "Tebessa",
+        "country": "Algeria",
+        "name": "Cheikh Larbi Tebessi Airport"
+      },
+      "HRM": {
+        "city": "Hassi R'Mel",
+        "country": "Algeria",
+        "name": "Hassi R'Mel Airport"
+      },
+      "TID": {
+        "city": "Tiaret",
+        "country": "Algeria",
+        "name": "Abdelhafid Boussouf Bou Chekif Airport"
+      },
+      "TIN": {
+        "city": "Tindouf",
+        "country": "Algeria",
+        "name": "Tindouf Airport"
+      },
+      "TLM": {
+        "city": "Tlemcen",
+        "country": "Algeria",
+        "name": "Zenata – Messali El Hadj Airport"
+      },
+      "ORN": {
+        "city": "Oran",
+        "country": "Algeria",
+        "name": "Es-Sénia Airport"
+      },
+      "AZR": {
+        "city": "Adrar",
+        "country": "Algeria",
+        "name": "Touat-Cheikh Sidi Mohamed Belkebir Airport"
+      },
+      "BSK": {
+        "city": "Biskra",
+        "country": "Algeria",
+        "name": "Biskra Airport"
+      },
+      "ELG": {
+        "city": "El Goolea",
+        "country": "Algeria",
+        "name": "El Golea Airport"
+      },
+      "GHA": {
+        "city": "Ghardaïa",
+        "country": "Algeria",
+        "name": "Noumérat – Moufdi Zakaria Airport"
+      },
+      "HME": {
+        "city": "Hassi Messaoud",
+        "country": "Algeria",
+        "name": "Oued Irara–Krim Belkacem Airport"
+      },
+      "INZ": {
+        "city": "In Salah",
+        "country": "Algeria",
+        "name": "In Salah Airport"
+      },
+      "TGR": {
+        "city": "Tigrawns",
+        "country": "Libya",
+        "name": "Tigrawns"
+      },
+      "LOO": {
+        "city": "Laghouat",
+        "country": "Algeria",
+        "name": "Laghouat"
+      },
+      "TMX": {
+        "city": "Timimoun",
+        "country": "Algeria",
+        "name": "Timimoun"
+      },
+      "OGX": {
+        "city": "Ouargla",
+        "country": "Algeria",
+        "name": "Ain Beida"
+      },
+      "IAM": {
+        "city": "In Amenas",
+        "country": "Algeria",
+        "name": "In Amenas"
+      },
+      "COO": {
+        "city": "Cotonou",
+        "country": "Benin",
+        "name": "Cadjehoun"
+      },
+      "OUA": {
+        "city": "Ouagadougou",
+        "country": "Burkina Faso",
+        "name": "Ouagadougou"
+      },
+      "BOY": {
+        "city": "Bobo-Dioulasso",
+        "country": "Burkina Faso",
+        "name": "Bobo-Dioulasso"
+      },
+      "ACC": {
+        "city": "Accra",
+        "country": "Ghana",
+        "name": "Kotoka"
+      },
+      "TML": {
+        "city": "Tamale",
+        "country": "Ghana",
+        "name": "Tamale"
+      },
+      "NYI": {
+        "city": "Sunyani",
+        "country": "Ghana",
+        "name": "Sunyani"
+      },
+      "TKD": {
+        "city": "Takoradi",
+        "country": "Ghana",
+        "name": "Takoradi"
+      },
+      "ABJ": {
+        "city": "Bouake",
+        "country": "Cote d'Ivoire",
+        "name": "Bouake Airport"
+      },
+      "BYK": {
+        "city": "Bouake"
+      },
+      "DJO": {
+        "city": "Djougou",
+        "country": "Benin",
+        "name": "Djougou Airport"
+      },
+      "HGO": {
+        "city": "Korhogo",
+        "country": "Cote d'Ivoire",
+        "name": "Korhogo Airport"
+      },
+      "MJC": {
+        "city": "Man",
+        "country": "Cote d'Ivoire",
+        "name": "Man Airport"
+      },
+      "SPY": {
+        "city": "San Pedro",
+        "country": "Cote d'Ivoire",
+        "name": "San Pedro Airport"
+      },
+      "ASK": {
+        "city": "Yamoussoukro"
+      },
+      "ABV": {
+        "city": "Abuja",
+        "country": "Nigeria",
+        "name": "Nnamdi Azikiwe International Airport"
+      },
+      "AKR": {
+        "city": "Akure",
+        "country": "Nigeria",
+        "name": "Akure Airport"
+      },
+      "BNI": {
+        "city": "Benin City",
+        "country": "Nigeria",
+        "name": "Benin Airport"
+      },
+      "CBQ": {
+        "city": "Calabar",
+        "country": "Nigeria",
+        "name": "Margaret Ekpo International Airport"
+      },
+      "ENU": {
+        "city": "Enugu",
+        "country": "Nigeria",
+        "name": "Akanu Ibiam International Airport"
+      },
+      "IBA": {
+        "city": "Ibadan",
+        "country": "Nigeria",
+        "name": "Ibadan Airport"
+      },
+      "ILR": {
+        "city": "Ilorin",
+        "country": "Nigeria",
+        "name": "Ilorin Airport"
+      },
+      "JOS": {
+        "city": "Jos",
+        "country": "Nigeria",
+        "name": "Yakubu Gowon Airport"
+      },
+      "KAD": {
+        "city": "Kaduna",
+        "country": "Nigeria",
+        "name": "Kaduna Airport"
+      },
+      "KAN": {
+        "city": "Kano",
+        "country": "Nigeria",
+        "name": "Mallam Aminu Kano International Airport"
+      },
+      "MIU": {
+        "city": "Maiduguri",
+        "country": "Nigeria",
+        "name": "Maiduguri Airport"
+      },
+      "MDI": {
+        "city": "Makurdi",
+        "country": "Nigeria",
+        "name": "Makurdi Airport"
+      },
+      "LOS": {
+        "city": "Lagos",
+        "country": "Nigeria",
+        "name": "Murtala Muhammed International Airport"
+      },
+      "MXJ": {
+        "city": "Minna",
+        "country": "Nigeria",
+        "name": "Minna Airport"
+      },
+      "PHC": {
+        "city": "Port Harcourt",
+        "country": "Nigeria",
+        "name": "Port Harcourt International Airport"
+      },
+      "SKO": {
+        "city": "Sokoto",
+        "country": "Nigeria",
+        "name": "Sadiq Abubakar III International Airport"
+      },
+      "YOL": {
+        "city": "Yola",
+        "country": "Nigeria",
+        "name": "Yola Airport"
+      },
+      "ZAR": {
+        "city": "Zaragoza",
+        "country": "Spain",
+        "name": "Zaragoza Airport"
+      },
+      "MFQ": {
+        "city": "Maradi",
+        "country": "Niger",
+        "name": "Maradi Airport"
+      },
+      "NIM": {
+        "city": "Niamey",
+        "country": "Niger",
+        "name": "Diori Hamani International Airport"
+      },
+      "THZ": {
+        "city": "Tahoua",
+        "country": "Niger",
+        "name": "Tahoua Airport"
+      },
+      "AJY": {
+        "city": "Agades",
+        "country": "Niger",
+        "name": "Mano Dayak International Airport"
+      },
+      "ZND": {
+        "city": "Zinder",
+        "country": "Niger",
+        "name": "Zinder Airport"
+      },
+      "MIR": {
+        "city": "Monastir",
+        "country": "Tunisia",
+        "name": "Monastir Habib Bourguiba International Airport"
+      },
+      "TUN": {
+        "city": "Tunis",
+        "country": "Tunisia",
+        "name": "Tunis–Carthage International Airport"
+      },
+      "GAF": {
+        "city": "Gafsa",
+        "country": "Tunisia",
+        "name": "Gafsa–Ksar International Airport"
+      },
+      "GAE": {
+        "city": "Gabès",
+        "country": "Tunisia",
+        "name": "Gabès–Matmata International Airport"
+      },
+      "DJE": {
+        "city": "Djerba",
+        "country": "Tunisia",
+        "name": "Djerba–Zarzis International Airport"
+      },
+      "EBM": {
+        "city": "El Borma",
+        "country": "Tunisia"
+      },
+      "LFW": {
+        "city": "Lomé",
+        "country": "Togo",
+        "name": "Lomé-Tokoin Airport"
+      },
+      "ANR": {
+        "city": "Antwerp",
+        "country": "Belgium",
+        "name": "Antwerp International Airport"
+      },
+      "BRU": {
+        "city": "Brussels",
+        "country": "Belgium",
+        "name": "Brussels Airport"
+      },
+      "CRL": {
+        "city": "Charleroi",
+        "country": "Belgium",
+        "name": "Brussels South Charleroi Airport"
+      },
+      "LGG": {
+        "city": "Liège",
+        "country": "Belgium",
+        "name": "Liège Airport"
+      },
+      "OST": {
+        "city": "Ostend",
+        "country": "Belgium",
+        "name": "Ostend-Bruges International Airport"
+      },
+      "OBL": {
+        "city": "Zoug"
+      },
+      "AOC": {
+        "city": "Altenburg",
+        "country": "Germany",
+        "name": "Leipzig–Altenburg Airport"
+      },
+      "IES": {
+        "city": "Rhyl",
+        "country": "United Kingdom",
+        "name": "Rhyl Airport"
+      },
+      "REB": {
+        "city": "Sydney",
+        "country": "Australia",
+        "name": "RAAF Base Richmond"
+      },
+      "QXH": {
+        "city": "",
+        "country": "",
+        "name": ""
+      },
+      "BBH": {
+        "city": "",
+        "country": "",
+        "name": ""
+      },
+      "ZMG": {
+        "city": "",
+        "country": "",
+        "name": ""
+      },
+      "CBU": {
+        "city": "",
+        "country": "",
+        "name": ""
+      },
+      "SXF": {
+        "city": "Berlin",
+        "country": "Germany",
+        "name": "Berlin Schönefeld Airport"
+      },
+      "DRS": {
+        "city": "Dresden",
+        "country": "Germany",
+        "name": "Dresden Airport"
+      },
+      "ERF": {
+        "city": "Erfurt",
+        "country": "Germany",
+        "name": "Erfurt Airport"
+      },
+      "FRA": {
+        "city": "Frankfurt",
+        "country": "Germany",
+        "name": "Frankfurt Airport"
+      },
+      "FMO": {
+        "city": "Münster",
+        "country": "Germany",
+        "name": "Münster Osnabrück International Airport"
+      },
+      "HAM": {
+        "city": "Hamburg",
+        "country": "Germany",
+        "name": "Hamburg Airport"
+      },
+      "THF": {
+        "city": "Berlin",
+        "country": "Germany",
+        "name": "Berlin Tempelhof"
+      },
+      "CGN": {
+        "city": "Cologne",
+        "country": "Germany",
+        "name": "Cologne Bonn Airport"
+      },
+      "DUS": {
+        "city": "Düsseldorf",
+        "country": "Germany",
+        "name": "Düsseldorf Airport"
+      },
+      "MUC": {
+        "city": "Munich",
+        "country": "Germany",
+        "name": "Munich Airport"
+      },
+      "NUE": {
+        "city": "Nuremberg",
+        "country": "Germany",
+        "name": "Nuremberg Airport"
+      },
+      "LEJ": {
+        "city": "Leipzig",
+        "country": "Germany",
+        "name": "Leipzig/Halle Airport"
+      },
+      "SCN": {
+        "city": "Saarbrücken",
+        "country": "Germany",
+        "name": "Saarbrücken Airport"
+      },
+      "STR": {
+        "city": "Stuttgart",
+        "country": "Germany",
+        "name": "Stuttgart Airport"
+      },
+      "TXL": {
+        "city": "Berlin",
+        "country": "Germany",
+        "name": "Berlin Tegel"
+      },
+      "HAJ": {
+        "city": "Hannover",
+        "country": "Germany",
+        "name": "Hannover Airport"
+      },
+      "BRE": {
+        "city": "Bremen",
+        "country": "Germany",
+        "name": "Bremen Airport"
+      },
+      "HHN": {
+        "city": "Frankfurt",
+        "country": "Germany",
+        "name": "Frankfurt-Hahn Airport"
+      },
+      "MHG": {
+        "city": "Mannheim",
+        "country": "Germany",
+        "name": "Mannheim City Airport"
+      },
+      "EIB": {
+        "city": "Eisenach",
+        "country": "Germany",
+        "name": "Eisenach-Kindel Airport"
+      },
+      "SGE": {
+        "city": "Siegen",
+        "country": "Germany",
+        "name": "Siegerland Airport"
+      },
+      "XFW": {
+        "city": "Hamburg",
+        "country": "Germany",
+        "name": "Hamburg Finkenwerder Airport"
+      },
+      "KEL": {
+        "city": "Kiel",
+        "country": "Germany",
+        "name": "Kiel Airport"
+      },
+      "LBC": {
+        "city": "Lübeck",
+        "country": "Germany",
+        "name": "Lübeck Airport"
+      },
+      "ESS": {
+        "city": "Essen",
+        "country": "Germany",
+        "name": "Essen/Mülheim Airport"
+      },
+      "BFE": {
+        "city": "Bielefeld",
+        "country": "Germany",
+        "name": "Bielefeld Airport"
+      },
+      "MGL": {
+        "city": "Mönchengladbach",
+        "country": "Germany",
+        "name": "Mönchengladbach Airport"
+      },
+      "PAD": {
+        "city": "Paderborn",
+        "country": "Germany",
+        "name": "Paderborn/Lippstadt Airport"
+      },
+      "DTM": {
+        "city": "Dortmund",
+        "country": "Germany",
+        "name": "Dortmund Airport"
+      },
+      "AGB": {
+        "city": "Augusta",
+        "country": "United States",
+        "name": "Augusta Regional Airport"
+      },
+      "OBF": {
+        "city": "Oberpfaffenhofen",
+        "country": "Germany",
+        "name": "Oberpfaffenhofen Airport"
+      },
+      "RBM": {
+        "city": "Straubing",
+        "country": "Germany",
+        "name": "Straubing Airport"
+      },
+      "FDH": {
+        "city": "Friedrichshafen",
+        "country": "Germany",
+        "name": "Friedrichshafen Airport"
+      },
+      "SZW": {
+        "city": "Schwerin",
+        "country": "Germany",
+        "name": "Schwerin-Parchim Airport"
+      },
+      "BYU": {
+        "city": "Bayreuth",
+        "country": "Germany",
+        "name": "Bayreuth Airport"
+      },
+      "URD": {
+        "city": "Büren",
+        "country": "Germany",
+        "name": "Büren Airport"
+      },
+      "HOQ": {
+        "city": "Hof",
+        "country": "Germany",
+        "name": "Hof-Plauen Airport"
+      },
+      "ZQW": {
+        "city": "Zweibrücken",
+        "country": "Germany",
+        "name": "Zweibrücken Airport"
+      },
+      "ZQL": {
+        "city": "Donauwörth",
+        "country": "Germany",
+        "name": "Donauwörth Airport"
+      }
+    },
+    "value_accuracy": 0.7385229540918163,
+    "by_type": {
+      "short_string": 0.7385229540918163
+    },
+    "outcomes": {
+      "correct": 740,
+      "accuracy": 193,
+      "omission": 69,
+      "hallucination": 0,
+      "structural": 0
+    }
+  },
+  {
+    "method": "nfield",
+    "fixture": "airports_1002",
+    "budget": "constrained",
+    "seed": 2,
+    "fields_total": 1002,
+    "fields_extracted": 944,
+    "coverage": 0.9341317365269461,
+    "k": 29,
+    "k_min": 28,
+    "optimality_gap": 0.03571428571428571,
+    "call_failed": 0,
+    "elapsed_seconds": 7.225,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "GKA": {
+        "city": "Goroka",
+        "country": "Papua New Guinea",
+        "name": "Goroka Airport"
+      },
+      "MAG": {
+        "city": "Madang",
+        "country": "Papua New Guinea",
+        "name": "Madang Airport"
+      },
+      "HGU": {
+        "city": "Mount Hagen",
+        "country": "Papua New Guinea",
+        "name": "Mount Hagen Airport"
+      },
+      "LAE": {
+        "city": "Lae",
+        "country": "Papua New Guinea",
+        "name": "Lae Airport"
+      },
+      "POM": {
+        "city": "Port Moresby",
+        "country": "Papua New Guinea",
+        "name": "Port Moresby Airport"
+      },
+      "WWK": {
+        "city": "Wewak",
+        "country": "Papua New Guinea",
+        "name": "Wewak Airport"
+      },
+      "UAK": {
+        "city": "Narsarsuaq",
+        "country": "Greenland",
+        "name": "Narsarsuaq Airport"
+      },
+      "GOH": {
+        "city": "Nuuk",
+        "country": "Greenland",
+        "name": "Nuuk Airport"
+      },
+      "SFJ": {
+        "city": "Kangerlussuaq",
+        "country": "Greenland",
+        "name": "Kangerlussuaq Airport"
+      },
+      "THU": {
+        "city": "Pituffik",
+        "country": "Greenland",
+        "name": "Thule Air Base"
+      },
+      "AEY": {
+        "city": "Akureyri",
+        "country": "Iceland",
+        "name": "Akureyri Airport"
+      },
+      "EGS": {
+        "city": "Egilsstadir",
+        "country": "Iceland",
+        "name": "Egilsstadir Airport"
+      },
+      "HFN": {
+        "city": "Hofn",
+        "country": "Iceland",
+        "name": "Hornafjordur Airport"
+      },
+      "HZK": {
+        "city": "Husavik",
+        "country": "Iceland",
+        "name": "Husavik Airport"
+      },
+      "IFJ": {
+        "city": "Isafjordur",
+        "country": "Iceland",
+        "name": "Isafjordur Airport"
+      },
+      "KEF": {
+        "city": "Keflavik",
+        "country": "Iceland",
+        "name": "Keflavik International Airport"
+      },
+      "PFJ": {
+        "city": "Patreksfjordur",
+        "country": "Iceland",
+        "name": "Patreksfjordur Airport"
+      },
+      "RKV": {
+        "city": "Reykjavik",
+        "country": "Iceland",
+        "name": "Reykjavik Airport"
+      },
+      "SIJ": {
+        "city": "Siglufjordur",
+        "country": "Iceland",
+        "name": "Siglufjordur Airport"
+      },
+      "VEY": {
+        "city": "Vestmannaeyjar",
+        "country": "Iceland",
+        "name": "Vestmannaeyjar Airport"
+      },
+      "YAM": {
+        "city": "Sault Ste. Marie",
+        "country": "Canada",
+        "name": "Sault Ste. Marie Airport"
+      },
+      "YAY": {
+        "city": "St. Anthony",
+        "country": "Canada",
+        "name": "St. Anthony Airport"
+      },
+      "YAZ": {
+        "city": "Tofino",
+        "country": "Canada",
+        "name": "Tofino Airport"
+      },
+      "YBB": {
+        "city": "Pelly Bay",
+        "country": "Canada",
+        "name": "Kugaaruk Airport"
+      },
+      "YBC": {
+        "city": "Baie Comeau",
+        "country": "Canada",
+        "name": "Baie Comeau Airport"
+      },
+      "YBG": {
+        "city": "Bagotville",
+        "country": "Canada",
+        "name": "Bagotville Airport"
+      },
+      "YBK": {
+        "city": "Baker Lake",
+        "country": "Canada",
+        "name": "Baker Lake Airport"
+      },
+      "YBL": {
+        "city": "Campbell River",
+        "country": "Canada",
+        "name": "Campbell River Airport"
+      },
+      "YBR": {
+        "city": "Brandon",
+        "country": "Canada",
+        "name": "Brandon Municipal Airport"
+      },
+      "YCB": {
+        "city": "Cambridge Bay",
+        "country": "Canada",
+        "name": "Cambridge Bay Airport"
+      },
+      "YCD": {
+        "city": "Nanaimo",
+        "country": "Canada",
+        "name": "Nanaimo Airport"
+      },
+      "YCG": {
+        "city": "Castlegar",
+        "country": "Canada",
+        "name": "West Kootenay Regional Airport"
+      },
+      "YCH": {
+        "city": "Chatham",
+        "country": "Canada",
+        "name": "Miramichi Airport"
+      },
+      "YCL": {
+        "city": "Charlo",
+        "country": "Canada",
+        "name": "Charlo Airport"
+      },
+      "YCO": {
+        "city": "Coppermine",
+        "country": "Canada",
+        "name": "Kugluktuk Airport"
+      },
+      "YCT": {
+        "city": "Coronation",
+        "country": "Canada",
+        "name": "Coronation Airport"
+      },
+      "YCW": {
+        "city": "Chicago",
+        "country": "Canada",
+        "name": "Chicago Water Town"
+      },
+      "YCY": {
+        "city": "Clarence Creek",
+        "country": "Canada",
+        "name": "Clarence Creek Airport"
+      },
+      "YZS": {
+        "city": "Coral Harbour",
+        "country": "Canada",
+        "name": "Coral Harbour Airport"
+      },
+      "YDA": {
+        "city": "Dawson City",
+        "country": "Canada",
+        "name": "Dawson City Airport"
+      },
+      "YDB": {
+        "city": "Burdett",
+        "country": "Canada",
+        "name": "Burdett Airport"
+      },
+      "YDF": {
+        "city": "Deer Lake",
+        "country": "Canada",
+        "name": "Deer Lake Regional Airport"
+      },
+      "YDL": {
+        "city": "Dease Lake",
+        "country": "Canada",
+        "name": "Dease Lake Airport"
+      },
+      "YDN": {
+        "city": "Dauphin",
+        "country": "Canada",
+        "name": "Dauphin Barker Airport"
+      },
+      "YDQ": {
+        "city": "Dawson Creek",
+        "country": "Canada",
+        "name": "Dawson Creek Airport"
+      },
+      "YEG": {
+        "city": "Edmonton",
+        "country": "Canada",
+        "name": "Edmonton International Airport"
+      },
+      "YEK": {
+        "city": "Arviat",
+        "country": "Canada",
+        "name": "Arviat Airport"
+      },
+      "YEN": {
+        "city": "North Spirit Lake",
+        "country": "Canada",
+        "name": "North Spirit Lake Airport"
+      },
+      "YET": {
+        "city": "Yellowknife",
+        "country": "Canada",
+        "name": "Yellowknife Airport"
+      },
+      "YEV": {
+        "city": "Inuvik",
+        "country": "Canada",
+        "name": "Inuvik (Mike Zubko) Airport"
+      },
+      "YFB": {
+        "city": "Iqaluit",
+        "country": "Canada",
+        "name": "Iqaluit Airport"
+      },
+      "YFC": {
+        "city": "Fredericton",
+        "country": "Canada",
+        "name": "Fredericton International Airport"
+      },
+      "YFE": {
+        "city": "Forestville",
+        "country": "Canada",
+        "name": "Forestville Airport"
+      },
+      "YFO": {
+        "city": "Flin Flon",
+        "country": "Canada",
+        "name": "Flin Flon Airport"
+      },
+      "YFR": {
+        "city": "Fort Resolution",
+        "country": "Canada",
+        "name": "Fort Resolution Airport"
+      },
+      "YFS": {
+        "city": "Fort Simpson",
+        "country": "Canada",
+        "name": "Fort Simpson Airport"
+      },
+      "YGK": {
+        "city": "Kingston",
+        "country": "Canada",
+        "name": "Kingston/Norman Rogers Airport"
+      },
+      "YGL": {
+        "city": "La Grande Riviere",
+        "country": "Canada",
+        "name": "La Grande Rivière Airport"
+      },
+      "YGP": {
+        "city": "Gaspe",
+        "country": "Canada",
+        "name": "Michel-Pouliot Gaspé Airport"
+      },
+      "YGQ": {
+        "city": "Windsor",
+        "country": "Canada",
+        "name": "Windsor International Airport"
+      },
+      "YGR": {
+        "city": "Îles-de-la-Madeleine",
+        "country": "Canada",
+        "name": "Îles-de-la-Madeleine Airport"
+      },
+      "YHB": {
+        "city": "Hudson Bay",
+        "country": "Canada",
+        "name": "Hudson Bay Airport"
+      },
+      "YHD": {
+        "city": "Dryden",
+        "country": "Canada",
+        "name": "Dryden Regional Airport"
+      },
+      "YHI": {
+        "city": "Ulukhaktok",
+        "country": "Canada",
+        "name": "Ulukhaktok/Holman Airport"
+      },
+      "YHK": {
+        "city": "Gjoa Haven",
+        "country": "Canada",
+        "name": "Gjoa Haven Airport"
+      },
+      "YHM": {
+        "city": "Hamilton",
+        "country": "Canada",
+        "name": "John C. Munro Hamilton International Airport"
+      },
+      "YHU": {
+        "city": "Montreal",
+        "country": "Canada",
+        "name": "Montréal/Saint-Hubert Airport"
+      },
+      "YHY": {
+        "city": "Fort Simpson",
+        "country": "Canada",
+        "name": "Fort Simpson Airport"
+      },
+      "YHZ": {
+        "city": "Halifax",
+        "country": "Canada",
+        "name": "Halifax Stanfield International Airport"
+      },
+      "YIB": {
+        "city": "Atikokan",
+        "country": "Canada",
+        "name": "Atikokan Municipal Airport"
+      },
+      "YIO": {
+        "city": "North Spirit Lake",
+        "country": "Canada",
+        "name": "North Spirit Lake Airport"
+      },
+      "YKA": {
+        "city": "Kamloops",
+        "country": "Canada",
+        "name": "Kamloops Airport"
+      },
+      "YKF": {
+        "city": "Waterloo",
+        "country": "Canada",
+        "name": "Region of Waterloo International Airport"
+      },
+      "YKL": {
+        "city": "Schefferville",
+        "country": "Canada",
+        "name": "Schefferville Airport"
+      },
+      "YKY": {
+        "city": "Kindersley",
+        "country": "Canada",
+        "name": "Kindersley Regional Airport"
+      },
+      "YKZ": {
+        "city": "Toronto",
+        "country": "Canada",
+        "name": "Toronto-Buttonville Municipal Airport"
+      },
+      "YLD": {
+        "city": "Chapleau",
+        "country": "Canada",
+        "name": "Chapleau Airport"
+      },
+      "YLJ": {
+        "city": "Lloydminster",
+        "country": "Canada",
+        "name": "Lloydminster Airport"
+      },
+      "YLL": {
+        "city": "Lloydminster",
+        "country": "Canada",
+        "name": "Lloydminster Airport"
+      },
+      "YLT": {
+        "city": "Alert",
+        "country": "Canada",
+        "name": "Alert Airport"
+      },
+      "YLW": {
+        "city": "Kelowna",
+        "country": "Canada",
+        "name": "Kelowna International Airport"
+      },
+      "YMA": {
+        "city": "Mayo",
+        "country": "Canada",
+        "name": "Mayo Airport"
+      },
+      "YMJ": {
+        "city": "Moose Jaw",
+        "country": "Canada",
+        "name": "Moose Jaw Air Vice Marshal C.M. McEwen Airport"
+      },
+      "YMM": {
+        "city": "Fort McMurray",
+        "country": "Canada",
+        "name": "Fort McMurray International Airport"
+      },
+      "YMO": {
+        "city": "Moosonee",
+        "country": "Canada",
+        "name": "Moosonee Airport"
+      },
+      "YMW": {
+        "city": "Maniwaki",
+        "country": "Canada",
+        "name": "Maniwaki Airport"
+      },
+      "YMX": {
+        "city": "Montreal",
+        "country": "Canada",
+        "name": "Montréal–Mirabel International Airport"
+      },
+      "YNA": {
+        "city": "Natashquan",
+        "country": "Canada",
+        "name": "Natashquan Airport"
+      },
+      "YND": {
+        "city": "North Bay",
+        "country": "Canada",
+        "name": "North Bay/Jack Garland Airport"
+      },
+      "YNM": {
+        "city": "Matagami",
+        "country": "Canada",
+        "name": "Matagami Airport"
+      },
+      "YOC": {
+        "city": "Old Crow",
+        "country": "Canada",
+        "name": "Old Crow Airport"
+      },
+      "YOD": {
+        "city": "Cold Lake",
+        "country": "Canada",
+        "name": "Cold Lake/Group Captain R.W. McNair Airport"
+      },
+      "YOJ": {
+        "city": "High Level",
+        "country": "Canada",
+        "name": "North Spirit Lake Airport"
+      },
+      "YOW": {
+        "city": "Ottawa",
+        "country": "Canada",
+        "name": "Ottawa Macdonald-Cartier International Airport"
+      },
+      "YPA": {
+        "city": "Prince Albert",
+        "country": "Canada",
+        "name": "Prince Albert Airport"
+      },
+      "YPE": {
+        "city": "Peace River",
+        "country": "Canada",
+        "name": "Peace River Airport"
+      },
+      "YPG": {
+        "city": "Portage la Prairie",
+        "country": "Canada",
+        "name": "Portage la Prairie Airport"
+      },
+      "YPL": {
+        "city": "Pickle Lake",
+        "country": "Canada",
+        "name": "Pickle Lake Airport"
+      },
+      "YPN": {
+        "city": "Port McNicoll",
+        "country": "Canada",
+        "name": "Port McNicoll Airport"
+      },
+      "YPQ": {
+        "city": "Peterborough",
+        "country": "Canada",
+        "name": "Peterborough Airport"
+      },
+      "YPR": {
+        "city": "Prince Rupert",
+        "country": "Canada",
+        "name": "Prince Rupert Airport"
+      },
+      "YPY": {
+        "city": "Fort Chipewyan",
+        "country": "Canada",
+        "name": "Fort Chipewyan Airport"
+      },
+      "YQA": {
+        "city": "Muskoka",
+        "country": "Canada",
+        "name": "Muskoka Airport"
+      },
+      "YQB": {
+        "city": "Quebec",
+        "country": "Canada",
+        "name": "Québec City Jean Lesage International Airport"
+      },
+      "YQF": {
+        "city": "Red Deer",
+        "country": "Canada",
+        "name": "Red Deer Regional Airport"
+      },
+      "YQG": {
+        "city": "Windsor",
+        "country": "Canada",
+        "name": "Windsor International Airport"
+      },
+      "YQK": {
+        "city": "Kenora",
+        "country": "Canada",
+        "name": "Kenora Airport"
+      },
+      "YQL": {
+        "city": "Lethbridge",
+        "country": "Canada",
+        "name": "Lethbridge Airport"
+      },
+      "YQM": {
+        "city": "Moncton",
+        "country": "Canada",
+        "name": "Greater Moncton Roméo LeBlanc International Airport"
+      },
+      "YQQ": {
+        "city": "Comox",
+        "country": "Canada",
+        "name": "CFB Comox"
+      },
+      "YQR": {
+        "city": "Regina",
+        "country": "Canada",
+        "name": "Regina International Airport"
+      },
+      "YQT": {
+        "city": "Thunder Bay",
+        "country": "Canada",
+        "name": "Thunder Bay International Airport"
+      },
+      "YQU": {
+        "city": "Grande Prairie",
+        "country": "Canada",
+        "name": "Grande Prairie Airport"
+      },
+      "YQV": {
+        "city": "Yorkton",
+        "country": "Canada",
+        "name": "Yorkton Municipal Airport"
+      },
+      "YQW": {
+        "city": "North Battleford",
+        "country": "Canada",
+        "name": "North Battleford Airport"
+      },
+      "YQX": {
+        "city": "Gander",
+        "country": "Canada",
+        "name": "Gander International Airport"
+      },
+      "YQY": {
+        "city": "Sydney",
+        "country": "Canada",
+        "name": "J.A. Douglas McCurdy Sydney Airport"
+      },
+      "YQZ": {
+        "city": "Quesnel",
+        "country": "Canada",
+        "name": "Quesnel Airport"
+      },
+      "YRB": {
+        "city": "Resolute",
+        "country": "Canada",
+        "name": "Resolute Bay Airport"
+      },
+      "YRI": {
+        "city": "Rivière-du-Loup",
+        "country": "Canada",
+        "name": "Rivière-du-Loup Airport"
+      },
+      "YRJ": {
+        "city": "Roberval",
+        "country": "Canada",
+        "name": "Roberval Airport"
+      },
+      "YRM": {
+        "city": "Rocky Mountain House",
+        "country": "Canada",
+        "name": "Rocky Mountain House Airport"
+      },
+      "YRT": {
+        "city": "Rankin Inlet",
+        "country": "Canada",
+        "name": "Rankin Inlet Airport"
+      },
+      "YSB": {
+        "city": "Sudbury",
+        "country": "Canada",
+        "name": "Sudbury Airport"
+      },
+      "YSC": {
+        "city": "Sherbrooke",
+        "country": "Canada",
+        "name": "Sherbrooke Airport"
+      },
+      "YSJ": {
+        "city": "Saint John",
+        "country": "Canada",
+        "name": "Saint John Airport"
+      },
+      "YSM": {
+        "city": "Fort Smith",
+        "country": "Canada",
+        "name": "Fort Smith Airport"
+      },
+      "YSR": {
+        "city": "Nanisivik",
+        "country": "Canada",
+        "name": "Nanisivik Airport"
+      },
+      "YSU": {
+        "city": "Summerside",
+        "country": "Canada",
+        "name": "Summerside Airport"
+      },
+      "YSY": {
+        "city": "Sachs Harbour",
+        "country": "Canada",
+        "name": "Sachs Harbour Airport"
+      },
+      "YTE": {
+        "city": "Cape Dorset",
+        "country": "Canada",
+        "name": "Cape Dorset Airport"
+      },
+      "YTH": {
+        "city": "Thompson",
+        "country": "Canada",
+        "name": "Thompson Airport"
+      },
+      "YTR": {
+        "city": "Trenton",
+        "country": "Canada",
+        "name": "Trenton Airport"
+      },
+      "YTS": {
+        "city": "Timmins",
+        "country": "Canada",
+        "name": "Timmins/Victor M. Power Airport"
+      },
+      "YTZ": {
+        "city": "Toronto",
+        "country": "Canada",
+        "name": "Billy Bishop Toronto City Airport"
+      },
+      "YUB": {
+        "city": "Tuktoyaktuk",
+        "country": "Canada",
+        "name": "Tuktoyaktuk Airport"
+      },
+      "YUL": {
+        "city": "Montreal",
+        "country": "Canada",
+        "name": "Montréal-Pierre Elliott Trudeau International Airport"
+      },
+      "YUT": {
+        "city": "Repulse Bay",
+        "country": "Canada",
+        "name": "Repulse Bay Airport"
+      },
+      "YUX": {
+        "city": "Hall Beach",
+        "country": "Canada",
+        "name": "Hall Beach Airport"
+      },
+      "YUY": {
+        "city": "Rouyn-Noranda",
+        "country": "Canada",
+        "name": "Rouyn-Noranda Airport"
+      },
+      "YVC": {
+        "city": "Cartwright",
+        "country": "Canada",
+        "name": "Cartwright Airport"
+      },
+      "YVG": {
+        "city": "Vermilion"
+      },
+      "YVM": {
+        "city": "Quesnel",
+        "country": "Canada",
+        "name": "Quesnel Airport"
+      },
+      "YVO": {
+        "city": "Val-d'Or",
+        "country": "Canada",
+        "name": "Val-d'Or Airport"
+      },
+      "YVP": {
+        "city": "Kuujjuaq",
+        "country": "Canada",
+        "name": "Kuujjuaq Airport"
+      },
+      "YVQ": {
+        "city": "Norman Wells",
+        "country": "Canada",
+        "name": "Norman Wells Airport"
+      },
+      "YVR": {
+        "city": "Vancouver",
+        "country": "Canada",
+        "name": "Vancouver International Airport"
+      },
+      "YVT": {
+        "city": "Buffalo Narrows",
+        "country": "Canada",
+        "name": "Buffalo Narrows Airport"
+      },
+      "YVV": {
+        "city": "Wiarton",
+        "country": "Canada",
+        "name": "Wiarton Airport"
+      },
+      "YWA": {
+        "city": "Petawawa",
+        "country": "Canada",
+        "name": "Petawawa Airport"
+      },
+      "YWG": {
+        "city": "Winnipeg",
+        "country": "Canada",
+        "name": "Winnipeg James Armstrong Richardson International Airport"
+      },
+      "YWK": {
+        "city": "Wabush",
+        "country": "Canada",
+        "name": "Wabush Airport"
+      },
+      "YWL": {
+        "city": "Williams Lake",
+        "country": "Canada",
+        "name": "Williams Lake Airport"
+      },
+      "YWY": {
+        "city": "Wrigley",
+        "country": "Canada",
+        "name": "Wrigley Airport"
+      },
+      "YXC": {
+        "city": "Cranbrook",
+        "country": "Canada",
+        "name": "Canadian Rockies International Airport"
+      },
+      "YXD": {
+        "city": "Edmonton",
+        "country": "Canada",
+        "name": "Edmonton City Centre Airport"
+      },
+      "YXE": {
+        "city": "Saskatoon",
+        "country": "Canada",
+        "name": "Saskatoon John G. Diefenbaker International Airport"
+      },
+      "YXH": {
+        "city": "Medicine Hat",
+        "country": "Canada",
+        "name": "Medicine Hat Airport"
+      },
+      "YXJ": {
+        "city": "Fort St. John",
+        "country": "Canada",
+        "name": "North Peace Regional Airport"
+      },
+      "YXL": {
+        "city": "Sioux Lookout",
+        "country": "Canada",
+        "name": "Sioux Lookout Airport"
+      },
+      "YXP": {
+        "city": "Pamiero",
+        "country": "Canada",
+        "name": "Pamiero Airport"
+      },
+      "YXR": {
+        "city": "Earlsfield",
+        "country": "Canada",
+        "name": "Earlsfield Airport"
+      },
+      "YXS": {
+        "city": "Prince George",
+        "country": "Canada",
+        "name": "Prince George Airport"
+      },
+      "YXT": {
+        "city": "Northwest Territories",
+        "country": "Canada",
+        "name": "Terrace Airport"
+      },
+      "YXU": {
+        "city": "London",
+        "country": "Canada",
+        "name": "London International Airport"
+      },
+      "YXX": {
+        "city": "Abbotsford",
+        "country": "Canada",
+        "name": "Abbotsford International Airport"
+      },
+      "YXY": {
+        "city": "Whitehorse",
+        "country": "Canada",
+        "name": "Erik Nielsen Whitehorse International Airport"
+      },
+      "YYB": {
+        "city": "North Bay",
+        "country": "Canada",
+        "name": "North Bay/Jack Garland Airport"
+      },
+      "YYC": {
+        "city": "Calgary",
+        "country": "Canada",
+        "name": "Calgary International Airport"
+      },
+      "YYD": {
+        "city": "Smiths Falls",
+        "country": "Canada",
+        "name": "Smiths Falls-Montague Airport"
+      },
+      "YYE": {
+        "city": "Fort Nelson",
+        "country": "Canada",
+        "name": "Fort Nelson Airport"
+      },
+      "YYF": {
+        "city": "Penticton",
+        "country": "Canada",
+        "name": "Penticton Regional Airport"
+      },
+      "YYG": {
+        "city": "Charlottetown",
+        "country": "Canada",
+        "name": "Charlottetown Airport"
+      },
+      "YYH": {
+        "city": "Spence Bay",
+        "country": "Canada",
+        "name": "Spence Bay Airport"
+      },
+      "YYJ": {
+        "city": "Victoria",
+        "country": "Canada",
+        "name": "Victoria International Airport"
+      },
+      "YYL": {
+        "city": "Lynn Lake",
+        "country": "Canada",
+        "name": "Lynn Lake Airport"
+      },
+      "YYR": {
+        "city": "Goose Bay",
+        "country": "Canada",
+        "name": "Goose Bay Airport"
+      },
+      "YYT": {
+        "city": "St. John's",
+        "country": "Canada",
+        "name": "St. John's International Airport"
+      },
+      "YYU": {
+        "city": "Kapuskasing",
+        "country": "Canada",
+        "name": "Kapuskasing Airport"
+      },
+      "YYW": {
+        "city": "Armstrong",
+        "country": "Canada",
+        "name": "Armstrong Airport"
+      },
+      "YYY": {
+        "city": "Mont-Joli",
+        "country": "Canada",
+        "name": "Mont-Joli Airport"
+      },
+      "YYZ": {
+        "city": "Toronto",
+        "country": "Canada",
+        "name": "Toronto Pearson International Airport"
+      },
+      "YZD": {
+        "city": "Toronto",
+        "country": "Canada",
+        "name": "Billy Bishop Toronto City Airport"
+      },
+      "YZE": {
+        "city": "Gore Bay",
+        "country": "Canada",
+        "name": "Gore Bay-Manitoulin Airport"
+      },
+      "YZF": {
+        "city": "Yellowknife",
+        "country": "Canada",
+        "name": "Yellowknife Airport"
+      },
+      "YZH": {
+        "city": "Slave Lake",
+        "country": "Canada",
+        "name": "Slave Lake Airport"
+      },
+      "YZP": {
+        "city": "Sandspit",
+        "country": "Canada",
+        "name": "Sandspit Airport"
+      },
+      "YZR": {
+        "city": "Sarnia",
+        "country": "Canada",
+        "name": "Sarnia Chris Hadfield Airport"
+      },
+      "YZT": {
+        "city": "Port Hardy",
+        "country": "Canada",
+        "name": "Port Hardy Airport"
+      },
+      "YZU": {
+        "city": "Whitecourt",
+        "country": "Canada",
+        "name": "Whitecourt Airport"
+      },
+      "YZV": {
+        "city": "Sepvik",
+        "country": "Canada",
+        "name": "Sept-Îles Airport"
+      },
+      "YZW": {
+        "city": "Teslin",
+        "country": "Canada",
+        "name": "Teslin Airport"
+      },
+      "YZX": {
+        "city": "North Bay",
+        "country": "Canada",
+        "name": "North Bay/Jack Garland Airport"
+      },
+      "ZFA": {
+        "city": "Faro",
+        "country": "Canada",
+        "name": "Faro Airport"
+      },
+      "ZFM": {
+        "city": "Fort McPherson",
+        "country": "Canada",
+        "name": "Fort McPherson Airport"
+      },
+      "BUJ": {
+        "city": "Bou Saada",
+        "country": "Algeria",
+        "name": "Ain Eddis Airport"
+      },
+      "BJA": {
+        "city": "Bejaia",
+        "country": "Algeria",
+        "name": "Abane Ramdane Airport"
+      },
+      "ALG": {
+        "city": "Algiers",
+        "country": "Algeria",
+        "name": "Houari Boumediene Airport"
+      },
+      "DJG": {
+        "city": "Djanet",
+        "country": "Algeria",
+        "name": "Djanet Inedbirenne Airport"
+      },
+      "VVZ": {
+        "city": "Illizi",
+        "country": "Algeria",
+        "name": "Takhamalt Airport"
+      },
+      "TMR": {
+        "city": "Tamanrasset",
+        "country": "Algeria",
+        "name": "Aguenar – Hadj Bey Akhamok Airport"
+      },
+      "GJL": {
+        "city": "Jijel",
+        "country": "Algeria",
+        "name": "Jijel Ferhat Abbas Airport"
+      },
+      "MZW": {
+        "city": "Mezarieb"
+      },
+      "AAE": {
+        "city": "Annaba",
+        "country": "Algeria",
+        "name": "Rabah Bitat Airport"
+      },
+      "CZL": {
+        "city": "Constantine",
+        "country": "Algeria",
+        "name": "Mohammed Boudiaf International Airport"
+      },
+      "TEE": {
+        "city": "Tebessa",
+        "country": "Algeria",
+        "name": "Cheikh Larbi Tebessi Airport"
+      },
+      "HRM": {
+        "city": "Hassi R'Mel",
+        "country": "Algeria",
+        "name": "Hassi R'Mel Airport"
+      },
+      "TID": {
+        "city": "Tiaret"
+      },
+      "TIN": {
+        "city": "Tindouf",
+        "country": "Algeria",
+        "name": "Tindouf Airport"
+      },
+      "TLM": {
+        "city": "Tlemcen",
+        "country": "Algeria",
+        "name": "Zenata – Messali El Hadj Airport"
+      },
+      "ORN": {
+        "city": "Oran",
+        "country": "Algeria",
+        "name": "Es-Sénia Airport"
+      },
+      "AZR": {
+        "city": "Adrar",
+        "country": "Algeria",
+        "name": "Touat-Cheikh Sidi Mohamed Belkebir Airport"
+      },
+      "BSK": {
+        "city": "Biskra",
+        "country": "Algeria",
+        "name": "Biskra Airport"
+      },
+      "ELG": {
+        "city": "El Golea",
+        "country": "Algeria",
+        "name": "El Golea Airport"
+      },
+      "GHA": {
+        "city": "Ghardaïa",
+        "country": "Algeria",
+        "name": "Noumérat – Moufdi Zakaria Airport"
+      },
+      "HME": {
+        "city": "Hassi Messaoud",
+        "country": "Algeria",
+        "name": "Oued Irara Airport"
+      },
+      "INZ": {
+        "city": "In Salah",
+        "country": "Algeria",
+        "name": "In Salah Airport"
+      },
+      "TGR": {
+        "city": "Tangier",
+        "country": "Morocco",
+        "name": "Ibn Batouta Airport"
+      },
+      "LOO": {
+        "city": "Laghouat",
+        "country": "Algeria",
+        "name": "Laghouat Airport"
+      },
+      "TMX": {
+        "city": "Timimoun",
+        "country": "Algeria",
+        "name": "Timimoun Airport"
+      },
+      "OGX": {
+        "city": "Ouargla",
+        "country": "Algeria",
+        "name": "Ain Beida Airport"
+      },
+      "IAM": {
+        "city": "In Amenas",
+        "country": "Algeria",
+        "name": "In Amenas Airport"
+      },
+      "COO": {
+        "city": "Cotonou",
+        "country": "Benin",
+        "name": "Cadjehoun Airport"
+      },
+      "OUA": {
+        "city": "Ouagadougou",
+        "country": "Burkina Faso",
+        "name": "Thomas Sankara International Airport"
+      },
+      "BOY": {
+        "city": "Bobo-Dioulasso",
+        "country": "Burkina Faso",
+        "name": "Bobo-Dioulasso Airport"
+      },
+      "ACC": {
+        "city": "Accra",
+        "country": "Ghana",
+        "name": "Kotoka International Airport"
+      },
+      "TML": {
+        "city": "Tamale",
+        "country": "Ghana",
+        "name": "Tamale Airport"
+      },
+      "NYI": {
+        "city": "Sunyani",
+        "country": "Ghana",
+        "name": "Sunyani Airport"
+      },
+      "TKD": {
+        "city": "Takoradi",
+        "country": "Ghana",
+        "name": "Takoradi Airport"
+      },
+      "ABJ": {
+        "city": "Bouake",
+        "country": "Cote d'Ivoire",
+        "name": "Bouake Airport"
+      },
+      "BYK": {
+        "city": "Bouaké"
+      },
+      "DJO": {
+        "city": "Dornod",
+        "country": "Mongolia",
+        "name": "Dornod Airport"
+      },
+      "HGO": {
+        "city": "Korhogo",
+        "country": "Cote d'Ivoire",
+        "name": "Korhogo Airport"
+      },
+      "MJC": {
+        "city": "Man",
+        "country": "Cote d'Ivoire",
+        "name": "Man Airport"
+      },
+      "SPY": {
+        "city": "San Pedro",
+        "country": "Cote d'Ivoire",
+        "name": "San Pedro Airport"
+      },
+      "ASK": {
+        "city": "Yamoussoukro"
+      },
+      "ABV": {
+        "city": "Abuja",
+        "country": "Nigeria",
+        "name": "Nnamdi Azikiwe International Airport"
+      },
+      "AKR": {
+        "city": "Akure",
+        "country": "Nigeria",
+        "name": "Akure Airport"
+      },
+      "BNI": {
+        "city": "Benin City",
+        "country": "Nigeria",
+        "name": "Benin Airport"
+      },
+      "CBQ": {
+        "city": "Calabar",
+        "country": "Nigeria",
+        "name": "Margaret Ekpo International Airport"
+      },
+      "ENU": {
+        "city": "Enugu",
+        "country": "Nigeria",
+        "name": "Akanu Ibiam International Airport"
+      },
+      "IBA": {
+        "city": "Ibadan",
+        "country": "Nigeria",
+        "name": "Ibadan Airport"
+      },
+      "ILR": {
+        "city": "Ilorin",
+        "country": "Nigeria",
+        "name": "Ilorin International Airport"
+      },
+      "JOS": {
+        "city": "Jos",
+        "country": "Nigeria",
+        "name": "Yakubu Gowon Airport"
+      },
+      "KAD": {
+        "city": "Kaduna",
+        "country": "Nigeria",
+        "name": "Kaduna International Airport"
+      },
+      "KAN": {
+        "city": "Kano",
+        "country": "Nigeria",
+        "name": "Mallam Aminu Kano International Airport"
+      },
+      "MIU": {
+        "city": "Maiduguri",
+        "country": "Nigeria",
+        "name": "Maiduguri International Airport"
+      },
+      "MDI": {
+        "city": "Makurdi",
+        "country": "Nigeria",
+        "name": "Makurdi Airport"
+      },
+      "LOS": {
+        "city": "Lagos",
+        "country": "Nigeria",
+        "name": "Murtala Muhammed International Airport"
+      },
+      "MXJ": {
+        "city": "Minna",
+        "country": "Nigeria",
+        "name": "Minna Airport"
+      },
+      "PHC": {
+        "city": "Port Harcourt",
+        "country": "Nigeria",
+        "name": "Port Harcourt International Airport"
+      },
+      "SKO": {
+        "city": "Sokoto",
+        "country": "Nigeria",
+        "name": "Sadiq Abubakar III International Airport"
+      },
+      "YOL": {
+        "city": "Yola",
+        "country": "Nigeria",
+        "name": "Yola Airport"
+      },
+      "ZAR": {
+        "city": "Zaragoza",
+        "country": "Spain",
+        "name": "Zaragoza Airport"
+      },
+      "MFQ": {
+        "city": "Maradi",
+        "country": "Niger",
+        "name": "Maradi Airport"
+      },
+      "NIM": {
+        "city": "Niamey",
+        "country": "Niger",
+        "name": "Diori Hamani International Airport"
+      },
+      "THZ": {
+        "city": "Tahoua",
+        "country": "Niger",
+        "name": "Tahoua Airport"
+      },
+      "AJY": {
+        "city": "Agades",
+        "country": "Niger",
+        "name": "Mano Dayak International Airport"
+      },
+      "ZND": {
+        "city": "Zinder",
+        "country": "Niger",
+        "name": "Zinder Airport"
+      },
+      "MIR": {
+        "city": "Monastir",
+        "country": "Tunisia",
+        "name": "Monastir Habib Bourguiba International Airport"
+      },
+      "TUN": {
+        "city": "Tunis",
+        "country": "Tunisia",
+        "name": "Tunis–Carthage International Airport"
+      },
+      "GAF": {
+        "city": "Gafsa",
+        "country": "Tunisia",
+        "name": "Gafsa–Ksar International Airport"
+      },
+      "GAE": {
+        "city": "Gabès",
+        "country": "Tunisia",
+        "name": "Gabès–Matmata International Airport"
+      },
+      "DJE": {
+        "city": "Djerba",
+        "country": "Tunisia",
+        "name": "Djerba–Zarzis International Airport"
+      },
+      "EBM": {
+        "city": "El Borma",
+        "country": "Tunisia"
+      },
+      "LFW": {
+        "city": "Lomé",
+        "country": "Togo",
+        "name": "Lomé–Tokoin International Airport"
+      },
+      "ANR": {
+        "city": "Antwerp",
+        "country": "Belgium",
+        "name": "Antwerp International Airport"
+      },
+      "BRU": {
+        "city": "Brussels",
+        "country": "Belgium",
+        "name": "Brussels Airport"
+      },
+      "CRL": {
+        "city": "Charleroi",
+        "country": "Belgium",
+        "name": "Brussels South Charleroi Airport"
+      },
+      "LGG": {
+        "city": "Liège",
+        "country": "Belgium",
+        "name": "Liège Airport"
+      },
+      "OST": {
+        "city": "Ostend",
+        "country": "Belgium",
+        "name": "Ostend–Bruges International Airport"
+      },
+      "OBL": {
+        "city": "Zouar"
+      },
+      "AOC": {
+        "city": "Altenburg",
+        "country": "Germany",
+        "name": "Leipzig–Altenburg Airport"
+      },
+      "IES": {
+        "city": "Rhyl",
+        "country": "United Kingdom",
+        "name": "Rhyl Airport"
+      },
+      "REB": {
+        "city": "Syrian Desert",
+        "country": "Syria",
+        "name": "Resifa Airport"
+      },
+      "QXH": {
+        "city": "",
+        "country": "",
+        "name": ""
+      },
+      "BBH": {
+        "city": "Burgas",
+        "country": "Bulgaria",
+        "name": "Burgas Airport"
+      },
+      "ZMG": {
+        "city": "",
+        "country": "",
+        "name": ""
+      },
+      "CBU": {
+        "city": "Cottbus",
+        "country": "Germany",
+        "name": "Cottbus-Drewitz Airport"
+      },
+      "SXF": {
+        "city": "Berlin",
+        "country": "Germany",
+        "name": "Berlin Schönefeld Airport"
+      },
+      "DRS": {
+        "city": "Dresden",
+        "country": "Germany",
+        "name": "Dresden Airport"
+      },
+      "ERF": {
+        "city": "Erfurt",
+        "country": "Germany",
+        "name": "Erfurt Airport"
+      },
+      "FRA": {
+        "city": "Frankfurt",
+        "country": "Germany",
+        "name": "Frankfurt Airport"
+      },
+      "FMO": {
+        "city": "Münster",
+        "country": "Germany",
+        "name": "Münster Osnabrück Airport"
+      },
+      "HAM": {
+        "city": "Hamburg",
+        "country": "Germany",
+        "name": "Hamburg Airport"
+      },
+      "THF": {
+        "city": "Berlin",
+        "country": "Germany",
+        "name": "Tempelhof"
+      },
+      "CGN": {
+        "city": "Cologne",
+        "country": "Germany",
+        "name": "Cologne Bonn Airport"
+      },
+      "DUS": {
+        "city": "Dusseldorf",
+        "country": "Germany",
+        "name": "Dusseldorf Airport"
+      },
+      "MUC": {
+        "city": "Munich",
+        "country": "Germany",
+        "name": "Munich Airport"
+      },
+      "NUE": {
+        "city": "Nuremberg",
+        "country": "Germany",
+        "name": "Nuremberg Airport"
+      },
+      "LEJ": {
+        "city": "Leipzig",
+        "country": "Germany",
+        "name": "Leipzig/Halle Airport"
+      },
+      "SCN": {
+        "city": "Saarbrucken",
+        "country": "Germany",
+        "name": "Saarbrucken Airport"
+      },
+      "STR": {
+        "city": "Stuttgart",
+        "country": "Germany",
+        "name": "Stuttgart Airport"
+      },
+      "TXL": {
+        "city": "Berlin",
+        "country": "Germany",
+        "name": "Tegel"
+      },
+      "HAJ": {
+        "city": "Hanover",
+        "country": "Germany",
+        "name": "Hannover Airport"
+      },
+      "BRE": {
+        "city": "Bremen",
+        "country": "Germany",
+        "name": "Bremen Airport"
+      },
+      "QEF": {
+        "city": "",
+        "country": "",
+        "name": "Queen Beatrix International Airport"
+      },
+      "HHN": {
+        "city": "Frankfurt",
+        "country": "Germany",
+        "name": "Frankfurt-Hahn Airport"
+      },
+      "MHG": {
+        "city": "Mannheim",
+        "country": "Germany",
+        "name": "Mannheim City Airport"
+      },
+      "EIB": {
+        "city": "Eisenach",
+        "country": "Germany",
+        "name": "Eisenach-Kindel Airport"
+      },
+      "SGE": {
+        "city": "Siegen",
+        "country": "Germany",
+        "name": "Siegerland Airport"
+      },
+      "XFW": {
+        "city": "Hamburg",
+        "country": "Germany",
+        "name": "Hamburg Finkenwerder Airport"
+      },
+      "KEL": {
+        "city": "Kiel",
+        "country": "Germany",
+        "name": "Kiel Airport"
+      },
+      "LBC": {
+        "city": "Lübeck",
+        "country": "Germany",
+        "name": "Lübeck Airport"
+      },
+      "ESS": {
+        "city": "Essen",
+        "country": "Germany",
+        "name": "Essen/Mülheim Airport"
+      },
+      "BFE": {
+        "city": "Bielefeld",
+        "country": "Germany",
+        "name": "Bielefeld Airport"
+      },
+      "MGL": {
+        "city": "Mönchengladbach",
+        "country": "Germany",
+        "name": "Mönchengladbach Airport"
+      },
+      "PAD": {
+        "city": "Paderborn",
+        "country": "Germany",
+        "name": "Paderborn/Lippstadt Airport"
+      },
+      "DTM": {
+        "city": "Dortmund",
+        "country": "Germany",
+        "name": "Dortmund Airport"
+      },
+      "AGB": {
+        "city": "Augusta",
+        "country": "United States",
+        "name": "Augusta Regional Airport"
+      },
+      "OBF": {
+        "city": "Oberpfaffenhofen",
+        "country": "Germany",
+        "name": "Oberpfaffenhofen Airport"
+      },
+      "RBM": {
+        "city": "Straubing",
+        "country": "Germany",
+        "name": "Straubing Airport"
+      },
+      "FDH": {
+        "city": "Friedrichshafen",
+        "country": "Germany",
+        "name": "Friedrichshafen Airport"
+      },
+      "SZW": {
+        "city": "Schwerin",
+        "country": "Germany",
+        "name": "Schwerin–Parchim Airport"
+      },
+      "BYU": {
+        "city": "Bayreuth",
+        "country": "Germany",
+        "name": "Bayreuth Airport"
+      },
+      "URD": {
+        "city": "Büren",
+        "country": "Germany",
+        "name": "Büren Airport"
+      },
+      "HOQ": {
+        "city": "Hof",
+        "country": "Germany",
+        "name": "Hof–Plauen Airport"
+      },
+      "ZQW": {
+        "city": "Zweibrücken",
+        "country": "Germany",
+        "name": "Zweibrücken Airport"
+      },
+      "ZQL": {
+        "city": "Donauwörth",
+        "country": "Germany",
+        "name": "Donauwörth Airport"
+      }
+    },
+    "value_accuracy": 0.7365269461077845,
+    "by_type": {
+      "short_string": 0.7365269461077845
+    },
+    "outcomes": {
+      "correct": 738,
+      "accuracy": 198,
+      "omission": 66,
+      "hallucination": 0,
+      "structural": 0
+    }
+  }
+]

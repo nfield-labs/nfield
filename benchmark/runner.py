@@ -272,6 +272,8 @@ def _write_scored(
         "fields_covered_mean": round(coverage_mean * n_fields, 1),
         "value_accuracy_mean": _mean(accuracies),
         "value_accuracy_std": _std(accuracies),
+        "precision_mean": _mean([r.precision for r in reports]),
+        "reliability_mean": _mean([r.reliability for r in reports]),
         "json_pass_all": all(r.json_pass for r in reports),
         "by_type_mean": _by_type_mean(reports),
         "call_failed_mean": _mean([float(r.call_failed) for r in reports]),

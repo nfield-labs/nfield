@@ -1,0 +1,18 @@
+{
+  "method": "native_json",
+  "fixture": "countries_205",
+  "n_fields": 205,
+  "runs": 3,
+  "coverage_mean": 0.9951219512195122,
+  "fields_covered_mean": 204.0,
+  "value_accuracy_mean": 0.9463414634146341,
+  "value_accuracy_std": 0.014634146341463372,
+  "precision_mean": 0.9509538758753924,
+  "reliability_mean": 0.8975609756097561,
+  "json_pass_all": true,
+  "by_type_mean": {
+    "boolean": 0.9743589743589743,
+    "short_string": 0.9291338582677166
+  },
+  "call_failed_mean": 0.0
+}

@@ -37,6 +37,7 @@ class NfieldAdapter:
 
     name: str = field(default="nfield", init=False)
     max_retry_rounds: int = DEFAULT_MAX_RETRY_ROUNDS
+    closed_book: bool = False
     api_key: str | None = None
     base_url: str | None = None
 
@@ -71,7 +72,9 @@ class NfieldAdapter:
                 api_key=self.api_key,
                 base_url=self.base_url,
                 instructions=instructions,
-                config=ExtractionConfig(max_retry_rounds=self.max_retry_rounds),
+                config=ExtractionConfig(
+                    max_retry_rounds=self.max_retry_rounds, closed_book=self.closed_book
+                ),
             )
         except Exception as exc:  # a baseline-fair failure: record, never abort the sweep
             # A whole-engine failure means no leaf returned, so every targeted field
