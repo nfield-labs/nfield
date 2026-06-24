@@ -13,7 +13,7 @@ Classes:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from enum import Enum
 from typing import Any
 
@@ -177,3 +177,43 @@ class ExtractionResult:
     metadata: Metadata
     status: ExtractionStatus
     fields: tuple[FieldResult, ...] = field(default_factory=tuple)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Return a plain-dict form of the result, ready for JSON serialisation.
+
+        The enum status becomes its string value; metadata and per-field results
+        become nested dicts. Round-trips with :meth:`from_dict`.
+
+        Returns:
+            A JSON-serialisable dict with ``data``, ``metadata``, ``status``,
+            ``fields`` keys.
+
+        Example:
+            >>> # ExtractionResult.from_dict(r.to_dict()) == r
+        """
+        return {
+            "data": self.data,
+            "metadata": asdict(self.metadata),
+            "status": self.status.value,
+            "fields": [asdict(f) for f in self.fields],
+        }
+
+    @classmethod
+    def from_dict(cls, payload: dict[str, Any]) -> ExtractionResult:
+        """Reconstruct an ``ExtractionResult`` from its :meth:`to_dict` form.
+
+        Args:
+            payload: A dict produced by :meth:`to_dict` (or matching its shape).
+
+        Returns:
+            The reconstructed ``ExtractionResult``.
+
+        Example:
+            >>> # ExtractionResult.from_dict(r.to_dict()).status is r.status
+        """
+        return cls(
+            data=payload["data"],
+            metadata=Metadata(**payload["metadata"]),
+            status=ExtractionStatus(payload["status"]),
+            fields=tuple(FieldResult(**f) for f in payload.get("fields", [])),
+        )

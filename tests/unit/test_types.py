@@ -213,3 +213,41 @@ def test_imports_from_formatshield_types() -> None:
         FieldResult,
         Metadata,
     )
+
+
+# ---------------------------------------------------------------------------
+# to_dict / from_dict round-trip
+# ---------------------------------------------------------------------------
+
+
+class TestResultSerialization:
+    def _result(self) -> ExtractionResult:
+        return ExtractionResult(
+            data={"vendor": "Acme", "total": 12.5},
+            metadata=_make_metadata(),
+            status=ExtractionStatus.PARTIAL,
+            fields=(
+                FieldResult(path="vendor", value="Acme", confidence=0.97),
+                FieldResult(path="total", value=12.5, confidence=0.8, is_missing=False),
+            ),
+        )
+
+    def test_to_dict_is_json_serialisable(self) -> None:
+        import json
+
+        payload = self._result().to_dict()
+        # status is a plain string, not an enum, so json.dumps does not choke.
+        assert payload["status"] == "partial"
+        json.dumps(payload)  # must not raise
+
+    def test_round_trip_equals_original(self) -> None:
+        original = self._result()
+        assert ExtractionResult.from_dict(original.to_dict()) == original
+
+    def test_round_trip_without_field_results(self) -> None:
+        bare = ExtractionResult(
+            data={"vendor": "Acme"},
+            metadata=_make_metadata(),
+            status=ExtractionStatus.SUCCESS,
+        )
+        assert ExtractionResult.from_dict(bare.to_dict()) == bare
