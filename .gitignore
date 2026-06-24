@@ -19,6 +19,11 @@ build/
 
 # Large downloaded test fixtures (fetched on-demand by integration tests)
 tests/fixtures/documents/_cache/
+
+# Closed-book benchmark source dumps (downloadable; build_fixtures.py lists the URLs and
+# regenerates the committed fixture folders). The fixtures themselves are tracked.
+benchmark/datasets/closed_book/*.json
+benchmark/datasets/closed_book/*.dat
 .coverage
 htmlcov/
 
