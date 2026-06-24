@@ -16,7 +16,16 @@ import asyncio
 import dataclasses
 import os
 import types
-from typing import TYPE_CHECKING, Any, Union, get_args, get_origin, get_type_hints
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Literal,
+    Union,
+    get_args,
+    get_origin,
+    get_type_hints,
+    overload,
+)
 
 from formatshield.config import ExtractionConfig
 from formatshield.exceptions import SchemaError
@@ -60,6 +69,12 @@ _PRIMITIVE_JSON_TYPES: dict[type, str] = {
 # nesting ceiling across the library; conversion adds ~2 frames per level, well
 # under CPython's ~1000-frame recursion limit.
 _MAX_SCHEMA_DEPTH: int = 256
+
+# Default ceiling on documents extracted at once by extract_batch. Each document itself
+# fans out to several leaf calls, so doc-level concurrency multiplies the in-flight API
+# calls; a small bound keeps that product under provider rate limits. Raise it on
+# higher-throughput plans (5-10 is the common API-concurrency range).
+_DEFAULT_BATCH_CONCURRENCY: int = 4
 
 
 def _check_schema_depth(depth: int) -> None:
@@ -386,6 +401,75 @@ class AsyncFormatShield:
             state, provider, config, fallback_provider=self._fallback_provider
         )
         return run_stage_6(state)
+
+    @overload
+    async def extract_batch(
+        self,
+        documents: list[str],
+        schema: object | None = ...,
+        *,
+        max_concurrent: int | None = ...,
+        return_exceptions: Literal[False] = ...,
+    ) -> list[ExtractionResult]: ...
+
+    @overload
+    async def extract_batch(
+        self,
+        documents: list[str],
+        schema: object | None = ...,
+        *,
+        max_concurrent: int | None = ...,
+        return_exceptions: Literal[True],
+    ) -> list[ExtractionResult | BaseException]: ...
+
+    async def extract_batch(
+        self,
+        documents: list[str],
+        schema: object | None = None,
+        *,
+        max_concurrent: int | None = None,
+        return_exceptions: bool = False,
+    ) -> list[ExtractionResult] | list[ExtractionResult | BaseException]:
+        """Extract many documents concurrently with one reused, calibrated engine.
+
+        Runs each document through :meth:`extract`, bounded by a semaphore so a large
+        batch does not fan out into a provider rate-limit storm. The engine calibrates
+        once (Stage 0) and every document reuses it.
+
+        Args:
+            documents: The source documents to extract.
+            schema: Optional schema override applied to every document; falls back to
+                the construction-time schema.
+            max_concurrent: Max documents in flight at once. Defaults to
+                ``_DEFAULT_BATCH_CONCURRENCY``. Each document still fans out to its own
+                bounded leaf calls underneath.
+            return_exceptions: When ``True``, a document that raises yields its exception
+                in place (the batch always completes). When ``False`` (default), the
+                first failure is re-raised after all documents have run.
+
+        Returns:
+            One result per input document, in input order. With
+            ``return_exceptions=True`` a failed document's slot holds the exception.
+
+        Example:
+            >>> # results = await engine.extract_batch([doc1, doc2], max_concurrent=2)
+        """
+        semaphore = asyncio.BoundedSemaphore(max_concurrent or _DEFAULT_BATCH_CONCURRENCY)
+
+        async def _one(document: str) -> ExtractionResult:
+            async with semaphore:
+                return await self.extract(document, schema)
+
+        settled = await asyncio.gather(*(_one(doc) for doc in documents), return_exceptions=True)
+        if return_exceptions:
+            return list(settled)
+        # Surface the first failure, but only after every document has settled.
+        resolved: list[ExtractionResult] = []
+        for outcome in settled:
+            if isinstance(outcome, BaseException):
+                raise outcome
+            resolved.append(outcome)
+        return resolved
 
     def _resolve_schema(self, schema: object | None) -> dict[str, Any]:
         """Pick the per-call schema, falling back to the cached one."""

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import concurrent.futures
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Literal, TypeVar, overload
 
 from formatshield.engine._async import AsyncFormatShield
 
@@ -126,6 +126,65 @@ class FormatShield:
             >>> # result = fs.extract("invoice text", schema=Invoice)
         """
         return _run_sync(self._engine.extract(document, schema))
+
+    @overload
+    def extract_batch(
+        self,
+        documents: list[str],
+        schema: object | None = ...,
+        *,
+        max_concurrent: int | None = ...,
+        return_exceptions: Literal[False] = ...,
+    ) -> list[ExtractionResult]: ...
+
+    @overload
+    def extract_batch(
+        self,
+        documents: list[str],
+        schema: object | None = ...,
+        *,
+        max_concurrent: int | None = ...,
+        return_exceptions: Literal[True],
+    ) -> list[ExtractionResult | BaseException]: ...
+
+    def extract_batch(
+        self,
+        documents: list[str],
+        schema: object | None = None,
+        *,
+        max_concurrent: int | None = None,
+        return_exceptions: bool = False,
+    ) -> list[ExtractionResult] | list[ExtractionResult | BaseException]:
+        """Extract many documents concurrently (blocking).
+
+        Synchronous facade over
+        :meth:`~formatshield.engine._async.AsyncFormatShield.extract_batch`.
+
+        Args:
+            documents: The source documents to extract.
+            schema: Optional schema override applied to every document.
+            max_concurrent: Max documents in flight at once.
+            return_exceptions: When ``True``, a failed document yields its exception in
+                place; when ``False`` (default), the first failure is re-raised.
+
+        Returns:
+            One result per input document, in input order.
+
+        Example:
+            >>> # results = fs.extract_batch([doc1, doc2])
+        """
+        # Branch so each call selects a concrete Literal overload of the async method.
+        if return_exceptions:
+            return _run_sync(
+                self._engine.extract_batch(
+                    documents, schema, max_concurrent=max_concurrent, return_exceptions=True
+                )
+            )
+        return _run_sync(
+            self._engine.extract_batch(
+                documents, schema, max_concurrent=max_concurrent, return_exceptions=False
+            )
+        )
 
     def __call__(self, document: str, schema: object | None = None) -> ExtractionResult:
         """Alias for :meth:`extract` so ``fs(document)`` works."""
