@@ -95,6 +95,32 @@ def _check_schema_depth(depth: int) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Input checks
+# ---------------------------------------------------------------------------
+
+
+def _require_text_document(document: object) -> None:
+    """Reject a document that is not text, with a clear, actionable message.
+
+    The pipeline reads the document as a string. A non-string (``None``, a number, a
+    ``Path``, raw bytes) otherwise fails deep inside with a cryptic error; this names
+    the problem at the boundary instead. An empty string is valid (it yields a result
+    with every field missing), so only the type is checked here.
+
+    Args:
+        document: The value passed as the document.
+
+    Raises:
+        TypeError: If *document* is not a ``str``.
+    """
+    if not isinstance(document, str):
+        raise TypeError(
+            f"document must be text (str), got {type(document).__name__}. Read a file "
+            "first with load_document('path'); convert PDF/DOCX to text yourself."
+        )
+
+
+# ---------------------------------------------------------------------------
 # Model resolution
 # ---------------------------------------------------------------------------
 
@@ -369,11 +395,13 @@ class AsyncFormatShield:
 
         Raises:
             SchemaError: If no schema is available from the call or construction.
+            TypeError: If ``document`` is not a string.
 
         Example:
             >>> # result = await engine.extract("invoice text", schema=Invoice)
             >>> # result.status
         """
+        _require_text_document(document)
         schema_dict = self._resolve_schema(schema)
         config = self._config
         provider = self._provider

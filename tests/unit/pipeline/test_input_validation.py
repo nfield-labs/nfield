@@ -47,6 +47,23 @@ def test_engine_rejects_contradictory_schema_before_calling(monkeypatch) -> None
         asyncio.run(engine.extract("any document", bad_schema))
 
 
+def test_non_string_document_is_rejected_with_clear_message(monkeypatch) -> None:
+    engine = _engine(monkeypatch, ExtractionConfig())
+    schema = {"type": "object", "properties": {"name": {"type": "string"}}}
+    for bad in (None, 123, b"bytes", ["text"]):
+        with pytest.raises(TypeError, match="document must be text"):
+            asyncio.run(engine.extract(bad, schema))  # type: ignore[arg-type]
+
+
+def test_empty_string_document_is_allowed(monkeypatch) -> None:
+    # An empty document is valid input (no evidence), not a type error: the gate checks
+    # only the type, so this must reach the (never-called) provider stage, not raise here.
+    engine = _engine(monkeypatch, ExtractionConfig())
+    schema = {"type": "object", "properties": {"name": {"type": "string"}}}
+    with pytest.raises(AssertionError):  # the stub provider asserts it is reached
+        asyncio.run(engine.extract("", schema))
+
+
 def test_engine_preflight_can_be_disabled(monkeypatch) -> None:
     # With validate_schema=False the preflight is skipped; the contradictory schema then
     # reaches the (never-called) provider stage, proving the gate is what rejects.
