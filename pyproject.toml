@@ -26,6 +26,7 @@ dependencies = []
 [project.optional-dependencies]
 groq = ["groq>=0.9"]
 cli = ["typer>=0.12"]
+export = ["pandas>=2.0"]
 dev = [
     "pytest>=9",
     "pytest-asyncio>=0.24",
@@ -96,6 +97,11 @@ ignore_missing_imports = true
 # it is imported lazily and never required to run the library or its tests.
 [[tool.mypy.overrides]]
 module = ["matplotlib.*"]
+ignore_missing_imports = true
+
+# pandas is the optional [export] dependency, imported lazily inside export.py only.
+[[tool.mypy.overrides]]
+module = ["pandas.*"]
 ignore_missing_imports = true
 
 # Competitor libraries driven by the head-to-head benchmark (runner3); they ship no

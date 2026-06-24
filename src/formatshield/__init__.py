@@ -29,6 +29,8 @@ if TYPE_CHECKING:
         SchemaError,
         ValidationError,
     )
+    from .export import result_to_dataframe, results_to_csv, results_to_dataframe
+    from .io import load_document, load_results, load_schema, save_results
     from .providers import from_model
     from .types import ExtractionResult, ExtractionStatus, FieldResult, Metadata
 
@@ -48,8 +50,15 @@ __all__ = [
     "ValidationError",
     "__version__",
     "from_model",
+    "load_document",
+    "load_results",
+    "load_schema",
     "nfield",
     "nfield_async",
+    "result_to_dataframe",
+    "results_to_csv",
+    "results_to_dataframe",
+    "save_results",
 ]
 
 _dynamic_imports: dict[str, str] = {
@@ -58,6 +67,15 @@ _dynamic_imports: dict[str, str] = {
     "nfield_async": ".engine",
     "FormatShield": ".engine",
     "AsyncFormatShield": ".engine",
+    # Filesystem helpers (load inputs, persist results)
+    "load_document": ".io",
+    "load_schema": ".io",
+    "save_results": ".io",
+    "load_results": ".io",
+    # Tabular export (optional pandas dependency)
+    "results_to_dataframe": ".export",
+    "result_to_dataframe": ".export",
+    "results_to_csv": ".export",
     # Provider factory
     "from_model": ".providers",
     # Config

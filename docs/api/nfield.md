@@ -53,6 +53,19 @@ AsyncFormatShield(model=None, schema=None, *, config=None)
 Async engine and async context manager. `await engine.extract(document)` or
 `await engine(document)`.
 
+## `extract_batch`
+
+```python
+engine.extract_batch(documents, schema=None, *, max_concurrent=None, return_exceptions=False)
+```
+
+Extract many documents through one reused, calibrated engine (`FormatShield` and
+`AsyncFormatShield` both expose it). Documents run concurrently, bounded by a semaphore
+(`max_concurrent`, default 4) so a large batch stays under provider rate limits. Returns
+one result per document, in input order. A provider failure surfaces as a `FAILED`-status
+result; with `return_exceptions=True`, an error that escapes `extract()` is kept in that
+document's slot instead of being re-raised.
+
 ## `from_model`
 
 ```python
@@ -93,6 +106,29 @@ Missing-field recovery (architecture engine §5.3) always runs as a core Stage 5
 step — fields never produced after surgical retry get one bounded recovery pass
 (tree-backtrack absent-ancestor children, then re-extract the missed-only set).
 There is no flag; it is a no-op when nothing is missing.
+
+## Filesystem helpers (`formatshield.io`)
+
+```python
+load_document(path) -> str          # read a UTF-8 text document
+load_schema(path) -> dict           # read + parse a JSON Schema file (SchemaError on bad JSON / non-object)
+save_results(results, path) -> None # write results as JSON Lines (one per line)
+load_results(path) -> list[ExtractionResult]   # read them back (round-trips to_dict/from_dict)
+```
+
+Text/JSON only — PDF/DOCX/CSV parsing stays the caller's job. `ExtractionResult.to_dict()`
+/ `ExtractionResult.from_dict()` give the underlying JSON-serialisable form.
+
+## Tabular export (`formatshield.export`, optional `pandas`)
+
+```python
+results_to_dataframe(results, *, include_metadata=False) -> pandas.DataFrame
+result_to_dataframe(result, *, include_metadata=False) -> pandas.DataFrame
+results_to_csv(results, path, *, include_metadata=False) -> None
+```
+
+One row per result; columns are the flat dot-notation field paths. Install with
+`pip install 'formatshield[export]'` — pandas is imported only when these are called.
 
 ## Exceptions
 
