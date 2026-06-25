@@ -62,13 +62,25 @@ _TRANSPORT_KINDS = frozenset({FailureKind.RATE_LIMITED, FailureKind.TRANSPORT})
 # Ordered (specific → generic): the first matching probe wins. Each probe is a set
 # of case-insensitive substrings; any one present classifies the text.
 _PROBES: tuple[tuple[FailureKind, tuple[str, ...]], ...] = (
-    (FailureKind.REQUEST_EXCEEDS_CONTEXT, ("reduce the length", "maximum context", "context_length")),
+    (
+        FailureKind.REQUEST_EXCEEDS_CONTEXT,
+        ("reduce the length", "maximum context", "context_length"),
+    ),
     (FailureKind.SCHEMA_VALIDATION_FAILED, ("validation error", "input should be", "model_type")),
     (FailureKind.OUTPUT_TRUNCATED, ("max_tokens length", "incomplete due to", "max_tokens limit")),
-    (FailureKind.SINGLE_CALL_OUTPUT_CEILING, ("service_unavailable", "internalservererror", " 502", "503")),
+    (
+        FailureKind.SINGLE_CALL_OUTPUT_CEILING,
+        ("service_unavailable", "internalservererror", " 502", "503"),
+    ),
     (FailureKind.RATE_LIMITED, ("rate limit", "ratelimiterror", "429", "too many requests")),
-    (FailureKind.JSON_TRUNCATED, ("jsondecodeerror", "expecting", "no json object", "not valid json")),
-    (FailureKind.TRANSPORT, ("apitimeout", "timed out", "timeout", "apiconnection", "connection error")),
+    (
+        FailureKind.JSON_TRUNCATED,
+        ("jsondecodeerror", "expecting", "no json object", "not valid json"),
+    ),
+    (
+        FailureKind.TRANSPORT,
+        ("apitimeout", "timed out", "timeout", "apiconnection", "connection error"),
+    ),
 )
 
 

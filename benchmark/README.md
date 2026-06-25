@@ -103,14 +103,21 @@ Two substrate tracks that never share a chart:
 ```
 benchmark/
   score.py          gold-diff scorer: type-aware VA + error decomposition (no API)
-  runner.py         orchestrator: sweep (method x fixture) -> raw JSON + MANIFEST
-  report.py         aggregate raw/scored -> summary.csv + tables (+ optional plots)
+  budget.py         native vs constrained token-budget profiles
+  models.py         per-model native limits (context / output ceilings)
   datasets.py       registry: fixture name -> (schema, document, gold, instructions)
-  adapters/         nfield (+ knowledge variant) and the Track-A baselines
+  report.py         aggregate raw/scored -> summary.csv + tables (+ optional plots)
+  runner.py         main sweep: method x document fixture -> raw JSON + MANIFEST
+  runner2.py        scale sweep: nfield on the large (2.5k-5.6k field) fixtures
+  runner3.py        competitor head-to-head: nfield vs other extraction libraries
+  runner4.py        closed-book sweep: every method fills a schema with no document
+  adapters/         nfield and the baselines, behind one uniform interface
+  datasets/         real/ document fixtures + closed_book/ knowledge fixtures
   results/
     <model>_<date>/
-      raw/<method>_<fixture>.json      readable indented JSON array (one entry per seed)
-      scored/<method>_<fixture>.json   coverage_mean (primary) + value_accuracy_mean
+      <native|constrained>/
+        raw/<method>_<fixture>.json    indented JSON array (one entry per seed)
+        scored/<method>_<fixture>.json coverage_mean (primary) + value_accuracy_mean
       summary.csv
       MANIFEST.json
 ```
@@ -125,7 +132,7 @@ runs — never auto-run the expensive sweep.
 # Run one method over one fixture and score it (needs GROQ_API_KEY, costs calls):
 uv run python -m benchmark.runner run --method nfield --fixture clinicaltrial --seeds 1
 
-# Run the whole method x fixture matrix into one dated result dir and aggregate:
+# Main sweep: the method x document-fixture matrix into one dated result dir:
 uv run python -m benchmark.runner sweep \
   --methods nfield,raw_prompt,native_json,instructor,langchain \
   --fixtures clinicaltrial,factbook_us,factbook_multi --seeds 1
@@ -134,11 +141,20 @@ uv run python -m benchmark.runner sweep \
 uv run python -m benchmark.runner score --method nfield --fixture clinicaltrial
 
 # Aggregate a result directory into a table + plot:
-uv run python -m benchmark.report results/groq-llama-3.3-70b-versatile_2026-06-09 --plot
+uv run python -m benchmark.report results/<model>_<date> --plot
 ```
 
-The competitor adapters (Instructor, LangChain) need the optional `bench` extra:
-`uv sync --extra bench`.
+Three focused sweeps live alongside the main one, each writing the same dated
+result layout:
+
+```bash
+uv run python -m benchmark.runner2   # scale: nfield on the 2.5k-5.6k field fixtures
+uv run python -m benchmark.runner3   # competitor head-to-head vs other libraries
+uv run python -m benchmark.runner4   # closed-book: fill a schema with no document
+```
+
+The baseline and competitor adapters (Instructor, LangChain, ContextGem,
+LangExtract, LangStruct) need the optional `bench` extra: `uv sync --extra bench`.
 
 ## Results are committed (and scrubbed)
 
@@ -154,13 +170,23 @@ key is read from a gitignored `.env`).
 
 ## Status
 
-A first real single-model sweep is committed under
-`results/groq-llama-3.3-70b-versatile_2026-06-09/` — nfield vs four Track-A
-baselines (raw prompt, native JSON mode, Instructor, LangChain) on the same model
-across the three gold fixtures (N = 304 / 335 / 1045). See that directory's
-README for the honest reading; the short version is that at **N=1045 every
-single-call baseline collapses to ≤0.22 VA while nfield holds 0.50 at 0.99
-coverage**, and at small N a single native-JSON call is competitive on VA. It is
-**1 run per cell** — variance bands (≥5 runs) and the controlled synthetic
-N-sweep are the next steps; until those land, treat the numbers as point
-estimates and any smooth "curve" as PROJECTED.
+Committed single-model runs on `groq/llama-3.3-70b-versatile`, one canonical run
+per question (see each run's `MANIFEST.json`; all are **1 run per cell**, so treat
+the numbers as point estimates, not variance-banded curves):
+
+- **Main sweep** (`…_2026-06-21_13-12-00`) — nfield vs four baselines (raw prompt,
+  native JSON, Instructor, LangChain) on N = 304 / 335 / 1045 plus coverage-only
+  War & Peace. At **N=1045 the single-call baselines collapse** (truncation /
+  context-exceeded → 0.0, or ≤0.55 VA) while **nfield holds ≈0.80 VA at ~1.0
+  coverage** with near-minimal calls (K=29=K_min on the native budget). At small N
+  a single native-JSON call is competitive on VA.
+- **Scale** (`groq-nk-…_2026-06-21_11-16-55`) — nfield on the large fixtures:
+  **100% VA at 2,523 and 4,000 fields, 98% at 5,641 fields**, each at near-optimal
+  K (no call storm).
+- **Competitors** (`…_2026-06-22_02-26-37`, `…_02-40-00`) — nfield vs ContextGem /
+  LangExtract / LangStruct; nfield is the only method scoring 1.0 on both
+  chemical_element and smartphone_spec.
+- **Closed-book** (`…closed-book_2026-06-24_13-17-26`) — every method fills a
+  schema from model knowledge (no document) across N = 59 / 205 / 600 / 1002;
+  reported with answer-rate and reliability, an honest result where nfield is
+  competitive rather than dominant.

@@ -2,8 +2,8 @@
 
 Datasets are self-contained under ``benchmark/datasets/real/<name>/``, each a
 directory of ``schema.json``, ``document.txt``, and (when scorable) ``gold.json``.
-The small gold documents are committed for reproducibility; the one large
-coverage-only document (War & Peace) is fetched on demand via ``datasets/gen``.
+Every document is committed for reproducibility, including the one large
+coverage-only document (War & Peace, public-domain text from Project Gutenberg).
 
 The model budget is NOT a property of the dataset — it is a run-level choice
 (:mod:`benchmark.budget`), applied uniformly to every method, so the same fixture
