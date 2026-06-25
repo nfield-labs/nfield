@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import asyncio
 
+import pytest
+
 from formatshield import AsyncFormatShield
 from formatshield.config import ExtractionConfig
 from formatshield.extraction._papt import TemplateType
@@ -98,22 +100,29 @@ class _SeqProvider:
         return max(1, len(text) // 4)
 
 
-def test_closed_book_run_sets_answer_rate_and_ignores_document(monkeypatch) -> None:
+def test_closed_book_run_sets_answer_rate(monkeypatch) -> None:
     # Both samples return the same values -> all agree -> answered. The provider always
     # gives the same completion, so every field is self-consistent.
     provider = _SeqProvider("name = Alice\nage = 30\ncity = Paris")
     monkeypatch.setattr("formatshield.engine._async.from_model", lambda *a, **k: provider)
     engine = AsyncFormatShield("mock/echo", _SCHEMA, config=ExtractionConfig(closed_book=True))
 
-    # A non-empty document is passed but must be IGNORED in closed-book mode.
-    result = asyncio.run(engine.extract("SECRET-DOCUMENT-TEXT", _SCHEMA))
+    result = asyncio.run(engine.extract("", _SCHEMA))
 
     assert result.data == {"name": "Alice", "age": 30, "city": "Paris"}
     assert result.metadata.answer_rate == 1.0
     assert result.metadata.abstain_rate == 0.0
     assert result.metadata.hallucination_rate is None  # no source to ground against
-    # The user's document never reached the model (closed-book ignores it).
-    assert all("SECRET-DOCUMENT-TEXT" not in msg for msg in provider.user_messages)
+
+
+def test_closed_book_rejects_a_document(monkeypatch) -> None:
+    # Closed-book ignores the document, so passing one is a usage error, not silent.
+    provider = _SeqProvider("name = Alice")
+    monkeypatch.setattr("formatshield.engine._async.from_model", lambda *a, **k: provider)
+    engine = AsyncFormatShield("mock/echo", _SCHEMA, config=ExtractionConfig(closed_book=True))
+
+    with pytest.raises(ValueError, match="closed_book=True"):
+        asyncio.run(engine.extract("SECRET-DOCUMENT-TEXT", _SCHEMA))
 
 
 def test_self_consistency_doubles_calls(monkeypatch) -> None:

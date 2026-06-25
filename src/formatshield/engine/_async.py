@@ -104,8 +104,8 @@ def _require_text_document(document: object) -> None:
 
     The pipeline reads the document as a string. A non-string (``None``, a number, a
     ``Path``, raw bytes) otherwise fails deep inside with a cryptic error; this names
-    the problem at the boundary instead. An empty string is valid (it yields a result
-    with every field missing), so only the type is checked here.
+    the problem at the boundary instead. Only the type is checked here; whether an
+    empty string is allowed depends on the mode (see ``_require_document_matches_mode``).
 
     Args:
         document: The value passed as the document.
@@ -117,6 +117,34 @@ def _require_text_document(document: object) -> None:
         raise TypeError(
             f"document must be text (str), got {type(document).__name__}. Read a file "
             "first with load_document('path'); convert PDF/DOCX to text yourself."
+        )
+
+
+def _require_document_matches_mode(document: str, closed_book: bool) -> None:
+    """Reject a document that contradicts the extraction mode.
+
+    The document and ``closed_book`` are mutually exclusive: closed-book fills the
+    schema from the model's own knowledge (no document), while document mode needs
+    text to read. Each error names the fix so the caller lands in the right mode.
+
+    Args:
+        document: The source text (already type-checked).
+        closed_book: Whether the engine is in closed-book mode.
+
+    Raises:
+        ValueError: If a document is passed in closed-book mode, or absent otherwise.
+    """
+    has_document = bool(document.strip())
+    if closed_book and has_document:
+        raise ValueError(
+            "closed_book=True fills the schema from the model's knowledge and ignores "
+            "the document; remove it (pass ''), or set closed_book=False to extract "
+            "from it."
+        )
+    if not closed_book and not has_document:
+        raise ValueError(
+            "no document to extract from; pass a document, or set closed_book=True to "
+            "fill the schema from the model's knowledge."
         )
 
 
@@ -396,6 +424,7 @@ class AsyncFormatShield:
         Raises:
             SchemaError: If no schema is available from the call or construction.
             TypeError: If ``document`` is not a string.
+            ValueError: If ``document`` and ``closed_book`` contradict each other.
 
         Example:
             >>> # result = await engine.extract("invoice text", schema=Invoice)
@@ -405,6 +434,7 @@ class AsyncFormatShield:
         schema_dict = self._resolve_schema(schema)
         config = self._config
         provider = self._provider
+        _require_document_matches_mode(document, config.closed_book)
 
         # Reject a provably-unsatisfiable schema before spending any API call.
         if config.validate_schema:

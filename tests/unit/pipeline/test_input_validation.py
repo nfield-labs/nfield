@@ -8,7 +8,7 @@ import pytest
 
 from formatshield.assembly._blackboard import Blackboard
 from formatshield.config import ExtractionConfig
-from formatshield.engine._async import AsyncFormatShield
+from formatshield.engine._async import AsyncFormatShield, _require_document_matches_mode
 from formatshield.exceptions import SchemaError
 from formatshield.pipeline.s5b_recover import _failure_reason
 
@@ -55,13 +55,83 @@ def test_non_string_document_is_rejected_with_clear_message(monkeypatch) -> None
             asyncio.run(engine.extract(bad, schema))  # type: ignore[arg-type]
 
 
-def test_empty_string_document_is_allowed(monkeypatch) -> None:
-    # An empty document is valid input (no evidence), not a type error: the gate checks
-    # only the type, so this must reach the (never-called) provider stage, not raise here.
+def test_empty_document_rejected_in_document_mode(monkeypatch) -> None:
+    # Document mode needs text; an empty document is a usage error that points to
+    # closed_book, not a silent empty result.
     engine = _engine(monkeypatch, ExtractionConfig())
+    schema = {"type": "object", "properties": {"name": {"type": "string"}}}
+    with pytest.raises(ValueError, match="no document to extract from"):
+        asyncio.run(engine.extract("", schema))
+
+
+def test_document_rejected_in_closed_book_mode(monkeypatch) -> None:
+    # Closed-book ignores the document; passing one is a usage error, not silent.
+    engine = _engine(monkeypatch, ExtractionConfig(closed_book=True))
+    schema = {"type": "object", "properties": {"name": {"type": "string"}}}
+    with pytest.raises(ValueError, match="closed_book=True"):
+        asyncio.run(engine.extract("some real document text", schema))
+
+
+def test_empty_document_allowed_in_closed_book_mode(monkeypatch) -> None:
+    # An empty document is the closed-book signal: it must pass the gates and reach the
+    # (never-called) provider stage, not raise at the boundary.
+    engine = _engine(monkeypatch, ExtractionConfig(closed_book=True))
     schema = {"type": "object", "properties": {"name": {"type": "string"}}}
     with pytest.raises(AssertionError):  # the stub provider asserts it is reached
         asyncio.run(engine.extract("", schema))
+
+
+def test_whitespace_only_document_counts_as_empty(monkeypatch) -> None:
+    # A whitespace-only document carries no evidence: it is rejected in document mode and
+    # accepted as the no-document signal in closed-book mode.
+    schema = {"type": "object", "properties": {"name": {"type": "string"}}}
+    doc_engine = _engine(monkeypatch, ExtractionConfig())
+    with pytest.raises(ValueError, match="no document to extract from"):
+        asyncio.run(doc_engine.extract("   \n\t ", schema))
+    cb_engine = _engine(monkeypatch, ExtractionConfig(closed_book=True))
+    with pytest.raises(AssertionError):  # passes the gates, reaches the stub provider
+        asyncio.run(cb_engine.extract("   \n\t ", schema))
+
+
+@pytest.mark.parametrize("closed_book", [False, True])
+def test_non_string_document_is_type_error_in_both_modes(monkeypatch, closed_book) -> None:
+    # The type gate runs before the mode gate (the mode gate calls document.strip(), valid
+    # only on a str), so a non-string is a TypeError regardless of closed_book.
+    engine = _engine(monkeypatch, ExtractionConfig(closed_book=closed_book))
+    schema = {"type": "object", "properties": {"name": {"type": "string"}}}
+    for bad in (None, 123, b"bytes", ["text"]):
+        with pytest.raises(TypeError, match="document must be text"):
+            asyncio.run(engine.extract(bad, schema))  # type: ignore[arg-type]
+
+
+# ---------------------------------------------------------------------------
+# The mode gate in isolation: every (document, closed_book) branch, no engine
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("document", "closed_book"),
+    [
+        ("", True),  # no document is the closed-book signal
+        ("   \n\t ", True),  # whitespace collapses to no document
+        ("real text", False),  # text is what document mode needs
+    ],
+)
+def test_mode_gate_accepts_valid_pairings(document, closed_book) -> None:
+    # A matching pairing passes silently (returns None, raises nothing).
+    assert _require_document_matches_mode(document, closed_book) is None
+
+
+def test_mode_gate_rejects_document_in_closed_book() -> None:
+    for document in ("real text", "x", "  word  "):
+        with pytest.raises(ValueError, match="closed_book=True"):
+            _require_document_matches_mode(document, closed_book=True)
+
+
+def test_mode_gate_rejects_empty_in_document_mode() -> None:
+    for document in ("", "   ", "\n\t"):
+        with pytest.raises(ValueError, match="no document to extract from"):
+            _require_document_matches_mode(document, closed_book=False)
 
 
 def test_engine_preflight_can_be_disabled(monkeypatch) -> None:
