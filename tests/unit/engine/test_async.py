@@ -61,9 +61,7 @@ class TestAsyncEngine:
 
     async def test_cached_schema_reused_across_calls(self, install_provider):
         install_provider(_ECHO)
-        engine = AsyncNField(
-            "mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0)
-        )
+        engine = AsyncNField("mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0))
         first = await engine.extract("doc one")
         second = await engine.extract("doc two")
         assert first.metadata.fields_total == 2
@@ -109,9 +107,7 @@ class TestAsyncEngine:
         # Stage 0 calibration must be measured once and cached; reusing the
         # engine across documents must not re-measure chars_per_token.
         provider = install_provider(_ECHO)
-        engine = AsyncNField(
-            "mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0)
-        )
+        engine = AsyncNField("mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0))
         await engine.extract("doc one")
         await engine.extract("doc two")
         await engine.extract("doc three")
@@ -134,9 +130,7 @@ class TestNestedSchemaForms:
             work: Addr
 
         install_provider("home.city = Paris\nwork.city = Lyon")
-        engine = AsyncNField(
-            "mock/echo", Person, config=ExtractionConfig(max_retry_rounds=0)
-        )
+        engine = AsyncNField("mock/echo", Person, config=ExtractionConfig(max_retry_rounds=0))
         result = await engine.extract("doc")
         # Both reused-submodel branches must survive (regression: work.* dropped).
         assert result.metadata.fields_total == 2
@@ -145,9 +139,7 @@ class TestNestedSchemaForms:
 
     async def test_nested_dataclass_expands(self, install_provider):
         install_provider("home.city = Paris\nwork.city = Lyon")
-        engine = AsyncNField(
-            "mock/echo", _Person, config=ExtractionConfig(max_retry_rounds=0)
-        )
+        engine = AsyncNField("mock/echo", _Person, config=ExtractionConfig(max_retry_rounds=0))
         result = await engine.extract("doc")
         assert result.metadata.fields_total == 2
         assert result.data["home"]["city"] == "Paris"
@@ -210,9 +202,7 @@ class TestConcurrentCalibration:
 
     async def test_concurrent_extracts_calibrate_once(self, install_provider):
         provider = install_provider(_ECHO)
-        engine = AsyncNField(
-            "mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0)
-        )
+        engine = AsyncNField("mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0))
         # Fire several extracts at once on a fresh engine: the calibration lock
         # must keep Stage 0 (the single count_tokens probe) from running per call.
         await asyncio.gather(

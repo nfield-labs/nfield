@@ -26,8 +26,7 @@ __all__ = [
 ]
 
 _PANDAS_HINT: str = (
-    "pandas is required for DataFrame/CSV export. Install it with: "
-    "pip install 'nfield[export]'"
+    "pandas is required for DataFrame/CSV export. Install it with: pip install 'nfield[export]'"
 )
 # Metadata columns added when include_metadata=True. Prefixed so they never collide
 # with a schema field path of the same name.

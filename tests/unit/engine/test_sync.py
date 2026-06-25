@@ -43,7 +43,7 @@ class TestRunSync:
         # of re-entering asyncio.run on the active loop.
         install_provider(_ECHO)
         assert asyncio.get_running_loop().is_running()
-        result = NField(
-            "mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0)
-        ).extract(_DOC)
+        result = NField("mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0)).extract(
+            _DOC
+        )
         assert result.data["name"] == "Alice"
