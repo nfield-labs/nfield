@@ -45,7 +45,7 @@ class TestNeedsRevalidationCheck:
         valid, _err = validate_field(fake, f)
         if valid:
             pytest.xfail(
-                "BUG H1: validate_field passes any object with repr 'NEEDS_REVALIDATION'. "
+                "validate_field passes any object with repr 'NEEDS_REVALIDATION'. "
                 "Fix: use 'value is NEEDS_REVALIDATION' instead of repr() comparison."
             )
 

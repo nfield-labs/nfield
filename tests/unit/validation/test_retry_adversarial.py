@@ -38,7 +38,7 @@ def make_config(max_retry_rounds: int = 2) -> ExtractionConfig:
 
 
 # ---------------------------------------------------------------------------
-# CRITICAL C1: orchestrate_retry doesn't validate recovered values
+# orchestrate_retry doesn't validate recovered values
 # A retry might return a still-invalid value, which gets marked as "recovered".
 # ---------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ def make_config(max_retry_rounds: int = 2) -> ExtractionConfig:
 class TestOrchestrateRetryValidation:
     @pytest.mark.asyncio
     async def test_recovered_value_still_invalid_is_not_marked_recovered(self):
-        """CRITICAL C1: if retry returns still-invalid value, must NOT be in result.
+        """if retry returns still-invalid value, must NOT be in result.
 
         Scenario: integer field 'age', first extraction returned "thirty" (invalid).
         Retry returns "also not a number" (still invalid).
@@ -73,7 +73,7 @@ class TestOrchestrateRetryValidation:
         # CURRENT BEHAVIOR: "age" IS in result with value "still_not_a_number" (a string)
         if "age" in result and result["age"] == "still_not_a_number":
             pytest.xfail(
-                "CRITICAL C1: orchestrate_retry returns invalid values without re-validation. "
+                "orchestrate_retry returns invalid values without re-validation. "
                 "Fix: validate each recovered value before adding to recovered dict."
             )
 
@@ -106,7 +106,7 @@ class TestClassifyFailureFragility:
     def test_minlength_error_does_not_classify_as_field_missing(self):
         """Error 'minLength constraint violated — length 3 < 5' should NOT be FIELD_MISSING.
 
-        BUG H2: 'missing' does not appear in this error, but if it did (e.g. 'missing chars'),
+        'missing' does not appear in this error, but if it did (e.g. 'missing chars'),
         the field would be incorrectly classified as FIELD_MISSING.
         """
         f = make_field("code", "string")
