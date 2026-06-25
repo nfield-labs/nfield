@@ -7,7 +7,7 @@ __pycache__/
 dist/
 build/
 *.egg-info/
-.remember*
+
 # Virtual environment
 .venv/
 
@@ -16,45 +16,29 @@ build/
 .mypy_cache/
 .ruff_cache/
 .hypothesis/
+.coverage
+htmlcov/
+
+# Environment
+.env
+
+# MkDocs build output
+site/
+
+# Packaging lockfile (keep uv.lock tracked — omit if you prefer not to)
+# uv.lock
 
 # Large downloaded test fixtures (fetched on-demand by integration tests)
 tests/fixtures/documents/_cache/
+tests/fixtures/documents/*.txt
+tests/fixtures/documents/_mtsamples.csv
+tests/fixtures/documents/clinical_note.txt
 
 # Closed-book benchmark source dumps (downloadable; build_fixtures.py lists the URLs and
 # regenerates the committed fixture folders). The fixtures themselves are tracked.
 benchmark/datasets/closed_book/*.json
 benchmark/datasets/closed_book/*.dat
-.coverage
-htmlcov/
-
-# Packaging lockfile (keep uv.lock tracked — omit if you prefer not to)
-# uv.lock
-
-# Environment
-.env
-
-# Project internals
-.claude/
-project-details/
-examples-repo/
-
-# MkDocs build output
-site/
-
-# Live Groq hard-test results (numbered, not committed)
-test-results/
-
-# Local-only scale-test scripts + generated fixtures (run by hand, not shipped)
-test-scripts/
-
-# Large downloaded real 10-K text (live tests fetch on demand)
-tests/fixtures/documents/*.txt
-
-# Downloaded medical dataset + extracted note (live test fetches on demand)
-tests/fixtures/documents/_mtsamples.csv
-tests/fixtures/documents/clinical_note.txt
 
 # Benchmark documents are committed for reproducibility (the War & Peace text is
 # public domain, from Project Gutenberg). Benchmark results ARE committed too —
-# raw outputs are the reproducibility evidence (honest-claims charter, rule 3) —
-# so benchmark/results/ is deliberately tracked.
+# raw outputs are the reproducibility evidence — so benchmark/results/ is tracked.
