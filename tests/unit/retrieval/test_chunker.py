@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.exceptions import SchemaError
-from formatshield.retrieval._chunker import (
+from nfield.exceptions import SchemaError
+from nfield.retrieval._chunker import (
     chunk_document,
     segment_structured,
     segment_tabular,
     segment_unstructured,
 )
-from formatshield.schema._types import (
+from nfield.schema._types import (
     SEGMENT_TYPE_STRUCTURED,
     SEGMENT_TYPE_TABULAR,
     SEGMENT_TYPE_UNSTRUCTURED,
@@ -134,7 +134,7 @@ class TestBoundaryAwareChunking:
 
     def test_token_budget_default_reduces_chunk_count(self) -> None:
         """The ~256-token default yields far fewer chunks than the old 512-char window."""
-        from formatshield.retrieval._chunker import _DEFAULT_CHUNK_SIZE
+        from nfield.retrieval._chunker import _DEFAULT_CHUNK_SIZE
 
         big = self._PROSE * 4
         default_chunks = segment_unstructured(big)

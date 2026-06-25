@@ -6,10 +6,10 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from formatshield.assembly._blackboard import Blackboard, FieldState
-from formatshield.config import ExtractionConfig
-from formatshield.schema._types import CapacityLeaf, Field
-from formatshield.validation._retry import orchestrate_retry, surgical_field_retry
+from nfield.assembly._blackboard import Blackboard, FieldState
+from nfield.config import ExtractionConfig
+from nfield.schema._types import CapacityLeaf, Field
+from nfield.validation._retry import orchestrate_retry, surgical_field_retry
 
 
 def _field(path: str, ftype: str = "string", tau: float = 2.0) -> Field:

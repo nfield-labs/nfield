@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.exceptions import SchemaError
-from formatshield.schema._preflight import preflight_schema
+from nfield.exceptions import SchemaError
+from nfield.schema._preflight import preflight_schema
 
 
 def _obj(name: str, node: dict) -> dict:

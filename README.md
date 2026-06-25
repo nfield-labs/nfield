@@ -1,8 +1,8 @@
-# FormatShield
+# NField
 
-[![CI](https://github.com/nfield-labs/formatshield/actions/workflows/ci.yml/badge.svg)](https://github.com/nfield-labs/formatshield/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/formatshield.svg)](https://pypi.org/project/formatshield/)
-[![Python](https://img.shields.io/pypi/pyversions/formatshield.svg)](https://pypi.org/project/formatshield/)
+[![CI](https://github.com/nfield-labs/nfield/actions/workflows/ci.yml/badge.svg)](https://github.com/nfield-labs/nfield/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/nfield.svg)](https://pypi.org/project/nfield/)
+[![Python](https://img.shields.io/pypi/pyversions/nfield.svg)](https://pypi.org/project/nfield/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
 **Extract N structured fields from any document with zero format tax.**
@@ -14,7 +14,7 @@ model spends attention on brackets, commas, and quotes instead of the values, an
 accuracy falls off a cliff on schemas with hundreds of fields. Most structured-output
 tools cap out well before that scale.
 
-FormatShield decomposes the schema into capacity-bounded groups, retrieves only the
+NField decomposes the schema into capacity-bounded groups, retrieves only the
 relevant document spans per group, and extracts a flat `path = value` format (SFEP)
 instead of nested JSON — then validates per field, retries failures surgically, and
 reassembles valid nested JSON.
@@ -22,15 +22,15 @@ reassembles valid nested JSON.
 ## Install
 
 ```bash
-pip install formatshield
-pip install "formatshield[groq]"   # Groq provider
-pip install "formatshield[cli]"    # command-line interface
+pip install nfield
+pip install "nfield[groq]"   # Groq provider
+pip install "nfield[cli]"    # command-line interface
 ```
 
 ## Quickstart
 
 ```python
-from formatshield import nfield
+from nfield import nfield
 
 schema = {
     "type": "object",
@@ -46,18 +46,18 @@ result = nfield(
     document_text,
     schema,
     "groq/llama-3.1-8b-instant",
-    context_window=131_072,      # the model's real limits — FormatShield's
+    context_window=131_072,      # the model's real limits — NField's
     max_output_tokens=32_768,    # capacity planning is a function of these
 )
 print(result.data)
 ```
 
 The model is a `"provider/model-name"` string (`groq/…` today; `openai/…`,
-`anthropic/…` as providers are added). Unlike single-call libraries, FormatShield
+`anthropic/…` as providers are added). Unlike single-call libraries, NField
 **plans** how to split a wide schema across calls, so it needs the model's real
 `context_window` (C_eff) and `max_output_tokens` (M_O); omit them to fall back to
 a conservative default. Pydantic models and dataclasses work as schemas too. For
-many documents, reuse a `FormatShield` (sync) or `AsyncFormatShield` (async) engine.
+many documents, reuse a `NField` (sync) or `AsyncNField` (async) engine.
 
 ## How it works
 
@@ -69,8 +69,8 @@ stages call the model. See [docs/concepts/pipeline.md](docs/concepts/pipeline.md
 ## Command line
 
 ```bash
-formatshield inspect schema.json
-formatshield extract doc.txt --schema schema.json --model groq/llama-3.1-8b-instant
+nfield inspect schema.json
+nfield extract doc.txt --schema schema.json --model groq/llama-3.1-8b-instant
 ```
 
 ## Supported providers

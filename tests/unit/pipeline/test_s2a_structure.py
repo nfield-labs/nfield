@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from formatshield.pipeline._state import PipelineState
-from formatshield.pipeline.s1_schema import run_stage_1
-from formatshield.pipeline.s2a_structure import run_stage_2a
-from formatshield.schema._types import FieldGroup
+from nfield.pipeline._state import PipelineState
+from nfield.pipeline.s1_schema import run_stage_1
+from nfield.pipeline.s2a_structure import run_stage_2a
+from nfield.schema._types import FieldGroup
 
 
 def _make_state() -> PipelineState:

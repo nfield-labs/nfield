@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import asyncio
 
-from formatshield.assembly._blackboard import Blackboard, FieldState
-from formatshield.config import ExtractionConfig
-from formatshield.pipeline._state import PipelineState
-from formatshield.pipeline.s5_validate import run_stage_5
-from formatshield.pipeline.s6_assemble import run_stage_6
-from formatshield.schema._types import CapacityLeaf, Field
+from nfield.assembly._blackboard import Blackboard, FieldState
+from nfield.config import ExtractionConfig
+from nfield.pipeline._state import PipelineState
+from nfield.pipeline.s5_validate import run_stage_5
+from nfield.pipeline.s6_assemble import run_stage_6
+from nfield.schema._types import CapacityLeaf, Field
 
 
 class _UnusedProvider:

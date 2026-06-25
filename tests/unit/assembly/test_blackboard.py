@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.assembly._blackboard import Blackboard, FieldState
-from formatshield.exceptions import AssemblyError
+from nfield.assembly._blackboard import Blackboard, FieldState
+from nfield.exceptions import AssemblyError
 
 # ---------------------------------------------------------------------------
 # Blackboard construction

@@ -291,7 +291,7 @@ def _write_manifest(
     *,
     budget: str = "",
 ) -> Path:
-    from formatshield import __version__ as fs_version
+    from nfield import __version__ as fs_version
 
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / "MANIFEST.json"

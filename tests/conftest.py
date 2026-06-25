@@ -1,4 +1,4 @@
-"""Global test fixtures for FormatShield test suite."""
+"""Global test fixtures for NField test suite."""
 
 from __future__ import annotations
 
@@ -37,10 +37,10 @@ def invoice_50fields_schema() -> dict:  # type: ignore[type-arg]
 
 
 @pytest.fixture(autouse=True)
-def clean_formatshield_env(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Remove all FORMATSHIELD_* env vars before each test."""
+def clean_nfield_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Remove all NFIELD_* env vars before each test."""
     import os
 
     for key in list(os.environ):
-        if key.startswith("FORMATSHIELD_"):
+        if key.startswith("NFIELD_"):
             monkeypatch.delenv(key)

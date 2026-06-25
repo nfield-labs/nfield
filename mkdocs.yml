@@ -1,7 +1,7 @@
-site_name: FormatShield
+site_name: NField
 site_description: N-field structured extraction from documents with LLMs.
-repo_url: https://github.com/nfield-labs/formatshield
-repo_name: nfield-labs/formatshield
+repo_url: https://github.com/nfield-labs/nfield
+repo_name: nfield-labs/nfield
 
 theme:
   name: material

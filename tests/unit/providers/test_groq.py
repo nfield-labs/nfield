@@ -5,7 +5,7 @@ from __future__ import annotations
 import sys
 import types
 
-from formatshield.providers.groq import GroqProvider
+from nfield.providers.groq import GroqProvider
 
 
 def _install_fake_groq(monkeypatch) -> dict:

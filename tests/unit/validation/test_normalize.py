@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.schema._types import Field
-from formatshield.validation._normalize import normalize_value
+from nfield.schema._types import Field
+from nfield.validation._normalize import normalize_value
 
 
 def _field(ftype: str, constraints: dict | None = None) -> Field:

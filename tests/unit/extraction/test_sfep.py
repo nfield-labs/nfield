@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.extraction._sfep import (
+from nfield.extraction._sfep import (
     NEEDS_REVALIDATION,
     count_unknown_paths,
     parse_sfep,
@@ -12,7 +12,7 @@ from formatshield.extraction._sfep import (
     parse_sfep_line,
     typecast,
 )
-from formatshield.schema._types import Field
+from nfield.schema._types import Field
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -144,7 +144,7 @@ class TestTypecastBoolean:
         assert typecast("no", f) is False
 
     def test_invalid_boolean_raises(self):
-        from formatshield.exceptions import ExtractionError
+        from nfield.exceptions import ExtractionError
 
         f = make_field("flag", "boolean")
         with pytest.raises(ExtractionError, match="Cannot cast"):
@@ -165,7 +165,7 @@ class TestTypecastInteger:
         assert typecast("-5", f) == -5
 
     def test_invalid_integer_raises(self):
-        from formatshield.exceptions import ExtractionError
+        from nfield.exceptions import ExtractionError
 
         f = make_field("age", "integer")
         with pytest.raises(ExtractionError):
@@ -182,7 +182,7 @@ class TestTypecastNumber:
         assert typecast("10", f) == pytest.approx(10.0)
 
     def test_invalid_number_raises(self):
-        from formatshield.exceptions import ExtractionError
+        from nfield.exceptions import ExtractionError
 
         f = make_field("score", "number")
         with pytest.raises(ExtractionError):
@@ -229,7 +229,7 @@ class TestTypecastEnum:
         assert typecast("active", f) == "Active"
 
     def test_invalid_enum_raises(self):
-        from formatshield.exceptions import ExtractionError
+        from nfield.exceptions import ExtractionError
 
         f = make_field("status", "enum", {"enum": ["active", "inactive"]})
         with pytest.raises(ExtractionError, match="not a valid enum"):
@@ -271,7 +271,7 @@ class TestTypecastSentinels:
         assert result is NEEDS_REVALIDATION
 
     def test_needs_revalidation_is_singleton(self):
-        from formatshield.extraction._sfep import _NeedsRevalidationType
+        from nfield.extraction._sfep import _NeedsRevalidationType
 
         assert NEEDS_REVALIDATION is _NeedsRevalidationType()
 

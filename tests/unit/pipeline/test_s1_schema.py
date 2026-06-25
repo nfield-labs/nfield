@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.assembly._blackboard import Blackboard
-from formatshield.exceptions import SchemaError
-from formatshield.pipeline._state import PipelineState
-from formatshield.pipeline.s1_schema import run_stage_1
+from nfield.assembly._blackboard import Blackboard
+from nfield.exceptions import SchemaError
+from nfield.pipeline._state import PipelineState
+from nfield.pipeline.s1_schema import run_stage_1
 
 
 def _make_state(chars_per_token: float = 4.0) -> PipelineState:

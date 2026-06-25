@@ -13,12 +13,12 @@ from pathlib import Path
 
 import pytest
 
-from formatshield.config import ExtractionConfig
-from formatshield.pipeline._state import PipelineState
-from formatshield.pipeline.s1_schema import run_stage_1
-from formatshield.pipeline.s2a_structure import run_stage_2a
-from formatshield.pipeline.s2b_prepass import run_stage_2b
-from formatshield.pipeline.s2c_packing import run_stage_2c
+from nfield.config import ExtractionConfig
+from nfield.pipeline._state import PipelineState
+from nfield.pipeline.s1_schema import run_stage_1
+from nfield.pipeline.s2a_structure import run_stage_2a
+from nfield.pipeline.s2b_prepass import run_stage_2b
+from nfield.pipeline.s2c_packing import run_stage_2c
 
 FIXTURE_PATH = Path(__file__).parent.parent / "fixtures" / "schemas" / "invoice_50fields.json"
 

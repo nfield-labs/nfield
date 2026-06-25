@@ -14,12 +14,12 @@ pass performs every re-extraction:
 
 from __future__ import annotations
 
-from formatshield.assembly._blackboard import Blackboard, FieldState
-from formatshield.config import ExtractionConfig
-from formatshield.pipeline._state import PipelineState
-from formatshield.pipeline.s5_validate import run_stage_5
-from formatshield.pipeline.s5b_recover import run_recovery_pass
-from formatshield.schema._types import CapacityLeaf, Field, FieldGroup, Segment
+from nfield.assembly._blackboard import Blackboard, FieldState
+from nfield.config import ExtractionConfig
+from nfield.pipeline._state import PipelineState
+from nfield.pipeline.s5_validate import run_stage_5
+from nfield.pipeline.s5b_recover import run_recovery_pass
+from nfield.schema._types import CapacityLeaf, Field, FieldGroup, Segment
 
 _DOC = "a is one and b is recovered_value"
 

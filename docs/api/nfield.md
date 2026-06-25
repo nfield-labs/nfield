@@ -12,12 +12,12 @@ nfield(
 
 Synchronous one-shot extraction. `schema` may be a JSON Schema dict, a Pydantic
 model (class or instance), or a dataclass (class or instance). If `model` is
-omitted, it is resolved from `FORMATSHIELD_MODEL`, then `config.default_model`.
+omitted, it is resolved from `NFIELD_MODEL`, then `config.default_model`.
 
 `instructions` adds caller steering (domain, task hints). It is **prepended** to
-FormatShield's built-in SFEP prompt — never replacing it — and is counted in each
+NField's built-in SFEP prompt — never replacing it — and is counted in each
 leaf's overhead, so a large value correctly shrinks the per-call document budget.
-The same kwarg exists on `FormatShield`, `AsyncFormatShield`, `nfield_async`, and
+The same kwarg exists on `NField`, `AsyncNField`, `nfield_async`, and
 as `--instructions` on the CLI.
 
 `model` is a `"provider/model-name"` string (`groq/…` today; `openai/…`,
@@ -34,20 +34,20 @@ nfield_async(document, schema, model=None, *, config=None) -> Awaitable[Extracti
 
 Async variant of `nfield`.
 
-## `FormatShield`
+## `NField`
 
 ```python
-FormatShield(model=None, schema=None, *, config=None)
+NField(model=None, schema=None, *, config=None)
 ```
 
 Reusable synchronous engine. Call the instance or `.extract(document, schema=None)`.
 A schema given at construction is normalised once and reused; a schema passed to
 `extract` overrides it for that call. Jupyter-safe (detects a running event loop).
 
-## `AsyncFormatShield`
+## `AsyncNField`
 
 ```python
-AsyncFormatShield(model=None, schema=None, *, config=None)
+AsyncNField(model=None, schema=None, *, config=None)
 ```
 
 Async engine and async context manager. `await engine.extract(document)` or
@@ -59,8 +59,8 @@ Async engine and async context manager. `await engine.extract(document)` or
 engine.extract_batch(documents, schema=None, *, max_concurrent=None, return_exceptions=False)
 ```
 
-Extract many documents through one reused, calibrated engine (`FormatShield` and
-`AsyncFormatShield` both expose it). Documents run concurrently, bounded by a semaphore
+Extract many documents through one reused, calibrated engine (`NField` and
+`AsyncNField` both expose it). Documents run concurrently, bounded by a semaphore
 (`max_concurrent`, default 4) so a large batch stays under provider rate limits. Returns
 one result per document, in input order. A provider failure surfaces as a `FAILED`-status
 result; with `return_exceptions=True`, an error that escapes `extract()` is kept in that
@@ -107,7 +107,7 @@ step — fields never produced after surgical retry get one bounded recovery pas
 (tree-backtrack absent-ancestor children, then re-extract the missed-only set).
 There is no flag; it is a no-op when nothing is missing.
 
-## Filesystem helpers (`formatshield.io`)
+## Filesystem helpers (`nfield.io`)
 
 ```python
 load_document(path) -> str          # read a UTF-8 text document
@@ -119,7 +119,7 @@ load_results(path) -> list[ExtractionResult]   # read them back (round-trips to_
 Text/JSON only — PDF/DOCX/CSV parsing stays the caller's job. `ExtractionResult.to_dict()`
 / `ExtractionResult.from_dict()` give the underlying JSON-serialisable form.
 
-## Tabular export (`formatshield.export`, optional `pandas`)
+## Tabular export (`nfield.export`, optional `pandas`)
 
 ```python
 results_to_dataframe(results, *, include_metadata=False) -> pandas.DataFrame
@@ -128,9 +128,9 @@ results_to_csv(results, path, *, include_metadata=False) -> None
 ```
 
 One row per result; columns are the flat dot-notation field paths. Install with
-`pip install 'formatshield[export]'` — pandas is imported only when these are called.
+`pip install 'nfield[export]'` — pandas is imported only when these are called.
 
 ## Exceptions
 
-All inherit from `FormatShieldError`: `SchemaError`, `ProviderError`,
+All inherit from `NFieldError`: `SchemaError`, `ProviderError`,
 `ExtractionError`, `ValidationError`, `AssemblyError`.

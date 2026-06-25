@@ -14,9 +14,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from formatshield.config import ExtractionConfig
-from formatshield.schema._types import CapacityLeaf, Field
-from formatshield.validation._retry import (
+from nfield.config import ExtractionConfig
+from nfield.schema._types import CapacityLeaf, Field
+from nfield.validation._retry import (
     FailureCause,
     classify_failure,
     handle_missing_fields,
@@ -225,7 +225,7 @@ class TestDeadCodeRemoved:
         """_compute_retry_max_tokens was dead code and has been removed."""
         import importlib
 
-        module = importlib.import_module("formatshield.validation._retry")
+        module = importlib.import_module("nfield.validation._retry")
         assert not hasattr(module, "_compute_retry_max_tokens"), (
             "_compute_retry_max_tokens should have been removed as dead code"
         )

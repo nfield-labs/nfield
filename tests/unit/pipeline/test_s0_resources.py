@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.config import ExtractionConfig
-from formatshield.pipeline._state import PipelineState
-from formatshield.pipeline.s0_resources import run_stage_0
+from nfield.config import ExtractionConfig
+from nfield.pipeline._state import PipelineState
+from nfield.pipeline.s0_resources import run_stage_0
 
 
 class MockProvider:
@@ -83,8 +83,8 @@ class TestRunStage0:
 # ---------------------------------------------------------------------------
 # document_language -> calibration bucket wiring
 # ---------------------------------------------------------------------------
-import formatshield.pipeline.s0_resources as _s0  # noqa: E402
-from formatshield.pipeline.s0_resources import _calibration_bucket  # noqa: E402
+import nfield.pipeline.s0_resources as _s0  # noqa: E402
+from nfield.pipeline.s0_resources import _calibration_bucket  # noqa: E402
 
 
 class TestCalibrationLanguage:

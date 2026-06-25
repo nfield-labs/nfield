@@ -1,4 +1,4 @@
-"""Async extraction over many documents with AsyncFormatShield.
+"""Async extraction over many documents with AsyncNField.
 
 Reuses one engine (schema cached, model calibrated once) and runs documents
 concurrently with ``asyncio.gather``.
@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import asyncio
 
-from formatshield import AsyncFormatShield
+from nfield import AsyncNField
 
 SCHEMA = {
     "type": "object",
@@ -28,7 +28,7 @@ DOCUMENTS = [
 
 
 async def main() -> None:
-    async with AsyncFormatShield(
+    async with AsyncNField(
         "groq/llama-3.1-8b-instant",
         SCHEMA,
         context_window=131_072,

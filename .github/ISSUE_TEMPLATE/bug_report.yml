@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a problem with FormatShield
+description: Report a problem with NField
 labels: ["bug"]
 body:
   - type: textarea
@@ -20,7 +20,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: FormatShield version
+      label: NField version
       placeholder: "0.1.0"
     validations:
       required: true

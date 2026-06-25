@@ -11,8 +11,8 @@ import sys
 
 import pytest
 
-from formatshield import from_model
-from formatshield.exceptions import ProviderError
+from nfield import from_model
+from nfield.exceptions import ProviderError
 
 
 class TestFromModel:
@@ -24,7 +24,7 @@ class TestFromModel:
 
     def test_groq_construction_does_not_import_sdk(self):
         # The groq SDK must be imported lazily (inside the client), never at
-        # provider construction. This keeps `import formatshield` dependency-free.
+        # provider construction. This keeps `import nfield` dependency-free.
         sys.modules.pop("groq", None)
         from_model("groq/llama-3.1-8b")
         assert "groq" not in sys.modules
@@ -57,17 +57,17 @@ class TestFromModel:
 
 class TestPublicImports:
     def test_mvp_surface_is_importable(self):
-        import formatshield as fs
+        import nfield as fs
 
         for name in (
             "nfield",
             "nfield_async",
-            "FormatShield",
-            "AsyncFormatShield",
+            "NField",
+            "AsyncNField",
             "from_model",
             "ExtractionConfig",
             "ExtractionResult",
-            "FormatShieldError",
+            "NFieldError",
             "__version__",
         ):
             assert hasattr(fs, name), f"missing public name: {name}"

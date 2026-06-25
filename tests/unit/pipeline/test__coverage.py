@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from formatshield.pipeline._coverage import coverage_segment_ids, coverage_tokens
-from formatshield.schema._types import Field, FieldGroup, Segment
+from nfield.pipeline._coverage import coverage_segment_ids, coverage_tokens
+from nfield.schema._types import Field, FieldGroup, Segment
 
 
 def _seg(seg_id: int, n_chars: int) -> Segment:

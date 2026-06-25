@@ -6,13 +6,13 @@ import asyncio
 
 import pytest
 
-from formatshield import AsyncFormatShield
-from formatshield.config import ExtractionConfig
-from formatshield.extraction._papt import TemplateType
-from formatshield.extraction._prompt import build_extraction_prompt
-from formatshield.extraction._sfep import NEEDS_REVALIDATION
-from formatshield.pipeline.s4_extract import _self_consistent
-from formatshield.schema._types import Field
+from nfield import AsyncNField
+from nfield.config import ExtractionConfig
+from nfield.extraction._papt import TemplateType
+from nfield.extraction._prompt import build_extraction_prompt
+from nfield.extraction._sfep import NEEDS_REVALIDATION
+from nfield.pipeline.s4_extract import _self_consistent
+from nfield.schema._types import Field
 
 _SCHEMA = {
     "type": "object",
@@ -104,8 +104,8 @@ def test_closed_book_run_sets_answer_rate(monkeypatch) -> None:
     # Both samples return the same values -> all agree -> answered. The provider always
     # gives the same completion, so every field is self-consistent.
     provider = _SeqProvider("name = Alice\nage = 30\ncity = Paris")
-    monkeypatch.setattr("formatshield.engine._async.from_model", lambda *a, **k: provider)
-    engine = AsyncFormatShield("mock/echo", _SCHEMA, config=ExtractionConfig(closed_book=True))
+    monkeypatch.setattr("nfield.engine._async.from_model", lambda *a, **k: provider)
+    engine = AsyncNField("mock/echo", _SCHEMA, config=ExtractionConfig(closed_book=True))
 
     result = asyncio.run(engine.extract("", _SCHEMA))
 
@@ -118,8 +118,8 @@ def test_closed_book_run_sets_answer_rate(monkeypatch) -> None:
 def test_closed_book_rejects_a_document(monkeypatch) -> None:
     # Closed-book ignores the document, so passing one is a usage error, not silent.
     provider = _SeqProvider("name = Alice")
-    monkeypatch.setattr("formatshield.engine._async.from_model", lambda *a, **k: provider)
-    engine = AsyncFormatShield("mock/echo", _SCHEMA, config=ExtractionConfig(closed_book=True))
+    monkeypatch.setattr("nfield.engine._async.from_model", lambda *a, **k: provider)
+    engine = AsyncNField("mock/echo", _SCHEMA, config=ExtractionConfig(closed_book=True))
 
     with pytest.raises(ValueError, match="closed_book=True"):
         asyncio.run(engine.extract("SECRET-DOCUMENT-TEXT", _SCHEMA))
@@ -129,13 +129,13 @@ def test_self_consistency_doubles_calls(monkeypatch) -> None:
     # Default closed-book is single-pass (one call per leaf); self_consistency=True samples
     # each leaf twice, so the call count exactly doubles.
     single = _SeqProvider("name = Alice\nage = 30\ncity = Paris")
-    monkeypatch.setattr("formatshield.engine._async.from_model", lambda *a, **k: single)
-    e1 = AsyncFormatShield("mock/echo", _SCHEMA, config=ExtractionConfig(closed_book=True))
+    monkeypatch.setattr("nfield.engine._async.from_model", lambda *a, **k: single)
+    e1 = AsyncNField("mock/echo", _SCHEMA, config=ExtractionConfig(closed_book=True))
     asyncio.run(e1.extract("", _SCHEMA))
 
     double = _SeqProvider("name = Alice\nage = 30\ncity = Paris")
-    monkeypatch.setattr("formatshield.engine._async.from_model", lambda *a, **k: double)
-    e2 = AsyncFormatShield(
+    monkeypatch.setattr("nfield.engine._async.from_model", lambda *a, **k: double)
+    e2 = AsyncNField(
         "mock/echo", _SCHEMA, config=ExtractionConfig(closed_book=True, self_consistency=True)
     )
     asyncio.run(e2.extract("", _SCHEMA))
@@ -147,9 +147,9 @@ def test_self_consistency_doubles_calls(monkeypatch) -> None:
 def test_closed_book_abstention_is_not_recovered(monkeypatch) -> None:
     # A deliberate abstention (tracked in state.abstained) is excluded from the recovery
     # pool, so it is not re-extracted and the provider is never called.
-    from formatshield.assembly._blackboard import Blackboard, FieldState
-    from formatshield.pipeline._state import PipelineState
-    from formatshield.pipeline.s5b_recover import run_recovery_pass
+    from nfield.assembly._blackboard import Blackboard, FieldState
+    from nfield.pipeline._state import PipelineState
+    from nfield.pipeline.s5b_recover import run_recovery_pass
 
     state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)
     state.closed_book = True
@@ -176,8 +176,8 @@ def test_closed_book_abstention_is_not_recovered(monkeypatch) -> None:
 
 def test_document_run_leaves_answer_rate_none(monkeypatch) -> None:
     provider = _SeqProvider("name = Alice")
-    monkeypatch.setattr("formatshield.engine._async.from_model", lambda *a, **k: provider)
-    engine = AsyncFormatShield("mock/echo", _SCHEMA)  # closed_book=False (default)
+    monkeypatch.setattr("nfield.engine._async.from_model", lambda *a, **k: provider)
+    engine = AsyncNField("mock/echo", _SCHEMA)  # closed_book=False (default)
     result = asyncio.run(engine.extract("Alice lives here.", _SCHEMA))
     assert result.metadata.answer_rate is None
     assert result.metadata.abstain_rate is None

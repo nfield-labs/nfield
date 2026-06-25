@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.exceptions import ProviderError
-from formatshield.providers._registry import from_model, register_provider
+from nfield.exceptions import ProviderError
+from nfield.providers._registry import from_model, register_provider
 
 
 class TestFromModel:
@@ -66,7 +66,7 @@ class TestRegisterProvider:
     def test_register_provider_adds_to_registry(self) -> None:
         """Registering a provider adds it to the factory."""
         # Register a custom provider (module path must exist in prod)
-        register_provider("custom", "formatshield.providers.groq", "GroqProvider")
+        register_provider("custom", "nfield.providers.groq", "GroqProvider")
         # Can now use it (will fail at import if module doesn't exist, but registration works)
         assert True  # Registration succeeded
 
@@ -89,7 +89,7 @@ class TestFromModelCredentials:
         assert provider._max_retries == 10  # type: ignore[attr-defined]
 
     def test_max_retries_defaults_to_provider_floor_when_unset(self) -> None:
-        from formatshield.providers._base import _DEFAULT_RETRY_ATTEMPTS
+        from nfield.providers._base import _DEFAULT_RETRY_ATTEMPTS
 
         provider = from_model("groq/llama-3.1-8b")
         assert provider._max_retries == _DEFAULT_RETRY_ATTEMPTS  # type: ignore[attr-defined]

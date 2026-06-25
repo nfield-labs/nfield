@@ -6,11 +6,11 @@ import asyncio
 
 import pytest
 
-from formatshield.assembly._blackboard import Blackboard
-from formatshield.config import ExtractionConfig
-from formatshield.engine._async import AsyncFormatShield, _require_document_matches_mode
-from formatshield.exceptions import SchemaError
-from formatshield.pipeline.s5b_recover import _failure_reason
+from nfield.assembly._blackboard import Blackboard
+from nfield.config import ExtractionConfig
+from nfield.engine._async import AsyncNField, _require_document_matches_mode
+from nfield.exceptions import SchemaError
+from nfield.pipeline.s5b_recover import _failure_reason
 
 
 class _NeverProvider:
@@ -27,9 +27,9 @@ class _NeverProvider:
         raise AssertionError("preflight must reject before any provider call")
 
 
-def _engine(monkeypatch, config: ExtractionConfig) -> AsyncFormatShield:
-    monkeypatch.setattr("formatshield.engine._async.from_model", lambda *a, **k: _NeverProvider())
-    return AsyncFormatShield("mock/model", config=config)
+def _engine(monkeypatch, config: ExtractionConfig) -> AsyncNField:
+    monkeypatch.setattr("nfield.engine._async.from_model", lambda *a, **k: _NeverProvider())
+    return AsyncNField("mock/model", config=config)
 
 
 # ---------------------------------------------------------------------------
@@ -194,9 +194,9 @@ def test_transient_reason_is_neutral_no_prior_value() -> None:
 def test_cast_failure_is_marked_failed_with_raw_value() -> None:
     # "age = abc" cannot be cast to integer; parse_sfep drops it. Stage 4 must instead
     # mark the field FAILED carrying the raw text, so recovery can show it to the model.
-    from formatshield.pipeline._state import PipelineState
-    from formatshield.pipeline.s4_extract import _mark_cast_failures
-    from formatshield.schema._types import Field
+    from nfield.pipeline._state import PipelineState
+    from nfield.pipeline.s4_extract import _mark_cast_failures
+    from nfield.schema._types import Field
 
     f = Field("age", "integer", {}, "", {})
     state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)
@@ -215,10 +215,10 @@ def test_cast_failure_is_marked_failed_with_raw_value() -> None:
 def test_cast_failure_not_marked_when_value_also_parses() -> None:
     # If the same field also produced a castable value (it is in `extracted`), the good
     # value must win — the field is not clobbered to FAILED.
-    from formatshield.assembly._blackboard import FieldState
-    from formatshield.pipeline._state import PipelineState
-    from formatshield.pipeline.s4_extract import _mark_cast_failures
-    from formatshield.schema._types import Field
+    from nfield.assembly._blackboard import FieldState
+    from nfield.pipeline._state import PipelineState
+    from nfield.pipeline.s4_extract import _mark_cast_failures
+    from nfield.schema._types import Field
 
     f = Field("age", "integer", {}, "", {})
     state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)
@@ -239,9 +239,9 @@ def test_cast_failure_not_marked_when_value_also_parses() -> None:
 
 
 def test_unknown_lines_flow_to_metadata() -> None:
-    from formatshield.pipeline._state import PipelineState
-    from formatshield.pipeline.s6_assemble import run_stage_6
-    from formatshield.schema._types import Field
+    from nfield.pipeline._state import PipelineState
+    from nfield.pipeline.s6_assemble import run_stage_6
+    from nfield.schema._types import Field
 
     f = Field("name", "string", {}, "", {})
     state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)
@@ -256,9 +256,9 @@ def test_unknown_lines_flow_to_metadata() -> None:
 
 
 def test_unknown_lines_default_zero() -> None:
-    from formatshield.pipeline._state import PipelineState
-    from formatshield.pipeline.s6_assemble import run_stage_6
-    from formatshield.schema._types import Field
+    from nfield.pipeline._state import PipelineState
+    from nfield.pipeline.s6_assemble import run_stage_6
+    from nfield.schema._types import Field
 
     f = Field("name", "string", {}, "", {})
     state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)

@@ -7,8 +7,8 @@ import math
 from hypothesis import given
 from hypothesis import strategies as st
 
-from formatshield.schema._tau import _compute_enum_tau, compute_tau
-from formatshield.schema._types import Field
+from nfield.schema._tau import _compute_enum_tau, compute_tau
+from nfield.schema._types import Field
 
 # ---------------------------------------------------------------------------
 # Helper

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from formatshield.pipeline._structure import (
+from nfield.pipeline._structure import (
     align_path_to_section,
     detect_blocks,
     detect_record_axis,
@@ -10,7 +10,7 @@ from formatshield.pipeline._structure import (
     group_record_ordinal,
     record_segments,
 )
-from formatshield.schema._types import Field
+from nfield.schema._types import Field
 
 
 def _field(path: str) -> Field:

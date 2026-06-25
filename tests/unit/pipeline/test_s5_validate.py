@@ -4,15 +4,15 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.config import ExtractionConfig
-from formatshield.pipeline._state import PipelineState
-from formatshield.pipeline.s1_schema import run_stage_1
-from formatshield.pipeline.s2a_structure import run_stage_2a
-from formatshield.pipeline.s2b_prepass import run_stage_2b
-from formatshield.pipeline.s2c_packing import run_stage_2c
-from formatshield.pipeline.s3_excerpt import run_stage_3
-from formatshield.pipeline.s4_extract import run_stage_4
-from formatshield.pipeline.s5_validate import run_stage_5
+from nfield.config import ExtractionConfig
+from nfield.pipeline._state import PipelineState
+from nfield.pipeline.s1_schema import run_stage_1
+from nfield.pipeline.s2a_structure import run_stage_2a
+from nfield.pipeline.s2b_prepass import run_stage_2b
+from nfield.pipeline.s2c_packing import run_stage_2c
+from nfield.pipeline.s3_excerpt import run_stage_3
+from nfield.pipeline.s4_extract import run_stage_4
+from nfield.pipeline.s5_validate import run_stage_5
 
 SCHEMA = {
     "type": "object",
@@ -105,7 +105,7 @@ class TestRunStage5:
     async def test_call_failed_fields_are_not_sfr_retried(self):
         # Fix B: a transient call/API failure (429) must not be re-fired via SFR —
         # that retry-storm is what amplifies a 429 into a coverage collapse.
-        from formatshield.assembly._blackboard import FieldState
+        from nfield.assembly._blackboard import FieldState
 
         state, provider0 = _build_state(GOOD_RESPONSE)
         state = await run_stage_4(state, provider0)

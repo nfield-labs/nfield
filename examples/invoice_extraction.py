@@ -1,6 +1,6 @@
 """Invoice extraction with a Pydantic schema and a reusable engine.
 
-Shows the class-based API (``FormatShield``) which caches the schema across
+Shows the class-based API (``NField``) which caches the schema across
 documents and calibrates the model only once.
 
 Run:
@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import pydantic
 
-from formatshield import FormatShield
+from nfield import NField
 
 
 class LineItem(pydantic.BaseModel):
@@ -36,7 +36,7 @@ DOCUMENTS = [
 
 
 def main() -> None:
-    engine = FormatShield(
+    engine = NField(
         "groq/llama-3.1-8b-instant",
         Invoice,
         context_window=131_072,

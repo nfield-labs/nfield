@@ -14,14 +14,14 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.extraction._sfep import (
+from nfield.extraction._sfep import (
     NEEDS_REVALIDATION,
     _cast_array,
     parse_sfep,
     parse_sfep_line,
     typecast,
 )
-from formatshield.schema._types import Field
+from nfield.schema._types import Field
 
 
 def make_field(path: str, ftype: str, constraints: dict | None = None) -> Field:
@@ -134,7 +134,7 @@ class TestTypeCastNumericEdgeCases:
     def test_float_42_point_9_for_integer_raises(self):
         """42.9 cannot be truncated to integer — should raise, not silently truncate."""
         f = make_field("age", "integer")
-        from formatshield.exceptions import ExtractionError
+        from nfield.exceptions import ExtractionError
 
         with pytest.raises(ExtractionError):
             typecast("42.9", f)
@@ -232,10 +232,10 @@ class TestParseSfepLineSeparator:
 class TestNeedsRevalidationSentinel:
     def test_singleton_identity_via_is(self):
         """NEEDS_REVALIDATION is a singleton — two imports must be same object."""
-        from formatshield.extraction._sfep import (
+        from nfield.extraction._sfep import (
             NEEDS_REVALIDATION as NR1,
         )
-        from formatshield.extraction._sfep import (
+        from nfield.extraction._sfep import (
             _NeedsRevalidationType,
         )
 

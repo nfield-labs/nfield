@@ -3,14 +3,14 @@
 ## Install
 
 ```bash
-pip install "formatshield[groq]"
+pip install "nfield[groq]"
 export GROQ_API_KEY=...
 ```
 
 ## One-shot extraction
 
 ```python
-from formatshield import nfield
+from nfield import nfield
 
 schema = {
     "type": "object",
@@ -32,7 +32,7 @@ print(result.metadata)    # K, K_min, quality_score, per-field confidence, ...
 
 ```python
 import pydantic
-from formatshield import nfield
+from nfield import nfield
 
 class Invoice(pydantic.BaseModel):
     vendor: str
@@ -49,9 +49,9 @@ For many documents on the same schema, build the engine once — the schema is
 normalised a single time and the model is calibrated once.
 
 ```python
-from formatshield import FormatShield
+from nfield import NField
 
-engine = FormatShield("groq/llama-3.1-8b-instant", Invoice)
+engine = NField("groq/llama-3.1-8b-instant", Invoice)
 for doc in documents:
     print(engine(doc).data)
 ```
@@ -59,25 +59,25 @@ for doc in documents:
 Async is symmetric:
 
 ```python
-from formatshield import AsyncFormatShield
+from nfield import AsyncNField
 
-async with AsyncFormatShield("groq/llama-3.1-8b-instant", Invoice) as engine:
+async with AsyncNField("groq/llama-3.1-8b-instant", Invoice) as engine:
     result = await engine.extract(document_text)
 ```
 
 ## Command line
 
 ```bash
-formatshield inspect schema.json
-formatshield extract doc.txt --schema schema.json --model groq/llama-3.1-8b-instant
+nfield inspect schema.json
+nfield extract doc.txt --schema schema.json --model groq/llama-3.1-8b-instant
 ```
 
-If no model is passed, FormatShield reads `FORMATSHIELD_MODEL` from the
+If no model is passed, NField reads `NFIELD_MODEL` from the
 environment, then `ExtractionConfig(default_model=...)`.
 
 ## Model specs (context window & output ceiling)
 
-You name the model as `"provider/model-name"` and tell FormatShield its real
+You name the model as `"provider/model-name"` and tell NField its real
 limits, so capacity planning uses the full window:
 
 ```python
@@ -88,8 +88,8 @@ result = nfield(
 )
 ```
 
-The same `context_window` / `max_output_tokens` arguments work on `FormatShield`,
-`AsyncFormatShield`, and `nfield_async`, and as `--context-window` /
+The same `context_window` / `max_output_tokens` arguments work on `NField`,
+`AsyncNField`, and `nfield_async`, and as `--context-window` /
 `--max-output-tokens` on the CLI. Omit them to use the provider's conservative
 default.
 
@@ -106,6 +106,6 @@ result = nfield(
 )
 ```
 
-`instructions` is **prepended** to FormatShield's built-in SFEP prompt (which is
+`instructions` is **prepended** to NField's built-in SFEP prompt (which is
 always kept, so output parsing stays valid) and is counted in capacity planning — a
 long value correctly reduces the per-call document budget. CLI: `--instructions`.

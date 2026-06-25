@@ -6,9 +6,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from formatshield.config import ExtractionConfig
-from formatshield.schema._types import CapacityLeaf, Field
-from formatshield.validation._retry import (
+from nfield.config import ExtractionConfig
+from nfield.schema._types import CapacityLeaf, Field
+from nfield.validation._retry import (
     FailureCause,
     build_retry_prompt,
     classify_failure,
@@ -319,7 +319,7 @@ class TestRetryBatchCapacityPacking:
     """Independent failed fields are packed into few batches, not one-per-field."""
 
     def _fields(self, n: int):
-        from formatshield.schema._types import Field
+        from nfield.schema._types import Field
 
         return [
             Field(f"f{i:03d}", "string", {}, "", {}).with_tau(tau=2.0, var_tau=0.5)
@@ -343,7 +343,7 @@ class TestRetryBatchCapacityPacking:
 
     def test_dependency_closure_never_split(self):
         # a<-b<-c chain stays in one batch even under a tiny budget.
-        from formatshield.schema._types import Field
+        from nfield.schema._types import Field
 
         a = Field("a", "string", {}, "", {}).with_tau(tau=5.0, var_tau=0.5)
         b = Field("b", "string", {}, "", {}).with_tau(tau=5.0, var_tau=0.5)

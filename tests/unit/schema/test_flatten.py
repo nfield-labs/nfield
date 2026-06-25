@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from formatshield.exceptions import SchemaError
-from formatshield.schema._flatten import flatten_schema
+from nfield.exceptions import SchemaError
+from nfield.schema._flatten import flatten_schema
 
 SCHEMAS_DIR = Path(__file__).parent.parent.parent / "fixtures" / "schemas"
 
@@ -497,7 +497,7 @@ class TestFlattenConstraints:
 # ---------------------------------------------------------------------------
 # Resource bound — $ref fan-out / pathological expansion (DoS guard)
 # ---------------------------------------------------------------------------
-import formatshield.schema._flatten as _flatten_mod  # noqa: E402
+import nfield.schema._flatten as _flatten_mod  # noqa: E402
 
 
 class TestNodeBudget:

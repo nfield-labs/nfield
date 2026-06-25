@@ -12,9 +12,9 @@ from dataclasses import dataclass
 
 import pytest
 
-from formatshield import ExtractionResult, ExtractionStatus, nfield
-from formatshield.config import ExtractionConfig
-from formatshield.exceptions import SchemaError
+from nfield import ExtractionResult, ExtractionStatus, nfield
+from nfield.config import ExtractionConfig
+from nfield.exceptions import SchemaError
 
 _DOC = "Name: Alice. Age: 30."
 
@@ -47,7 +47,7 @@ class TestNfieldContract:
 
     def test_two_param_falls_back_to_env_var(self, install_provider, monkeypatch):
         install_provider(_ECHO)
-        monkeypatch.setenv("FORMATSHIELD_MODEL", "mock/echo")
+        monkeypatch.setenv("NFIELD_MODEL", "mock/echo")
         result = nfield(_DOC, _DICT_SCHEMA)
         assert result.data["name"] == "Alice"
 
@@ -59,7 +59,7 @@ class TestNfieldContract:
 
     def test_no_model_anywhere_raises(self, install_provider, monkeypatch):
         install_provider(_ECHO)
-        monkeypatch.delenv("FORMATSHIELD_MODEL", raising=False)
+        monkeypatch.delenv("NFIELD_MODEL", raising=False)
         with pytest.raises(SchemaError):
             nfield(_DOC, _DICT_SCHEMA)
 

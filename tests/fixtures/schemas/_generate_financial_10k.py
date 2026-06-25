@@ -518,7 +518,7 @@ if __name__ == "__main__":
     out = pathlib.Path(__file__).parent / "financial_10k_realistic.json"
     out.write_text(json.dumps(schema, indent=2), encoding="utf-8")
 
-    from formatshield.schema._flatten import flatten_schema
+    from nfield.schema._flatten import flatten_schema
 
     fields = flatten_schema(schema)
     print(f"wrote {out.name} ({out.stat().st_size} bytes)")

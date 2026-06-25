@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.assembly._trie import (
+from nfield.assembly._trie import (
     RadixTrie,
     assemble_json,
     parse_path_segments,
 )
-from formatshield.exceptions import AssemblyError
+from nfield.exceptions import AssemblyError
 
 # ---------------------------------------------------------------------------
 # parse_path_segments
@@ -215,7 +215,7 @@ class TestRadixTrie:
 # ---------------------------------------------------------------------------
 # Resource bounds on untrusted (LLM-produced) paths — DoS guards
 # ---------------------------------------------------------------------------
-from formatshield.assembly._trie import _MAX_ARRAY_INDEX, _MAX_PATH_DEPTH  # noqa: E402
+from nfield.assembly._trie import _MAX_ARRAY_INDEX, _MAX_PATH_DEPTH  # noqa: E402
 
 
 class TestResourceBounds:

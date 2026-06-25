@@ -4,7 +4,7 @@ The format tax is the accuracy lost to producing JSON *structure* — the nested
 braces, commas, and quotes — rather than the field *values*. It grows with field
 count and nesting depth.
 
-FormatShield sidesteps it with the **Schema-aware Field Extraction Protocol (SFEP)**:
+NField sidesteps it with the **Schema-aware Field Extraction Protocol (SFEP)**:
 the model emits one flat line per field,
 
 ```

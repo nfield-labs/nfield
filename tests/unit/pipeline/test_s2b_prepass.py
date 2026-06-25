@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from formatshield.config import ExtractionConfig
-from formatshield.pipeline._state import PipelineState
-from formatshield.pipeline.s1_schema import run_stage_1
-from formatshield.pipeline.s2a_structure import run_stage_2a
-from formatshield.pipeline.s2b_prepass import run_stage_2b
+from nfield.config import ExtractionConfig
+from nfield.pipeline._state import PipelineState
+from nfield.pipeline.s1_schema import run_stage_1
+from nfield.pipeline.s2a_structure import run_stage_2a
+from nfield.pipeline.s2b_prepass import run_stage_2b
 
 SCHEMA = {
     "type": "object",
@@ -87,7 +87,7 @@ class TestGroupTopK:
 
     @staticmethod
     def _segs(n: int):
-        from formatshield.schema._types import Segment
+        from nfield.schema._types import Segment
 
         return [
             Segment(text="word " * 80, start=0, end=400, segment_type="unstructured", segment_id=i)
@@ -96,7 +96,7 @@ class TestGroupTopK:
 
     @staticmethod
     def _group(n_fields: int):
-        from formatshield.schema._types import Field, FieldGroup
+        from nfield.schema._types import Field, FieldGroup
 
         fields = [
             Field(path=f"g.f{i}", type="string", constraints={}, parent_path="g", schema_node={})
@@ -105,7 +105,7 @@ class TestGroupTopK:
         return FieldGroup(parent_path="g", fields=fields)
 
     def test_larger_group_retrieves_more(self):
-        from formatshield.pipeline.s2b_prepass import _group_top_k
+        from nfield.pipeline.s2b_prepass import _group_top_k
 
         # Small budget so the per-group field scaling (not the budget pool) binds:
         # a large group must then retrieve more than a small one.
@@ -115,14 +115,14 @@ class TestGroupTopK:
         assert large > small, "a group with more fields must retrieve more segments"
 
     def test_floored_at_minimum(self):
-        from formatshield.pipeline.s2b_prepass import _MIN_TOP_K_SEGMENTS, _group_top_k
+        from nfield.pipeline.s2b_prepass import _MIN_TOP_K_SEGMENTS, _group_top_k
 
         segs = self._segs(200)
         depth = _group_top_k(self._group(1), segs, c_usable=100_000.0, chars_per_token=4.0)
         assert depth >= _MIN_TOP_K_SEGMENTS
 
     def test_capped_by_segment_count(self):
-        from formatshield.pipeline.s2b_prepass import _group_top_k
+        from nfield.pipeline.s2b_prepass import _group_top_k
 
         segs = self._segs(3)
         depth = _group_top_k(self._group(50), segs, c_usable=100_000.0, chars_per_token=4.0)

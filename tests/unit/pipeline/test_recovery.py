@@ -10,11 +10,11 @@ Covers, deterministically and without network:
 
 from __future__ import annotations
 
-from formatshield.assembly._blackboard import Blackboard, FieldState
-from formatshield.config import ExtractionConfig
-from formatshield.pipeline._state import PipelineState
-from formatshield.pipeline.s5b_recover import run_recovery_pass
-from formatshield.schema._types import CapacityLeaf, Field, FieldGroup, Segment
+from nfield.assembly._blackboard import Blackboard, FieldState
+from nfield.config import ExtractionConfig
+from nfield.pipeline._state import PipelineState
+from nfield.pipeline.s5b_recover import run_recovery_pass
+from nfield.schema._types import CapacityLeaf, Field, FieldGroup, Segment
 
 
 def _field(path: str, *, tau: float = 5.0) -> Field:

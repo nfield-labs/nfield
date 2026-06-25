@@ -1,6 +1,6 @@
 """nfield adapter — the method under test.
 
-Wraps the library's :func:`formatshield.nfield` entry point in the uniform
+Wraps the library's :func:`nfield.nfield` entry point in the uniform
 :class:`Adapter` interface. The library import is deferred to call time so the
 pure scorer (and CI that only exercises it) never needs a provider SDK installed.
 """
@@ -15,7 +15,7 @@ from ._base import AdapterOutput
 from ._errors import classify_exc
 
 if TYPE_CHECKING:
-    from formatshield import ExtractionResult
+    from nfield import ExtractionResult
 
 # Retry budget applied to every method equally (fairness rule). Kept on the
 # adapter, not hard-coded in run(), so a sweep can hold it constant across the
@@ -58,8 +58,8 @@ class NfieldAdapter:
         as a failed :class:`AdapterOutput`, never raised — a failed run scores as a
         miss and stays in the denominator.
         """
-        from formatshield import nfield
-        from formatshield.config import ExtractionConfig
+        from nfield import nfield
+        from nfield.config import ExtractionConfig
 
         started = time.perf_counter()
         try:

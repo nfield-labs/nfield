@@ -3,7 +3,7 @@ requires = ["hatchling>=1.26", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
-name = "formatshield"
+name = "nfield"
 dynamic = ["version"]
 description = "N-field structured extraction from documents with LLMs."
 readme = "README.md"
@@ -45,21 +45,21 @@ bench = [
 ]
 
 [project.scripts]
-formatshield = "formatshield.cli._app:main"
+nfield = "nfield.cli._app:main"
 
 [project.urls]
-Homepage = "https://github.com/nfield-labs/formatshield"
-Documentation = "https://formatshield.readthedocs.io"
-Changelog = "https://github.com/nfield-labs/formatshield/blob/main/CHANGELOG.md"
-Repository = "https://github.com/nfield-labs/formatshield"
-"Bug Tracker" = "https://github.com/nfield-labs/formatshield/issues"
+Homepage = "https://github.com/nfield-labs/nfield"
+Documentation = "https://nfield.readthedocs.io"
+Changelog = "https://github.com/nfield-labs/nfield/blob/main/CHANGELOG.md"
+Repository = "https://github.com/nfield-labs/nfield"
+"Bug Tracker" = "https://github.com/nfield-labs/nfield/issues"
 
 [tool.hatch.version]
 source = "vcs"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/formatshield"]
-include = ["src/formatshield/py.typed"]
+packages = ["src/nfield"]
+include = ["src/nfield/py.typed"]
 
 [tool.ruff]
 line-length = 99
@@ -74,7 +74,7 @@ ignore = ["E501"]
 "__init__.py" = ["F401"]
 # Typer resolves command annotations at runtime via get_type_hints, so Path /
 # Annotated must stay as real runtime imports — not moved to TYPE_CHECKING.
-"src/formatshield/cli/_app.py" = ["TC003"]
+"src/nfield/cli/_app.py" = ["TC003"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -120,7 +120,7 @@ filterwarnings = ["error"]
 
 [tool.coverage.run]
 branch = true
-source_pkgs = ["formatshield"]
+source_pkgs = ["nfield"]
 parallel = true
 
 [tool.coverage.report]

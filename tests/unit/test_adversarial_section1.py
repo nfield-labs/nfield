@@ -11,19 +11,19 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from formatshield.config import ExtractionConfig
-from formatshield.exceptions import ExtractionError, SchemaError
-from formatshield.schema._deps import extract_dependencies
-from formatshield.schema._difficulty import compute_difficulty
-from formatshield.schema._flatten import flatten_schema
-from formatshield.schema._tau import compute_tau
-from formatshield.schema._types import (
+from nfield.config import ExtractionConfig
+from nfield.exceptions import ExtractionError, SchemaError
+from nfield.schema._deps import extract_dependencies
+from nfield.schema._difficulty import compute_difficulty
+from nfield.schema._flatten import flatten_schema
+from nfield.schema._tau import compute_tau
+from nfield.schema._types import (
     _VALID_SEGMENT_TYPES,
     Field,
     FieldGroup,
     Segment,
 )
-from formatshield.types import ExtractionResult, ExtractionStatus, FieldResult, Metadata
+from nfield.types import ExtractionResult, ExtractionStatus, FieldResult, Metadata
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -406,7 +406,7 @@ class TestDifficultyAdversarial:
     # ADV-DIFF-03: All weights sum to 1.0
     def test_difficulty_weights_sum_to_one(self) -> None:
         """D_WEIGHT_TYPE + D_WEIGHT_CONSTRAINT + D_WEIGHT_DEP == 1.0."""
-        from formatshield.schema._difficulty import (
+        from nfield.schema._difficulty import (
             _D_WEIGHT_CONSTRAINT,
             _D_WEIGHT_DEP,
             _D_WEIGHT_TYPE,
@@ -420,7 +420,7 @@ class TestDifficultyAdversarial:
         """M2: Code has boolean D_type=0.05; arch-engine example calibration shows 0.02.
         Test documents current value to detect drift.
         """
-        from formatshield.schema._difficulty import _D_TYPE
+        from nfield.schema._difficulty import _D_TYPE
 
         # Current code value — if this changes, the test will fail
         assert _D_TYPE["boolean"] == 0.05
@@ -638,13 +638,13 @@ class TestTypesAdversarial:
 
 
 class TestExceptionsAdversarial:
-    # ADV-EXC-01: All exception subclasses are catchable as FormatShieldError
+    # ADV-EXC-01: All exception subclasses are catchable as NFieldError
     def test_all_subclasses_catchable_as_base(self) -> None:
-        """Every exception subclass must be caught by FormatShieldError."""
-        from formatshield.exceptions import (
+        """Every exception subclass must be caught by NFieldError."""
+        from nfield.exceptions import (
             AssemblyError,
             ExtractionError,
-            FormatShieldError,
+            NFieldError,
             ProviderError,
             SchemaError,
             ValidationError,
@@ -660,9 +660,9 @@ class TestExceptionsAdversarial:
             caught = False
             try:
                 raise exc_cls("test")
-            except FormatShieldError:
+            except NFieldError:
                 caught = True
-            assert caught, f"{exc_cls.__name__} not caught by FormatShieldError"
+            assert caught, f"{exc_cls.__name__} not caught by NFieldError"
 
     # ADV-EXC-02: SchemaError __str__ includes field and hint
     def test_schema_error_str_contains_field_and_hint(self) -> None:
@@ -685,7 +685,7 @@ class TestExceptionsAdversarial:
     # ADV-EXC-04: ValidationError __str__ with value=0 (falsy but not None)
     def test_validation_error_with_falsy_value(self) -> None:
         """ValidationError with value=0 should include value in __str__."""
-        from formatshield.exceptions import ValidationError
+        from nfield.exceptions import ValidationError
 
         exc = ValidationError("Out of range", field="count", value=0)
         s = str(exc)
@@ -693,7 +693,7 @@ class TestExceptionsAdversarial:
 
     # ADV-EXC-05: AssemblyError __str__ surfaces path (consistent with the others)
     def test_assembly_error_str_contains_path(self) -> None:
-        from formatshield.exceptions import AssemblyError
+        from nfield.exceptions import AssemblyError
 
         assert "items[5]" in str(AssemblyError("bad path", path="items[5]"))
         assert str(AssemblyError("bad path")) == "bad path"  # no path -> message only

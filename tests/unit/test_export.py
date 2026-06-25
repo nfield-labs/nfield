@@ -1,4 +1,4 @@
-"""Tests for formatshield.export — DataFrame / CSV export (optional pandas)."""
+"""Tests for nfield.export — DataFrame / CSV export (optional pandas)."""
 
 from __future__ import annotations
 
@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from formatshield.export import result_to_dataframe, results_to_csv, results_to_dataframe
-from formatshield.types import ExtractionResult, ExtractionStatus, FieldResult, Metadata
+from nfield.export import result_to_dataframe, results_to_csv, results_to_dataframe
+from nfield.types import ExtractionResult, ExtractionStatus, FieldResult, Metadata
 
 if TYPE_CHECKING:
     from pathlib import Path

@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.exceptions import ProviderError
-from formatshield.providers import _base
-from formatshield.providers._base import BaseProvider
+from nfield.exceptions import ProviderError
+from nfield.providers import _base
+from nfield.providers._base import BaseProvider
 
 
 class MockProvider(BaseProvider):
@@ -138,7 +138,7 @@ class TestBaseProvider:
 
     def test_default_retry_policy_survives_a_tpm_window(self) -> None:
         """Fix A: defaults must outlast a ~60s 429 window, not surrender in ~7s."""
-        from formatshield.providers import _base
+        from nfield.providers import _base
 
         assert _base._DEFAULT_RETRY_ATTEMPTS >= 6
         assert _base._DEFAULT_BACKOFF_MAX >= 60.0

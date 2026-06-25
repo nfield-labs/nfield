@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from formatshield.retrieval._tokenize import fold_diacritics, tokenize
+from nfield.retrieval._tokenize import fold_diacritics, tokenize
 
 
 class TestFoldDiacritics:

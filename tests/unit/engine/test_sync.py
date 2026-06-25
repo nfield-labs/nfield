@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import asyncio
 
-from formatshield import FormatShield, nfield
-from formatshield.config import ExtractionConfig
-from formatshield.engine._sync import _run_sync
+from nfield import NField, nfield
+from nfield.config import ExtractionConfig
+from nfield.engine._sync import _run_sync
 
 _DOC = "Name: Alice. Age: 30."
 _SCHEMA = {
@@ -25,7 +25,7 @@ class TestSyncEngine:
 
     def test_call_alias_and_context_manager(self, install_provider):
         install_provider(_ECHO)
-        with FormatShield("mock/echo", _SCHEMA) as fs:
+        with NField("mock/echo", _SCHEMA) as fs:
             result = fs(_DOC)
         assert result.data["age"] == 30
 
@@ -43,7 +43,7 @@ class TestRunSync:
         # of re-entering asyncio.run on the active loop.
         install_provider(_ECHO)
         assert asyncio.get_running_loop().is_running()
-        result = FormatShield(
+        result = NField(
             "mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0)
         ).extract(_DOC)
         assert result.data["name"] == "Alice"

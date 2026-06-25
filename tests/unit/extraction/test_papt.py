@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
-from formatshield.extraction._papt import (
+from nfield.extraction._papt import (
     ClusterType,
     TemplateType,
     classify_cluster,
     describe_field,
     select_template,
 )
-from formatshield.schema._types import Field
+from nfield.schema._types import Field
 
 # ---------------------------------------------------------------------------
 # Helpers

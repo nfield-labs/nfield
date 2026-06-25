@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from formatshield.pipeline._state import PipelineState
-from formatshield.pipeline.s3_excerpt import _coverage_segment_ids, run_stage_3
-from formatshield.schema._types import CapacityLeaf, Field, FieldGroup, Segment
+from nfield.pipeline._state import PipelineState
+from nfield.pipeline.s3_excerpt import _coverage_segment_ids, run_stage_3
+from nfield.schema._types import CapacityLeaf, Field, FieldGroup, Segment
 
 
 def _seg(text: str, sid: int) -> Segment:

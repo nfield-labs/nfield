@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from formatshield.schema._deps import (
+from nfield.schema._deps import (
     _extract_allof_deps,
     _extract_dependent_required,
     _extract_if_then_else,

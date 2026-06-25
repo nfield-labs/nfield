@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from formatshield.retrieval._bmx import bmx_rescore
-from formatshield.retrieval._glean import (
+from nfield.retrieval._bmx import bmx_rescore
+from nfield.retrieval._glean import (
     build_glean_index,
     field_best_segments,
     glean_rescore,
 )
-from formatshield.schema._types import Field, Segment
+from nfield.schema._types import Field, Segment
 
 
 def _seg(text: str, sid: int) -> Segment:

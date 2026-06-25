@@ -71,7 +71,7 @@ def test_total_call_failure_is_credited_to_call_failed(monkeypatch):
     def boom(*_args, **_kwargs):
         raise ConnectionError("timed out")
 
-    monkeypatch.setattr("formatshield.nfield", boom)
+    monkeypatch.setattr("nfield.nfield", boom)
     schema = _schema({"a": {"type": "string"}, "b": {"type": "string"}})
     output = NfieldAdapter().run(
         "doc", schema, model="groq/x", context_window=8192, max_output_tokens=2048

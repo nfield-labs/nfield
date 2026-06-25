@@ -620,7 +620,7 @@ wheels = [
 ]
 
 [[package]]
-name = "formatshield"
+name = "nfield"
 source = { editable = "." }
 
 [package.optional-dependencies]

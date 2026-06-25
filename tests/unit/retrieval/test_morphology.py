@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from formatshield.retrieval._morphology import (
+from nfield.retrieval._morphology import (
     TYPE_BOOLEAN,
     TYPE_DATE,
     TYPE_EMAIL,
@@ -13,7 +13,7 @@ from formatshield.retrieval._morphology import (
     field_type_classes,
     nearest_gap,
 )
-from formatshield.schema._types import Field, Segment
+from nfield.schema._types import Field, Segment
 
 
 def _seg(text: str, sid: int = 0) -> Segment:

@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.config import ExtractionConfig
-from formatshield.pipeline._state import PipelineState
-from formatshield.pipeline.s1_schema import run_stage_1
-from formatshield.pipeline.s2a_structure import run_stage_2a
-from formatshield.pipeline.s2b_prepass import run_stage_2b
-from formatshield.pipeline.s2c_packing import run_stage_2c
-from formatshield.pipeline.s3_excerpt import run_stage_3
-from formatshield.pipeline.s4_extract import run_stage_4
+from nfield.config import ExtractionConfig
+from nfield.pipeline._state import PipelineState
+from nfield.pipeline.s1_schema import run_stage_1
+from nfield.pipeline.s2a_structure import run_stage_2a
+from nfield.pipeline.s2b_prepass import run_stage_2b
+from nfield.pipeline.s2c_packing import run_stage_2c
+from nfield.pipeline.s3_excerpt import run_stage_3
+from nfield.pipeline.s4_extract import run_stage_4
 
 SCHEMA = {
     "type": "object",

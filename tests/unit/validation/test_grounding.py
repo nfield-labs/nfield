@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.schema._types import Field
-from formatshield.validation._grounding import (
+from nfield.schema._types import Field
+from nfield.validation._grounding import (
     GROUNDABLE_TYPES,
     grounding_score,
     is_groundable,

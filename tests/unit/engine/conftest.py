@@ -61,7 +61,7 @@ def install_provider(monkeypatch: pytest.MonkeyPatch) -> Callable[[str], MockPro
     def _install(sfep_text: str) -> MockProvider:
         provider = MockProvider(sfep_text)
         monkeypatch.setattr(
-            "formatshield.engine._async.from_model",
+            "nfield.engine._async.from_model",
             lambda _model, **_kwargs: provider,
         )
         return provider

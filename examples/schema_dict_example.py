@@ -7,7 +7,7 @@ Run:
 
 from __future__ import annotations
 
-from formatshield import ExtractionConfig, nfield
+from nfield import ExtractionConfig, nfield
 
 DOCUMENT = """
 Patient: Jane Doe, age 54.

@@ -6,7 +6,7 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
-from formatshield.schema._difficulty import (
+from nfield.schema._difficulty import (
     _D_TYPE,
     _D_TYPE_STRING_UNCONSTRAINED,
     _D_WEIGHT_CONSTRAINT,
@@ -15,7 +15,7 @@ from formatshield.schema._difficulty import (
     _MAX_DEP_DEGREE,
     compute_difficulty,
 )
-from formatshield.schema._types import Field
+from nfield.schema._types import Field
 
 # ---------------------------------------------------------------------------
 # Helper

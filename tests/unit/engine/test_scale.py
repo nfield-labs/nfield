@@ -2,7 +2,7 @@
 
 The deterministic full-pipeline scale test exercises the raw stages; this one
 drives the same widths (200 / 500 / 1000 fields) through ``nfield`` and
-``AsyncFormatShield`` so the public surface is proven to thread hundreds of
+``AsyncNField`` so the public surface is proven to thread hundreds of
 leaves and reassemble every field. The mock provider's small context window
 forces capacity packing into many leaves, so the multi-leaf path is real.
 """
@@ -11,8 +11,8 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield import AsyncFormatShield, nfield
-from formatshield.config import ExtractionConfig
+from nfield import AsyncNField, nfield
+from nfield.config import ExtractionConfig
 
 from .conftest import MockProvider
 
@@ -33,7 +33,7 @@ def _full_sfep(n: int) -> str:
 
 def _install(monkeypatch, n: int) -> MockProvider:
     provider = MockProvider(_full_sfep(n))
-    monkeypatch.setattr("formatshield.engine._async.from_model", lambda _m, **_kw: provider)
+    monkeypatch.setattr("nfield.engine._async.from_model", lambda _m, **_kw: provider)
     return provider
 
 
@@ -41,7 +41,7 @@ class TestPublicApiScale:
     @pytest.mark.parametrize("n", [200, 500, 1000])
     async def test_async_engine_reassembles_every_field(self, monkeypatch, n):
         _install(monkeypatch, n)
-        engine = AsyncFormatShield(
+        engine = AsyncNField(
             "mock/echo", _wide_schema(n), config=ExtractionConfig(max_retry_rounds=0)
         )
         result = await engine.extract("short document")
@@ -55,7 +55,7 @@ class TestPublicApiScale:
 
     async def test_many_leaves_one_call_each(self, monkeypatch):
         provider = _install(monkeypatch, 500)
-        engine = AsyncFormatShield(
+        engine = AsyncNField(
             "mock/echo", _wide_schema(500), config=ExtractionConfig(max_retry_rounds=0)
         )
         result = await engine.extract("short document")
@@ -88,16 +88,16 @@ class TestPublicApiScale:
                 max_output_tokens=max_output_tokens or 8192,
             )
 
-        monkeypatch.setattr("formatshield.engine._async.from_model", factory)
+        monkeypatch.setattr("nfield.engine._async.from_model", factory)
         # Raise the field cap so the CONTEXT WINDOW is the binding constraint here
         # (this test isolates context-window → leaf-count; the field cap is its own
         # test, TestMaxFieldsPerCall).
         cfg = ExtractionConfig(max_retry_rounds=0, max_fields_per_call=1000)
 
-        small = await AsyncFormatShield(
+        small = await AsyncNField(
             "groq/x", _wide_schema(300), context_window=8192, max_output_tokens=8192, config=cfg
         ).extract("doc")
-        big = await AsyncFormatShield(
+        big = await AsyncNField(
             "groq/x",
             _wide_schema(300),
             context_window=131_072,
@@ -115,7 +115,7 @@ class TestInstructions:
 
     async def test_instructions_reach_provider(self, install_provider):
         provider = install_provider("name = Alice\nage = 30")
-        engine = AsyncFormatShield(
+        engine = AsyncNField(
             "mock/echo",
             {"type": "object", "properties": {"name": {"type": "string"}}},
             instructions="DOMAIN: clinical trial records. Prefer ISO dates.",
@@ -141,14 +141,14 @@ class TestInstructions:
                 max_output_tokens=max_output_tokens or 8192,
             )
 
-        monkeypatch.setattr("formatshield.engine._async.from_model", factory)
+        monkeypatch.setattr("nfield.engine._async.from_model", factory)
         cfg = ExtractionConfig(max_retry_rounds=0)
         schema = _wide_schema(50)
 
-        empty = await AsyncFormatShield(
+        empty = await AsyncNField(
             "groq/x", schema, context_window=8192, max_output_tokens=8192, config=cfg
         ).extract("doc")
-        huge = await AsyncFormatShield(
+        huge = await AsyncNField(
             "groq/x",
             schema,
             context_window=8192,

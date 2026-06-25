@@ -1,4 +1,4 @@
-"""Tests for formatshield.io — load document/schema, save/load results."""
+"""Tests for nfield.io — load document/schema, save/load results."""
 
 from __future__ import annotations
 
@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from formatshield.exceptions import SchemaError
-from formatshield.io import load_document, load_results, load_schema, save_results
-from formatshield.types import ExtractionResult, ExtractionStatus, Metadata
+from nfield.exceptions import SchemaError
+from nfield.io import load_document, load_results, load_schema, save_results
+from nfield.types import ExtractionResult, ExtractionStatus, Metadata
 
 if TYPE_CHECKING:
     from pathlib import Path

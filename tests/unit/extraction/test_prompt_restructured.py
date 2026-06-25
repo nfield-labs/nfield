@@ -6,9 +6,9 @@ as the value being present (anti-null), and a worked example is shown.
 
 from __future__ import annotations
 
-from formatshield.extraction._papt import TemplateType
-from formatshield.extraction._prompt import build_extraction_prompt
-from formatshield.schema._types import Field
+from nfield.extraction._papt import TemplateType
+from nfield.extraction._prompt import build_extraction_prompt
+from nfield.schema._types import Field
 
 
 def _fields() -> list[Field]:

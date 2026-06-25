@@ -14,8 +14,8 @@ from pathlib import Path
 
 import pytest
 
-from formatshield import ExtractionResult, ExtractionStatus, nfield
-from formatshield.config import ExtractionConfig
+from nfield import ExtractionResult, ExtractionStatus, nfield
+from nfield.config import ExtractionConfig
 
 # Load .env at import time (same convention as the other live tests).
 _env_file = Path(__file__).parent.parent.parent / ".env"

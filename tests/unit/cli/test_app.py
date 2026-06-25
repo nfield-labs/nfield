@@ -6,7 +6,7 @@ import json
 
 from typer.testing import CliRunner
 
-from formatshield.cli._app import app
+from nfield.cli._app import app
 
 runner = CliRunner()
 
@@ -47,7 +47,7 @@ class TestVersion:
     def test_version_flag(self):
         result = runner.invoke(app, ["--version"])
         assert result.exit_code == 0
-        assert "formatshield" in result.stdout
+        assert "nfield" in result.stdout
 
 
 class TestInspect:
@@ -72,7 +72,7 @@ class TestInspect:
 class TestExtract:
     def test_extract_writes_json(self, tmp_path, monkeypatch):
         provider = _MockProvider("vendor = Acme\ntotal = 42.5\npaid = true")
-        monkeypatch.setattr("formatshield.engine._async.from_model", lambda _m, **_kw: provider)
+        monkeypatch.setattr("nfield.engine._async.from_model", lambda _m, **_kw: provider)
 
         doc = _write(tmp_path / "doc.txt", "Acme invoice total 42.50 paid")
         schema_file = _write(tmp_path / "s.json", json.dumps(_SCHEMA))
@@ -99,7 +99,7 @@ class TestExtract:
 
     def test_extract_to_stdout(self, tmp_path, monkeypatch):
         provider = _MockProvider("vendor = Globex")
-        monkeypatch.setattr("formatshield.engine._async.from_model", lambda _m, **_kw: provider)
+        monkeypatch.setattr("nfield.engine._async.from_model", lambda _m, **_kw: provider)
         doc = _write(tmp_path / "doc.txt", "Globex")
         schema_file = _write(tmp_path / "s.json", json.dumps(_SCHEMA))
         result = runner.invoke(
@@ -110,7 +110,7 @@ class TestExtract:
 
     def test_extract_with_instructions_flag(self, tmp_path, monkeypatch):
         provider = _MockProvider("vendor = Acme")
-        monkeypatch.setattr("formatshield.engine._async.from_model", lambda _m, **_kw: provider)
+        monkeypatch.setattr("nfield.engine._async.from_model", lambda _m, **_kw: provider)
         doc = _write(tmp_path / "doc.txt", "Acme")
         schema_file = _write(tmp_path / "s.json", json.dumps(_SCHEMA))
         result = runner.invoke(
@@ -183,7 +183,7 @@ class TestIOErrorHandling:
 
     def test_unwritable_output_is_clean_error(self, tmp_path, monkeypatch):
         provider = _MockProvider("vendor = Acme")
-        monkeypatch.setattr("formatshield.engine._async.from_model", lambda _m, **_kw: provider)
+        monkeypatch.setattr("nfield.engine._async.from_model", lambda _m, **_kw: provider)
         doc = _write(tmp_path / "doc.txt", "Acme")
         schema_file = _write(tmp_path / "s.json", json.dumps(_SCHEMA))
         bad_out = tmp_path / "missing_dir" / "out.json"  # parent dir does not exist

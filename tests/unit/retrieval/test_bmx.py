@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from formatshield.retrieval._bmx import bmx_rescore, build_bmx_index
-from formatshield.schema._types import Segment
+from nfield.retrieval._bmx import bmx_rescore, build_bmx_index
+from nfield.schema._types import Segment
 
 
 def _seg(seg_id: int, text: str) -> Segment:

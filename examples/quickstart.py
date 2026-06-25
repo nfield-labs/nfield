@@ -7,7 +7,7 @@ Run:
 
 from __future__ import annotations
 
-from formatshield import nfield
+from nfield import nfield
 
 DOCUMENT = """
 INVOICE #4471
@@ -28,7 +28,7 @@ SCHEMA = {
 
 
 def main() -> None:
-    # Tell FormatShield the model's real limits so capacity planning uses the
+    # Tell NField the model's real limits so capacity planning uses the
     # full window instead of a conservative default.
     result = nfield(
         DOCUMENT,

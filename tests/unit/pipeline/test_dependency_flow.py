@@ -9,16 +9,16 @@ Covers, deterministically and without network:
 
 from __future__ import annotations
 
-from formatshield.assembly._blackboard import Blackboard, FieldState
-from formatshield.config import ExtractionConfig
-from formatshield.extraction._papt import TemplateType
-from formatshield.extraction._prompt import build_extraction_prompt
-from formatshield.pipeline._state import PipelineState
-from formatshield.pipeline.s2c_packing import _injection_cost, run_stage_2c
-from formatshield.pipeline.s4_extract import _resolved_dependencies
-from formatshield.pipeline.s5b_recover import run_recovery_pass
-from formatshield.schema._types import CapacityLeaf, Field, FieldGroup, Segment
-from formatshield.validation._retry import cascade_invalidate
+from nfield.assembly._blackboard import Blackboard, FieldState
+from nfield.config import ExtractionConfig
+from nfield.extraction._papt import TemplateType
+from nfield.extraction._prompt import build_extraction_prompt
+from nfield.pipeline._state import PipelineState
+from nfield.pipeline.s2c_packing import _injection_cost, run_stage_2c
+from nfield.pipeline.s4_extract import _resolved_dependencies
+from nfield.pipeline.s5b_recover import run_recovery_pass
+from nfield.schema._types import CapacityLeaf, Field, FieldGroup, Segment
+from nfield.validation._retry import cascade_invalidate
 
 
 class _RecoverProvider:

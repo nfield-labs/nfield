@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.extraction._papt import TemplateType
-from formatshield.extraction._prompt import (
+from nfield.extraction._papt import TemplateType
+from nfield.extraction._prompt import (
     build_extraction_prompt,
     build_retry_system_message,
 )
-from formatshield.schema._types import Field
+from nfield.schema._types import Field
 
 # ---------------------------------------------------------------------------
 # Helpers

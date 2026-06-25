@@ -1,4 +1,4 @@
-"""Tests for AsyncFormatShield: context manager, schema caching, call forms."""
+"""Tests for AsyncNField: context manager, schema caching, call forms."""
 
 from __future__ import annotations
 
@@ -7,13 +7,13 @@ from dataclasses import dataclass
 
 import pytest
 
-from formatshield import AsyncFormatShield, nfield_async
-from formatshield.config import ExtractionConfig
-from formatshield.engine._async import (
+from nfield import AsyncNField, nfield_async
+from nfield.config import ExtractionConfig
+from nfield.engine._async import (
     _MAX_SCHEMA_DEPTH,
     _dataclass_to_json_schema,
 )
-from formatshield.exceptions import SchemaError
+from nfield.exceptions import SchemaError
 
 
 # Module-scope dataclasses so get_type_hints can resolve the nested type — this
@@ -49,19 +49,19 @@ _ECHO = "name = Alice\nage = 30"
 class TestAsyncEngine:
     async def test_async_context_manager(self, install_provider):
         install_provider(_ECHO)
-        async with AsyncFormatShield("mock/echo", _SCHEMA) as fs:
+        async with AsyncNField("mock/echo", _SCHEMA) as fs:
             result = await fs.extract(_DOC)
         assert result.data["name"] == "Alice"
 
     async def test_call_alias(self, install_provider):
         install_provider(_ECHO)
-        engine = AsyncFormatShield("mock/echo", _SCHEMA)
+        engine = AsyncNField("mock/echo", _SCHEMA)
         result = await engine(_DOC)
         assert result.data["age"] == 30
 
     async def test_cached_schema_reused_across_calls(self, install_provider):
         install_provider(_ECHO)
-        engine = AsyncFormatShield(
+        engine = AsyncNField(
             "mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0)
         )
         first = await engine.extract("doc one")
@@ -71,7 +71,7 @@ class TestAsyncEngine:
 
     async def test_per_call_schema_overrides_cached(self, install_provider):
         install_provider("name = Bob")
-        engine = AsyncFormatShield("mock/echo", _SCHEMA)
+        engine = AsyncNField("mock/echo", _SCHEMA)
         override = {"type": "object", "properties": {"name": {"type": "string"}}}
         result = await engine.extract(_DOC, schema=override)
         assert result.metadata.fields_total == 1
@@ -79,7 +79,7 @@ class TestAsyncEngine:
 
     async def test_missing_schema_raises(self, install_provider):
         install_provider(_ECHO)
-        engine = AsyncFormatShield("mock/echo")
+        engine = AsyncNField("mock/echo")
         with pytest.raises(SchemaError):
             await engine.extract(_DOC)
 
@@ -90,13 +90,13 @@ class TestAsyncEngine:
 
     def test_model_property(self, install_provider):
         install_provider(_ECHO)
-        engine = AsyncFormatShield("mock/echo", _SCHEMA)
+        engine = AsyncNField("mock/echo", _SCHEMA)
         assert engine.model == "mock/echo"
 
     def test_model_specs_reach_provider(self):
         # No fixture: build a real Groq provider (no API call at construction)
         # and confirm the engine forwarded the caller-supplied model specs.
-        engine = AsyncFormatShield(
+        engine = AsyncNField(
             "groq/llama-3.1-8b-instant",
             _SCHEMA,
             context_window=131_072,
@@ -109,7 +109,7 @@ class TestAsyncEngine:
         # Stage 0 calibration must be measured once and cached; reusing the
         # engine across documents must not re-measure chars_per_token.
         provider = install_provider(_ECHO)
-        engine = AsyncFormatShield(
+        engine = AsyncNField(
             "mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0)
         )
         await engine.extract("doc one")
@@ -134,7 +134,7 @@ class TestNestedSchemaForms:
             work: Addr
 
         install_provider("home.city = Paris\nwork.city = Lyon")
-        engine = AsyncFormatShield(
+        engine = AsyncNField(
             "mock/echo", Person, config=ExtractionConfig(max_retry_rounds=0)
         )
         result = await engine.extract("doc")
@@ -145,7 +145,7 @@ class TestNestedSchemaForms:
 
     async def test_nested_dataclass_expands(self, install_provider):
         install_provider("home.city = Paris\nwork.city = Lyon")
-        engine = AsyncFormatShield(
+        engine = AsyncNField(
             "mock/echo", _Person, config=ExtractionConfig(max_retry_rounds=0)
         )
         result = await engine.extract("doc")
@@ -165,7 +165,7 @@ class TestSchemaDepthGuard:
     def test_self_referential_via_engine_construction(self, install_provider):
         install_provider(_ECHO)
         with pytest.raises(SchemaError, match="nests deeper"):
-            AsyncFormatShield("mock/echo", _Tree)
+            AsyncNField("mock/echo", _Tree)
 
     def test_normal_nesting_still_converts(self):
         # _Person nests one level (_Addr); well under the cap → no error.
@@ -186,13 +186,13 @@ class TestCredentialForwarding:
             captured.update(kwargs)
             return object()  # __init__ only stores the provider
 
-        monkeypatch.setattr("formatshield.engine._async.from_model", fake_from_model)
-        AsyncFormatShield("groq/x", _SCHEMA, api_key="gsk_x", base_url="https://p/v1")
+        monkeypatch.setattr("nfield.engine._async.from_model", fake_from_model)
+        AsyncNField("groq/x", _SCHEMA, api_key="gsk_x", base_url="https://p/v1")
         assert captured["api_key"] == "gsk_x"
         assert captured["base_url"] == "https://p/v1"
 
     def test_engine_forwards_config_max_api_retries(self, monkeypatch):
-        from formatshield.config import ExtractionConfig
+        from nfield.config import ExtractionConfig
 
         captured: dict = {}
 
@@ -200,8 +200,8 @@ class TestCredentialForwarding:
             captured.update(kwargs)
             return object()
 
-        monkeypatch.setattr("formatshield.engine._async.from_model", fake_from_model)
-        AsyncFormatShield("groq/x", _SCHEMA, config=ExtractionConfig(max_api_retries=3))
+        monkeypatch.setattr("nfield.engine._async.from_model", fake_from_model)
+        AsyncNField("groq/x", _SCHEMA, config=ExtractionConfig(max_api_retries=3))
         assert captured["max_retries"] == 3
 
 
@@ -210,7 +210,7 @@ class TestConcurrentCalibration:
 
     async def test_concurrent_extracts_calibrate_once(self, install_provider):
         provider = install_provider(_ECHO)
-        engine = AsyncFormatShield(
+        engine = AsyncNField(
             "mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0)
         )
         # Fire several extracts at once on a fresh engine: the calibration lock

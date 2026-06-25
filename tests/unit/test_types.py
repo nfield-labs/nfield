@@ -1,10 +1,10 @@
-"""Tests for formatshield.types."""
+"""Tests for nfield.types."""
 
 from __future__ import annotations
 
 import pytest
 
-from formatshield.types import ExtractionResult, ExtractionStatus, FieldResult, Metadata
+from nfield.types import ExtractionResult, ExtractionStatus, FieldResult, Metadata
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -206,8 +206,8 @@ class TestExtractionResult:
 # ---------------------------------------------------------------------------
 
 
-def test_imports_from_formatshield_types() -> None:
-    from formatshield.types import (  # noqa: F401
+def test_imports_from_nfield_types() -> None:
+    from nfield.types import (  # noqa: F401
         ExtractionResult,
         ExtractionStatus,
         FieldResult,

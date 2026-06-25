@@ -12,7 +12,7 @@ Never "nfield is the best." Never an averaged-over-models number. One model, one
 date, one curve.
 
 This folder lives in-repo so the benchmark is reproducible with the code it
-measures. It is **not** part of the published `formatshield` wheel.
+measures. It is **not** part of the published `nfield` wheel.
 
 ---
 

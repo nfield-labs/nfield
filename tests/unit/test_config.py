@@ -1,10 +1,10 @@
-"""Tests for formatshield.config."""
+"""Tests for nfield.config."""
 
 from __future__ import annotations
 
 import pytest
 
-from formatshield.config import (
+from nfield.config import (
     DEFAULT_CONTEXT_UTILIZATION_RATIO,
     DEFAULT_MAX_API_RETRIES,
     DEFAULT_MAX_RETRY_ROUNDS,

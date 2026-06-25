@@ -13,8 +13,8 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.schema._types import Field
-from formatshield.validation._type_check import validate_field
+from nfield.schema._types import Field
+from nfield.validation._type_check import validate_field
 
 
 def make_field(path: str, ftype: str, constraints: dict | None = None) -> Field:
@@ -26,7 +26,7 @@ def make_field(path: str, ftype: str, constraints: dict | None = None) -> Field:
 class TestNeedsRevalidationCheck:
     def test_real_sentinel_passes_validation(self):
         """Real NEEDS_REVALIDATION sentinel must pass (not fail) validation."""
-        from formatshield.extraction._sfep import NEEDS_REVALIDATION
+        from nfield.extraction._sfep import NEEDS_REVALIDATION
 
         f = make_field("score", "number")
         valid, err = validate_field(NEEDS_REVALIDATION, f)

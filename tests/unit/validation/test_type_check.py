@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from formatshield.schema._types import Field
-from formatshield.validation._type_check import constraint_check, validate_field
+from nfield.schema._types import Field
+from nfield.validation._type_check import constraint_check, validate_field
 
 
 def make_field(path: str, ftype: str, constraints: dict | None = None) -> Field:

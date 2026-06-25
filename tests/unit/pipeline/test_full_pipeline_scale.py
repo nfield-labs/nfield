@@ -14,17 +14,17 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.config import ExtractionConfig
-from formatshield.pipeline.s0_resources import run_stage_0
-from formatshield.pipeline.s1_schema import run_stage_1
-from formatshield.pipeline.s2a_structure import run_stage_2a
-from formatshield.pipeline.s2b_prepass import run_stage_2b
-from formatshield.pipeline.s2c_packing import run_stage_2c
-from formatshield.pipeline.s3_excerpt import run_stage_3
-from formatshield.pipeline.s4_extract import run_stage_4
-from formatshield.pipeline.s5_validate import run_stage_5
-from formatshield.pipeline.s6_assemble import run_stage_6
-from formatshield.types import ExtractionStatus
+from nfield.config import ExtractionConfig
+from nfield.pipeline.s0_resources import run_stage_0
+from nfield.pipeline.s1_schema import run_stage_1
+from nfield.pipeline.s2a_structure import run_stage_2a
+from nfield.pipeline.s2b_prepass import run_stage_2b
+from nfield.pipeline.s2c_packing import run_stage_2c
+from nfield.pipeline.s3_excerpt import run_stage_3
+from nfield.pipeline.s4_extract import run_stage_4
+from nfield.pipeline.s5_validate import run_stage_5
+from nfield.pipeline.s6_assemble import run_stage_6
+from nfield.types import ExtractionStatus
 
 _N = 1000
 
@@ -136,7 +136,7 @@ class TestThousandFieldFullPipeline:
 
     @pytest.mark.asyncio
     async def test_no_field_left_pending_or_missing(self):
-        from formatshield.assembly._blackboard import FieldState
+        from nfield.assembly._blackboard import FieldState
 
         _, state = await _run_full(_schema(_N), "short document", _EchoProvider(_full_sfep(_N)))
         bb = state.blackboard

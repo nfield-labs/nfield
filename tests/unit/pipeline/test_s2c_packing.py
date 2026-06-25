@@ -2,19 +2,19 @@
 
 from __future__ import annotations
 
-from formatshield.config import ExtractionConfig
-from formatshield.pipeline._state import PipelineState
-from formatshield.pipeline.s1_schema import run_stage_1
-from formatshield.pipeline.s2a_structure import run_stage_2a
-from formatshield.pipeline.s2b_prepass import run_stage_2b
-from formatshield.pipeline.s2c_packing import (
+from nfield.config import ExtractionConfig
+from nfield.pipeline._state import PipelineState
+from nfield.pipeline.s1_schema import run_stage_1
+from nfield.pipeline.s2a_structure import run_stage_2a
+from nfield.pipeline.s2b_prepass import run_stage_2b
+from nfield.pipeline.s2c_packing import (
     compute_execution_order,
     compute_K_min,
     fits,
     run_stage_2c,
     tarjan_scc,
 )
-from formatshield.schema._types import CapacityLeaf, Field
+from nfield.schema._types import CapacityLeaf, Field
 
 
 def _make_field(path: str, tau: float = 5.0, var_tau: float = 0.5) -> Field:
@@ -507,8 +507,8 @@ class TestSafeOutputCappedAtMO:
 # ---------------------------------------------------------------------------
 # Evidence-aware split (Set-Union Bin Packing) — Phase A.2
 # ---------------------------------------------------------------------------
-from formatshield.pipeline.s2c_packing import _coverage_fits  # noqa: E402
-from formatshield.schema._types import FieldGroup, Segment  # noqa: E402
+from nfield.pipeline.s2c_packing import _coverage_fits  # noqa: E402
+from nfield.schema._types import FieldGroup, Segment  # noqa: E402
 
 
 def _field_in(path: str, parent: str, tau: float = 5.0) -> Field:

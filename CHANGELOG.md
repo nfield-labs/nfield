@@ -7,7 +7,7 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
-- Command-line interface (`formatshield extract`, `formatshield inspect`) under the
+- Command-line interface (`nfield extract`, `nfield inspect`) under the
   `[cli]` extra.
 - Documentation site (MkDocs Material) and runnable examples.
 - Release, CodeQL, and docs CI workflows.
@@ -16,12 +16,12 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 - Initial MVP: the seven-stage N-field extraction pipeline (S0–S6).
-- Public API: `nfield`, `nfield_async`, `FormatShield`, `AsyncFormatShield`,
+- Public API: `nfield`, `nfield_async`, `NField`, `AsyncNField`,
   `from_model`.
 - Schema flattening (dict / Pydantic / dataclass), SFEP extraction, capacity packing,
   BM25 document pre-pass, per-field validation with surgical retry, and radix-trie
   assembly.
 - Groq provider.
 
-[Unreleased]: https://github.com/nfield-labs/formatshield/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/nfield-labs/formatshield/releases/tag/v0.1.0
+[Unreleased]: https://github.com/nfield-labs/nfield/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/nfield-labs/nfield/releases/tag/v0.1.0

@@ -11,9 +11,9 @@ from __future__ import annotations
 
 import pytest
 
-from formatshield.assembly._blackboard import Blackboard
-from formatshield.assembly._quality import QualityReport, compute_quality_score
-from formatshield.schema._types import Field
+from nfield.assembly._blackboard import Blackboard
+from nfield.assembly._quality import QualityReport, compute_quality_score
+from nfield.schema._types import Field
 
 
 def make_field(path: str) -> Field:
