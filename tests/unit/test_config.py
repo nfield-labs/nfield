@@ -44,6 +44,10 @@ class TestExtractionConfigDefaults:
         cfg = ExtractionConfig()
         assert cfg.document_language == "en"
 
+    def test_default_chars_per_token_is_none(self) -> None:
+        cfg = ExtractionConfig()
+        assert cfg.chars_per_token is None
+
     def test_default_think_phase_budget(self) -> None:
         cfg = ExtractionConfig()
         assert cfg.think_phase_budget == (100, 150)
@@ -92,3 +96,17 @@ class TestExtractionConfigCustom:
     def test_stores_use_advanced_sfr(self) -> None:
         cfg = ExtractionConfig(use_advanced_sfr=True)
         assert cfg.use_advanced_sfr is True
+
+    def test_stores_chars_per_token_override(self) -> None:
+        cfg = ExtractionConfig(chars_per_token=3.6)
+        assert cfg.chars_per_token == pytest.approx(3.6)
+
+
+class TestExtractionConfigValidation:
+    def test_chars_per_token_zero_raises(self) -> None:
+        with pytest.raises(ValueError, match="chars_per_token must be > 0"):
+            ExtractionConfig(chars_per_token=0.0)
+
+    def test_chars_per_token_negative_raises(self) -> None:
+        with pytest.raises(ValueError, match="chars_per_token must be > 0"):
+            ExtractionConfig(chars_per_token=-1.0)

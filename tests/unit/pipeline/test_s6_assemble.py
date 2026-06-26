@@ -40,9 +40,6 @@ class MockProvider:
     async def complete(self, messages, *, max_tokens):
         return self.response
 
-    async def count_tokens(self, text):
-        return max(1, len(text) // 4)
-
 
 async def _run_pipeline(response: str) -> ExtractionResult:
     config = ExtractionConfig()

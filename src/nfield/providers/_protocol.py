@@ -29,7 +29,6 @@ class LLMProvider(Protocol):
 
     Methods:
         complete(messages, max_tokens): Generate text completion.
-        count_tokens(text): Count tokens in text.
 
     Properties:
         context_window: Total context size (input + output) in tokens.
@@ -49,20 +48,6 @@ class LLMProvider(Protocol):
 
         Raises:
             ProviderError: On API failures or rate limiting.
-        """
-        ...
-
-    async def count_tokens(self, text: str) -> int:
-        """Count tokens in a given text.
-
-        Args:
-            text: Text to tokenize and count.
-
-        Returns:
-            Number of tokens.
-
-        Raises:
-            ProviderError: On API failures.
         """
         ...
 

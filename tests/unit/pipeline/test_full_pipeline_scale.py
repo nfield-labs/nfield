@@ -63,13 +63,10 @@ class _EchoProvider:
         self.calls += 1
         return self._sfep
 
-    async def count_tokens(self, text: str) -> int:
-        return max(1, len(text) // 4)
-
 
 async def _run_full(schema: dict, document: str, provider: _EchoProvider):
     config = ExtractionConfig()
-    state = await run_stage_0(provider, config)
+    state = run_stage_0(provider, config)
     state = run_stage_1(state, schema)
     state = run_stage_2a(state)
     state = run_stage_2b(state, document, config)
@@ -88,7 +85,7 @@ class TestThousandFieldFullPipeline:
     async def test_stage1_flattens_all_thousand(self):
         provider = _EchoProvider(_full_sfep(_N))
         config = ExtractionConfig()
-        state = await run_stage_0(provider, config)
+        state = run_stage_0(provider, config)
         state = run_stage_1(state, _schema(_N))
         assert len(state.fields) == _N
         assert state.blackboard is not None

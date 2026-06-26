@@ -40,9 +40,6 @@ class MockProvider:
         self.calls.append(self.response)
         return self.response
 
-    async def count_tokens(self, text: str) -> int:
-        return max(1, len(text) // 4)
-
 
 def _build_state() -> PipelineState:
     state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)
@@ -107,9 +104,6 @@ class TestRunStage4:
             async def complete(self, messages, *, max_tokens):
                 raise RuntimeError("provider down")
 
-            async def count_tokens(self, text):
-                return 1
-
         state = _build_state()
         state = await run_stage_4(state, ErrorProvider())
         failed = state.blackboard.get_failed()
@@ -146,9 +140,6 @@ class TestEmergencySplit:
                 )
             return "company = Acme Corp\nyear = 1947\nactive = true\n"
 
-        async def count_tokens(self, text):
-            return max(1, len(text) // 4)
-
     @pytest.mark.asyncio
     async def test_overflow_triggers_split_and_recovers(self):
         """A context-overflow error splits the leaf and re-extracts each half."""
@@ -184,9 +175,6 @@ class TestEmergencySplit:
             async def complete(self, messages, *, max_tokens):
                 self.call_count += 1
                 raise RuntimeError("rate limited")
-
-            async def count_tokens(self, text):
-                return max(1, len(text) // 4)
 
         state = _build_state()
         provider = _PlainErrorProvider()

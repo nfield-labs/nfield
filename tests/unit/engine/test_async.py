@@ -103,17 +103,16 @@ class TestAsyncEngine:
         assert engine._provider.context_window == 131_072
         assert engine._provider.max_output_tokens == 32_768
 
-    async def test_calibration_runs_once_across_calls(self, install_provider):
-        # Stage 0 calibration must be measured once and cached; reusing the
-        # engine across documents must not re-measure chars_per_token.
+    async def test_reuse_adds_no_extra_provider_calls(self, install_provider):
+        # Stage 0 reads the provider's chars-per-token estimate (prior, then
+        # calibrated from response usage) with no dedicated probe, so a reused
+        # engine spends exactly one extraction call per document (single-leaf).
         provider = install_provider(_ECHO)
         engine = AsyncNField("mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0))
         await engine.extract("doc one")
         await engine.extract("doc two")
         await engine.extract("doc three")
-        assert provider.token_calls == 1, (
-            f"calibration ran {provider.token_calls} times; expected once (cached)"
-        )
+        assert provider.calls == 3
 
 
 class TestNestedSchemaForms:
@@ -198,18 +197,18 @@ class TestCredentialForwarding:
 
 
 class TestConcurrentCalibration:
-    """Concurrent first-time extracts calibrate exactly once (calibration lock)."""
+    """Concurrent extracts on a shared engine succeed without extra calls."""
 
-    async def test_concurrent_extracts_calibrate_once(self, install_provider):
+    async def test_concurrent_extracts_one_call_each(self, install_provider):
         provider = install_provider(_ECHO)
         engine = AsyncNField("mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0))
-        # Fire several extracts at once on a fresh engine: the calibration lock
-        # must keep Stage 0 (the single count_tokens probe) from running per call.
-        await asyncio.gather(
+        # Fire several extracts at once on a fresh engine. Stage 0 reads the
+        # provider's estimate (no dedicated probe), so each document costs exactly
+        # one extraction call.
+        results = await asyncio.gather(
             engine.extract("doc one"),
             engine.extract("doc two"),
             engine.extract("doc three"),
         )
-        assert provider.token_calls == 1, (
-            f"calibration ran {provider.token_calls} times under concurrency; expected once (lock)"
-        )
+        assert provider.calls == 3
+        assert len(results) == 3

@@ -52,16 +52,13 @@ logger = logging.getLogger(__name__)
 class BaseProvider(ABC):
     """Abstract base class for LLM providers.
 
-    Implements shared retry logic with exponential backoff + jitter,
-    logging, and token count caching. Subclasses must implement:
+    Implements shared retry logic with exponential backoff + jitter and logging.
+    Subclasses must implement:
       - _raw_complete(messages, max_tokens) -> str
-      - _raw_count_tokens(text) -> int
       - _get_client() -> provider-specific client
 
     Attributes:
         model_name: Name of the model.
-        _chars_per_token_cache: Cached measurement of chars per token (None until measured).
-
     """
 
     def __init__(
@@ -113,7 +110,6 @@ class BaseProvider(ABC):
         self._rate_limit_backoff_max = rate_limit_backoff_max
         self._context_window = context_window
         self._max_output_tokens = max_output_tokens
-        self._chars_per_token_cache: float | None = None
 
     # --- Abstract methods (subclasses must implement) ---
 
@@ -127,21 +123,6 @@ class BaseProvider(ABC):
 
         Returns:
             Generated text.
-
-        Raises:
-            ProviderError: On API failure.
-        """
-        ...
-
-    @abstractmethod
-    async def _raw_count_tokens(self, text: str) -> int:
-        """Provider-specific raw token count call.
-
-        Args:
-            text: Text to count.
-
-        Returns:
-            Token count.
 
         Raises:
             ProviderError: On API failure.
@@ -174,7 +155,7 @@ class BaseProvider(ABC):
         """Maximum output tokens for a single call."""
         ...
 
-    # --- Public API (with retry + caching) ---
+    # --- Public API (with retry) ---
 
     async def complete(self, messages: list[dict[str, str]], *, max_tokens: int) -> str:
         """Complete messages with retry logic.
@@ -194,44 +175,6 @@ class BaseProvider(ABC):
             operation_name="complete",
         )
         return result
-
-    async def count_tokens(self, text: str) -> int:
-        """Count tokens with retry logic.
-
-        Args:
-            text: Text to count.
-
-        Returns:
-            Token count.
-
-        Raises:
-            ProviderError: After max retries or on non-transient failure.
-        """
-        result: int = await self._retry_with_backoff(
-            lambda: self._raw_count_tokens(text),
-            operation_name="count_tokens",
-        )
-        return result
-
-    # --- Caching ---
-
-    @property
-    def chars_per_token(self) -> float | None:
-        """Cached measurement of characters per token.
-
-        Returns None until set by measure_chars_per_token().
-        """
-        return self._chars_per_token_cache
-
-    def set_chars_per_token(self, value: float) -> None:
-        """Set the cached chars_per_token measurement.
-
-        Args:
-            value: Characters per token ratio.
-        """
-        if value <= 0:
-            raise ValueError(f"chars_per_token must be positive, got {value}")
-        self._chars_per_token_cache = value
 
     # --- Retry logic ---
 

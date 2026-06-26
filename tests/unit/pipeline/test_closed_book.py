@@ -96,9 +96,6 @@ class _SeqProvider:
         self.user_messages.append("\n".join(m["content"] for m in messages))
         return self._completion
 
-    async def count_tokens(self, text):
-        return max(1, len(text) // 4)
-
 
 def test_closed_book_run_sets_answer_rate(monkeypatch) -> None:
     # Both samples return the same values -> all agree -> answered. The provider always
@@ -165,9 +162,6 @@ def test_closed_book_abstention_is_not_recovered(monkeypatch) -> None:
 
         async def complete(self, *a, **k):
             raise AssertionError("an abstained field must not be re-extracted")
-
-        async def count_tokens(self, text):
-            return 1
 
     result = asyncio.run(run_recovery_pass(state, _Boom(), ExtractionConfig(closed_book=True)))
     assert result is state

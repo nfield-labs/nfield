@@ -44,9 +44,6 @@ class _RecoverProvider:
         self.calls += 1
         return "b = recovered_value"
 
-    async def count_tokens(self, text: str) -> int:
-        return max(1, len(text) // 4)
-
 
 def _state(fields: list[Field]) -> PipelineState:
     seg = Segment(text=_DOC, start=0, end=len(_DOC), segment_type="unstructured", segment_id=0)

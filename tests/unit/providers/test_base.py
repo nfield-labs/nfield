@@ -36,10 +36,6 @@ class MockProvider(BaseProvider):
         """Mock complete implementation."""
         return "mock response"
 
-    async def _raw_count_tokens(self, text: str) -> int:
-        """Mock token counting."""
-        return len(text) // 4
-
     def _get_client(self):
         """Mock client getter."""
         return object()
@@ -67,34 +63,12 @@ class TestBaseProvider:
         provider = MockProvider("test-model")
         assert provider.model_name == "test-model"
 
-    def test_chars_per_token_caching(self) -> None:
-        """Chars per token is cached."""
-        provider = MockProvider("test-model")
-        assert provider.chars_per_token is None
-        provider.set_chars_per_token(3.5)
-        assert provider.chars_per_token == 3.5
-
-    def test_invalid_chars_per_token_raises_error(self) -> None:
-        """Setting invalid chars_per_token raises ValueError."""
-        provider = MockProvider("test-model")
-        with pytest.raises(ValueError, match="must be positive"):
-            provider.set_chars_per_token(0)
-        with pytest.raises(ValueError, match="must be positive"):
-            provider.set_chars_per_token(-1)
-
     @pytest.mark.asyncio
     async def test_complete_calls_raw_complete(self) -> None:
         """Complete method calls _raw_complete."""
         provider = MockProvider("test-model")
         result = await provider.complete([{"role": "user", "content": "hello"}], max_tokens=100)
         assert result == "mock response"
-
-    @pytest.mark.asyncio
-    async def test_count_tokens_calls_raw_count_tokens(self) -> None:
-        """Count tokens calls _raw_count_tokens."""
-        provider = MockProvider("test-model")
-        result = await provider.count_tokens("hello world")
-        assert result > 0
 
     def test_context_window_property(self) -> None:
         """Context window property is accessible."""

@@ -25,22 +25,14 @@ class TestAsyncBatch:
         results = await engine.extract_batch(_DOCS)
         assert len(results) == len(_DOCS)
         assert all(r.data["name"] == "Alice" for r in results)
-        # One extraction call per document (single-leaf schema). Stage 0 calibration
-        # uses count_tokens, not complete, so it does not add to this count.
+        # One extraction call per document (single-leaf schema). Stage 0 spends no
+        # provider call, so it does not add to this count.
         assert provider.calls == len(_DOCS)
 
     async def test_empty_batch_returns_empty_list(self, install_provider) -> None:
         install_provider(_ECHO)
         engine = AsyncNField("mock/echo", _SCHEMA)
         assert await engine.extract_batch([]) == []
-
-    async def test_calibrates_once_for_the_whole_batch(self, install_provider) -> None:
-        provider = install_provider(_ECHO)
-        engine = AsyncNField("mock/echo", _SCHEMA)
-        await engine.extract_batch(_DOCS)
-        # token_calls is the Stage 0 calibration probe; it must run exactly once even
-        # though every document goes through the pipeline.
-        assert provider.token_calls == 1
 
     async def test_max_concurrent_bounds_in_flight_calls(
         self, monkeypatch: pytest.MonkeyPatch
@@ -59,9 +51,6 @@ class TestAsyncBatch:
                 await asyncio.sleep(0)  # yield so overlap can build up
                 peak["now"] -= 1
                 return _ECHO
-
-            async def count_tokens(self, text):
-                return max(1, len(text) // 4)
 
         provider = _CountingProvider()
         monkeypatch.setattr("nfield.engine._async.from_model", lambda _m, **_k: provider)
@@ -82,9 +71,6 @@ class TestAsyncBatch:
 
             async def complete(self, messages, *, max_tokens):
                 raise RuntimeError("synthetic failure")
-
-            async def count_tokens(self, text):
-                return max(1, len(text) // 4)
 
         provider = _AlwaysFails()
         monkeypatch.setattr("nfield.engine._async.from_model", lambda _m, **_k: provider)

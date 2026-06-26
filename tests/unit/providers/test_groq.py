@@ -120,12 +120,6 @@ class TestGroqProviderBackendIntegration:
         assert hasattr(provider, "complete")
         assert callable(provider.complete)
 
-    def test_groq_provider_has_count_tokens_method(self) -> None:
-        """GroqProvider has count_tokens method (from BaseProvider)."""
-        provider = GroqProvider("llama-3.1-8b")
-        assert hasattr(provider, "count_tokens")
-        assert callable(provider.count_tokens)
-
     def test_groq_provider_implements_llm_provider_protocol(self) -> None:
         """GroqProvider implements LLMProvider protocol."""
         provider = GroqProvider("llama-3.1-8b")
@@ -134,7 +128,6 @@ class TestGroqProviderBackendIntegration:
         assert hasattr(provider, "context_window")
         assert hasattr(provider, "max_output_tokens")
         assert hasattr(provider, "complete")
-        assert hasattr(provider, "count_tokens")
 
 
 class TestGroqProviderCredentials:

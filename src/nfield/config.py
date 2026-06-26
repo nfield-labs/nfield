@@ -73,6 +73,10 @@ class ExtractionConfig:
             score, e.g. ``{"HIGH": 0.9, "MEDIUM": 0.7}``.
         document_language: BCP-47 language tag of the input document.
             Default ``"en"``.
+        chars_per_token: Override the characters-per-token ratio used to size the
+            context-window budget. ``None`` (default) uses a script-aware estimate
+            keyed by ``document_language`` (English ~4.0, CJK ~1.5). Set a float to
+            pin the exact ratio for a known model. Must be > 0 when set.
         think_phase_budget: ``(min, max)`` token budget for the thinking
             phase. Default ``(100, 150)``.
         evidence_score_threshold: Minimum lexical/semantic evidence score
@@ -146,6 +150,9 @@ class ExtractionConfig:
         default_factory=lambda: {"HIGH": 0.9, "MEDIUM": 0.7}
     )
     document_language: str = "en"
+    # None → script-aware estimate by document_language; a float pins the model's
+    # exact ratio (see providers/_token_budget.py).
+    chars_per_token: float | None = None
     think_phase_budget: tuple[int, int] = (
         DEFAULT_THINK_PHASE_BUDGET_MIN,
         DEFAULT_THINK_PHASE_BUDGET_MAX,
@@ -183,3 +190,12 @@ class ExtractionConfig:
     # Opt-in stronger abstention: sample each leaf twice, keep a value only if both agree
     # (arXiv:2602.04853). Doubles calls; no-op unless closed_book is set.
     self_consistency: bool = False
+
+    def __post_init__(self) -> None:
+        """Validate settings that have no safe non-positive value.
+
+        Raises:
+            ValueError: If ``chars_per_token`` is set to a non-positive ratio.
+        """
+        if self.chars_per_token is not None and self.chars_per_token <= 0:
+            raise ValueError(f"chars_per_token must be > 0, got {self.chars_per_token}")

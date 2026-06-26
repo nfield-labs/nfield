@@ -23,12 +23,25 @@ class _NeverProvider:
     async def complete(self, messages, *, max_tokens):  # pragma: no cover
         raise AssertionError("preflight must reject before any provider call")
 
-    async def count_tokens(self, text):  # pragma: no cover
-        raise AssertionError("preflight must reject before any provider call")
+
+class _EchoProvider:
+    """Working stub: returns an empty SFEP so the pipeline runs to completion."""
+
+    context_window = 8192
+    max_output_tokens = 1024
+    model_name = "mock/model"
+
+    async def complete(self, messages, *, max_tokens):
+        return ""
 
 
 def _engine(monkeypatch, config: ExtractionConfig) -> AsyncNField:
     monkeypatch.setattr("nfield.engine._async.from_model", lambda *a, **k: _NeverProvider())
+    return AsyncNField("mock/model", config=config)
+
+
+def _echo_engine(monkeypatch, config: ExtractionConfig) -> AsyncNField:
+    monkeypatch.setattr("nfield.engine._async.from_model", lambda *a, **k: _EchoProvider())
     return AsyncNField("mock/model", config=config)
 
 
@@ -73,12 +86,12 @@ def test_document_rejected_in_closed_book_mode(monkeypatch) -> None:
 
 
 def test_empty_document_allowed_in_closed_book_mode(monkeypatch) -> None:
-    # An empty document is the closed-book signal: it must pass the gates and reach the
-    # (never-called) provider stage, not raise at the boundary.
-    engine = _engine(monkeypatch, ExtractionConfig(closed_book=True))
+    # An empty document is the closed-book signal: it must pass the gates and run the
+    # pipeline to a result, not raise at the boundary.
+    engine = _echo_engine(monkeypatch, ExtractionConfig(closed_book=True))
     schema = {"type": "object", "properties": {"name": {"type": "string"}}}
-    with pytest.raises(AssertionError):  # the stub provider asserts it is reached
-        asyncio.run(engine.extract("", schema))
+    result = asyncio.run(engine.extract("", schema))  # no ValueError at the gate
+    assert isinstance(result.data, dict)
 
 
 def test_whitespace_only_document_counts_as_empty(monkeypatch) -> None:
@@ -88,9 +101,9 @@ def test_whitespace_only_document_counts_as_empty(monkeypatch) -> None:
     doc_engine = _engine(monkeypatch, ExtractionConfig())
     with pytest.raises(ValueError, match="no document to extract from"):
         asyncio.run(doc_engine.extract("   \n\t ", schema))
-    cb_engine = _engine(monkeypatch, ExtractionConfig(closed_book=True))
-    with pytest.raises(AssertionError):  # passes the gates, reaches the stub provider
-        asyncio.run(cb_engine.extract("   \n\t ", schema))
+    cb_engine = _echo_engine(monkeypatch, ExtractionConfig(closed_book=True))
+    result = asyncio.run(cb_engine.extract("   \n\t ", schema))  # passes the gates
+    assert isinstance(result.data, dict)
 
 
 @pytest.mark.parametrize("closed_book", [False, True])
@@ -135,16 +148,15 @@ def test_mode_gate_rejects_empty_in_document_mode() -> None:
 
 
 def test_engine_preflight_can_be_disabled(monkeypatch) -> None:
-    # With validate_schema=False the preflight is skipped; the contradictory schema then
-    # reaches the (never-called) provider stage, proving the gate is what rejects.
-    engine = _engine(monkeypatch, ExtractionConfig(validate_schema=False))
+    # With validate_schema=False the preflight is skipped: the contradictory schema no
+    # longer raises SchemaError at the boundary; the pipeline runs to a result.
+    engine = _echo_engine(monkeypatch, ExtractionConfig(validate_schema=False))
     bad_schema = {
         "type": "object",
         "properties": {"age": {"type": "integer", "minimum": 100, "maximum": 10}},
     }
-    # No SchemaError now — it fails later (the stub provider asserts), not at preflight.
-    with pytest.raises(AssertionError):
-        asyncio.run(engine.extract("any document", bad_schema))
+    result = asyncio.run(engine.extract("any document", bad_schema))  # no SchemaError
+    assert isinstance(result.data, dict)
 
 
 # ---------------------------------------------------------------------------

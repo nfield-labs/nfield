@@ -29,7 +29,6 @@ from typing import (
 
 from nfield.config import ExtractionConfig
 from nfield.exceptions import SchemaError
-from nfield.pipeline._state import PipelineState
 from nfield.pipeline.s0_resources import run_stage_0
 from nfield.pipeline.s1_schema import run_stage_1
 from nfield.pipeline.s2a_structure import run_stage_2a
@@ -390,17 +389,9 @@ class AsyncNField:
         self._schema: dict[str, Any] | None = (
             _normalize_schema(schema) if schema is not None else None
         )
-        # chars_per_token is a property of the model's tokenizer — the Normalized
-        # Sequence Length (chars / token; arXiv:2411.12240) — and of the language,
-        # never of the document. It is measured once and reused across extract()
-        # calls so a reused engine calibrates a single time.
-        self._chars_per_token: float | None = None
-        self._c_eff: int = 0
-        self._m_o: int = 0
-        self._c_usable: float = 0.0
-        # Serializes the one-time Stage 0 calibration so concurrent extract()
-        # calls on a shared engine measure chars_per_token once, not once each.
-        self._calibration_lock = asyncio.Lock()
+        # chars_per_token comes from the provider's estimator (Stage 0), which
+        # refines it from each response's real prompt-token count — so a reused
+        # engine sharpens its budget across documents.
 
     @property
     def model(self) -> str:
@@ -440,7 +431,7 @@ class AsyncNField:
         if config.validate_schema:
             preflight_schema(schema_dict)
 
-        state = await self._calibrated_state()
+        state = run_stage_0(self._provider, self._config)
         state.instructions = self._instructions
         state.inject_dependencies = config.inject_dependencies
         state.knowledge_fallback = config.knowledge_fallback
@@ -543,32 +534,6 @@ class AsyncNField:
         raise SchemaError(
             "No schema provided.",
             hint="Pass schema=... to extract() or to the constructor.",
-        )
-
-    async def _calibrated_state(self) -> PipelineState:
-        """Return a fresh ``PipelineState`` carrying Stage 0 calibration.
-
-        The first call runs Stage 0 (one provider call to measure
-        ``chars_per_token``) and caches the result on the engine. Later calls
-        skip that round trip and build a fresh state from the cached values, so
-        a reused engine calibrates only once. The lock + double-checked guard
-        keeps that "once" true even when extract() calls run concurrently.
-        """
-        if self._chars_per_token is None:
-            async with self._calibration_lock:
-                # Re-check inside the lock: a racing call may have just filled it.
-                if self._chars_per_token is None:
-                    state = await run_stage_0(self._provider, self._config)
-                    self._chars_per_token = state.chars_per_token
-                    self._c_eff = state.C_eff
-                    self._m_o = state.M_O
-                    self._c_usable = state.C_usable
-                    return state
-        return PipelineState(
-            chars_per_token=self._chars_per_token,
-            C_eff=self._c_eff,
-            M_O=self._m_o,
-            C_usable=self._c_usable,
         )
 
     async def __call__(self, document: str, schema: object | None = None) -> ExtractionResult:

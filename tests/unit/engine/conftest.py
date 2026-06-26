@@ -33,7 +33,6 @@ class MockProvider:
     ) -> None:
         self._sfep = sfep_text
         self.calls = 0
-        self.token_calls = 0
         self.context_window = context_window
         self.max_output_tokens = max_output_tokens
         self.last_messages: list[dict[str, str]] = []
@@ -42,10 +41,6 @@ class MockProvider:
         self.calls += 1
         self.last_messages = messages
         return self._sfep
-
-    async def count_tokens(self, text: str) -> int:
-        self.token_calls += 1
-        return max(1, len(text) // 4)
 
 
 @pytest.fixture

@@ -40,9 +40,6 @@ class _FixedProvider:
         self.calls += 1
         return self.response
 
-    async def count_tokens(self, text):
-        return max(1, len(text) // 4)
-
 
 def _settled_state_with_failed_year() -> PipelineState:
     """Run S1-S5 with a primary that cannot produce a valid ``year``."""

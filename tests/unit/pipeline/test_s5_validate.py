@@ -42,9 +42,6 @@ class MockProvider:
             return self.initial
         return self.retry
 
-    async def count_tokens(self, text):
-        return max(1, len(text) // 4)
-
 
 def _build_state(response: str) -> tuple[PipelineState, MockProvider]:
     state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)
@@ -93,9 +90,6 @@ class TestRunStage5:
             async def complete(self, messages, *, max_tokens):
                 return ""
 
-            async def count_tokens(self, text):
-                return 1
-
         state = await run_stage_4(state, EmptyProvider())
         state = await run_stage_5(state, EmptyProvider(), config)
         # All fields should be failed
@@ -124,9 +118,6 @@ class TestRunStage5:
             async def complete(self, messages, *, max_tokens):
                 self.calls += 1
                 return ""
-
-            async def count_tokens(self, text):
-                return 1
 
         counter = CountingProvider()
         await run_stage_5(state, counter, ExtractionConfig(max_retry_rounds=1))

@@ -34,9 +34,6 @@ class _MockProvider:
         self.last_messages = messages
         return self._sfep
 
-    async def count_tokens(self, text: str) -> int:
-        return max(1, len(text) // 4)
-
 
 def _write(path, data: str) -> str:
     path.write_text(data, encoding="utf-8")

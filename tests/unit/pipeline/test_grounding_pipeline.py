@@ -22,9 +22,6 @@ class _UnusedProvider:
     async def complete(self, messages, *, max_tokens):  # pragma: no cover - never called
         raise AssertionError("Stage 5 must not call the provider")
 
-    async def count_tokens(self, text):  # pragma: no cover - never called
-        raise AssertionError("Stage 5 must not call the provider")
-
 
 _EXCERPT = "Acme Corp was founded in 1947."
 

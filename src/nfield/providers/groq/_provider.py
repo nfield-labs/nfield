@@ -250,23 +250,6 @@ class GroqProvider(BaseProvider):
                 retry_after=_retry_after_seconds(e),
             ) from e
 
-    async def _raw_count_tokens(self, text: str) -> int:
-        """Estimate token count locally — the Groq SDK exposes no token API.
-
-        IMPORTANT: this makes NO network call. Groq has no token-counting
-        endpoint, so this returns a ``len // 4`` character heuristic. As a result
-        Stage 0 calibration via this provider yields ~4.0 chars/token (a constant
-        estimate), not a tokenizer-measured value. A future upgrade would count
-        with the model's real tokenizer offline (e.g. tiktoken / transformers).
-
-        Args:
-            text: Text to estimate a token count for.
-
-        Returns:
-            Estimated token count (``len(text) // 4``, minimum 1).
-        """
-        return max(1, len(text) // 4)
-
     # --- Properties ---
 
     @property

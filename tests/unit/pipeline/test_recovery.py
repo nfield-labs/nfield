@@ -37,9 +37,6 @@ class _RecoverProvider:
         self.calls += 1
         return "b = recovered_value"
 
-    async def count_tokens(self, text: str) -> int:
-        return max(1, len(text) // 4)
-
 
 class _SilentProvider:
     """Returns nothing — the missed field stays missing (bound check)."""
@@ -54,9 +51,6 @@ class _SilentProvider:
     async def complete(self, messages: list[dict[str, str]], *, max_tokens: int) -> str:
         self.calls += 1
         return ""
-
-    async def count_tokens(self, text: str) -> int:
-        return max(1, len(text) // 4)
 
 
 def _state_with_missing() -> PipelineState:

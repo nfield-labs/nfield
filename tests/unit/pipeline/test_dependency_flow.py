@@ -31,9 +31,6 @@ class _RecoverProvider:
     async def complete(self, messages: list[dict[str, str]], *, max_tokens: int) -> str:
         return "up = recovered"
 
-    async def count_tokens(self, text: str) -> int:
-        return max(1, len(text) // 4)
-
 
 def _field(path: str, *, tau: float = 5.0) -> Field:
     return Field(
