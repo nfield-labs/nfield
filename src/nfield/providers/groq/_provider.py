@@ -11,6 +11,11 @@ from typing import Any
 
 from nfield.exceptions import ProviderError
 from nfield.providers._base import BaseProvider
+from nfield.providers._reasoning import (
+    is_unsupported_reasoning_param_error,
+    reasoning_suppression_kwargs,
+    strip_reasoning,
+)
 
 # ---------------------------------------------------------------------------
 # Default model specifications
@@ -31,24 +36,6 @@ _TRANSIENT_ERROR_NAMES: frozenset[str] = frozenset(
     {"APITimeoutError", "APIConnectionError", "InternalServerError"}
 )
 _TRANSIENT_ERROR_KEYWORDS: tuple[str, ...] = ("timed out", "timeout", "connection")
-
-# Model-name fragments for Groq reasoning models that accept ``reasoning_effort``.
-# Setting it to ``"none"`` returns the answer without a <think> block.
-_REASONING_MODEL_MARKERS: tuple[str, ...] = ("qwen3", "qwen/qwen")
-
-
-def _supports_reasoning_effort(model_name: str) -> bool:
-    """Whether *model_name* accepts the ``reasoning_effort`` parameter.
-
-    Args:
-        model_name: The Groq model identifier.
-
-    Returns:
-        ``True`` for reasoning models (Qwen3 family) where reasoning can be
-        disabled for direct, parseable output.
-    """
-    lowered = model_name.lower()
-    return any(marker in lowered for marker in _REASONING_MODEL_MARKERS)
 
 
 def _is_transient_error(exc: Exception) -> bool | None:
@@ -122,6 +109,7 @@ class GroqProvider(BaseProvider):
         max_retries: int | None = None,
         api_key: str | None = None,
         base_url: str | None = None,
+        reasoning_model: bool = False,
     ) -> None:
         """Initialize Groq provider.
 
@@ -141,6 +129,8 @@ class GroqProvider(BaseProvider):
                 the client and is never logged or echoed in errors.
             base_url: Override the Groq API base URL (proxy, gateway, or
                 Groq-compatible self-hosted endpoint). If None, the SDK default.
+            reasoning_model: When True, disable the model's thinking on each call
+                so it does not consume the answer's output budget. Default False.
 
         Example:
             >>> # Use defaults for unknown model (key from GROQ_API_KEY env)
@@ -168,6 +158,9 @@ class GroqProvider(BaseProvider):
         # base URL). Never logged, never placed in an error message.
         self._api_key = api_key
         self._base_url = base_url
+        self._reasoning_model = reasoning_model
+        # Latched once the endpoint rejects the thinking-off parameter.
+        self._suppression_unsupported = False
 
     def _get_client(self) -> Any:
         """Get or initialize the Groq client.
@@ -206,6 +199,16 @@ class GroqProvider(BaseProvider):
 
     # --- Abstract method implementations ---
 
+    async def _create(
+        self, client: Any, base_kwargs: dict[str, Any], extra: dict[str, Any]
+    ) -> Any:
+        """Run the blocking chat-completions call in a worker thread.
+
+        The groq SDK client is synchronous, so it runs off the event loop while the
+        engine's semaphore bounds the concurrent leaf calls Stage 4/5 fire.
+        """
+        return await asyncio.to_thread(client.chat.completions.create, **base_kwargs, **extra)
+
     async def _raw_complete(self, messages: list[dict[str, str]], *, max_tokens: int) -> str:
         """Call Groq API for text completion.
 
@@ -220,30 +223,28 @@ class GroqProvider(BaseProvider):
             ProviderError: On API call failure.
         """
         client = self._get_client()
-
-        create_kwargs: dict[str, Any] = {
+        base_kwargs: dict[str, Any] = {
             "model": self.model_name,
             "messages": messages,
             "max_tokens": max_tokens,
         }
-        # Reasoning models (e.g. Qwen3) emit a <think> block before the answer by
-        # default. For structured extraction that block bloats the output, consumes
-        # the output-token rate limit, and breaks the line-based SFEP parser, so
-        # reasoning is disabled where the model accepts the parameter.
-        if _supports_reasoning_effort(self.model_name):
-            create_kwargs["reasoning_effort"] = "none"
-
+        # Turn thinking off for a declared reasoning model so it does not consume
+        # the answer's output budget.
+        suppression = (
+            reasoning_suppression_kwargs(self._base_url)
+            if self._reasoning_model and not self._suppression_unsupported
+            else {}
+        )
         try:
-            # The groq SDK client is synchronous, so run the blocking call in a
-            # worker thread. Without this, awaiting it would still block the event
-            # loop and serialize the concurrent leaf calls Stage 4/5 fire via
-            # asyncio.gather — defeating max_concurrent_calls. httpx.Client (under
-            # the SDK) is thread-safe, and the semaphore bounds the thread count.
-            response = await asyncio.to_thread(
-                client.chat.completions.create,
-                **create_kwargs,
-            )
-            return response.choices[0].message.content or ""
+            try:
+                response = await self._create(client, base_kwargs, suppression)
+            except Exception as e:
+                if not (suppression and is_unsupported_reasoning_param_error(e)):
+                    raise
+                # The endpoint rejects the thinking-off parameter: stop sending it and
+                # retry once without, relying on the output strip instead.
+                self._suppression_unsupported = True
+                response = await self._create(client, base_kwargs, {})
         except Exception as e:
             status_code = getattr(e, "status_code", None)
             raise ProviderError(
@@ -252,6 +253,8 @@ class GroqProvider(BaseProvider):
                 retryable=_is_transient_error(e),
                 retry_after=_retry_after_seconds(e),
             ) from e
+
+        return strip_reasoning(response.choices[0].message.content or "")
 
     # --- Properties ---
 

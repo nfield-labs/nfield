@@ -73,6 +73,9 @@ class ExtractionConfig:
             score, e.g. ``{"HIGH": 0.9, "MEDIUM": 0.7}``.
         document_language: BCP-47 language tag of the input document.
             Default ``"en"``.
+        reasoning_model: When ``True``, the model is treated as a reasoning model
+            and its thinking is disabled on each call so it does not consume the
+            answer's output budget. Default ``False``.
         chars_per_token: Override the characters-per-token ratio used to size the
             context-window budget. ``None`` (default) uses a script-aware estimate
             keyed by ``document_language`` (English ~4.0, CJK ~1.5). Set a float to
@@ -150,6 +153,9 @@ class ExtractionConfig:
         default_factory=lambda: {"HIGH": 0.9, "MEDIUM": 0.7}
     )
     document_language: str = "en"
+    # Disable a reasoning model's thinking per call so it does not eat the answer's
+    # output budget (see providers/_reasoning.py).
+    reasoning_model: bool = False
     # None → script-aware estimate by document_language; a float pins the model's
     # exact ratio (see providers/_token_budget.py).
     chars_per_token: float | None = None

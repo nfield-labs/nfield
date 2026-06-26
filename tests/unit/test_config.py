@@ -48,6 +48,10 @@ class TestExtractionConfigDefaults:
         cfg = ExtractionConfig()
         assert cfg.chars_per_token is None
 
+    def test_default_reasoning_model_is_false(self) -> None:
+        cfg = ExtractionConfig()
+        assert cfg.reasoning_model is False
+
     def test_default_think_phase_budget(self) -> None:
         cfg = ExtractionConfig()
         assert cfg.think_phase_budget == (100, 150)
@@ -100,6 +104,10 @@ class TestExtractionConfigCustom:
     def test_stores_chars_per_token_override(self) -> None:
         cfg = ExtractionConfig(chars_per_token=3.6)
         assert cfg.chars_per_token == pytest.approx(3.6)
+
+    def test_stores_reasoning_model(self) -> None:
+        cfg = ExtractionConfig(reasoning_model=True)
+        assert cfg.reasoning_model is True
 
 
 class TestExtractionConfigValidation:

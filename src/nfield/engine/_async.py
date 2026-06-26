@@ -372,6 +372,7 @@ class AsyncNField:
             max_retries=self._config.max_api_retries,
             api_key=api_key,
             base_url=base_url,
+            reasoning_model=self._config.reasoning_model,
         )
         # Optional stronger model the recovery pass escalates stragglers to. Built once
         # here (not per call); it uses its own default specs and the same credentials.
@@ -381,6 +382,7 @@ class AsyncNField:
                 max_retries=self._config.max_api_retries,
                 api_key=api_key,
                 base_url=base_url,
+                reasoning_model=self._config.reasoning_model,
             )
             if self._config.fallback_model
             else None

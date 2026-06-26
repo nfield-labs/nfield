@@ -39,6 +39,7 @@ def from_model(
     max_retries: int | None = None,
     api_key: str | None = None,
     base_url: str | None = None,
+    reasoning_model: bool = False,
 ) -> LLMProvider:
     """Create an LLM provider from a model string identifier.
 
@@ -70,6 +71,7 @@ def from_model(
         api_key: Provider API key. ``None`` (default) → read from the
             environment by the provider SDK. Never logged.
         base_url: Override the provider API base URL. ``None`` → SDK default.
+        reasoning_model: When ``True``, disable the model's thinking per call.
 
     Returns:
         Instantiated provider object.
@@ -133,6 +135,8 @@ def from_model(
         kwargs["api_key"] = api_key
     if base_url is not None:
         kwargs["base_url"] = base_url
+    if reasoning_model:
+        kwargs["reasoning_model"] = True
 
     # Instantiate and return
     return provider_class(model_name, **kwargs)  # type: ignore[no-any-return]

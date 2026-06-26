@@ -14,6 +14,11 @@ from typing import Any
 
 from nfield.exceptions import ProviderError
 from nfield.providers._base import BaseProvider
+from nfield.providers._reasoning import (
+    is_unsupported_reasoning_param_error,
+    reasoning_suppression_kwargs,
+    strip_reasoning,
+)
 
 # ---------------------------------------------------------------------------
 # Default model specifications
@@ -111,6 +116,7 @@ class OpenAIProvider(BaseProvider):
         max_retries: int | None = None,
         api_key: str | None = None,
         base_url: str | None = None,
+        reasoning_model: bool = False,
     ) -> None:
         """Initialize the OpenAI-compatible provider.
 
@@ -136,6 +142,8 @@ class OpenAIProvider(BaseProvider):
                 ``"https://api.together.xyz/v1"``, ``"https://api.deepseek.com"``,
                 ``"http://localhost:11434/v1"`` (Ollama),
                 ``"http://localhost:8000/v1"`` (vLLM).
+            reasoning_model: When True, disable the model's thinking on each call
+                so it does not consume the answer's output budget. Default False.
 
         Example:
             >>> # OpenAI, key from OPENAI_API_KEY env
@@ -162,6 +170,9 @@ class OpenAIProvider(BaseProvider):
         # base URL). Never logged, never placed in an error message.
         self._api_key = api_key
         self._base_url = base_url
+        self._reasoning_model = reasoning_model
+        # Latched once the endpoint rejects the thinking-off parameter.
+        self._suppression_unsupported = False
 
     def _get_client(self) -> Any:
         """Get or initialize the OpenAI client.
@@ -200,6 +211,17 @@ class OpenAIProvider(BaseProvider):
 
     # --- Abstract method implementations ---
 
+    async def _create(
+        self, client: Any, base_kwargs: dict[str, Any], extra: dict[str, Any]
+    ) -> Any:
+        """Run the blocking chat-completions call in a worker thread.
+
+        The sync client is loop-independent (survives the sync wrapper's per-call
+        ``asyncio.run``) and httpx.Client is thread-safe, so concurrent leaves run
+        in parallel under the engine's semaphore.
+        """
+        return await asyncio.to_thread(client.chat.completions.create, **base_kwargs, **extra)
+
     async def _raw_complete(self, messages: list[dict[str, str]], *, max_tokens: int) -> str:
         """Call the OpenAI-compatible chat completions API.
 
@@ -214,19 +236,28 @@ class OpenAIProvider(BaseProvider):
             ProviderError: On API call failure.
         """
         client = self._get_client()
+        base_kwargs: dict[str, Any] = {
+            "model": self.model_name,
+            "messages": messages,
+            "max_tokens": max_tokens,
+        }
+        # Turn thinking off for a declared reasoning model so it does not consume
+        # the answer's output budget.
+        suppression = (
+            reasoning_suppression_kwargs(self._base_url)
+            if self._reasoning_model and not self._suppression_unsupported
+            else {}
+        )
         try:
-            # The sync openai client is loop-independent, so it survives the sync
-            # wrapper's per-call asyncio.run (an AsyncOpenAI client would bind to one
-            # loop and warn once it closed). Run the blocking call in a worker thread
-            # so concurrent leaf calls from asyncio.gather don't serialize; httpx.Client
-            # is thread-safe and the engine's semaphore bounds the thread count.
-            response = await asyncio.to_thread(
-                client.chat.completions.create,
-                model=self.model_name,
-                messages=messages,
-                max_tokens=max_tokens,
-            )
-            return response.choices[0].message.content or ""
+            try:
+                response = await self._create(client, base_kwargs, suppression)
+            except Exception as e:
+                if not (suppression and is_unsupported_reasoning_param_error(e)):
+                    raise
+                # The endpoint rejects the thinking-off parameter: stop sending it and
+                # retry once without, relying on the output strip instead.
+                self._suppression_unsupported = True
+                response = await self._create(client, base_kwargs, {})
         except Exception as e:
             status_code = getattr(e, "status_code", None)
             raise ProviderError(
@@ -235,6 +266,8 @@ class OpenAIProvider(BaseProvider):
                 retryable=_is_transient_error(e),
                 retry_after=_retry_after_seconds(e),
             ) from e
+
+        return strip_reasoning(response.choices[0].message.content or "")
 
     # --- Properties ---
 
