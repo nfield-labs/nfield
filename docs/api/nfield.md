@@ -88,6 +88,9 @@ Provider factory routed by the prefix before `/`.
 Key options: `default_model`, `context_utilization_ratio` (0.50),
 `max_retry_rounds` (2), `z_target` (1.645), `confidence_thresholds`,
 `document_language`, `evidence_score_threshold`,
+`reasoning_model` (False — set `True` for a reasoning/thinking model, e.g. Qwen3,
+DeepSeek-R1, QwQ; its thinking is disabled per call so it does not consume the
+answer's output budget. See below),
 `inject_dependencies` (**True** — inject resolved upstream dependency values into
 a dependent leaf's prompt, counted in capacity planning; no-op without cross-leaf
 dependencies; set `False` for ordering-only handling),
@@ -97,6 +100,27 @@ dependents `NEEDS_REVALIDATION` when a retry changes an upstream value),
 be filled from the model's own well-established knowledge instead of left `NULL`;
 use only for documents about well-known subject matter, as it can produce
 confident-but-unsourced values on private documents).
+
+### Reasoning models
+
+A reasoning model emits a thinking pass before its answer. Left on, that pass
+shares the per-call output budget and can truncate the answer to nothing. Set
+`reasoning_model=True` so each call disables thinking (via the endpoint's own
+off-switch); a stray inline `<think>…</think>` block is stripped either way. If
+the endpoint does not support the off-switch, it is dropped automatically and the
+call still succeeds. This applies to both the `openai/` and `groq/` providers.
+
+```python
+from nfield import nfield
+from nfield.config import ExtractionConfig
+
+result = nfield(
+    document,
+    schema,
+    "openai/qwen/qwen3.6-27b",          # any reasoning model, openai/ or groq/
+    config=ExtractionConfig(reasoning_model=True),
+)
+```
 
 Retrieval note: BMX lexical indexing folds diacritics (Unicode NFKD; Lucene-style ASCII
 folding), so an accented document spelling (`Denísov`, `café`) matches an

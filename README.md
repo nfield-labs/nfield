@@ -83,6 +83,10 @@ nfield extract doc.txt --schema schema.json --model groq/llama-3.1-8b-instant
   (Together, Fireworks, OpenRouter, DeepSeek, xAI, Mistral, Azure) or local
   (Ollama, vLLM, LM Studio).
 
+For a reasoning/thinking model (Qwen3, DeepSeek-R1, QwQ), pass
+`ExtractionConfig(reasoning_model=True)` so its thinking is disabled per call and
+does not consume the answer's output budget.
+
 The provider layer is a small Protocol; adding one is a single registry entry —
 see [CONTRIBUTING.md](CONTRIBUTING.md).
 
