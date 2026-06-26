@@ -16,9 +16,11 @@ from nfield.providers._base import BaseProvider
 # Default model specifications
 # ---------------------------------------------------------------------------
 
-# Conservative defaults for unknown Groq models. Model specs vary by model
-# and change over time. Users should provide context_window and max_output_tokens
-# in the constructor for accurate specs with specific models.
+# Conservative fallback for unknown Groq models. Kept small on purpose:
+# under-stating the window only costs throughput (more, smaller leaves), while
+# over-stating it overflows the real window and fails the call. Groq models are
+# far larger (llama-3.3-70b ~128K), so pass the real context_window /
+# max_output_tokens to plan capacity against the true size.
 _DEFAULT_GROQ_CONTEXT_WINDOW: int = 8_192
 _DEFAULT_GROQ_MAX_OUTPUT_TOKENS: int = 8_192
 
@@ -125,9 +127,10 @@ class GroqProvider(BaseProvider):
 
         Args:
             model_name: Groq model name (e.g., "llama-3.1-8b").
-            context_window: Total context window size in tokens. If None, uses
-                default 8192. Provide this if you know the actual context window
-                for your model.
+            context_window: Total context window size in tokens. If None, uses a
+                conservative 8192. Pass the model's real window (e.g. 131072 for
+                llama-3.3-70b) so capacity planning fills it — the small default is
+                safe but packs many more, smaller calls than necessary.
             max_output_tokens: Maximum output tokens. If None, uses default 8192.
                 Provide this if you know the actual limit for your model.
             max_retries: Transient-failure retry budget per call. If None, the

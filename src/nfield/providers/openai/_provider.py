@@ -19,10 +19,12 @@ from nfield.providers._base import BaseProvider
 # Default model specifications
 # ---------------------------------------------------------------------------
 
-# Conservative defaults for an unknown model behind an OpenAI-compatible endpoint.
-# Context windows differ across OpenAI, hosted gateways, and local servers, so
-# callers should pass context_window and max_output_tokens for accurate capacity
-# planning with a specific model.
+# Conservative fallback for an unknown model behind an OpenAI-compatible endpoint.
+# Kept small on purpose: under-stating the window only costs throughput (more,
+# smaller leaves), while over-stating it overflows the real window and fails the
+# call. Cloud models are far larger (gpt-4o ~128K), local servers often smaller
+# (Ollama default ~2-8K), so there is no safe larger blind default — pass the
+# real context_window / max_output_tokens to plan capacity against the true size.
 _DEFAULT_OPENAI_CONTEXT_WINDOW: int = 8_192
 _DEFAULT_OPENAI_MAX_OUTPUT_TOKENS: int = 8_192
 
@@ -115,8 +117,10 @@ class OpenAIProvider(BaseProvider):
         Args:
             model_name: Model name as the endpoint expects it (e.g., "gpt-4o-mini",
                 "meta-llama/Llama-3.1-8B-Instruct", "llama3.2").
-            context_window: Total context window size in tokens. If None, uses
-                default 8192. Provide this for accurate capacity planning.
+            context_window: Total context window size in tokens. If None, uses a
+                conservative 8192. Pass the model's real window (e.g. 128000 for
+                gpt-4o) so capacity planning fills it — the small default is safe
+                but packs many more, smaller calls than necessary on large models.
             max_output_tokens: Maximum output tokens. If None, uses default 8192.
                 Provide this if you know the actual limit for your model.
             max_retries: Transient-failure retry budget per call. If None, the

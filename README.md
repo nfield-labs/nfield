@@ -52,12 +52,14 @@ result = nfield(
 print(result.data)
 ```
 
-The model is a `"provider/model-name"` string (`groq/…` today; `openai/…`,
-`anthropic/…` as providers are added). Unlike single-call libraries, NField
-**plans** how to split a wide schema across calls, so it needs the model's real
-`context_window` (C_eff) and `max_output_tokens` (M_O); omit them to fall back to
-a conservative default. Pydantic models and dataclasses work as schemas too. For
-many documents, reuse a `NField` (sync) or `AsyncNField` (async) engine.
+The model is a `"provider/model-name"` string (`groq/…` and `openai/…` today).
+Unlike single-call libraries, NField **plans** how to split a wide schema across
+calls, so it needs the model's real `context_window` (C_eff) and
+`max_output_tokens` (M_O). Omit them and a conservative 8192 default applies —
+safe, but it under-fills large models (gpt-4o and llama-3.3-70b are ~128K), so
+pass the real window for full throughput. Pydantic models and dataclasses work as
+schemas too. For many documents, reuse a `NField` (sync) or `AsyncNField` (async)
+engine.
 
 ## How it works
 
@@ -75,8 +77,14 @@ nfield extract doc.txt --schema schema.json --model groq/llama-3.1-8b-instant
 
 ## Supported providers
 
-Groq (MVP), via `from_model("groq/<model>")`. The provider layer is a small Protocol;
-adding one is a single registry entry — see [CONTRIBUTING.md](CONTRIBUTING.md).
+- **Groq** — `from_model("groq/<model>")`, install `nfield[groq]`.
+- **OpenAI-compatible** — `from_model("openai/<model>")`, install `nfield[openai]`. A
+  `base_url` retargets the same provider at any compatible endpoint, hosted
+  (Together, Fireworks, OpenRouter, DeepSeek, xAI, Mistral, Azure) or local
+  (Ollama, vLLM, LM Studio).
+
+The provider layer is a small Protocol; adding one is a single registry entry —
+see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Contributing
 
