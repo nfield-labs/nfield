@@ -25,6 +25,7 @@ dependencies = []
 
 [project.optional-dependencies]
 groq = ["groq>=0.9"]
+openai = ["openai>=1.0"]
 cli = ["typer>=0.12"]
 export = ["pandas>=2.0"]
 dev = [
@@ -90,7 +91,7 @@ warn_unused_ignores = true
 exclude = ["benchmark/datasets/gen/"]
 
 [[tool.mypy.overrides]]
-module = ["groq.*"]
+module = ["groq.*", "openai.*"]
 ignore_missing_imports = true
 
 # matplotlib is an optional, plot-only dependency of the dev benchmark harness;

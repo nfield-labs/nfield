@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 # Format: "provider_name" -> (lazy import, class name)
 _PROVIDER_REGISTRY: dict[str, tuple[str, str]] = {
     "groq": ("nfield.providers.groq", "GroqProvider"),
+    "openai": ("nfield.providers.openai", "OpenAIProvider"),
 }
 
 
@@ -42,9 +43,10 @@ def from_model(
     """Create an LLM provider from a model string identifier.
 
     Supports model strings of the form "provider/model-name", where the
-    provider prefix routes to the correct provider class (``groq/`` today;
-    ``openai/``, ``anthropic/`` and others as they are added). The model name
-    after "/" is passed straight to the provider.
+    provider prefix routes to the correct provider class (``groq/`` and
+    ``openai/`` today; others as they are added). The ``openai/`` prefix paired
+    with ``base_url`` reaches any OpenAI-compatible endpoint — hosted gateways or
+    a local server. The model name after "/" is passed straight to the provider.
 
     The model's real context window and output ceiling are caller-supplied —
     pass ``context_window`` and ``max_output_tokens`` so capacity planning uses
