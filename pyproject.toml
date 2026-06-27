@@ -11,7 +11,7 @@ license = "Apache-2.0"
 requires-python = ">=3.10"
 authors = [{ name = "nfield-labs", email = "contact@nfield-labs.com" }]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3 :: Only",
@@ -23,27 +23,12 @@ classifiers = [
 ]
 dependencies = []
 
+# Runtime features a user opts into; published to PyPI as `nfield[<name>]`.
 [project.optional-dependencies]
 groq = ["groq>=0.9"]
 openai = ["openai>=1.0"]
 cli = ["typer>=0.12"]
 export = ["pandas>=2.0"]
-dev = [
-    "pytest>=9",
-    "pytest-asyncio>=0.24",
-    "pytest-xdist>=3",
-    "coverage[toml]>=7",
-    "ruff>=0.8",
-    "mypy>=1.13",
-    "hypothesis>=6",
-    "pre-commit>=4",
-]
-docs = ["mkdocs-material>=9", "mkdocstrings[python]>=0.27"]
-bench = [
-    "instructor>=1.15.1",
-    "langchain>=1.3.4",
-    "langchain-groq>=1.1.2",
-]
 
 [project.scripts]
 nfield = "nfield.cli._app:main"
@@ -54,6 +39,33 @@ Documentation = "https://nfield.readthedocs.io"
 Changelog = "https://github.com/nfield-labs/nfield/blob/main/CHANGELOG.md"
 Repository = "https://github.com/nfield-labs/nfield"
 "Bug Tracker" = "https://github.com/nfield-labs/nfield/issues"
+
+# Development-only requirements (PEP 735); never published, never pulled by
+# `pip install nfield`. Install with `uv sync` (dev) or `uv sync --group docs|bench`.
+[dependency-groups]
+dev = [
+    "pytest>=9",
+    "pytest-asyncio>=0.24",
+    "pytest-xdist>=3",
+    "pytest-cov>=7.1.0",
+    "coverage[toml]>=7",
+    "ruff>=0.8",
+    "mypy>=1.13",
+    "hypothesis>=6",
+    "pre-commit>=4",
+    "twine>=5",
+]
+docs = ["mkdocs-material>=9", "mkdocstrings[python]>=0.27"]
+# The comparison harness in benchmark/ imports these; run it with `uv sync --group bench`.
+bench = [
+    "instructor>=1.15.1",
+    "langchain>=1.3.4",
+    "langchain-groq>=1.1.2",
+    "langextract",
+    "langstruct; python_version >= '3.12'",
+    "contextgem",
+    "dspy",
+]
 
 [tool.hatch.version]
 source = "vcs"
@@ -86,8 +98,8 @@ strict = true
 warn_unused_configs = true
 warn_redundant_casts = true
 warn_unused_ignores = true
-# Dataset provenance scripts fetch from external services and are run by hand,
-# not type-checked with the library's strictness (they were untyped in scripts/).
+# Dataset generation scripts fetch from external services and are run by hand,
+# not type-checked with the library's strictness.
 exclude = ["benchmark/datasets/gen/"]
 
 [[tool.mypy.overrides]]
@@ -105,8 +117,8 @@ ignore_missing_imports = true
 module = ["pandas.*"]
 ignore_missing_imports = true
 
-# Competitor libraries driven by the head-to-head benchmark (runner3); they ship no
-# type stubs and are imported lazily inside the adapters, never by the library.
+# The benchmark adapters (bench dependency group) import these; they ship no type stubs
+# and are imported lazily inside the benchmark, never by the library itself.
 [[tool.mypy.overrides]]
 module = ["dspy.*", "langstruct.*", "langextract.*", "contextgem.*"]
 ignore_missing_imports = true
@@ -132,9 +144,3 @@ exclude_also = [
     "\\.\\.\\.",
 ]
 fail_under = 80
-
-[dependency-groups]
-dev = [
-    "coverage>=7.14.1",
-    "pytest-cov>=7.1.0",
-]

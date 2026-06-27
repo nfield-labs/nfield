@@ -29,6 +29,8 @@ jobs:
         run: uv python install ${{ matrix.python-version }}
 
       - name: Install dependencies
+        # All published extras; the benchmark adapters live in the bench dependency
+        # group and stay out of the test environment.
         run: uv sync --all-extras --dev
 
       - name: Lint
