@@ -93,7 +93,7 @@ retried-away artifact). No method gets more corrective budget than another.
 Two substrate tracks that never share a chart:
 
 - **Track A — orchestration-layer**, run on the *same* hosted model as nfield
-  (raw prompt, native JSON mode, Instructor, LangChain, …). The fair head-to-head.
+  (raw prompt, native JSON mode, Instructor, LangChain, …). The fair comparison.
 - **Track B — decoding-layer**, run on *local weights* (Outlines, XGrammar,
   lm-format-enforcer, …). A separately-labelled appendix, never cross-compared
   with Track A numbers.
@@ -109,7 +109,7 @@ benchmark/
   report.py         aggregate raw/scored -> summary.csv + tables (+ optional plots)
   runner.py         main sweep: method x document fixture -> raw JSON + MANIFEST
   runner2.py        scale sweep: nfield on the large (2.5k-5.6k field) fixtures
-  runner3.py        competitor head-to-head: nfield vs other extraction libraries
+  runner3.py        comparison: nfield vs other extraction libraries
   runner4.py        closed-book sweep: every method fills a schema with no document
   adapters/         nfield and the baselines, behind one uniform interface
   datasets/         real/ document fixtures + closed_book/ knowledge fixtures
@@ -149,12 +149,12 @@ result layout:
 
 ```bash
 uv run python -m benchmark.runner2   # scale: nfield on the 2.5k-5.6k field fixtures
-uv run python -m benchmark.runner3   # competitor head-to-head vs other libraries
+uv run python -m benchmark.runner3   # comparison vs other libraries
 uv run python -m benchmark.runner4   # closed-book: fill a schema with no document
 ```
 
-The baseline and competitor adapters (Instructor, LangChain, ContextGem,
-LangExtract, LangStruct) need the optional `bench` extra: `uv sync --extra bench`.
+The baseline and comparison adapters (Instructor, LangChain, ContextGem,
+LangExtract, LangStruct) need the `bench` dependency group: `uv sync --group bench`.
 
 ## Results are committed (and scrubbed)
 

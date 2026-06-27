@@ -30,7 +30,7 @@ def make_field(path: str, ftype: str, constraints: dict | None = None) -> Field:
 
 
 class TestCountUnknownPaths:
-    """count_unknown_paths — the ContextGem extra=forbid format-drift signal."""
+    """count_unknown_paths — the format-drift signal for out-of-schema paths."""
 
     def test_no_unknowns_when_all_paths_known(self) -> None:
         fields = [make_field("name", "string"), make_field("age", "integer")]

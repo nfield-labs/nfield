@@ -144,8 +144,8 @@ def count_unknown_paths(text: str, fields: list[Field]) -> int:
     """Count SFEP lines whose ``path`` is not a known schema field.
 
     A line that parses as ``path = value`` but whose path is absent from *fields* is the
-    model emitting a field outside the schema — a format-drift / hallucination signal (the
-    ContextGem ``extra="forbid"`` analog). Unparseable lines (no separator) are *not*
+    model emitting a field outside the schema — a format-drift / hallucination signal
+    (analogous to a strict schema's "forbid extra" rule). Unparseable lines (no separator) are *not*
     counted: those are prose/noise, not invented fields. Extraction is unaffected; this is
     a measurement only.
 

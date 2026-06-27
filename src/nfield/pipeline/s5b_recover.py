@@ -61,9 +61,8 @@ async def run_recovery_pass(
 ) -> PipelineState:
     """Recover still-missing fields in one bounded pass (Stage 5.5).
 
-    Always runs as a core Stage 5 step (architecture engine §5.3); a fast no-op
-    when no fields are missing. Validated (``FILLED``) fields are never
-    re-extracted.
+    Always runs as a core Stage 5 step; a fast no-op when no fields are missing.
+    Validated (``FILLED``) fields are never re-extracted.
 
     Args:
         state: Pipeline state after Stage 5 (blackboard populated).

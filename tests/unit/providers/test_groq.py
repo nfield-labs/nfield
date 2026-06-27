@@ -131,7 +131,7 @@ class TestGroqProviderBackendIntegration:
 
 
 class TestGroqProviderCredentials:
-    """api_key / base_url parity with Outlines / Instructor / Guidance."""
+    """api_key / base_url are stored and forwarded to the SDK client."""
 
     def test_credentials_stored(self) -> None:
         provider = GroqProvider("llama-3.1-8b", api_key="gsk_secret", base_url="https://proxy/v1")

@@ -226,9 +226,8 @@ def _tokens(text: str) -> list[str]:
 def _fuzzy_accept(value_tokens: list[str], text_tokens: list[str]) -> bool:
     """Return whether *value_tokens* fuzzily match *text*, by coverage AND density.
 
-    Ports the LCS accept rule of span-grounding extractors (LangExtract resolver
-    ``_accept_lcs_match``): the order-preserving matching blocks of
-    :class:`difflib.SequenceMatcher` stand in for the LCS (a standard, faster
+    Uses an LCS-style accept rule for span grounding: the order-preserving matching
+    blocks of :class:`difflib.SequenceMatcher` stand in for the LCS (a standard, faster
     approximation than the full O(n·m²) DP), then **both** gates must hold:
 
     * **coverage** — ``matched >= ceil(len(value) * threshold)``: enough of the value

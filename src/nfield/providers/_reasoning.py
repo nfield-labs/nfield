@@ -9,9 +9,8 @@ declares a reasoning model (``ExtractionConfig.reasoning_model``):
   - ``reasoning_suppression_kwargs`` turns thinking off on each call;
     ``is_unsupported_reasoning_param_error`` recognises an endpoint that rejects
     the parameter so the caller can drop it rather than fail.
-  - ``strip_reasoning`` removes any inline block that still arrives, the same
-    defensive strip used by langextract (``_THINK_TAG_RE``) and contextgem
-    (``_remove_thinking_content_from_llm_output``).
+  - ``strip_reasoning`` removes any inline ``<think>…</think>`` block that still
+    arrives, before the line-based parser sees it.
 """
 
 from __future__ import annotations

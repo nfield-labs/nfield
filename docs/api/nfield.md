@@ -126,7 +126,7 @@ Retrieval note: BMX lexical indexing folds diacritics (Unicode NFKD; Lucene-styl
 folding), so an accented document spelling (`Denísov`, `café`) matches an
 unaccented query term (`Denisov`, `cafe`) and vice-versa.
 
-Missing-field recovery (architecture engine §5.3) always runs as a core Stage 5
+Missing-field recovery always runs as a core Stage 5
 step — fields never produced after surgical retry get one bounded recovery pass
 (tree-backtrack absent-ancestor children, then re-extract the missed-only set).
 There is no flag; it is a no-op when nothing is missing.
