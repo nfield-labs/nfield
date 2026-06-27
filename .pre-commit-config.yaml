@@ -10,7 +10,6 @@ repos:
     rev: v1.13.0
     hooks:
       - id: mypy
-        additional_dependencies: ["types-all"]
         args: [--strict]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
