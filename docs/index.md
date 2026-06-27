@@ -1,10 +1,11 @@
 # nfield
 
-**Pull hundreds of structured fields out of a document, reliably.**
+**Pull N structured fields out of a document, reliably.**
 
-Ask an LLM to fill one big JSON schema in a single call and the answers get worse as the
-schema grows. The model spends its output budget on brackets, commas, and quotes instead of
-the values, and a wide schema can overflow the context window before it finishes.
+N is whatever your schema has, from a handful to thousands. Ask an LLM to fill one big JSON
+schema in a single call and the answers get worse as the schema grows. The model spends its
+output budget on brackets, commas, and quotes instead of the values, and a wide schema can
+overflow the context window before it finishes.
 
 nfield is built for the wide case. It splits the schema into groups that fit the model, finds
 the part of the document each group needs, extracts plain `key = value` lines instead of

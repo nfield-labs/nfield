@@ -1,21 +1,32 @@
+<div align="center">
+
 # nfield
 
-[![CI](https://github.com/nfield-labs/nfield/actions/workflows/ci.yml/badge.svg)](https://github.com/nfield-labs/nfield/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/nfield.svg)](https://pypi.org/project/nfield/)
-[![Python](https://img.shields.io/pypi/pyversions/nfield.svg)](https://pypi.org/project/nfield/)
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+**Pull N structured fields out of a document, reliably.**
 
-**Pull hundreds of structured fields out of a document, reliably.**
+*N is whatever your schema has, from a handful to thousands.*
 
-Ask an LLM to fill one big JSON schema in a single call and the answers get worse as the
-schema grows. The model spends its output budget on brackets, commas, and quotes instead of
-the values, and a wide schema can overflow the context window before it finishes. Most
-structured-output tools are built for a handful of fields and quietly fall apart past that.
+[![PyPI](https://img.shields.io/pypi/v/nfield?style=flat-square&color=2563eb)](https://pypi.org/project/nfield/)
+[![Python](https://img.shields.io/pypi/pyversions/nfield?style=flat-square&color=2563eb)](https://pypi.org/project/nfield/)
+[![CI](https://img.shields.io/github/actions/workflow/status/nfield-labs/nfield/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/nfield-labs/nfield/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square)](LICENSE)
+
+[**Quickstart**](docs/quickstart.md) · [**How it works**](docs/concepts/pipeline.md) · [**API**](docs/api/nfield.md)
+
+</div>
+
+---
+
+Ask an LLM to fill one big JSON
+schema in a single call and the answers get worse as the schema grows. The model spends its
+output budget on brackets, commas, and quotes instead of the values, and a wide schema can
+overflow the context window before it finishes. Most structured-output tools are built for a
+handful of fields and quietly fall apart past that.
 
 nfield is built for the wide case. It splits the schema into groups that fit the model,
 finds the part of the document each group needs, extracts plain `key = value` lines instead
 of nested JSON, validates every field against the text, retries the ones that fail, and
-reassembles the clean nested JSON you asked for. Schemas with hundreds of fields come back
+reassembles the clean nested JSON you asked for. Schemas with thousands of fields come back
 intact, on models that would choke on a single-call request.
 
 ## Install
@@ -98,7 +109,7 @@ method's behaviour rather than a leaderboard. See [benchmark/README.md](benchmar
 
 ## Why nfield
 
-- **Built for wide schemas.** Hundreds of fields, not a handful. nfield plans how to split
+- **Built for wide schemas.** Thousands of fields, not a handful. nfield plans how to split
   the schema across calls so the model never sees more than it can handle at once.
 - **Grounded, not guessed.** Every value is validated against the document; fields that fail
   are retried surgically rather than left wrong.
