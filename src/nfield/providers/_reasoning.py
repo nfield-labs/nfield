@@ -34,7 +34,7 @@ _UNSUPPORTED_PARAM_MARKERS: tuple[str, ...] = (
 
 # A non-greedy, dot-matches-newline match of a complete think block, plus any
 # trailing whitespace. An unclosed ``<think>`` (truncated output) is intentionally
-# not matched — there is no answer to recover, so the content is left as-is.
+# not matched - there is no answer to recover, so the content is left as-is.
 _THINK_BLOCK: re.Pattern[str] = re.compile(r"<think>.*?</think>\s*", re.IGNORECASE | re.DOTALL)
 
 

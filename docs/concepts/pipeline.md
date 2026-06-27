@@ -18,12 +18,12 @@ Every extraction runs the same stages (S0–S6). Each is a pure step over a shar
 ## Why decomposition
 
 A single call cannot reliably emit a very wide schema. Capacity packing computes how
-many calls are actually needed from the model's real numbers — `K_min` is the lower
-bound — and splits the schema only as much as the budget requires. On a small schema
+many calls are actually needed from the model's real numbers - `K_min` is the lower
+bound - and splits the schema only as much as the budget requires. On a small schema
 that fits one call, there is exactly one leaf; on a 1000-field schema it is many.
 
 ## Calibration is measured, not guessed
 
 `chars_per_token` is a property of the model's tokenizer (the Normalized Sequence
 Length, chars/token), so it is measured once at first use and reused for the life of
-the engine — never hardcoded and never re-measured per document.
+the engine - never hardcoded and never re-measured per document.

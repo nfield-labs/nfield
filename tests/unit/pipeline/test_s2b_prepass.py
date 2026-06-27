@@ -78,7 +78,7 @@ class TestRunStage2b:
 
 
 # ---------------------------------------------------------------------------
-# Per-group dynamic retrieval depth (Phase A.2) — no fixed global top-k
+# Per-group dynamic retrieval depth (Phase A.2) - no fixed global top-k
 # ---------------------------------------------------------------------------
 
 

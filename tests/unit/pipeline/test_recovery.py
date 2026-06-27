@@ -39,7 +39,7 @@ class _RecoverProvider:
 
 
 class _SilentProvider:
-    """Returns nothing — the missed field stays missing (bound check)."""
+    """Returns nothing - the missed field stays missing (bound check)."""
 
     context_window = 8192
     max_output_tokens = 8192
@@ -75,7 +75,7 @@ def _state_with_missing() -> PipelineState:
     state.groups = [group]
     state.segments = [seg]
     state.blackboard = Blackboard(["a", "b"])
-    state.blackboard.write("a", "one")  # FILLED — must not be re-touched
+    state.blackboard.write("a", "one")  # FILLED - must not be re-touched
     state.blackboard.mark_failed("b", "field absent after retry")  # the missed field
     return state
 

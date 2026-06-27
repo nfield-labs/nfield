@@ -3,7 +3,7 @@
 One bounded pass after SFR (Stage 5) and before assembly (Stage 6). Fields still
 ``EMPTY``/``FAILED`` are recovered without re-touching validated fields:
 
-1. Tree-backtrack — a child of an absent ancestor cannot exist, so it is written
+1. Tree-backtrack - a child of an absent ancestor cannot exist, so it is written
    ``None`` (confirmed absent) rather than re-queried.
 2. The remaining missed-only fields are grouped into a fresh recovery leaf.
 3. A targeted excerpt is finalised for that leaf, then it is extracted once and
@@ -97,7 +97,7 @@ async def _run_consolidated_recovery(
     The single retry path for the consolidated configuration. Since validation made
     no API calls, this pass pools all fields that are absent, invalid, conflicting,
     or flagged for revalidation; re-extracts them with a fresh path-aware excerpt and
-    a per-field reason; and re-validates — repeating up to ``config.max_retry_rounds``
+    a per-field reason; and re-validates - repeating up to ``config.max_retry_rounds``
     times. A child whose ancestor is itself missing is written ``None`` rather than
     re-queried.
 
@@ -168,7 +168,7 @@ async def _run_consolidated_recovery(
             state, provider, config, bb, still, reasons, rounds=_RECOVERY_ROUNDS
         )
         # Escalation: re-extract whatever the primary still could not produce on a
-        # stronger fallback model, once — only the stragglers pay the higher cost, not
+        # stronger fallback model, once - only the stragglers pay the higher cost, not
         # the whole document.
         if fallback_provider is not None and still:
             logger.debug(
@@ -272,7 +272,7 @@ def _failure_reason(bb: Blackboard, path: str, *, transient: bool = False) -> st
 
     if transient:
         # The Stage 4 call never reached the model, so there is no prior output to
-        # correct — ask for a fresh extraction.
+        # correct - ask for a fresh extraction.
         return (
             "the previous request did not complete; extract this field from the document, or NULL"
         )

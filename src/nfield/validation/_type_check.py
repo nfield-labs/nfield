@@ -1,7 +1,7 @@
 """Type and constraint validation for extracted field values (Layer 1).
 
 This is Layer 1 of the three-layer validation stack:
-- Layer 1 (this module): type + constraint validation — zero API calls.
+- Layer 1 (this module): type + constraint validation - zero API calls.
 - Layer 2 (post-MVP): GSV grounding-based semantic validation.
 - Layer 3 (post-MVP): NLI natural-language inference validation.
 
@@ -38,7 +38,7 @@ __all__ = [
 # Constants
 # ---------------------------------------------------------------------------
 
-# Basic format validators (MVP subset — not RFC-compliant, good enough for extraction)
+# Basic format validators (MVP subset - not RFC-compliant, good enough for extraction)
 _RE_EMAIL: re.Pattern[str] = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 _RE_URI: re.Pattern[str] = re.compile(r"^https?://\S+$")
 _RE_DATE: re.Pattern[str] = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -84,16 +84,16 @@ def validate_field(value: Any, field: Field) -> tuple[bool, str | None]:
         >>> validate_field(25, f)
         (True, None)
         >>> validate_field(-5, f)
-        (False, 'age: minimum constraint violated — -5 < 0')
+        (False, 'age: minimum constraint violated - -5 < 0')
         >>> validate_field("not_a_number", f)
         (False, "age: expected integer, got str 'not_a_number'")
     """
-    # None is always valid — represents a missing optional field
+    # None is always valid - represents a missing optional field
     if value is None:
         return True, None
 
-    # NEEDS_REVALIDATION sentinel — not a validation failure, handled by blackboard.
-    # Use identity check (is), not repr() comparison — any object whose __repr__
+    # NEEDS_REVALIDATION sentinel - not a validation failure, handled by blackboard.
+    # Use identity check (is), not repr() comparison - any object whose __repr__
     # returns "NEEDS_REVALIDATION" would otherwise bypass validation.
     if value is NEEDS_REVALIDATION:
         return True, None
@@ -133,7 +133,7 @@ def constraint_check(value: Any, field: Field) -> list[str]:
         >>> from nfield.schema._types import Field
         >>> f = Field("code", "string", {"minLength": 3, "maxLength": 5}, "", {})
         >>> constraint_check("ab", f)
-        ['code: minLength constraint violated — length 2 < 3']
+        ['code: minLength constraint violated - length 2 < 3']
         >>> constraint_check("abc", f)
         []
     """
@@ -147,13 +147,13 @@ def constraint_check(value: Any, field: Field) -> list[str]:
             min_len = int(constraints["minLength"])
             if len(value) < min_len:
                 violations.append(
-                    f"{path}: minLength constraint violated — length {len(value)} < {min_len}"
+                    f"{path}: minLength constraint violated - length {len(value)} < {min_len}"
                 )
         if "maxLength" in constraints:
             max_len = int(constraints["maxLength"])
             if len(value) > max_len:
                 violations.append(
-                    f"{path}: maxLength constraint violated — length {len(value)} > {max_len}"
+                    f"{path}: maxLength constraint violated - length {len(value)} > {max_len}"
                 )
         if "pattern" in constraints:
             # already failed maxLength above -> don't run the pattern on an over-long value
@@ -164,7 +164,7 @@ def constraint_check(value: Any, field: Field) -> list[str]:
                 try:
                     if not re.search(pattern, value):
                         violations.append(
-                            f"{path}: pattern constraint violated — "
+                            f"{path}: pattern constraint violated - "
                             f"{value!r} does not match /{pattern}/"
                         )
                 except re.error:
@@ -174,7 +174,7 @@ def constraint_check(value: Any, field: Field) -> list[str]:
             fmt_re = _FORMAT_VALIDATORS.get(fmt)
             if fmt_re is not None and not fmt_re.match(value):
                 violations.append(
-                    f"{path}: format constraint violated — {value!r} is not a valid {fmt!r}"
+                    f"{path}: format constraint violated - {value!r} is not a valid {fmt!r}"
                 )
 
     # Numeric range constraints
@@ -182,22 +182,22 @@ def constraint_check(value: Any, field: Field) -> list[str]:
         if "minimum" in constraints:
             minimum = constraints["minimum"]
             if value < minimum:
-                violations.append(f"{path}: minimum constraint violated — {value} < {minimum}")
+                violations.append(f"{path}: minimum constraint violated - {value} < {minimum}")
         if "maximum" in constraints:
             maximum = constraints["maximum"]
             if value > maximum:
-                violations.append(f"{path}: maximum constraint violated — {value} > {maximum}")
+                violations.append(f"{path}: maximum constraint violated - {value} > {maximum}")
         if "exclusiveMinimum" in constraints:
             ex_min = constraints["exclusiveMinimum"]
             if value <= ex_min:
                 violations.append(
-                    f"{path}: exclusiveMinimum constraint violated — {value} <= {ex_min}"
+                    f"{path}: exclusiveMinimum constraint violated - {value} <= {ex_min}"
                 )
         if "exclusiveMaximum" in constraints:
             ex_max = constraints["exclusiveMaximum"]
             if value >= ex_max:
                 violations.append(
-                    f"{path}: exclusiveMaximum constraint violated — {value} >= {ex_max}"
+                    f"{path}: exclusiveMaximum constraint violated - {value} >= {ex_max}"
                 )
         if "multipleOf" in constraints:
             multiple = constraints["multipleOf"]
@@ -207,7 +207,7 @@ def constraint_check(value: Any, field: Field) -> list[str]:
                 quotient = value / multiple
                 if not math.isclose(quotient, round(quotient), rel_tol=1e-9):
                     violations.append(
-                        f"{path}: multipleOf constraint violated — "
+                        f"{path}: multipleOf constraint violated - "
                         f"{value} is not a multiple of {multiple}"
                     )
 
@@ -215,7 +215,7 @@ def constraint_check(value: Any, field: Field) -> list[str]:
     if "enum" in constraints:
         allowed = constraints["enum"]
         if value not in allowed:
-            violations.append(f"{path}: enum constraint violated — {value!r} not in {allowed}")
+            violations.append(f"{path}: enum constraint violated - {value!r} not in {allowed}")
 
     # Array item count
     if isinstance(value, list):
@@ -223,13 +223,13 @@ def constraint_check(value: Any, field: Field) -> list[str]:
             min_items = int(constraints["minItems"])
             if len(value) < min_items:
                 violations.append(
-                    f"{path}: minItems constraint violated — {len(value)} < {min_items}"
+                    f"{path}: minItems constraint violated - {len(value)} < {min_items}"
                 )
         if "maxItems" in constraints:
             max_items = int(constraints["maxItems"])
             if len(value) > max_items:
                 violations.append(
-                    f"{path}: maxItems constraint violated — {len(value)} > {max_items}"
+                    f"{path}: maxItems constraint violated - {len(value)} > {max_items}"
                 )
 
     return violations
@@ -272,7 +272,7 @@ def _check_type(
 
     if field_type == "integer":
         if isinstance(value, bool):
-            # bool is a subtype of int in Python — reject
+            # bool is a subtype of int in Python - reject
             return False, None, f"{path}: expected integer, got bool {value!r}"
         if isinstance(value, int):
             return True, None, None
@@ -334,5 +334,5 @@ def _check_type(
             f"{path}: expected enum string, got {type(value).__name__} {value!r}",
         )
 
-    # object / unknown type — accept any value (schema structure handled upstream)
+    # object / unknown type - accept any value (schema structure handled upstream)
     return True, None, None

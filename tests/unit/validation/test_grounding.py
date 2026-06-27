@@ -18,7 +18,7 @@ def _field(field_type: str, constraints: dict | None = None) -> Field:
 
 
 # ---------------------------------------------------------------------------
-# is_groundable — type-awareness (do-no-harm on inferred types)
+# is_groundable - type-awareness (do-no-harm on inferred types)
 # ---------------------------------------------------------------------------
 
 
@@ -38,7 +38,7 @@ def test_none_value_is_never_grounded() -> None:
 
 
 # ---------------------------------------------------------------------------
-# grounding_score — the ladder
+# grounding_score - the ladder
 # ---------------------------------------------------------------------------
 
 
@@ -71,7 +71,7 @@ def test_partial_support_scores_low() -> None:
 
 def test_density_gate_rejects_scattered_match() -> None:
     # 3 of 4 value tokens appear (coverage 0.75 passes) but spread across noise, so the
-    # density gate rejects the fuzzy tier — it drops to PARTIAL, not FUZZY.
+    # density gate rejects the fuzzy tier - it drops to PARTIAL, not FUZZY.
     text = "alpha lorem ipsum dolor sit amet consectetur adipiscing elit sed do beta gamma"
     score = grounding_score("alpha beta gamma delta", text, "string")
     assert score == pytest.approx(0.4)  # PARTIAL, not 0.7 FUZZY
@@ -92,7 +92,7 @@ def test_empty_text_scores_zero() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Numeric grounding — formatted variants
+# Numeric grounding - formatted variants
 # ---------------------------------------------------------------------------
 
 
@@ -110,7 +110,7 @@ def test_number_not_in_text_scores_zero() -> None:
 
 
 def test_non_finite_numbers_do_not_crash() -> None:
-    # An extracted "1e500" casts to inf; int(inf)/int(nan) raise — grounding must not.
+    # An extracted "1e500" casts to inf; int(inf)/int(nan) raise - grounding must not.
     assert grounding_score(float("inf"), "revenue was 100", "number") == 0.0
     assert grounding_score(float("nan"), "revenue was 100", "number") == 0.0
     # inf still grounds via its raw string form if the text happens to contain it.
@@ -118,7 +118,7 @@ def test_non_finite_numbers_do_not_crash() -> None:
 
 
 # ---------------------------------------------------------------------------
-# is_grounded — threshold
+# is_grounded - threshold
 # ---------------------------------------------------------------------------
 
 

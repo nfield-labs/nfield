@@ -70,7 +70,7 @@ class Metadata:
         fields_call_failed: Number of fields left unextracted because an API/call
             error never returned (transient), as distinct from fields genuinely
             absent from the document. ``0`` when every call succeeded.
-        calls_by_origin: Breakdown of ``K`` by call site — e.g.
+        calls_by_origin: Breakdown of ``K`` by call site - e.g.
             ``{"extract": 120, "s5_retry": 30, "recovery_extract": 8}``. Lets a
             run attribute its API cost to first-pass extraction vs Stage 5 retry
             vs the recovery pass. Empty when no calls were made.
@@ -79,10 +79,10 @@ class Metadata:
         fields_ungrounded: Number of grounding-checked values the source did not
             support (likely hallucinations). ``0`` when grounding is disabled.
         hallucination_rate: ``fields_ungrounded / (fields_grounded + fields_ungrounded)``
-            — the fraction of grounding-checked values that were unsupported. ``None``
+            - the fraction of grounding-checked values that were unsupported. ``None``
             when grounding was disabled or no value was groundable.
         unknown_output_lines: Count of extracted lines whose field path was not in the
-            schema (the model emitted a field outside the requested set) — a format-drift
+            schema (the model emitted a field outside the requested set) - a format-drift
             signal. ``0`` when the model stayed within the schema.
 
     Example:

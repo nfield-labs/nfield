@@ -43,7 +43,7 @@ def test_empty_schema_passes() -> None:
 
 
 def test_union_type_with_string_pattern_not_rejected() -> None:
-    # A pattern on a (string|integer) union is valid — strings can satisfy it.
+    # A pattern on a (string|integer) union is valid - strings can satisfy it.
     preflight_schema(_obj("f", {"type": ["string", "integer"], "pattern": "^a"}))
 
 

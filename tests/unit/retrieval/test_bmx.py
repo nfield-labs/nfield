@@ -1,4 +1,4 @@
-"""Tests for retrieval._bmx — entropy-weighted lexical retrieval (BMX)."""
+"""Tests for retrieval._bmx - entropy-weighted lexical retrieval (BMX)."""
 
 from __future__ import annotations
 

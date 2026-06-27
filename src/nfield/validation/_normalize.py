@@ -1,8 +1,8 @@
 """Value normalization run before validation.
 
 Coerces common value forms to the schema type so a correct value is not rejected on
-format alone — e.g. ``"$1,234,568" -> 1234568``, ``"Female" -> "Female"`` for an enum
-cased ``"female"``. Keyed only on the JSON Schema ``type``/``constraints`` — never on
+format alone - e.g. ``"$1,234,568" -> 1234568``, ``"Female" -> "Female"`` for an enum
+cased ``"female"``. Keyed only on the JSON Schema ``type``/``constraints`` - never on
 field name or domain. Lossless-or-decline: an ambiguous input is returned unchanged for
 the validator to judge, never guessed. Bool set follows Pydantic v1 ``bool_validator``.
 """

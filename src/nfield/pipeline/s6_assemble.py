@@ -61,7 +61,7 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
     # --- 4. Build Metadata ---
     # get_filled() returns only real (non-None) values, so a field the recovery
     # pass confirmed absent (None) is NOT counted as extracted. Everything that is
-    # not a real value, a conflict, or pending revalidation is therefore missing —
+    # not a real value, a conflict, or pending revalidation is therefore missing -
     # derived as the remainder so the four buckets always sum to fields_total.
     fields_extracted = len(filled)
     fields_conflicted = len(bb.get_conflicts())
@@ -115,7 +115,7 @@ def _grounding_metric(state: PipelineState) -> tuple[int, int, float | None]:
     Counts every grounding-checked value (those Stage 5 scored when grounding was
     enabled) as grounded or ungrounded by the same threshold the gate used, then
     reports the unsupported fraction. A value counts as ungrounded if the source did
-    not support it on its best excerpt, even if it was later dropped — that is exactly
+    not support it on its best excerpt, even if it was later dropped - that is exactly
     the model's hallucination signal.
 
     Args:

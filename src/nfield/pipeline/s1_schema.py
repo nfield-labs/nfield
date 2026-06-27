@@ -26,10 +26,10 @@ def run_stage_1(state: PipelineState, schema: dict[str, Any]) -> PipelineState:
     """Analyse schema: flatten, score tokens, extract deps, score difficulty.
 
     Populates:
-    - ``state.fields`` — ordered list of ``Field`` objects with dot-notation paths
-    - ``state.field_by_path`` — O(1) lookup by path
-    - ``state.dep_dag`` — dependency adjacency dict
-    - ``state.blackboard`` — Blackboard initialised with all field paths
+    - ``state.fields`` - ordered list of ``Field`` objects with dot-notation paths
+    - ``state.field_by_path`` - O(1) lookup by path
+    - ``state.dep_dag`` - dependency adjacency dict
+    - ``state.blackboard`` - Blackboard initialised with all field paths
 
     Args:
         state: Pipeline state from Stage 0 (must have ``chars_per_token`` set).

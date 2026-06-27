@@ -1,4 +1,4 @@
-"""Unit tests for assembly._quality — quality scoring."""
+"""Unit tests for assembly._quality - quality scoring."""
 
 from __future__ import annotations
 
@@ -67,7 +67,7 @@ class TestQualityReport:
 
 
 # ---------------------------------------------------------------------------
-# compute_quality_score — quality_score (fill rate)
+# compute_quality_score - quality_score (fill rate)
 # ---------------------------------------------------------------------------
 
 
@@ -100,7 +100,7 @@ class TestComputeQualityScore:
 
 
 # ---------------------------------------------------------------------------
-# compute_quality_score — confidence_level
+# compute_quality_score - confidence_level
 # ---------------------------------------------------------------------------
 
 
@@ -140,7 +140,7 @@ class TestConfidenceLevel:
 
 
 # ---------------------------------------------------------------------------
-# compute_quality_score — optimality_gap
+# compute_quality_score - optimality_gap
 # ---------------------------------------------------------------------------
 
 
@@ -175,7 +175,7 @@ class TestOptimalityGap:
 
 
 # ---------------------------------------------------------------------------
-# compute_quality_score — per_field_confidence
+# compute_quality_score - per_field_confidence
 # ---------------------------------------------------------------------------
 
 
@@ -211,7 +211,7 @@ class TestPerFieldConfidence:
 
 
 # ---------------------------------------------------------------------------
-# compute_quality_score — field counts
+# compute_quality_score - field counts
 # ---------------------------------------------------------------------------
 
 

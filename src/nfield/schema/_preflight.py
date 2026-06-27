@@ -1,18 +1,18 @@
-"""Schema preflight — reject a self-contradictory JSON Schema before any LLM call.
+"""Schema preflight - reject a self-contradictory JSON Schema before any LLM call.
 
 A JSON Schema can be syntactically valid yet *unsatisfiable*: ``minimum > maximum``,
 an empty ``enum``, ``minLength > maxLength``. Today such a schema runs the whole
 pipeline and every field fails, which reads as a confusing "everything missing". This
 catches the contradiction up front and raises a :class:`SchemaError` with the field
-path and a fix hint — the "fail before you spend a call" discipline.
+path and a fix hint - the "fail before you spend a call" discipline.
 
 Scope is deliberately narrow. Full JSON Schema satisfiability is decidable but up to
 2EXPTIME, and the cost is driven by Boolean operators (``not``/``anyOf``/``oneOf``/
-``allOf`` merging), ``$ref`` recursion, and ``uniqueItems`` — not by simple bounds. So
+``allOf`` merging), ``$ref`` recursion, and ``uniqueItems`` - not by simple bounds. So
 this checks **only** per-field, single-keyword-pair contradictions that are
 *necessarily* unsatisfiable: each can never reject a valid schema (zero false
 rejections). Anything that would need a solver (negation, disjunction, ref merging) is
-skipped, not guessed — exactly where published satisfiability tools (jsonsubschema,
+skipped, not guessed - exactly where published satisfiability tools (jsonsubschema,
 arXiv:1911.12651) themselves punt.
 """
 
@@ -66,7 +66,7 @@ def _walk(node: Any, path: str) -> Iterator[tuple[str, dict[str, Any]]]:
     """Yield ``(path, node)`` for the schema node and every nested object property.
 
     Recurses ``properties`` (objects) and an array's ``items`` schema. Boolean-combinator
-    branches (``anyOf``/``oneOf``/``allOf``/``not``) are not descended into — merging them
+    branches (``anyOf``/``oneOf``/``allOf``/``not``) are not descended into - merging them
     is the solver-grade reasoning this module intentionally avoids.
 
     Args:
@@ -275,7 +275,7 @@ def _check_required_present(path: str, node: dict[str, Any]) -> None:
     """Reject a required key that is closed out by ``additionalProperties: false``.
 
     Only fires when the key is absent from ``properties`` AND ``additionalProperties``
-    is ``false`` AND there is no ``patternProperties`` that could admit it — the only
+    is ``false`` AND there is no ``patternProperties`` that could admit it - the only
     case where the requirement is provably unsatisfiable.
     """
     required = node.get("required")
@@ -300,7 +300,7 @@ def _check_required_present(path: str, node: dict[str, Any]) -> None:
 def _check_multiple_of_range(path: str, node: dict[str, Any]) -> None:
     """Reject an integer ``multipleOf`` whose multiples all fall outside [minimum, maximum].
 
-    Restricted to integer multipleOf with integer bounds — float multipleOf invites
+    Restricted to integer multipleOf with integer bounds - float multipleOf invites
     precision error, so it is skipped to preserve the zero-false-rejection guarantee.
     """
     multiple = node.get("multipleOf")

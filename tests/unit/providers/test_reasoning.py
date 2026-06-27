@@ -1,4 +1,4 @@
-"""Tests for providers._reasoning — stripping reasoning traces from output."""
+"""Tests for providers._reasoning - stripping reasoning traces from output."""
 
 from __future__ import annotations
 

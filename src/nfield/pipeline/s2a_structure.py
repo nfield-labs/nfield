@@ -23,14 +23,14 @@ _TOP_LEVEL_GROUP_KEY: str = ""
 def run_stage_2a(state: PipelineState) -> PipelineState:
     """Group fields by shared parent path.
 
-    MVP algorithm: parent-path grouping — all fields sharing the same
+    MVP algorithm: parent-path grouping - all fields sharing the same
     ``field.parent_path`` are placed in one ``FieldGroup``.
 
     Top-level fields (parent_path == "") form their own group.
 
     Populates:
-    - ``state.groups`` — list of ``FieldGroup`` objects
-    - ``state.group_map`` — field path → its ``FieldGroup``
+    - ``state.groups`` - list of ``FieldGroup`` objects
+    - ``state.group_map`` - field path → its ``FieldGroup``
 
     Args:
         state: Pipeline state from Stage 1 (must have ``state.fields`` set).

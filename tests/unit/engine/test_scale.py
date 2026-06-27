@@ -131,7 +131,7 @@ class TestInstructions:
 
     async def test_large_instructions_increases_leaf_count(self, monkeypatch):
         # A big instructions string eats the per-leaf budget, so the same schema
-        # must split into more calls — proof it is counted in overhead, not ignored.
+        # must split into more calls - proof it is counted in overhead, not ignored.
         sfep = _full_sfep(50)
 
         def factory(_model, *, context_window=None, max_output_tokens=None, **_kwargs):

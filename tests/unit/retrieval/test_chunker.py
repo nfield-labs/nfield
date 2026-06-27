@@ -1,4 +1,4 @@
-"""Tests for retrieval._chunker — adaptive document chunking."""
+"""Tests for retrieval._chunker - adaptive document chunking."""
 
 from __future__ import annotations
 

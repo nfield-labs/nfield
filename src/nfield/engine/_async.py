@@ -1,4 +1,4 @@
-"""Async engine — the real pipeline runner behind every public entry point.
+"""Async engine - the real pipeline runner behind every public entry point.
 
 ``AsyncNField`` threads a single ``PipelineState`` through all seven
 stages (S0 → S6) and returns an :class:`~nfield.types.ExtractionResult`.
@@ -62,7 +62,7 @@ _PRIMITIVE_JSON_TYPES: dict[type, str] = {
 # Bound dataclass-schema recursion. A self-referential dataclass (e.g. a tree
 # node whose field type is its own class) would otherwise recurse forever and
 # crash with a RecursionError. The schema is caller-supplied, not untrusted
-# document content, so this is a robustness guard, not a DoS defense — it turns a
+# document content, so this is a robustness guard, not a DoS defense - it turns a
 # confusing stack overflow into a clean SchemaError. Real schemas nest a few
 # levels. Same value as assembly._trie._MAX_PATH_DEPTH for one consistent
 # nesting ceiling across the library; conversion adds ~2 frames per level, well
@@ -337,7 +337,7 @@ class AsyncNField:
             Defaults to the provider's conservative default when omitted.
         max_output_tokens: The model's real output ceiling in tokens (M_O).
         api_key: Provider API key. ``None`` (default) reads it from the
-            environment — the recommended path. Pass explicitly only for
+            environment - the recommended path. Pass explicitly only for
             secret-vault / multi-tenant use; it is never logged.
         base_url: Override the provider API base URL (proxy / gateway /
             self-hosted compatible endpoint). ``None`` uses the SDK default.
@@ -392,7 +392,7 @@ class AsyncNField:
             _normalize_schema(schema) if schema is not None else None
         )
         # chars_per_token comes from the provider's estimator (Stage 0), which
-        # refines it from each response's real prompt-token count — so a reused
+        # refines it from each response's real prompt-token count - so a reused
         # engine sharpens its budget across documents.
 
     @property

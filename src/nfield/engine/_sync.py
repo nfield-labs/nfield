@@ -1,4 +1,4 @@
-"""Sync engine — a thin, Jupyter-safe wrapper over the async engine.
+"""Sync engine - a thin, Jupyter-safe wrapper over the async engine.
 
 ``NField`` mirrors :class:`~nfield.engine._async.AsyncNField`
 but drives it synchronously. The only real work here is running an awaitable to
@@ -48,7 +48,7 @@ def _run_sync(coro: Coroutine[Any, Any, _T]) -> _T:
     try:
         asyncio.get_running_loop()
     except RuntimeError:
-        # No running loop in this thread — the common, non-Jupyter case.
+        # No running loop in this thread - the common, non-Jupyter case.
         return asyncio.run(coro)
 
     # A loop is already running here; offload to a thread with a fresh loop.

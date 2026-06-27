@@ -1,4 +1,4 @@
-"""NField — N-field structured extraction from documents with LLMs.
+"""NField - N-field structured extraction from documents with LLMs.
 
 Extract hundreds of structured fields from any document without the format tax.
 

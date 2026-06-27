@@ -6,7 +6,7 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
-## [0.1.0] — 2026-06-27
+## [0.1.0] - 2026-06-27
 
 ### Added
 - The seven-stage N-field extraction pipeline (S0–S6).

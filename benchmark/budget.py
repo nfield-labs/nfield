@@ -3,11 +3,11 @@
 A :class:`Budget` is one ``(context_window, max_output_tokens)`` pair applied
 **uniformly** to every method, so the comparison is apples-to-apples:
 
-- ``native``      — the model's real context, and the largest single-call output
+- ``native``      - the model's real context, and the largest single-call output
   that *reliably* completes (``reliable_output_tokens``, bounded by the provider's
   wall-clock completion limit, not its token ceiling). Answers: given the model's
   usable single-call capacity, can one call do the job?
-- ``constrained`` — one fixed small window every method shares. Answers: under a
+- ``constrained`` - one fixed small window every method shares. Answers: under a
   tight identical budget, decomposition vs a single call.
 
 Native deliberately uses the *reliable* output, not the published 32k ceiling:

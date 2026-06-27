@@ -137,7 +137,7 @@ def compute_tau(
         var_tau = (tau * 0.6) ** 2
 
     else:
-        # Unknown type — fallback to unconstrained string
+        # Unknown type - fallback to unconstrained string
         tau = float(p90_string_tokens)
         var_tau = (tau * 0.6) ** 2
 

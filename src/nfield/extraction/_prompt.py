@@ -17,7 +17,7 @@ User message structure
 
 Post-MVP stubs
 --------------
-* TEP two-phase format (think block + extract block) — activated when
+* TEP two-phase format (think block + extract block) - activated when
   the cluster type is COMPLEX and D(f) >= 0.5 for most fields.
 """
 
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 
 # Header that introduces injected upstream dependency values in the user message.
 _DEPENDENCY_BLOCK_HEADER: str = (
-    "[Resolved dependency values — use these when extracting the fields below]"
+    "[Resolved dependency values - use these when extracting the fields below]"
 )
 
 __all__ = [
@@ -53,7 +53,7 @@ _SFEP_SYSTEM_PROMPT: str = """\
 You are a structured data extraction assistant. The document is given first, then the \
 list of fields to extract from it.
 
-OUTPUT FORMAT — follow exactly:
+OUTPUT FORMAT - follow exactly:
 - Output exactly one line for EVERY field listed, in the order given: field.path = value
 - Every listed field's value appears in the document above. Read it out exactly as \
 written. {sourcing_rule}
@@ -63,7 +63,7 @@ trailing zero (e.g. 42; and 2,042,137,000 USD becomes 2042137000, not 2042137)
 - For number fields: write with decimals if needed (e.g. 3.14)
 - For array fields: use [item1, item2, item3] notation
 - For enum fields: use one of the exact allowed values listed in the schema
-- Preserve exact string values — do not paraphrase or translate
+- Preserve exact string values - do not paraphrase or translate
 - Do not include explanations, only output field = value lines
 
 Example (for two fields named a.x and a.y):
@@ -88,10 +88,10 @@ _CLOSED_BOOK_SYSTEM_PROMPT: str = """\
 You are an expert assistant with broad, accurate factual knowledge. Provide the value of \
 each field listed below for the subject described, drawing on what you reliably know.
 
-OUTPUT FORMAT — follow exactly:
+OUTPUT FORMAT - follow exactly:
 - Output exactly one line for EVERY field listed, in the order given: field.path = value
 - Give a value only when you are confident it is correct. If you are not certain, write NULL \
-— do not guess.
+- do not guess.
 - For boolean fields: use true or false (lowercase)
 - For integer fields: write ALL digits with no quotes, commas, or units (e.g. 42)
 - For number fields: write with decimals if needed (e.g. 3.14)
@@ -183,10 +183,10 @@ def build_extraction_prompt(
         True
     """
     if not fields:
-        raise ValueError("fields must be non-empty — cannot build extraction prompt")
+        raise ValueError("fields must be non-empty - cannot build extraction prompt")
 
     # Caller instructions go in the USER message, not the system message. Chat
-    # models — Llama-70B on Groq especially — follow user-turn instructions far more
+    # models - Llama-70B on Groq especially - follow user-turn instructions far more
     # reliably than system-prompt ones (IHEval arXiv:2502.08745; Llama-70B prompting
     # guidance puts task instructions in the user turn). The system message stays the
     # pure SFEP output contract; the caller's domain instructions frame the task at
@@ -218,7 +218,7 @@ def builtin_system_message(*, knowledge_fallback: bool = False) -> str:
 
     Args:
         knowledge_fallback: Select the knowledge-fallback sourcing rule, which is
-            longer than the strict rule — so the overhead estimate matches the
+            longer than the strict rule - so the overhead estimate matches the
             prompt that will actually be sent.
 
     Returns:
@@ -370,7 +370,7 @@ def _build_user_message(
     """Build the user message: document first, field list last.
 
     Order: caller instructions, then the document, then any resolved dependency
-    values, then the field list — so the fields are the most recent context when
+    values, then the field list - so the fields are the most recent context when
     the model produces its answer.
 
     Args:
@@ -466,7 +466,7 @@ def _build_retry_user_message(
     field_lines: list[str] = []
     for f in failed_fields:
         error_msg = errors.get(f.path, "validation failed")
-        field_lines.append(f"{f.path} ({f.type}): FAILED — {error_msg}. Please re-extract.")
+        field_lines.append(f"{f.path} ({f.type}): FAILED - {error_msg}. Please re-extract.")
 
     fields_block = "\n".join(field_lines)
     excerpt_block = _format_document_excerpt(document_excerpt)

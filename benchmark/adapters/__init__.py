@@ -1,4 +1,4 @@
-"""Adapter layer — one uniform interface over every method under test.
+"""Adapter layer - one uniform interface over every method under test.
 
 Each method (nfield and every baseline) is wrapped in an :class:`Adapter` whose
 ``run`` returns the same :class:`AdapterOutput`, so the runner and scorer treat

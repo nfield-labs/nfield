@@ -1,4 +1,4 @@
-"""Tests for schema._flatten — Radix Trie Schema Flattener."""
+"""Tests for schema._flatten - Radix Trie Schema Flattener."""
 
 from __future__ import annotations
 
@@ -254,7 +254,7 @@ class TestFlattenEdgeCases:
         assert fields[0].type == "integer"
 
     def test_ref_cycle_detected(self) -> None:
-        """Circular $ref does not cause infinite loop — terminates."""
+        """Circular $ref does not cause infinite loop - terminates."""
         schema: dict = {  # type: ignore[type-arg]
             "type": "object",
             "$defs": {
@@ -495,7 +495,7 @@ class TestFlattenConstraints:
 
 
 # ---------------------------------------------------------------------------
-# Resource bound — $ref fan-out / pathological expansion (DoS guard)
+# Resource bound - $ref fan-out / pathological expansion (DoS guard)
 # ---------------------------------------------------------------------------
 import nfield.schema._flatten as _flatten_mod  # noqa: E402
 

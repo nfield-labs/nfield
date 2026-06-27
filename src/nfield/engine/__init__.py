@@ -1,4 +1,4 @@
-"""NField orchestrator — sync and async engines plus the n* entry points.
+"""NField orchestrator - sync and async engines plus the n* entry points.
 
 ``_async.py`` holds the real pipeline runner (:class:`AsyncNField`);
 ``_sync.py`` wraps it for blocking callers (:class:`NField`). Both

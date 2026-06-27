@@ -1,4 +1,4 @@
-"""Tests for providers._token_budget — script-aware chars-per-token estimate."""
+"""Tests for providers._token_budget - script-aware chars-per-token estimate."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""Plain JSON Schema dict as input — no Pydantic required.
+"""Plain JSON Schema dict as input - no Pydantic required.
 
 Run:
     export GROQ_API_KEY=...

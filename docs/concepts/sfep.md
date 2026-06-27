@@ -1,7 +1,7 @@
-# SFEP — why `key = value` beats nested JSON
+# SFEP - why `key = value` beats nested JSON
 
-The format tax is the accuracy lost to producing JSON *structure* — the nested
-braces, commas, and quotes — rather than the field *values*. It grows with field
+The format tax is the accuracy lost to producing JSON *structure* - the nested
+braces, commas, and quotes - rather than the field *values*. It grows with field
 count and nesting depth.
 
 NField sidesteps it with the **Schema-aware Field Extraction Protocol (SFEP)**:
@@ -21,7 +21,7 @@ are no structural tokens to get wrong, so attention stays on the content.
 SFEP is bijective with nested JSON: the parser splits each line on the first ` = `,
 type-casts the value against the field's schema, and the assembler rebuilds the
 nested object via a radix trie. Flattening then reassembling returns the original
-structure — every schema field maps to exactly one path and back.
+structure - every schema field maps to exactly one path and back.
 
 ## Per-field validation
 

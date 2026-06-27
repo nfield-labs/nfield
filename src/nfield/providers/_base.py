@@ -32,7 +32,7 @@ _DEFAULT_BACKOFF_BASE: float = 2.0
 _DEFAULT_BACKOFF_MAX: float = 60.0
 # A TPM 429's Retry-After reports when the FULL token window resets (~60s), but a
 # token bucket refills continuously at limit/60 tokens per second, so one call's
-# tokens free up in a few seconds — not a whole window. Cap the rate-limit wait
+# tokens free up in a few seconds - not a whole window. Cap the rate-limit wait
 # here so throughput tracks the steady-state limit instead of sleeping a full
 # window per throttled call. The attempt still counts, so a genuinely exhausted
 # quota still backs off across the retry budget.
@@ -186,7 +186,7 @@ class BaseProvider(ABC):
     ) -> T:
         """Execute with exponential backoff retry on transient (retryable) errors.
 
-        Takes a *factory* that produces a fresh awaitable per attempt — a coroutine
+        Takes a *factory* that produces a fresh awaitable per attempt - a coroutine
         can only be awaited once, so each retry must call the API anew. Retries only
         ``ProviderError.retryable`` failures (429, 5xx, timeouts): a server ``Retry-After``
         is honored (capped) with a small decorrelation jitter, otherwise the wait is
@@ -219,7 +219,7 @@ class BaseProvider(ABC):
                         f"{operation_name} failed (attempt {attempt + 1}/{self._max_retries}): {e}"
                     )
                     raise
-                # Honor a server Retry-After (capped) + small jitter — NOT full jitter,
+                # Honor a server Retry-After (capped) + small jitter - NOT full jitter,
                 # since we must not retry before the server is ready. Otherwise full
                 # jitter: a uniform wait in [0, exponential ceiling] spreads concurrent
                 # retries and minimizes collisions (AWS Exponential Backoff and Jitter).

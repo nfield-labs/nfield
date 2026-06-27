@@ -45,7 +45,7 @@ class TestEmptyRawValueHandling:
         assert result is None
 
     def test_empty_string_for_string_field_returns_empty_string(self):
-        """Empty raw_value on string field returns '' — empty string is a valid string value."""
+        """Empty raw_value on string field returns '' - empty string is a valid string value."""
         f = make_field("notes", "string")
         result = typecast("", f)
         assert result == ""
@@ -73,21 +73,21 @@ class TestSingleItemArrayFallback:
     """A single value without brackets wraps as [value]."""
 
     def test_single_item_no_brackets_no_comma(self):
-        """LLM outputs 'engineering' for array field — becomes ['engineering']."""
+        """LLM outputs 'engineering' for array field - becomes ['engineering']."""
         f = make_field("tags", "array", {"items": {"type": "string"}})
         result = _cast_array("engineering", f)
         assert isinstance(result, list)
         assert result == ["engineering"]
 
     def test_single_integer_no_brackets(self):
-        """LLM outputs '42' for integer array field — becomes [42]."""
+        """LLM outputs '42' for integer array field - becomes [42]."""
         f = make_field("ids", "array", {"items": {"type": "integer"}})
         result = _cast_array("42", f)
         assert isinstance(result, list)
         assert result == [42]
 
     def test_single_float_no_brackets(self):
-        """LLM outputs '3.14' for number array field — becomes [3.14]."""
+        """LLM outputs '3.14' for number array field - becomes [3.14]."""
         f = make_field("prices", "array", {"items": {"type": "number"}})
         result = _cast_array("3.14", f)
         assert result == [pytest.approx(3.14)]
@@ -113,7 +113,7 @@ class TestTypeCastNumericEdgeCases:
         assert isinstance(result, int)
 
     def test_very_large_integer(self):
-        """Python ints are arbitrary precision — huge numbers must parse."""
+        """Python ints are arbitrary precision - huge numbers must parse."""
         f = make_field("big", "integer")
         big_num = "999999999999999999999999999999"
         result = typecast(big_num, f)
@@ -132,7 +132,7 @@ class TestTypeCastNumericEdgeCases:
         assert result == 42
 
     def test_float_42_point_9_for_integer_raises(self):
-        """42.9 cannot be truncated to integer — should raise, not silently truncate."""
+        """42.9 cannot be truncated to integer - should raise, not silently truncate."""
         f = make_field("age", "integer")
         from nfield.exceptions import ExtractionError
 
@@ -147,13 +147,13 @@ class TestTypeCastNumericEdgeCases:
 
 class TestArrayParsingEdgeCases:
     def test_array_with_spaces_in_items(self):
-        """'[hello world, foo bar]' — items with internal spaces."""
+        """'[hello world, foo bar]' - items with internal spaces."""
         f = make_field("phrases", "array")
         result = typecast("[hello world, foo bar]", f)
         assert result == ["hello world", "foo bar"]
 
     def test_array_with_quoted_comma_item(self):
-        """'["one,two", three]' — quoted string containing comma."""
+        """'["one,two", three]' - quoted string containing comma."""
         f = make_field("items", "array")
         result = typecast('["one,two", three]', f)
         # The quoted item should be treated as a single element
@@ -161,7 +161,7 @@ class TestArrayParsingEdgeCases:
         assert "one,two" in result or '"one,two"' in result  # either stripped or not
 
     def test_array_with_null_element(self):
-        """'[NULL, valid]' — NULL element in array."""
+        """'[NULL, valid]' - NULL element in array."""
         f = make_field("values", "array")
         result = typecast("[NULL, valid]", f)
         assert isinstance(result, list)
@@ -215,7 +215,7 @@ class TestParseSfepLineSeparator:
     def test_line_with_only_separator(self):
         """Line that is just ' = ' (no path or value)."""
         result = parse_sfep_line(" = ")
-        # Path is empty after strip — should return None
+        # Path is empty after strip - should return None
         assert result is None
 
     def test_multiline_string_value_first_line_only(self):
@@ -231,7 +231,7 @@ class TestParseSfepLineSeparator:
 
 class TestNeedsRevalidationSentinel:
     def test_singleton_identity_via_is(self):
-        """NEEDS_REVALIDATION is a singleton — two imports must be same object."""
+        """NEEDS_REVALIDATION is a singleton - two imports must be same object."""
         from nfield.extraction._sfep import (
             NEEDS_REVALIDATION as NR1,
         )

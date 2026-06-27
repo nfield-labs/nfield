@@ -84,7 +84,7 @@ class PipelineState:
     record_block_tokens: dict[int, int] = field(default_factory=dict)
     # Record blocks as segments (record index -> its segments; shared header segments).
     # Let Stage 5 rebuild a failed field's record block for a small, record-local retry
-    # excerpt — independent of the leaf, so it works for recovery leaves too.
+    # excerpt - independent of the leaf, so it works for recovery leaves too.
     record_block_segments: dict[int, list[Segment]] = field(default_factory=dict)
     record_header_segments: list[Segment] = field(default_factory=list)
 
@@ -104,7 +104,7 @@ class PipelineState:
     grounding_scores: dict[str, float] = field(default_factory=dict)
 
     # Count of SFEP output lines whose path was not in the schema (the model emitted a
-    # field outside the requested set) — a format-drift signal accumulated across all
+    # field outside the requested set) - a format-drift signal accumulated across all
     # extraction calls and reported in Metadata.
     unknown_lines: int = 0
 

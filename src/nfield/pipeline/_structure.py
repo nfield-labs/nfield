@@ -2,7 +2,7 @@
 
 When a schema repeats one shape across many sibling keys (44 ``patient_record_k``,
 30 ``subsidiary_k``, …) and the document repeats a matching block that many times,
-each leaf only needs its own records' blocks — not the whole document. This turns
+each leaf only needs its own records' blocks - not the whole document. This turns
 the per-leaf excerpt cost from O(D) (whole doc) into O(block), so total input
 drops from O(K·D) to O(D + K·header).
 
@@ -12,7 +12,7 @@ lexical retrieval) are still separated correctly.
 
 Scope: this only overwrites ``leaf.document_excerpt`` after packing and Stage 3.
 It never changes K (call count), grouping, or chunking. If the structure is not
-unambiguous it is a no-op and the leaf keeps its Stage 3 excerpt — so a normal
+unambiguous it is a no-op and the leaf keeps its Stage 3 excerpt - so a normal
 heterogeneous document behaves exactly as before.
 
 Domain-agnostic throughout: detection is by repetition and schema shape only,
@@ -87,7 +87,7 @@ class SectionStructure(NamedTuple):
     """Heading-tree structure of a heterogeneous document (the non-record analogue
     of :class:`RecordSegments`).
 
-    Structure decides INCLUSION — a group is routed to the section its fields name —
+    Structure decides INCLUSION - a group is routed to the section its fields name -
     while retrieval orders the chunks WITHIN that section. ``preamble_segments`` (text
     before the first heading) is shared, mirroring ``RecordSegments.header_segments``.
 
@@ -108,7 +108,7 @@ class SectionStructure(NamedTuple):
 # Below this, repetition is too weak to trust order-alignment; fall back to the
 # whole-document excerpt (accurate, just not sliced).
 _MIN_RECORD_BLOCKS: int = 4
-# A record axis must hold a MAJORITY of the schema's fields — i.e. the document is
+# A record axis must hold a MAJORITY of the schema's fields - i.e. the document is
 # primarily a list of these records. Otherwise the "axis" is a minor nested list
 # (e.g. a study's 12 outcomes = 12% of fields), and slicing by it would strand the
 # other 88%. Below this fraction, treat it as not a record document.
@@ -143,7 +143,7 @@ _MAX_HEADING_TOKENS: int = 12
 # lines must be longer than the heading (the body it introduces). This window bounds
 # how far ahead that body may start.
 _HEADING_LOOKAHEAD_LINES: int = 3
-# A document is "heading-structured" only with at least this many sections — the same
+# A document is "heading-structured" only with at least this many sections - the same
 # floor as a record axis (below it, structure is too sparse to route by reliably).
 _MIN_SECTIONS: int = 4
 # Headings carry distinct identities (like record headers); boilerplate lines repeat.
@@ -152,13 +152,13 @@ _MIN_SECTIONS: int = 4
 # ``_MIN_IDENTIFIER_DISTINCT_FRAC``.
 _MIN_HEADING_DISTINCT_FRAC: float = 0.5
 # A group routes to a section only when its field-path tokens cover at least this
-# fraction of the section heading's tokens — enough overlap that the match is the
+# fraction of the section heading's tokens - enough overlap that the match is the
 # heading's own identity, not an incidental shared stopword. Below it the group is left
 # unaligned and the caller routes it to the whole document within the same tier.
 _MIN_ALIGN_OVERLAP: float = 0.5
 # A heading line that opens with a structural enumerator: a number ("1", "1.2"), a
 # single letter ("A."), a roman numeral, a markdown "#", or a section keyword
-# ("Item"/"Section"/"Part"/"Chapter"/"Article"). Domain-agnostic — these are document
+# ("Item"/"Section"/"Part"/"Chapter"/"Article"). Domain-agnostic - these are document
 # structure words, not field/domain words.
 _HEADING_ENUMERATOR: re.Pattern[str] = re.compile(
     r"^(#{1,6}\s+"
@@ -177,7 +177,7 @@ def detect_record_axis(fields: list[Field]) -> tuple[dict[str, int], int] | None
     it has >= ``_MIN_RECORD_BLOCKS`` direct children whose sub-shapes are
     identical (so the children are records, not distinct leaves). The axis with the
     most children wins, but only if its records hold a majority of fields
-    (``_MIN_AXIS_DOMINANCE``) — a minor nested list is not the document's structure.
+    (``_MIN_AXIS_DOMINANCE``) - a minor nested list is not the document's structure.
     Each record is numbered by first appearance, which is its document order.
 
     Args:
@@ -234,7 +234,7 @@ def detect_record_axis(fields: list[Field]) -> tuple[dict[str, int], int] | None
         if len(segs) > depth and tuple(segs[:depth]) == best_parent and segs[depth] in ordinal:
             field_ordinal[f.path] = ordinal[segs[depth]]
     # Dominance guard: the records must cover most fields, else this is a minor
-    # nested list, not the document's record structure — don't slice by it.
+    # nested list, not the document's record structure - don't slice by it.
     if fields and len(field_ordinal) / len(fields) < _MIN_AXIS_DOMINANCE:
         return None
     return field_ordinal, len(best_children)
@@ -274,8 +274,8 @@ def _block_starts(document: str, count: int) -> list[int] | None:
 
     A line *shape* (digits and word-runs masked) that recurs exactly ``count`` times
     and is evenly spaced marks the record boundaries. Among such families, the record
-    header is the one whose raw text VARIES across occurrences — it carries each
-    record's identity — so it is preferred over a constant divider or section label
+    header is the one whose raw text VARIES across occurrences - it carries each
+    record's identity - so it is preferred over a constant divider or section label
     that also recurs. Cutting at the header makes every block lead with its own
     identity, which is what lets the model bind values to the right record. When no
     family varies (records delimited by a constant marker), the earliest periodic
@@ -326,7 +326,7 @@ def record_segments(
 
     The record block is the *parent* (structure routes a leaf to it); its chunks are
     the *children* (retrieval ranks within it). A block that fits a leaf whole stays
-    ONE segment — chunking it would split a value across a child boundary and lose it
+    ONE segment - chunking it would split a value across a child boundary and lose it
     for no benefit (the whole block is kept anyway). Only an oversized block (cannot
     fit ``c_usable``) is chunked, so within-record retrieval can trim it to budget.
     Child offsets are absolute document positions so Stage 3 reorders coherently.
@@ -512,7 +512,7 @@ def align_path_to_section(field_paths: list[str], sections: list[Section]) -> tu
     the fraction of the heading's content tokens that the path tokens cover, so a
     field like ``income_statement.fy_2023.revenue`` aligns to the heading
     "FY2023 Income Statement". Returns ``(-1, 0.0)`` when no section clears
-    ``_MIN_ALIGN_OVERLAP`` — the group is then routed to the whole document within
+    ``_MIN_ALIGN_OVERLAP`` - the group is then routed to the whole document within
     the same tier, never starved.
 
     Args:
@@ -554,7 +554,7 @@ def _block_signature(line: str) -> str:
     Two record headers that differ only in their identifier (``RECORD 1 -- Acme`` vs
     ``RECORD 2 -- Globex``) collapse to the same signature, so the header family is
     detectable even though no two header lines are textually identical. Digit-only
-    masking cannot do this — the name survives and the header never recurs.
+    masking cannot do this - the name survives and the header never recurs.
 
     Args:
         line: A single (already stripped) document line.
@@ -618,10 +618,10 @@ def _is_heading_line(line: str, followers: list[str]) -> int:
     """Classify a line as a heading and return its level, or ``-1`` if it is body text.
 
     Domain-agnostic structural cues (never field/domain words):
-    1. SHORT — at most ``_MAX_HEADING_TOKENS`` tokens (a heading labels, not narrates).
-    2. SHAPED — opens with a structural enumerator (number/letter/roman/markdown/section
+    1. SHORT - at most ``_MAX_HEADING_TOKENS`` tokens (a heading labels, not narrates).
+    2. SHAPED - opens with a structural enumerator (number/letter/roman/markdown/section
        keyword) or is title-cased / all-caps (a label, not a sentence).
-    3. INTRODUCES CONTENT — at least one of the next few non-blank lines is longer than
+    3. INTRODUCES CONTENT - at least one of the next few non-blank lines is longer than
        the heading (the denser body it announces). A short line with only short lines
        under it is a list item or label pair, not a section heading.
 

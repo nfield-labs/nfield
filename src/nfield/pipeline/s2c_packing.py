@@ -5,14 +5,14 @@ in each call. Pure computation, zero API calls.
 
 Pipeline of this stage:
 
-* ``compute_K_min`` — a lower bound on the number of calls, from total output
+* ``compute_K_min`` - a lower bound on the number of calls, from total output
   volume and the count of fields too large to share a call.
-* ``fits`` — a dual feasibility test (input context budget AND output budget)
+* ``fits`` - a dual feasibility test (input context budget AND output budget)
   for a candidate set of fields.
-* ``_greedy_ffd`` — First-Fit Decreasing bin packing (Johnson, "Near-optimal
+* ``_greedy_ffd`` - First-Fit Decreasing bin packing (Johnson, "Near-optimal
   bin packing algorithms", 1973), O(N log N), with per-field splitting when a
   single group cannot fit one call.
-* ``tarjan_scc`` + ``compute_execution_order`` — Tarjan's strongly-connected-
+* ``tarjan_scc`` + ``compute_execution_order`` - Tarjan's strongly-connected-
   components algorithm (Tarjan, "Depth-first search and linear graph
   algorithms", SIAM J. Comput. 1972) condenses dependency cycles, then Kahn's
   topological sort (Kahn, "Topological sorting of large networks", CACM 1962)
@@ -75,8 +75,8 @@ _FALLBACK_CHARS_PER_TOKEN: float = 4.0
 _INJECTION_HEADER_TOKENS: int = 12
 # Difficulty penalty in the per-leaf reliability budget. A field's reliability
 # load is 1 + λ·D(f): a trivial field (D=0) costs 1 unit, a maximally-hard field
-# (D=1) costs 1+λ. Extraction reliability falls with field COUNT — and harder
-# fields consume more of the model's attention — so the budget is spent in
+# (D=1) costs 1+λ. Extraction reliability falls with field COUNT - and harder
+# fields consume more of the model's attention - so the budget is spent in
 # difficulty-weighted units, not raw counts (IFScale arXiv:2507.11538; instance-
 # count collapse arXiv:2603.22608).
 _DIFFICULTY_WEIGHT: float = 1.0
@@ -86,7 +86,7 @@ def _reliability_load(fields: list[Field]) -> float:
     """Difficulty-weighted reliability load of a field set: ``Σ (1 + λ·D(f))``.
 
     Replaces a raw field count as the leaf-size limit, so a leaf can hold many
-    easy fields or fewer hard ones — the model's reliable capacity depends on both
+    easy fields or fewer hard ones - the model's reliable capacity depends on both
     how many fields and how hard they are, not the count alone.
 
     Args:
@@ -104,7 +104,7 @@ def _reliability_load(fields: list[Field]) -> float:
 
 
 def _field_schema_tokens(field: Field, chars_per_token: float) -> int:
-    """Tokens to *describe* one field in the prompt — costed from the REAL line.
+    """Tokens to *describe* one field in the prompt - costed from the REAL line.
 
     Renders the exact ``describe_field`` line the prompt will contain (path,
     type, description, title, every constraint, array-item schema, examples) and
@@ -151,10 +151,10 @@ def compute_K_min(  # noqa: N802
 
     The bound is the larger of two independent constraints:
 
-    * **Volume bound** — total predicted output (value *and* echoed path per
+    * **Volume bound** - total predicted output (value *and* echoed path per
       field) cannot exceed the per-call output budget, so at least
       ``ceil(Σ output(f) / safe_output)`` calls are required.
-    * **Large-field bound** — any field whose own output would consume more than
+    * **Large-field bound** - any field whose own output would consume more than
       half a call's budget effectively monopolises a call, so the count of such
       fields is itself a lower bound.
 
@@ -202,7 +202,7 @@ def fits(
 
     * Output:  ``output_needed <= output_ceiling`` (model max-output minus margin).
     * Context: after overhead and output, at least a minimal document excerpt
-      must still fit — ``overhead + output_needed + min(D_cost, MIN_EXCERPT)
+      must still fit - ``overhead + output_needed + min(D_cost, MIN_EXCERPT)
       <= C_usable`` (a small group needing little document uses its real D_cost;
       a large retrieval pool is capped, since Stage 3 will trim it to fit).
 
@@ -237,7 +237,7 @@ def fits(
     # small-group portion binds; a large retrieval pool is capped at MIN_EXCERPT.
     # Output is NOT charged against C_usable: it generates into the window's
     # headroom (see ``output_ceiling``), so only the prompt (overhead + excerpt)
-    # is held under the reliability ceiling — input and output are decoupled.
+    # is held under the reliability ceiling - input and output are decoupled.
     doc_needed = min(D_cost, _MIN_EXCERPT_TOKENS)
     return overhead + doc_needed <= C_usable
 
@@ -251,13 +251,13 @@ def _coverage_fits(
     chars_per_token: float,
 ) -> bool:
     """Evidence-aware feasibility (Set-Union Bin Packing): does the leaf's coverage
-    set — each group's best segment plus each typed field's own best segment — fit
+    set - each group's best segment plus each typed field's own best segment - fit
     alongside overhead and output?
 
     Complements :func:`fits` (which bounds output + a minimal excerpt): here the
     document term is the real coverage floor (the same set Stage 3 keeps, see
     :mod:`_coverage`), deduplicated. When it fails, the leaf must split rather than
-    have Stage 3 trim away a field's only evidence — keeping each leaf small and
+    have Stage 3 trim away a field's only evidence - keeping each leaf small and
     focused, which also avoids the accuracy loss of over-long context
     (Lost-in-the-Middle, arXiv:2307.03172).
 
@@ -457,9 +457,9 @@ def run_stage_2c(state: PipelineState, config: ExtractionConfig) -> PipelineStat
     4. Order the leaves into parallel rounds (Tarjan SCC + Kahn).
 
     Populates:
-    - ``state.leaves`` — list of CapacityLeafs (one per API call)
-    - ``state.execution_order`` — parallel rounds
-    - ``state.K_min`` — theoretical minimum API calls
+    - ``state.leaves`` - list of CapacityLeafs (one per API call)
+    - ``state.execution_order`` - parallel rounds
+    - ``state.K_min`` - theoretical minimum API calls
 
     Args:
         state: Pipeline state from Stage 2.5 (must have groups with D_cost).
@@ -475,7 +475,7 @@ def run_stage_2c(state: PipelineState, config: ExtractionConfig) -> PipelineStat
     # C_usable for reliability (lost-in-the-middle), but the model generates its
     # answer into the window's *headroom* (C_eff - C_usable), not out of the input
     # budget. So the ceiling is the model output limit (minus the heavy-tail
-    # margin) bounded by that headroom — guaranteeing prompt + output <= C_eff
+    # margin) bounded by that headroom - guaranteeing prompt + output <= C_eff
     # without ever stealing excerpt space (the truncation-vs-starvation trade-off
     # the coupled budget forced on verbose, instruction-driven values).
     sum_var_all = sum(f.var_tau for f in state.fields)
@@ -568,7 +568,7 @@ def _injection_cost(
 
     A dependency field that lands in the SAME leaf costs nothing (the value is
     already present). A dependency in another leaf must be injected as a
-    ``path = value`` line, so its tokens are charged to this leaf's overhead —
+    ``path = value`` line, so its tokens are charged to this leaf's overhead -
     this is what can push a leaf over budget and force a split.
 
     Depends only on the leaf's own field set and the dep graph (not the global
@@ -609,8 +609,8 @@ def _leaf_safe_output(
     Each call reserves ``max_tokens`` against the provider's tokens-per-minute
     budget, so reserving the full ceiling on every call starves the rate limit
     (a leaf emitting ~50 short fields would book the whole model output anyway).
-    Reserve what THIS leaf is predicted to emit — ``Σ output(f)`` plus the same
-    heavy-tail margin ``z·√Σ var(f)`` used for the global ceiling — capped at the
+    Reserve what THIS leaf is predicted to emit - ``Σ output(f)`` plus the same
+    heavy-tail margin ``z·√Σ var(f)`` used for the global ceiling - capped at the
     ceiling (never exceed it, so ``fits()`` stays valid) and floored so a tiny
     leaf keeps usable room.
 
@@ -644,11 +644,11 @@ def _greedy_ffd(
     Sorts groups by total predicted output descending (heaviest first), the
     standard First-Fit Decreasing heuristic that keeps the packing within ~11/9
     of optimal (Johnson, 1973). Each whole group is placed in the first leaf it
-    fits. A group too large for any single call is refined lazily — its fields
-    are packed into fresh leaves one at a time — so a wide flat group (e.g. 200
+    fits. A group too large for any single call is refined lazily - its fields
+    are packed into fresh leaves one at a time - so a wide flat group (e.g. 200
     sibling fields) splits across several calls instead of overflowing one.
 
-    Complexity: O(G·L) placement scans (G groups, L leaves) — first-fit inherently
+    Complexity: O(G·L) placement scans (G groups, L leaves) - first-fit inherently
     rescans existing leaves, and each scan re-costs the candidate's coverage set.
     Comfortable to thousands of leaves (N up to ~10^4 fields). For far larger N
     (10^5 to 10^6) this quadratic leaf scan is the pipeline's scaling bottleneck and
@@ -692,14 +692,14 @@ def _greedy_ffd(
         # 1. Try to place the whole group into an existing leaf. The leaf must pass
         #    BOTH the output/minimal-excerpt test (fits) AND the evidence-coverage
         #    test (_coverage_fits): the deduped union of every group's best segment
-        #    must still fit. When coverage fails the group starts a new leaf — the
+        #    must still fit. When coverage fails the group starts a new leaf - the
         #    Set-Union Bin Packing split, locality-aware because groups sharing
         #    segments have a small union and pack together.
         placed = False
         for leaf in leaves:
             candidate_fields = leaf.fields + group.fields
             # Reliability cap: keep the difficulty-weighted load within budget, even
-            # when the token budget would allow more — many easy fields or fewer
+            # when the token budget would allow more - many easy fields or fewer
             # hard ones, never a raw count that ignores difficulty.
             if _reliability_load(candidate_fields) > max_fields_per_call:
                 continue
@@ -720,7 +720,7 @@ def _greedy_ffd(
         if placed:
             continue
 
-        # 2. Whole group did not fit any existing leaf — pack its fields into
+        # 2. Whole group did not fit any existing leaf - pack its fields into
         #    fresh leaves greedily. A group that fits a fresh leaf becomes one
         #    leaf; an oversized group splits across several. D_cost stays the
         #    whole group's cost (conservative: keeps fits() safe after split).
@@ -730,7 +730,7 @@ def _greedy_ffd(
             overhead = _overhead(candidate)
             # Split when the reliability budget is hit, the token budget is exceeded,
             # or the field-level coverage set would no longer fit (so a typed field's
-            # evidence is never trimmed away — same set Stage 3 keeps).
+            # evidence is never trimmed away - same set Stage 3 keeps).
             over_cap = _reliability_load(candidate) > max_fields_per_call
             if current and (
                 over_cap
@@ -775,7 +775,7 @@ def _greedy_record_ffd(
 
     Group Bin Packing (Gilmore-Gomory set-partitioning): the record is the group
     whose items must share a bin. Fields are taken in record (document) order and
-    Next-Fit packed (Johnson 1974, <=2x OPT) — only the open leaf is tried, so each
+    Next-Fit packed (Johnson 1974, <=2x OPT) - only the open leaf is tried, so each
     leaf holds a contiguous run of records and never scatters. A leaf closes when
     either the reliability load exceeds the cap (so K stays at its floor) or the
     leaf's records' blocks no longer fit ``C_usable`` (so the prompt cannot
@@ -890,7 +890,7 @@ def _aggregate_dcost(groups: list[FieldGroup], chars_per_token: float) -> int:
                 total += len(seg.text)
     # Small-doc fast path: groups carry no matched_segments and every group's
     # D_cost is the same shared full document, which appears in the leaf prompt
-    # exactly once. Count it once (max), not once per group (sum) — summing would
+    # exactly once. Count it once (max), not once per group (sum) - summing would
     # phantom-inflate the leaf's document cost and force needless extra leaves.
     if not seen_ids:
         return max((g.D_cost for g in groups), default=0)

@@ -3,18 +3,18 @@
 PAPT selects the verbosity tier for extraction prompts based on the available
 token budget. Three tiers trade off schema detail against token cost:
 
-* ``CONCISE``  — field names only; used when the budget is very tight.
-* ``STANDARD`` — field names + one-line descriptions; the normal tier.
-* ``VERBOSE``  — full schema descriptions + constraint examples; used when
+* ``CONCISE``  - field names only; used when the budget is very tight.
+* ``STANDARD`` - field names + one-line descriptions; the normal tier.
+* ``VERBOSE``  - full schema descriptions + constraint examples; used when
   the budget allows extra context for difficult fields.
 
 Five cluster-type variants further tune the prompt style:
 
-* ``SIMPLE``    — all-boolean / all-integer fields (short values).
-* ``STANDARD``  — mixed-type fields (default).
-* ``COMPLEX``   — deeply nested objects or high-difficulty fields.
-* ``LIST``      — groups dominated by array fields.
-* ``REFERENCE`` — fields referencing other schema objects (``$ref`` patterns).
+* ``SIMPLE``    - all-boolean / all-integer fields (short values).
+* ``STANDARD``  - mixed-type fields (default).
+* ``COMPLEX``   - deeply nested objects or high-difficulty fields.
+* ``LIST``      - groups dominated by array fields.
+* ``REFERENCE`` - fields referencing other schema objects (``$ref`` patterns).
 
 Post-MVP: TEP (Think-Extract-Parse) two-phase variants for fields where
 ``D(f) >= 0.5`` are stubbed here but not yet implemented.
@@ -61,7 +61,7 @@ class TemplateType(Enum):
     """Verbosity tier for extraction prompt generation.
 
     Attributes:
-        CONCISE: Field names only — minimum token cost.
+        CONCISE: Field names only - minimum token cost.
         STANDARD: Field names plus one-line schema descriptions.
         VERBOSE: Full schema descriptions including constraints and examples.
 
@@ -189,7 +189,7 @@ def describe_field(
     """Produce a complete, human-readable description line for a single field.
 
     Renders EVERYTHING the schema says about the field so the model has the full
-    contract — name, type, description, title, every constraint, the element
+    contract - name, type, description, title, every constraint, the element
     schema for arrays, and any examples. None of this is dropped to save tokens:
     a field's own meaning and the shape of a valid value are exactly what raises
     extraction accuracy (schema-in-prompt grounding; constraints + examples cut
@@ -198,7 +198,7 @@ def describe_field(
 
     Format (clauses appear only when the schema provides them)::
 
-        field.path (type): description [title] — constraints | items: <elem> | e.g. <examples>
+        field.path (type): description [title] - constraints | items: <elem> | e.g. <examples>
 
     Args:
         field: The field to describe.
@@ -212,7 +212,7 @@ def describe_field(
         >>> from nfield.schema._types import Field
         >>> f = Field("age", "integer", {"minimum": 0}, "", {"description": "Patient age"})
         >>> describe_field(f, TemplateType.CONCISE)
-        'age (integer): Patient age — >= 0'
+        'age (integer): Patient age - >= 0'
         >>> g = Field("tags", "array", {}, "", {"items": {"type": "string"}, "examples": [["a", "b"]]})
         >>> describe_field(g, TemplateType.STANDARD)
         'tags (array) | items: string | e.g. ["a", "b"]'
@@ -233,7 +233,7 @@ def describe_field(
 
     constraint_text = _format_constraints(field.constraints)
     if constraint_text:
-        parts.append(f" — {constraint_text}")
+        parts.append(f" - {constraint_text}")
 
     item_text = _format_array_items(field)
     if item_text:
@@ -336,7 +336,7 @@ def _format_constraints(constraints: dict[str, Any]) -> str:
 
     # Catch-all: any constraint keyword we don't phrase specially is still sent
     # verbatim (e.g. minItems, maxItems, uniqueItems) so the model sees the full
-    # contract — a field's properties are never dropped.
+    # contract - a field's properties are never dropped.
     parts.extend(f"{key}: {constraints[key]}" for key in sorted(constraints) if key not in handled)
 
     return "; ".join(parts)
@@ -359,7 +359,7 @@ _ITEM_CONSTRAINT_KEYS: frozenset[str] = frozenset(
         "multipleOf",
     }
 )
-# Cap on examples shown per field — enough to anchor the format without bloating
+# Cap on examples shown per field - enough to anchor the format without bloating
 # the prompt (a couple of concrete shapes is what helps; more is noise).
 _MAX_EXAMPLES_SHOWN: int = 3
 

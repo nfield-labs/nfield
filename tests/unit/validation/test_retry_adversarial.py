@@ -104,13 +104,13 @@ class TestOrchestrateRetryValidation:
 
 class TestClassifyFailureFragility:
     def test_minlength_error_does_not_classify_as_field_missing(self):
-        """Error 'minLength constraint violated — length 3 < 5' should NOT be FIELD_MISSING.
+        """Error 'minLength constraint violated - length 3 < 5' should NOT be FIELD_MISSING.
 
         'missing' does not appear in this error, but if it did (e.g. 'missing chars'),
         the field would be incorrectly classified as FIELD_MISSING.
         """
         f = make_field("code", "string")
-        error = "code: minLength constraint violated — length 3 < 5"
+        error = "code: minLength constraint violated - length 3 < 5"
         cause = classify_failure(f, "abc", error)
         assert cause == FailureCause.TYPE_CONSTRAINT
 
@@ -147,7 +147,7 @@ class TestHandleMissingFieldsEdgeCases:
         """Docstring shows handle_missing_fields(paths, None, []) → {} but it crashes."""
         with pytest.raises(AttributeError):
             # This SHOULD raise because None.fields doesn't exist
-            # The docstring example is wrong — document this.
+            # The docstring example is wrong - document this.
             handle_missing_fields(["address.city"], None, [])  # type: ignore[arg-type]
 
     def test_empty_missing_paths(self):
@@ -163,19 +163,19 @@ class TestHandleMissingFieldsEdgeCases:
         assert result == {"name": None}
 
     def test_nested_field_with_no_parent_in_leaf(self):
-        """'a.b.c' with no parent fields in leaf — marked as None."""
+        """'a.b.c' with no parent fields in leaf - marked as None."""
         leaf = CapacityLeaf(fields=[], document_excerpt="", safe_output=0, leaf_id=0)
         result = handle_missing_fields(["a.b.c"], leaf, [])
         assert result.get("a.b.c") is None
 
     def test_nested_field_with_parent_in_leaf_not_marked(self):
-        """'address.city' where 'address' is in leaf — city might exist, not marked."""
+        """'address.city' where 'address' is in leaf - city might exist, not marked."""
         parent_field = Field(
             path="address", type="object", constraints={}, parent_path="", schema_node={}
         )
         leaf = CapacityLeaf(fields=[parent_field], document_excerpt="", safe_output=0, leaf_id=0)
         result = handle_missing_fields(["address.city"], leaf, [])
-        # Parent "address" is in leaf — so city is just missing from this extraction,
+        # Parent "address" is in leaf - so city is just missing from this extraction,
         # not necessarily absent from the document
         assert "address.city" not in result
 
@@ -202,7 +202,7 @@ class TestSplitRetryBatchesOrdering:
         assert len(all_paths) == len(set(all_paths))
 
     def test_three_way_dep_chain_in_one_batch(self):
-        """a → b → c — all three must be in the same batch."""
+        """a → b → c - all three must be in the same batch."""
         fa, fb, fc = make_field("a"), make_field("b"), make_field("c")
         dep_dag = {"b": {"a"}, "c": {"b"}}
         batches = split_retry_batches([fa, fb, fc], dep_dag)

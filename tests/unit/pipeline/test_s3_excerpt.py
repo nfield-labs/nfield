@@ -1,4 +1,4 @@
-"""Tests for Stage 3 excerpt finalisation — field-level coverage (CFCS)."""
+"""Tests for Stage 3 excerpt finalisation - field-level coverage (CFCS)."""
 
 from __future__ import annotations
 
@@ -29,8 +29,8 @@ class TestCoverageSegmentIds:
 
     def test_split_group_leaf_only_covers_its_own_fields(self) -> None:
         # A wide group split across leaves attaches the whole group object to each
-        # leaf. Coverage must be scoped to THIS leaf's fields (a, b) — never the
-        # sibling leaf's fields (c, d) — or it would crowd out its own evidence.
+        # leaf. Coverage must be scoped to THIS leaf's fields (a, b) - never the
+        # sibling leaf's fields (c, d) - or it would crowd out its own evidence.
         g = FieldGroup(
             parent_path="g",
             fields=[_field("g.a"), _field("g.b")],

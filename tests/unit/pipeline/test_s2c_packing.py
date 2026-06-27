@@ -52,7 +52,7 @@ class TestComputeKMin:
     def test_many_small_fields(self):
         fields = [_make_field(str(i), tau=1.0) for i in range(50)]
         # each line ~10 output tokens (path + value + line overhead); 50*10=500;
-        # ceil(500/100) = 5 — the echoed path + line overhead are real output cost.
+        # ceil(500/100) = 5 - the echoed path + line overhead are real output cost.
         k = compute_K_min(fields, safe_output=100.0, chars_per_token=_CPT)
         assert k == 5
 
@@ -106,7 +106,7 @@ class TestFits:
         )
 
     def test_large_doc_pool_does_not_block_packing(self):
-        # A huge retrieval pool (D_cost) must NOT block a leaf — Stage 3 trims it.
+        # A huge retrieval pool (D_cost) must NOT block a leaf - Stage 3 trims it.
         f = _make_field("x", tau=5.0)
         assert fits(
             [f],
@@ -257,7 +257,7 @@ class TestRunStage2c:
 
         Decoupling: the excerpt keeps the FULL input budget (C_usable - overhead,
         output not subtracted), and the call's output cap (safe_output) is bounded
-        by the headroom (C_eff - C_usable), never by the input budget — so a
+        by the headroom (C_eff - C_usable), never by the input budget - so a
         verbose answer never steals excerpt space, yet prompt + output still fits
         the full window. safe_output is right-sized to the leaf's predicted output,
         so a tiny schema reserves far less than the headroom (rate-limit friendly).
@@ -265,7 +265,7 @@ class TestRunStage2c:
         state = _prepare_state(SIMPLE_SCHEMA)
         state.C_eff = 8192
         state.C_usable = 4096.0  # the 50% input ceiling
-        state.M_O = 131_072  # huge model output limit — headroom must bind it
+        state.M_O = 131_072  # huge model output limit - headroom must bind it
         state = run_stage_2c(state, ExtractionConfig())
         headroom = state.C_eff - state.C_usable
         for leaf in state.leaves:
@@ -429,7 +429,7 @@ class TestRecordAwarePacking:
         assert len(in_order) == len(state.leaves)
 
     def test_tarjan_deep_chain_is_recursion_safe(self):
-        """A 5000-node dependency chain — recursion would blow the stack limit.
+        """A 5000-node dependency chain - recursion would blow the stack limit.
 
         The recursive Tarjan would raise RecursionError well before 5000; the
         iterative implementation handles it. This guards huge dependency graphs.
@@ -456,7 +456,7 @@ class TestSmallDocSharedDocumentCost:
     def test_multi_group_small_doc_packs_to_k_min(self):
         # 20 records x 10 string fields = 200 fields in 20 groups, on a small
         # shared document. Each group's D_cost is the same full doc; the packer
-        # must count it once per leaf (max), not sum it per group — otherwise the
+        # must count it once per leaf (max), not sum it per group - otherwise the
         # phantom-inflated document cost forces far more leaves than K_min.
         props = {
             f"rec_{r:02d}": {
@@ -474,7 +474,7 @@ class TestSmallDocSharedDocumentCost:
         state = run_stage_2b(state, doc, ExtractionConfig())
         # Sanity: this is the small-doc fast path (no per-group segments).
         assert all(not g.matched_segments for g in state.groups)
-        # Raise the reliability budget so the field cap does not bind here — this
+        # Raise the reliability budget so the field cap does not bind here - this
         # test isolates the shared-document cost behaviour (the field cap is its
         # own test, TestMaxFieldsPerCall).
         state = run_stage_2c(state, ExtractionConfig(max_fields_per_call=1000))
@@ -505,7 +505,7 @@ class TestSafeOutputCappedAtMO:
 
 
 # ---------------------------------------------------------------------------
-# Evidence-aware split (Set-Union Bin Packing) — Phase A.2
+# Evidence-aware split (Set-Union Bin Packing) - Phase A.2
 # ---------------------------------------------------------------------------
 from nfield.pipeline.s2c_packing import _coverage_fits  # noqa: E402
 from nfield.schema._types import FieldGroup, Segment  # noqa: E402
@@ -573,7 +573,7 @@ class TestEvidenceAwareSplit:
     def test_field_level_coverage_forces_split(self):
         # One group, four typed fields, each needing a DIFFERENT large segment.
         # Per-group coverage (one segment) fits the budget, but per-field coverage
-        # (four segments) does not — so the leaf must split rather than let Stage 3
+        # (four segments) does not - so the leaf must split rather than let Stage 3
         # trim a field's only evidence. Every field must still be placed.
         segs = [_seg(i, 2000) for i in range(4)]
         fields = [_field_in(f"a.f{i}", "a") for i in range(4)]

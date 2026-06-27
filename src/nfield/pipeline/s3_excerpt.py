@@ -80,7 +80,7 @@ def _finalize_excerpt(leaf: CapacityLeaf, state: PipelineState) -> str:
     if not seg_score:
         return ""
 
-    # Excerpt budget: B_excerpt = C_usable - overhead. Output is NOT subtracted —
+    # Excerpt budget: B_excerpt = C_usable - overhead. Output is NOT subtracted -
     # the model's answer generates into the window's headroom (decoupled budgets,
     # see s2c_packing.output_ceiling), so the excerpt keeps the full input budget.
     b_excerpt = max(0.0, state.C_usable - leaf.overhead)

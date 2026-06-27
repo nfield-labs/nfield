@@ -98,8 +98,8 @@ class QualityReport:
 def compute_quality_score(
     blackboard: Blackboard,
     fields: list[Field],
-    K: int,  # noqa: N803 — K is the conventional symbol for the call count
-    K_min: int,  # noqa: N803 — K_min is its theoretical lower bound
+    K: int,  # noqa: N803 - K is the conventional symbol for the call count
+    K_min: int,  # noqa: N803 - K_min is its theoretical lower bound
 ) -> QualityReport:
     """Compute quality metrics from the blackboard state after all passes.
 
@@ -179,7 +179,7 @@ def compute_quality_score(
 def _compute_optimality_gap(K: int, K_min: int) -> float:  # noqa: N803
     """Compute the fractional optimality gap.
 
-    ``(K - K_min) / K`` — fraction of extra API calls beyond minimum.
+    ``(K - K_min) / K`` - fraction of extra API calls beyond minimum.
     Range [0.0, 1.0]; 0.0 when K == K_min (optimal); approaches 1.0 as K >> K_min.
 
     Args:
@@ -220,8 +220,8 @@ def _compute_per_field_confidence(
         try:
             state = blackboard.get_state(path)
         except AssemblyError:
-            # Path not registered on the blackboard (should not happen — field_paths
-            # come from the same fields it was built with) — score it 0, don't mask
+            # Path not registered on the blackboard (should not happen - field_paths
+            # come from the same fields it was built with) - score it 0, don't mask
             # other bugs behind a bare except.
             confidence[path] = _CONFIDENCE_MISSING_OR_FAILED
             continue

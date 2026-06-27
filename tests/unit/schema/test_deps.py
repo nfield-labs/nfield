@@ -1,4 +1,4 @@
-"""Tests for schema._deps — dependency extraction."""
+"""Tests for schema._deps - dependency extraction."""
 
 from __future__ import annotations
 

@@ -189,7 +189,7 @@ def test_missing_field_reason_unchanged() -> None:
 
 def test_transient_reason_is_neutral_no_prior_value() -> None:
     # A call-failed field's request never reached the model, so the reason must not claim
-    # a prior output or a validation failure — it asks for a fresh extraction.
+    # a prior output or a validation failure - it asks for a fresh extraction.
     bb = Blackboard(["age"])
     bb.mark_failed("age", "provider error: 429 rate limit", transient=True)
     reason = _failure_reason(bb, "age", transient=True)
@@ -226,7 +226,7 @@ def test_cast_failure_is_marked_failed_with_raw_value() -> None:
 
 def test_cast_failure_not_marked_when_value_also_parses() -> None:
     # If the same field also produced a castable value (it is in `extracted`), the good
-    # value must win — the field is not clobbered to FAILED.
+    # value must win - the field is not clobbered to FAILED.
     from nfield.assembly._blackboard import FieldState
     from nfield.pipeline._state import PipelineState
     from nfield.pipeline.s4_extract import _mark_cast_failures

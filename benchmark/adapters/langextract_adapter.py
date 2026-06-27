@@ -1,4 +1,4 @@
-"""LangExtract competitor — Google's span-grounded entity extractor on Groq.
+"""LangExtract competitor - Google's span-grounded entity extractor on Groq.
 
 LangExtract (https://github.com/google/langextract) is entity/span oriented: given
 a prompt and few-shot examples it returns a flat list of ``Extraction`` objects

@@ -1,4 +1,4 @@
-"""Scale benchmark — nfield on the large in-house fixtures (2.5k, 4k, 5.6k, and future).
+"""Scale benchmark - nfield on the large in-house fixtures (2.5k, 4k, 5.6k, and future).
 
 Separate from :mod:`benchmark.runner` (which pits nfield against the competitor
 baselines on the standard fixtures). These are big, record-structured documents that
@@ -20,13 +20,13 @@ _MODEL = "groq/llama-3.3-70b-versatile"
 _SEEDS = 1
 
 _FAITHFULNESS = (
-    "Extract each field's value exactly as written for the correct record and section — "
+    "Extract each field's value exactly as written for the correct record and section - "
     "keep all amounts, units, dates, codes, and identifiers; never summarize or infer. "
     "Leave a field null if the document does not state it."
 )
 
 # In-house large fixtures, registered here (not in the competitor registry). Add new
-# scale fixtures to this tuple — each needs benchmark/datasets/real/<name>/.
+# scale fixtures to this tuple - each needs benchmark/datasets/real/<name>/.
 _FIXTURES: tuple[Dataset, ...] = (
     Dataset(
         "clinical_registry",

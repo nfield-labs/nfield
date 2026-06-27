@@ -1,4 +1,4 @@
-"""Tests for schema._difficulty — D(f) difficulty scoring."""
+"""Tests for schema._difficulty - D(f) difficulty scoring."""
 
 from __future__ import annotations
 

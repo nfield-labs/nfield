@@ -1,4 +1,4 @@
-"""Closed-book sweep — every method fills a schema from knowledge, no document.
+"""Closed-book sweep - every method fills a schema from knowledge, no document.
 
 A thin orchestrator that mirrors ``runner.py``: it loads the closed-book fixtures through
 the ``datasets`` module (``get_closed_book``) and reuses ``run_sweep`` + the budget profiles
@@ -13,7 +13,7 @@ the ``datasets`` module (``get_closed_book``) and reuses ``run_sweep`` + the bud
 Fixtures are four reference domains of increasing size (elements, countries, pokemon,
 airports), each with a knowledge gradient so abstention separates from confident guessing;
 they are materialised by ``datasets/closed_book/build_fixtures.py``. nfield runs closed-book;
-the baselines generate from the empty-document + instruction prompt. Manual, budgeted tool —
+the baselines generate from the empty-document + instruction prompt. Manual, budgeted tool -
 the sweep costs live API calls. Run:
 
     uv run python -m benchmark.runner4
@@ -69,7 +69,7 @@ def main(*, seeds: int = 1) -> None:
     """Sweep every method over every closed-book fixture under both budget profiles."""
     _load_env()
     if not os.environ.get("GROQ_API_KEY"):
-        print("No GROQ_API_KEY in .env — cannot run live.")
+        print("No GROQ_API_KEY in .env - cannot run live.")
         return
     fixtures = datasets.closed_book_available()
     if not fixtures:

@@ -1,4 +1,4 @@
-"""Unit tests for assembly._trie — radix trie assembler."""
+"""Unit tests for assembly._trie - radix trie assembler."""
 
 from __future__ import annotations
 
@@ -52,7 +52,7 @@ class TestParsePathSegments:
 
 
 # ---------------------------------------------------------------------------
-# assemble_json — flat dict to nested JSON
+# assemble_json - flat dict to nested JSON
 # ---------------------------------------------------------------------------
 
 
@@ -155,7 +155,7 @@ class TestAssembleJson:
 
 
 class TestHomogeneousArrayBrackets:
-    """The flattener emits ``[]`` for homogeneous arrays — assembler maps to 0."""
+    """The flattener emits ``[]`` for homogeneous arrays - assembler maps to 0."""
 
     def test_parse_empty_brackets_maps_to_index_zero(self):
         assert parse_path_segments("segments[].capex") == ["segments", 0, "capex"]
@@ -173,7 +173,7 @@ class TestHomogeneousArrayBrackets:
 
 
 # ---------------------------------------------------------------------------
-# RadixTrie — direct usage
+# RadixTrie - direct usage
 # ---------------------------------------------------------------------------
 
 
@@ -213,7 +213,7 @@ class TestRadixTrie:
 
 
 # ---------------------------------------------------------------------------
-# Resource bounds on untrusted (LLM-produced) paths — DoS guards
+# Resource bounds on untrusted (LLM-produced) paths - DoS guards
 # ---------------------------------------------------------------------------
 from nfield.assembly._trie import _MAX_ARRAY_INDEX, _MAX_PATH_DEPTH  # noqa: E402
 

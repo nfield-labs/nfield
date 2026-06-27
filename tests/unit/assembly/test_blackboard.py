@@ -1,4 +1,4 @@
-"""Unit tests for assembly._blackboard — field state machine."""
+"""Unit tests for assembly._blackboard - field state machine."""
 
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ class TestBlackboardConstruction:
 
 
 # ---------------------------------------------------------------------------
-# write — state transitions
+# write - state transitions
 # ---------------------------------------------------------------------------
 
 
@@ -87,7 +87,7 @@ class TestBlackboardWrite:
 
 
 # ---------------------------------------------------------------------------
-# write_raw — dep-change safe write
+# write_raw - dep-change safe write
 # ---------------------------------------------------------------------------
 
 
@@ -109,7 +109,7 @@ class TestWriteRaw:
         bb.write("dep", "original")
         bb.write_raw("dep", "new")
         # write_raw on FILLED transitions to NEEDS_REVALIDATION (dep changed)
-        # The field is removed from get_filled() — it needs revalidation
+        # The field is removed from get_filled() - it needs revalidation
         assert bb.get_state("dep") == FieldState.NEEDS_REVALIDATION
         assert "dep" not in bb.get_filled()
 
@@ -155,7 +155,7 @@ class TestStateTransitions:
     def test_mark_pending_only_from_empty(self):
         bb = Blackboard(["p"])
         bb.write("p", "val")
-        bb.mark_pending("p")  # Already FILLED — should not change
+        bb.mark_pending("p")  # Already FILLED - should not change
         assert bb.get_state("p") == FieldState.FILLED
 
 
@@ -196,7 +196,7 @@ class TestReadOperations:
         bb.write("b", "second")
         filled = bb.get_filled()
         assert "a" in filled
-        assert "b" not in filled  # CONFLICT — not in filled
+        assert "b" not in filled  # CONFLICT - not in filled
 
     def test_summary_counts_all_states(self):
         bb = Blackboard(["a", "b", "c", "d", "e", "f"])

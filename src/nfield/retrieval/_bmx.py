@@ -1,8 +1,8 @@
-"""BMX — entropy-weighted, semantic-enhanced lexical retrieval (Stage 2.5).
+"""BMX - entropy-weighted, semantic-enhanced lexical retrieval (Stage 2.5).
 
 A drop-in successor to BM25 (Li et al., "BMX: Entropy-weighted Similarity and
 Semantic-enhanced Lexical Search", arXiv:2408.06643). Same inverted-index cost as
-BM25 — tokenize + count, **no per-document embedding** — but it weights each query
+BM25 - tokenize + count, **no per-document embedding** - but it weights each query
 term by the entropy of its frequency distribution and adds a query-overlap bonus.
 On BEIR it beats BM25 on 11/15 datasets and beats a 7B embedding model on the
 long-context LoCo benchmark, while staying purely lexical. That is exactly what

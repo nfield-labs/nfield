@@ -2,7 +2,7 @@
 
 The root package exposes its names lazily (PEP 562 ``__getattr__`` over a
 ``_dynamic_imports`` map). These tests fail if ``__all__``, the lazy map, and the
-names that actually resolve ever disagree — so a rename or a forgotten export is
+names that actually resolve ever disagree - so a rename or a forgotten export is
 caught here instead of in a downstream user's import.
 """
 

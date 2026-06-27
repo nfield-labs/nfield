@@ -2,8 +2,8 @@
 
 Every Track-A baseline runs on the *same* hosted model as nfield with the *same*
 single-call budget (fairness rules, design §7). The differences between them are
-only in *how* they ask for structure — free text, provider JSON mode, a
-Pydantic-validating loop, a framework wrapper — so the call setup, prompt, and
+only in *how* they ask for structure - free text, provider JSON mode, a
+Pydantic-validating loop, a framework wrapper - so the call setup, prompt, and
 result accounting are factored here and each adapter stays a thin shell.
 
 None of these baselines decompose the schema or retrieve: they send the whole
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 # baselines apply it exactly as nfield does: the document is fit to the input
 # window (context_window minus the output reservation) and max_tokens is set to
 # the budget's output ceiling. The budget is identical across methods, so the only
-# difference measured is what each method does with the same window — not who got a
+# difference measured is what each method does with the same window - not who got a
 # bigger one. A low single-call score is then the genuine single-call ceiling.
 _CHARS_PER_TOKEN: int = 4
 # Generous timeout so a slow single call (e.g. a full 32k-token native completion)
@@ -35,7 +35,7 @@ _CHARS_PER_TOKEN: int = 4
 _REQUEST_TIMEOUT_SECONDS: float = 180.0
 # Transient-failure (429 / 5xx) retry budget for the raw-SDK baselines, matched to
 # nfield's DEFAULT_MAX_API_RETRIES so a shared rate-limit storm penalizes no method.
-# The Groq SDK honors Retry-After natively; its own default is only 2 — too few to
+# The Groq SDK honors Retry-After natively; its own default is only 2 - too few to
 # outlast a TPM window, which would mis-score a 429 as a competitor failure.
 MAX_TRANSIENT_RETRIES: int = 10
 
@@ -86,7 +86,7 @@ def messages(
     The document is fit to the budget's input window (``context_window`` minus the
     ``max_output_tokens`` reservation), so prompt + completion stay within the same
     window every method shares. The caller's domain ``instructions`` lead the USER
-    message — the same channel and string nfield threads to each leaf — so every
+    message - the same channel and string nfield threads to each leaf - so every
     method receives identical guidance in the channel the model actually follows.
     """
     fitted = _fit_document(document, context_window, max_output_tokens)
@@ -170,7 +170,7 @@ def failure_output(schema: dict[str, Any], elapsed: float, exc: Exception) -> Ad
     returned a body, so every field is credited to call-failed (not the method's
     fault). A *capability* failure (single-call output ceiling, request too large,
     truncated / invalid JSON, validation reject) is the method itself failing to
-    produce N fields — scored as a real miss in the denominator, ``call_failed=0``.
+    produce N fields - scored as a real miss in the denominator, ``call_failed=0``.
     """
     kind, message = classify_exc(exc)
     total = schema_field_count(schema)

@@ -1,14 +1,14 @@
-"""NField assembly module — JSON assembly, blackboard, and quality scoring.
+"""NField assembly module - JSON assembly, blackboard, and quality scoring.
 
 Public surface
 --------------
-* :func:`assemble_json` — assemble flat SFEP results into a nested JSON dict.
-* :func:`parse_path_segments` — parse dot-notation path into segment list.
-* :class:`RadixTrie` — low-level trie for custom assembly workflows.
-* :class:`Blackboard` — per-field state machine for extraction state tracking.
-* :class:`FieldState` — enum of the 6 blackboard field states.
-* :func:`compute_quality_score` — compute quality metrics from blackboard state.
-* :class:`QualityReport` — immutable quality metrics dataclass.
+* :func:`assemble_json` - assemble flat SFEP results into a nested JSON dict.
+* :func:`parse_path_segments` - parse dot-notation path into segment list.
+* :class:`RadixTrie` - low-level trie for custom assembly workflows.
+* :class:`Blackboard` - per-field state machine for extraction state tracking.
+* :class:`FieldState` - enum of the 6 blackboard field states.
+* :func:`compute_quality_score` - compute quality metrics from blackboard state.
+* :class:`QualityReport` - immutable quality metrics dataclass.
 """
 
 from __future__ import annotations

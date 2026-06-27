@@ -1,4 +1,4 @@
-"""Surgical Field Retry (SFR) — re-extract only failed fields.
+"""Surgical Field Retry (SFR) - re-extract only failed fields.
 
 SFR is Innovation INN_003 of NField. Instead of re-running the full
 extraction pass when some fields fail validation, SFR constructs a targeted
@@ -11,10 +11,10 @@ independent retries is low (~2.4% under the project's measured per-round rates).
 
 MVP failure causes (4)
 ----------------------
-* ``FORMAT``                   — SFEP parse failed; malformed key=value line.
-* ``TYPE_CONSTRAINT``          — Field extracted but type/constraint invalid.
-* ``FIELD_MISSING``            — Field absent from LLM output (EMPTY state).
-* ``DEPENDENCY_VALUE_CHANGED`` — A dependency's value changed during retry,
+* ``FORMAT``                   - SFEP parse failed; malformed key=value line.
+* ``TYPE_CONSTRAINT``          - Field extracted but type/constraint invalid.
+* ``FIELD_MISSING``            - Field absent from LLM output (EMPTY state).
+* ``DEPENDENCY_VALUE_CHANGED`` - A dependency's value changed during retry,
                                   invalidating this field's extracted value.
 
 Also implemented: GSGRF (fresh per-field excerpt via ``retry_excerpt``) and CADTR
@@ -22,9 +22,9 @@ Also implemented: GSGRF (fresh per-field excerpt via ``retry_excerpt``) and CADT
 
 Post-MVP stubs (not implemented)
 ---------------------------------
-* ``LOW_GROUNDING_EVIDENCE_PRESENT`` — GSV grounding score below threshold.
-* ``LOW_GROUNDING_NO_EVIDENCE``      — No supporting evidence found in document.
-* PFTEN (pool-first narrowed excerpt) — targeted context narrowing per field.
+* ``LOW_GROUNDING_EVIDENCE_PRESENT`` - GSV grounding score below threshold.
+* ``LOW_GROUNDING_NO_EVIDENCE``      - No supporting evidence found in document.
+* PFTEN (pool-first narrowed excerpt) - targeted context narrowing per field.
 """
 
 from __future__ import annotations
@@ -79,7 +79,7 @@ class FailureCause(Enum):
     """Root cause classification for a failed field extraction.
 
     Attributes:
-        FORMAT: SFEP parse error — the line was not a valid ``path = value`` pair.
+        FORMAT: SFEP parse error - the line was not a valid ``path = value`` pair.
         TYPE_CONSTRAINT: The extracted value failed type or constraint validation.
         FIELD_MISSING: The field was absent from the LLM output (never extracted).
         DEPENDENCY_VALUE_CHANGED: A dependency field was updated in a later
@@ -185,7 +185,7 @@ async def orchestrate_retry(
             incremented once per provider call made, so callers can fold retry
             cost into the run's total API-call count.
         rounds_counter: Optional single-element list; when given, element 0 is set
-            to the number of retry rounds that actually ran (flaw C — the real
+            to the number of retry rounds that actually ran (flaw C - the real
             count, not a 0/1 flag), so callers report it faithfully.
         call_failures: Optional dict; populated ``{path: reason}`` for fields whose
             retry call itself raised (flaw E), so the caller can record a real
@@ -394,7 +394,7 @@ def split_retry_batches(
        dependency-aware re-extraction stays correct.
     2. **Capacity packing.** When ``max_output_tokens`` is given, those closures
        are greedily packed into the fewest batches whose combined output fits the
-       budget — so many independent fields share one retry call instead of one
+       budget - so many independent fields share one retry call instead of one
        call each. Without a budget, each closure is its own batch (legacy
        behaviour). A single closure that alone exceeds the budget still forms its
        own batch (a closure is never split).
@@ -513,7 +513,7 @@ def handle_missing_fields(
         # Walk up the dot-notation tree
         parts = path.split(".")
         if len(parts) <= 1:
-            # Top-level field: no parent to check — mark as None
+            # Top-level field: no parent to check - mark as None
             result[path] = None
             continue
 
@@ -521,10 +521,10 @@ def handle_missing_fields(
         for depth in range(len(parts) - 1, 0, -1):
             parent_path = ".".join(parts[:depth])
             if parent_path in leaf_field_paths:
-                # Parent exists but is not in missing paths — child should have value
+                # Parent exists but is not in missing paths - child should have value
                 break
         else:
-            # No parent in this leaf — field truly absent
+            # No parent in this leaf - field truly absent
             result[path] = None
 
     return result

@@ -1,4 +1,4 @@
-"""Unit tests for extraction._prompt — prompt construction."""
+"""Unit tests for extraction._prompt - prompt construction."""
 
 from __future__ import annotations
 
@@ -114,7 +114,7 @@ class TestBuildExtractionPrompt:
     def test_descriptions_always_sent_even_in_concise(self):
         f = make_field("age", "integer", description="Patient age")
         msgs = build_extraction_prompt([f], "doc", TemplateType.CONCISE)
-        # Description is never dropped — the model needs it to understand the field.
+        # Description is never dropped - the model needs it to understand the field.
         assert "Patient age" in msgs[1]["content"]
         assert "age (integer)" in msgs[1]["content"]
 

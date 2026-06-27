@@ -1,4 +1,4 @@
-"""Direct-competitor head-to-head — nfield vs the real extraction libraries.
+"""Direct-competitor head-to-head - nfield vs the real extraction libraries.
 
 Separate from :mod:`benchmark.runner` (orchestration-layer baselines: raw_prompt,
 native_json, instructor, langchain) and :mod:`benchmark.runner2` (nfield-only scale

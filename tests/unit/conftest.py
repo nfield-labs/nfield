@@ -1,4 +1,4 @@
-"""Unit test fixtures — mock providers, fake schemas."""
+"""Unit test fixtures - mock providers, fake schemas."""
 
 from __future__ import annotations
 

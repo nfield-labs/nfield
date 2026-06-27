@@ -1,4 +1,4 @@
-"""nfield adapter — the method under test.
+"""nfield adapter - the method under test.
 
 Wraps the library's :func:`nfield.nfield` entry point in the uniform
 :class:`Adapter` interface. The library import is deferred to call time so the
@@ -55,7 +55,7 @@ class NfieldAdapter:
 
         ``instructions`` are passed straight to nfield, which threads them into
         every leaf's user message. Any provider/API error is caught and returned
-        as a failed :class:`AdapterOutput`, never raised — a failed run scores as a
+        as a failed :class:`AdapterOutput`, never raised - a failed run scores as a
         miss and stays in the denominator.
         """
         from nfield import nfield
@@ -78,7 +78,7 @@ class NfieldAdapter:
             )
         except Exception as exc:  # a baseline-fair failure: record, never abort the sweep
             # A whole-engine failure means no leaf returned, so every targeted field
-            # was lost to the call, not to the model — credit it all to call-failed
+            # was lost to the call, not to the model - credit it all to call-failed
             # (design §4.3 / §7). The category is labelled honestly like the baselines.
             kind, message = classify_exc(exc)
             total = _schema_field_count(schema)

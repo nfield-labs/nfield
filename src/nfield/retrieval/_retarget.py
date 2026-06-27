@@ -4,7 +4,7 @@ When a field fails because its evidence was trimmed out of its leaf's excerpt
 (a retrieval miss, not a model miss), re-asking the model with the *same* text
 cannot recover it. This module re-queries the full segment set with ONLY the
 failed fields' own terms and builds a fresh, focused excerpt, so the retry sees
-different, field-relevant document text — closing Stage 5 flaw B.
+different, field-relevant document text - closing Stage 5 flaw B.
 
 It reuses the same BMX index already built in Stage 2.5; no new index, no API
 call. Domain-agnostic: the query is the failed fields' paths + descriptions.
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 __all__ = ["build_field_query", "record_block_excerpt", "targeted_excerpt"]
 
-# Words taken from each field's description to enrich its retrieval query — a few
+# Words taken from each field's description to enrich its retrieval query - a few
 # more than the group-query pre-pass uses, since a targeted retry wants the field's
 # full meaning to relocate evidence the first pass missed.
 _MAX_DESC_WORDS: int = 8
@@ -60,13 +60,13 @@ def targeted_excerpt(
 
     Re-ranks every segment against the failed fields' query and fills the budget
     with the top matches, ordered by document position. Differs from the leaf's
-    original excerpt, which was pooled per group then trimmed — so evidence the
+    original excerpt, which was pooled per group then trimmed - so evidence the
     first pass dropped can resurface here.
 
     Args:
         fields: Failed fields to retrieve evidence for.
         bmx_index: The BMX index from Stage 2.5 (``None`` on the small-doc path,
-            where the whole document was already in context — re-retrieval is a
+            where the whole document was already in context - re-retrieval is a
             no-op and the caller should keep the original excerpt).
         segments: All document segments from Stage 2.5.
         budget_tokens: Token budget for the excerpt (same B_excerpt the leaf used).

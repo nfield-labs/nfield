@@ -1,4 +1,4 @@
-"""Tests for providers.groq._provider — GroqProvider implementation."""
+"""Tests for providers.groq._provider - GroqProvider implementation."""
 
 from __future__ import annotations
 

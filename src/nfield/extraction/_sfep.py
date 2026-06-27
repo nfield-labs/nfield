@@ -1,9 +1,9 @@
 """SFEP (Schema-aware Field Extraction Protocol) parser.
 
-Instead of asking the LLM to output nested JSON — whose braces, quotes, commas,
+Instead of asking the LLM to output nested JSON - whose braces, quotes, commas,
 and repeated keys spend a large share of tokens on structure, and whose
 constrained decoding measurably degrades reasoning accuracy (arXiv:2408.02442;
-arXiv:2604.03616, "The Format Tax") — the LLM outputs one field per line::
+arXiv:2604.03616, "The Format Tax") - the LLM outputs one field per line::
 
     field.path = value
 
@@ -134,7 +134,7 @@ def parse_sfep(text: str, fields: list[Field]) -> dict[str, Any]:
         try:
             result[path] = typecast(raw_value, field)
         except ExtractionError:
-            # Malformed value that can't be coerced — skip, blackboard handles missing
+            # Malformed value that can't be coerced - skip, blackboard handles missing
             continue
 
     return result
@@ -144,7 +144,7 @@ def count_unknown_paths(text: str, fields: list[Field]) -> int:
     """Count SFEP lines whose ``path`` is not a known schema field.
 
     A line that parses as ``path = value`` but whose path is absent from *fields* is the
-    model emitting a field outside the schema — a format-drift / hallucination signal
+    model emitting a field outside the schema - a format-drift / hallucination signal
     (analogous to a strict schema's "forbid extra" rule). Unparseable lines (no separator) are *not*
     counted: those are prose/noise, not invented fields. Extraction is unaffected; this is
     a measurement only.
@@ -176,7 +176,7 @@ def parse_sfep_failures(text: str, fields: list[Field]) -> dict[str, str]:
 
     ``parse_sfep`` drops a value it cannot coerce (e.g. ``age = abc`` for an integer).
     This scan keeps the raw string so the recovery prompt can show the model what it
-    produced (DSPy Assertions, arXiv:2312.13382). Only genuine cast failures appear —
+    produced (DSPy Assertions, arXiv:2312.13382). Only genuine cast failures appear -
     NULL, NEEDS_REVALIDATION, empty, unknown paths, and clean casts are excluded.
 
     Args:
@@ -233,7 +233,7 @@ def parse_sfep_line(line: str) -> tuple[str, str] | None:
         >>> parse_sfep_line("") is None
         True
     """
-    # Strip leading whitespace only — preserve trailing spaces in value
+    # Strip leading whitespace only - preserve trailing spaces in value
     lstripped = line.lstrip()
     if not lstripped or lstripped.startswith("#"):
         return None
@@ -278,7 +278,7 @@ def typecast(raw_value: str, field: Field) -> Any:
     """
     stripped = raw_value.strip()
 
-    # Universal sentinels — checked before type-specific logic.
+    # Universal sentinels - checked before type-specific logic.
     # NULL maps to None for all types.
     # An empty value maps to None for non-string types; for string fields the
     # empty string is a legitimate value and is returned as-is.
@@ -309,7 +309,7 @@ def typecast(raw_value: str, field: Field) -> Any:
     if field_type == "array":
         return _cast_array(stripped, field)
 
-    # string (constrained or unconstrained) — strip only, no transformation
+    # string (constrained or unconstrained) - strip only, no transformation
     return stripped
 
 
@@ -337,7 +337,7 @@ def _cast_boolean(raw: str, field: Field) -> bool:
     if lower in ("false", "no", "0"):
         return False
     raise ExtractionError(
-        f"Cannot cast {raw!r} to boolean — expected 'true' or 'false'",
+        f"Cannot cast {raw!r} to boolean - expected 'true' or 'false'",
         field=field.path,
     )
 
@@ -358,7 +358,7 @@ def _cast_integer(raw: str, field: Field) -> int:
     Raises:
         ExtractionError: If the value cannot be interpreted as an integer.
     """
-    # Exact parse first — keeps precision for very large integers that float() rounds.
+    # Exact parse first - keeps precision for very large integers that float() rounds.
     try:
         return int(raw)
     except ValueError:
@@ -463,10 +463,10 @@ def _cast_array(raw: str, field: Field) -> list[Any]:
     # becomes a list; a single bare value becomes a one-element list.
     if not (stripped.startswith("[") and stripped.endswith("]")):
         if "," in stripped:
-            # Bare comma-separated list — treat as array
+            # Bare comma-separated list - treat as array
             stripped = f"[{stripped}]"
         else:
-            # Single bare value (LLM omitted brackets) — wrap as single-element array
+            # Single bare value (LLM omitted brackets) - wrap as single-element array
             item_type = _get_array_item_type(field)
             element = _cast_array_element(stripped, item_type, field)
             return [element]
@@ -554,7 +554,7 @@ def _cast_array_element(raw: str, item_type: str, field: Field) -> Any:
         try:
             return int(raw)
         except ValueError:
-            return raw  # Degrade gracefully — validation will catch it
+            return raw  # Degrade gracefully - validation will catch it
     if item_type == "number":
         try:
             return float(raw)

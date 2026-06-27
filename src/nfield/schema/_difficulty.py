@@ -12,7 +12,7 @@ __all__ = ["compute_difficulty"]
 # ---------------------------------------------------------------------------
 
 # Per-type difficulty: the inverse of measured extraction accuracy by JSON type
-# from DeepJSONEval (arXiv:2509.25922) — harder types extract less reliably.
+# from DeepJSONEval (arXiv:2509.25922) - harder types extract less reliably.
 _D_TYPE: dict[str, float] = {
     "boolean": 0.05,
     "null": 0.05,
@@ -21,7 +21,7 @@ _D_TYPE: dict[str, float] = {
     "number": 0.20,
     "string": 0.40,  # constrained string (has maxLength/pattern/format)
     "array": 0.60,
-    "object": 0.80,  # nested_object — should be rare after flattening
+    "object": 0.80,  # nested_object - should be rare after flattening
 }
 _D_TYPE_STRING_UNCONSTRAINED: float = 0.70
 

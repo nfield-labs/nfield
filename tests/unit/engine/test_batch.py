@@ -62,7 +62,7 @@ class TestAsyncBatch:
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         # A provider blowup is caught inside the pipeline and surfaces as a FAILED
-        # result (with the call-failed fields reported), not as a raised exception —
+        # result (with the call-failed fields reported), not as a raised exception -
         # so the batch keeps its one-result-per-document contract.
         class _AlwaysFails:
             model_name = "mock/echo"

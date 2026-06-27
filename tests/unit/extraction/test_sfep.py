@@ -1,4 +1,4 @@
-"""Unit tests for extraction._sfep — SFEP parser and typecast."""
+"""Unit tests for extraction._sfep - SFEP parser and typecast."""
 
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ def make_field(path: str, ftype: str, constraints: dict | None = None) -> Field:
 
 
 class TestCountUnknownPaths:
-    """count_unknown_paths — the format-drift signal for out-of-schema paths."""
+    """count_unknown_paths - the format-drift signal for out-of-schema paths."""
 
     def test_no_unknowns_when_all_paths_known(self) -> None:
         fields = [make_field("name", "string"), make_field("age", "integer")]
@@ -51,7 +51,7 @@ class TestCountUnknownPaths:
 
 
 class TestParseSfepFailures:
-    """parse_sfep_failures — capture the raw text of values that could not be cast."""
+    """parse_sfep_failures - capture the raw text of values that could not be cast."""
 
     def test_uncastable_value_is_captured(self) -> None:
         fields = [make_field("age", "integer")]
@@ -62,7 +62,7 @@ class TestParseSfepFailures:
         assert parse_sfep_failures("age = 30", fields) == {}
 
     def test_null_is_not_a_failure(self) -> None:
-        # NULL coerces to None for every type — it never fails the cast.
+        # NULL coerces to None for every type - it never fails the cast.
         fields = [make_field("age", "integer")]
         assert parse_sfep_failures("age = NULL", fields) == {}
 
@@ -121,7 +121,7 @@ class TestParseSfepLine:
 
 
 # ---------------------------------------------------------------------------
-# typecast — all 8 types
+# typecast - all 8 types
 # ---------------------------------------------------------------------------
 
 
@@ -283,7 +283,7 @@ class TestTypecastSentinels:
 
 
 # ---------------------------------------------------------------------------
-# parse_sfep — full document parsing
+# parse_sfep - full document parsing
 # ---------------------------------------------------------------------------
 
 

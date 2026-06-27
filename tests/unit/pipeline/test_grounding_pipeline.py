@@ -31,8 +31,8 @@ def _grounding_state(*, ground_values: bool) -> tuple[PipelineState, Blackboard]
     company = Field("company", "string", {}, "", {})
     year = Field("year", "integer", {}, "", {})
     bb = Blackboard(["company", "year"])
-    bb.write("company", "Globex Inc")  # NOT in the excerpt — a hallucination
-    bb.write("year", 1947)  # present in the excerpt — grounded
+    bb.write("company", "Globex Inc")  # NOT in the excerpt - a hallucination
+    bb.write("year", 1947)  # present in the excerpt - grounded
     leaf = CapacityLeaf(fields=[company, year], document_excerpt=_EXCERPT, leaf_id=1)
     state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)
     state.fields = [company, year]

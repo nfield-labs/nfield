@@ -16,7 +16,7 @@ from nfield.engine._async import (
 from nfield.exceptions import SchemaError
 
 
-# Module-scope dataclasses so get_type_hints can resolve the nested type — this
+# Module-scope dataclasses so get_type_hints can resolve the nested type - this
 # is how real users define schemas (top level), and what the converter targets.
 @dataclass
 class _Addr:

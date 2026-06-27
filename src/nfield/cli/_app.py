@@ -2,9 +2,9 @@
 
 Two commands:
 
-* ``nfield extract`` — run the extraction pipeline on a document and print
+* ``nfield extract`` - run the extraction pipeline on a document and print
   the resulting JSON.
-* ``nfield inspect`` — analyse a schema offline (no API calls): field
+* ``nfield inspect`` - analyse a schema offline (no API calls): field
   count, type breakdown, and a minimum-call (K_min) estimate.
 
 The CLI is an optional extra: install with ``pip install "nfield[cli]"``.
@@ -62,14 +62,14 @@ def _root(
         typer.Option("--version", callback=_version_callback, is_eager=True, help="Show version."),
     ] = False,
 ) -> None:
-    """NField — extract N structured fields from any document."""
+    """NField - extract N structured fields from any document."""
 
 
 def _read_text_file(path: Path, label: str) -> str:
     """Read a UTF-8 text file, turning every I/O failure into a clean message.
 
-    Centralises the ways a user-supplied path can fail — missing, a directory,
-    permission-denied, or not UTF-8 — so the CLI reports a one-line
+    Centralises the ways a user-supplied path can fail - missing, a directory,
+    permission-denied, or not UTF-8 - so the CLI reports a one-line
     ``BadParameter`` instead of a Python traceback.
 
     Args:

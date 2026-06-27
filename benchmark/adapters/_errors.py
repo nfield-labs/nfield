@@ -4,8 +4,8 @@ A raw SDK exception (e.g. a multi-KB ``InstructorRetryException`` blob) tells a
 reader nothing and makes a genuine single-call limit look like a crash. Each
 failure is mapped to a stable :class:`FailureKind` plus a one-line reason, and to
 whether it is a *transport* failure (infra: the call never returned through no
-fault of the method — credited to call-failed) or a *capability* failure (the
-single call itself could not produce the output — a real miss in the denominator).
+fault of the method - credited to call-failed) or a *capability* failure (the
+single call itself could not produce the output - a real miss in the denominator).
 
 Classification works on the error *text* so it serves both live runs (the
 exception) and re-scoring already-written results (the stored error string).

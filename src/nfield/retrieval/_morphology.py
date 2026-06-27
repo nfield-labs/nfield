@@ -208,7 +208,7 @@ def _tokens_in_spans(
 def field_type_classes(field: Field) -> tuple[str, ...]:
     """Type-classes whose surface form a field's value is expected to take.
 
-    Derived only from JSON Schema ``type`` and ``format`` — a ``format`` (date,
+    Derived only from JSON Schema ``type`` and ``format`` - a ``format`` (date,
     email, uri, uuid) takes precedence for string fields; numeric and boolean
     types map directly. Containers and plain strings return ``()``.
 

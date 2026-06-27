@@ -45,7 +45,7 @@ Plain dataclasses work too.
 
 ## Reusable engine
 
-For many documents on the same schema, build the engine once — the schema is
+For many documents on the same schema, build the engine once - the schema is
 normalised a single time and the model is calibrated once.
 
 ```python
@@ -107,5 +107,5 @@ result = nfield(
 ```
 
 `instructions` is **prepended** to NField's built-in SFEP prompt (which is
-always kept, so output parsing stays valid) and is counted in capacity planning — a
+always kept, so output parsing stays valid) and is counted in capacity planning - a
 long value correctly reduces the per-call document budget. CLI: `--instructions`.

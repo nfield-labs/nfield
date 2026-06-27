@@ -1,11 +1,11 @@
 """Stage 2.5: Document Pre-Pass (DDF).
 
 Zero API calls. Chunks the document, builds a BMX index, and scores each
-FieldGroup against the index to estimate D_cost(g) — the token cost of
+FieldGroup against the index to estimate D_cost(g) - the token cost of
 the document segments needed for that group.
 
 Key invariant: D_cost(g) >= D_cost(any_subset_of_g). This makes fits()
-conservative — never over-promises on context.
+conservative - never over-promises on context.
 
 Small-doc fast path: if the entire document fits in C_usable, skip chunking
 and assign D_cost = total document tokens to every group.
@@ -37,7 +37,7 @@ __all__ = ["run_stage_2b"]
 # Floor on segments kept per group after BMX ranking, so even a single-field
 # group retrieves a few candidates (Robertson & Zaragoza, "The Probabilistic
 # Relevance Framework: BM25 and Beyond", 2009). Depth is computed PER GROUP from
-# its field count (see _group_top_k) — never a fixed global top-k, which would
+# its field count (see _group_top_k) - never a fixed global top-k, which would
 # under-serve large groups and over-serve small ones.
 _MIN_TOP_K_SEGMENTS: int = 5
 # Candidate segments retrieved per field in a group. A group with more fields can
@@ -51,7 +51,7 @@ _GROUP_QUERY_MAX_DESC_WORDS: int = 5
 _FALLBACK_CHARS_PER_TOKEN: float = 4.0
 # The heading route is taken only when at least this fraction of groups align to a
 # section. Below it the schema does not mirror the document's headings, so the doc
-# descends to the paragraph tier — structural routing is used only when it is the
+# descends to the paragraph tier - structural routing is used only when it is the
 # better mechanism (DeepRead arXiv:2602.05014).
 _MIN_ALIGN_COVERAGE: float = 0.5
 
@@ -64,11 +64,11 @@ def run_stage_2b(
     """Chunk document, score segments per group, estimate D_cost(g).
 
     Populates:
-    - ``state.segments`` — all document segments
-    - ``state.lexical_index`` — BMX index over segments (None for small docs)
-    - ``group.matched_segments`` — top-k segments for each group
-    - ``group.segment_scores`` — BMX scores parallel to matched_segments
-    - ``group.D_cost`` — token cost estimate for group's segments
+    - ``state.segments`` - all document segments
+    - ``state.lexical_index`` - BMX index over segments (None for small docs)
+    - ``group.matched_segments`` - top-k segments for each group
+    - ``group.segment_scores`` - BMX scores parallel to matched_segments
+    - ``group.D_cost`` - token cost estimate for group's segments
 
     Args:
         state: Pipeline state from Stage 2A (must have ``state.groups``).
@@ -82,7 +82,7 @@ def run_stage_2b(
         >>> callable(run_stage_2b)
         True
     """
-    # Hybrid tier 1 — record axis. Structure routes each group to its record block;
+    # Hybrid tier 1 - record axis. Structure routes each group to its record block;
     # GLEAN orders the chunks within it (wrapper induction TWIX arXiv:2501.06659).
     # Non-record docs descend to the heading tier.
     record = record_segments(state.fields, document, state.chars_per_token, state.C_usable)
@@ -92,7 +92,7 @@ def run_stage_2b(
     total_doc_tokens = _estimate_tokens(document, state.chars_per_token)
 
     # Small-doc fast path: entire document fits in the usable context window.
-    # Skip retrieval entirely — every group gets the full document.
+    # Skip retrieval entirely - every group gets the full document.
     if total_doc_tokens <= state.C_usable:
         for g in state.groups:
             g.D_cost = total_doc_tokens
@@ -111,7 +111,7 @@ def run_stage_2b(
         ]
         return state
 
-    # Hybrid tier 2 — heading hierarchy. A non-record doc may still be organised by
+    # Hybrid tier 2 - heading hierarchy. A non-record doc may still be organised by
     # headings; route each group to the section its path names (UniHDSA arXiv:2503.15893;
     # locate-then-read DeepRead arXiv:2602.05014). Used only when the schema aligns to
     # the headings; otherwise the document descends to the paragraph tier below.
@@ -119,7 +119,7 @@ def run_stage_2b(
     if structure is not None and _run_heading_hybrid(state, structure):
         return state
 
-    # Hybrid tier 3 — paragraph base case. No record/heading structure: chunk the whole
+    # Hybrid tier 3 - paragraph base case. No record/heading structure: chunk the whole
     # document and let GLEAN order the segments per group. Retrieval is the within-tier
     # scorer here, not a separate fallback.
     segments = chunk_document(document)
@@ -176,7 +176,7 @@ def _run_record_hybrid(state: PipelineState, record: RecordSegments) -> Pipeline
         rec = group_record_ordinal([f.path for f in g.fields], record.field_ordinal)
         # Structure decides INCLUSION: the group's own record block (+ shared header)
         # are always candidates. Retrieval only decides ORDER, so a block GLEAN scores
-        # zero (snake_case field names vs spaced prose) is still kept — Stage 3 keeps
+        # zero (snake_case field names vs spaced prose) is still kept - Stage 3 keeps
         # all that fit, trimming an oversized block to its top-ranked children.
         candidates = [*record.by_record.get(rec, []), *record.header_segments]
         query = _build_group_query(g)
@@ -196,8 +196,8 @@ def _run_heading_hybrid(state: PipelineState, structure: SectionStructure) -> bo
 
     Each group is aligned to the section its field paths name (``align_path_to_section``);
     the section's chunks (plus the shared preamble) are the candidates GLEAN orders
-    within. Mutates state only when the schema aligns to the headings — at least
-    ``_MIN_ALIGN_COVERAGE`` of groups must match a section — so a document whose schema
+    within. Mutates state only when the schema aligns to the headings - at least
+    ``_MIN_ALIGN_COVERAGE`` of groups must match a section - so a document whose schema
     does not mirror its headings is left untouched for the paragraph tier (do-no-harm).
 
     Args:

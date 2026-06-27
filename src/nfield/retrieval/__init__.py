@@ -1,7 +1,7 @@
 """Document retrieval for the Stage 2.5 pre-pass.
 
 Chunking (`chunk_document`), a diacritic-folding lexical tokenizer, the BMX
-entropy-weighted scorer, and GLEAN — a schema-typed fusion retriever that augments
+entropy-weighted scorer, and GLEAN - a schema-typed fusion retriever that augments
 BMX with a morphological evidence signal (literal enum hits, format/pattern
 matches, and label↔typed-value proximity) at CPU/lexical speed, no model.
 """

@@ -46,10 +46,10 @@ def from_model(
     Supports model strings of the form "provider/model-name", where the
     provider prefix routes to the correct provider class (``groq/`` and
     ``openai/`` today; others as they are added). The ``openai/`` prefix paired
-    with ``base_url`` reaches any OpenAI-compatible endpoint — hosted gateways or
+    with ``base_url`` reaches any OpenAI-compatible endpoint - hosted gateways or
     a local server. The model name after "/" is passed straight to the provider.
 
-    The model's real context window and output ceiling are caller-supplied —
+    The model's real context window and output ceiling are caller-supplied -
     pass ``context_window`` and ``max_output_tokens`` so capacity planning uses
     the true numbers. When omitted, the provider's conservative defaults apply.
 

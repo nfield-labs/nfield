@@ -1,11 +1,11 @@
-"""Dataset registry — fixture name to (schema, document, gold answer key).
+"""Dataset registry - fixture name to (schema, document, gold answer key).
 
 Datasets are self-contained under ``benchmark/datasets/real/<name>/``, each a
 directory of ``schema.json``, ``document.txt``, and (when scorable) ``gold.json``.
 Every document is committed for reproducibility, including the one large
 coverage-only document (War & Peace, public-domain text from Project Gutenberg).
 
-The model budget is NOT a property of the dataset — it is a run-level choice
+The model budget is NOT a property of the dataset - it is a run-level choice
 (:mod:`benchmark.budget`), applied uniformly to every method, so the same fixture
 can be swept under different budgets.
 
@@ -38,11 +38,11 @@ _DOCUMENT_FILE = "document.txt"
 _GOLD_FILE = "gold.json"
 
 # Domain instructions are general, professional guidance a real caller would
-# write — never gold answers. The SAME string is given to every method (nfield
+# write - never gold answers. The SAME string is given to every method (nfield
 # threads it to each leaf; the baselines prepend it to their prompt), so it is a
 # fair, uniform input, not a per-method tuning lever (fairness rule, design §7).
 _FAITHFULNESS = (
-    "Extract each field's value exactly as written in the document — keep all "
+    "Extract each field's value exactly as written in the document - keep all "
     "units, dates, identifiers, and parenthetical qualifiers (e.g. '(2023 est.)'); "
     "never summarize, normalize, or drop trailing detail. Preserve the order of "
     "any list items as they appear in the source."
@@ -171,15 +171,15 @@ def get(name: str) -> Dataset:
 # Closed-book domains: the subject lives in each gold path (e.g. Carbon.symbol), so one
 # instruction per domain suffices. The same string is given to every method (fairness).
 _CLOSED_BOOK_INSTRUCTIONS: dict[str, str] = {
-    "elements": "Periodic table of the elements. There is no source document — provide each "
+    "elements": "Periodic table of the elements. There is no source document - provide each "
     "field's value from your own knowledge of the element named in its path; leave a field "
     "empty if unsure.",
-    "countries": "Country reference facts. There is no source document — provide each field's "
+    "countries": "Country reference facts. There is no source document - provide each field's "
     "value from your own knowledge of the country named in its path; leave a field empty if "
     "unsure.",
-    "pokemon": "Pokedex stats. There is no source document — provide each field's value from "
+    "pokemon": "Pokedex stats. There is no source document - provide each field's value from "
     "your own knowledge of the Pokemon named in its path; leave a field empty if unsure.",
-    "airports": "Airport reference data keyed by IATA code. There is no source document — "
+    "airports": "Airport reference data keyed by IATA code. There is no source document - "
     "provide each field's value from your own knowledge of the airport with that code; leave "
     "a field empty if unsure.",
 }

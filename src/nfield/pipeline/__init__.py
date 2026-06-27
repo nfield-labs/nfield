@@ -1,4 +1,4 @@
-"""NField extraction pipeline — stages S0 through S6."""
+"""NField extraction pipeline - stages S0 through S6."""
 
 from __future__ import annotations
 

@@ -1,8 +1,8 @@
-"""Raw-prompt baseline — the format-tax floor.
+"""Raw-prompt baseline - the format-tax floor.
 
 No enforcement of any kind: ask the model for JSON in plain text and parse
 whatever comes back. This is the lower bound the design calls the "format-tax
-floor" — what you get with a single call and no structured-output tooling.
+floor" - what you get with a single call and no structured-output tooling.
 """
 
 from __future__ import annotations

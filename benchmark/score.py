@@ -1,4 +1,4 @@
-"""Gold-diff scorer — the one new measurement nfield-bench adds.
+"""Gold-diff scorer - the one new measurement nfield-bench adds.
 
 The pipeline already reports *coverage* (did a value come back). This module
 adds *Value Accuracy* (is the value correct), the benchmark's headline metric.
@@ -11,7 +11,7 @@ for free text), and every gold field lands in exactly one outcome bucket:
 Arrays are matched by **position**, not as sets: a list flattens to ``item_0``,
 ``item_1``, … and each element is scored against the gold element at the same
 index. A correct set in a different order therefore scores as per-element
-accuracy errors — a deliberate, disclosed reorder penalty (the design follows
+accuracy errors - a deliberate, disclosed reorder penalty (the design follows
 SOB, which penalises reordering). Schemas needing order-insensitive lists are
 out of scope for this scorer until a per-field policy is added.
 
@@ -22,7 +22,7 @@ out of scope for this scorer until a per-field policy is added.
     HALLUCINATION gold marks the field empty but a value was produced
     STRUCTURAL   wrong shape at the path (a container where a scalar is due)
 
-Value Accuracy is ``CORRECT / |gold|``. Failures stay in the denominator — a
+Value Accuracy is ``CORRECT / |gold|``. Failures stay in the denominator - a
 method that returns nothing is scored a miss, never dropped (honest-claims
 charter, rule 4). The scorer is pure and deterministic: no API, no clock, no
 randomness, so it runs in CI and re-scores old raw outputs without re-generating
@@ -53,7 +53,7 @@ __all__ = [
 SHORT_STRING_MAX_CHARS: int = 80
 
 # Long strings match when their normalised Levenshtein distance is within this
-# fraction of the longer string — the design's "semantic equivalence" proxy
+# fraction of the longer string - the design's "semantic equivalence" proxy
 # (10% edit budget tolerates reflow / punctuation drift, not paraphrase).
 LONG_STRING_MAX_DISTANCE: float = 0.1
 
@@ -130,13 +130,13 @@ class ScoreReport:
     """Complete gold-diff judgement for one extraction run.
 
     Args:
-        n_fields: Size of the gold answer key — the Value Accuracy denominator.
+        n_fields: Size of the gold answer key - the Value Accuracy denominator.
         value_accuracy: ``correct / n_fields``, the headline metric.
         coverage: Fraction of gold fields for which any value was returned.
         json_pass: ``True`` when no field had a structural (wrong-shape) error.
         call_failed: Count of fields lost to API/call errors, carried through
             from ``Metadata.fields_call_failed``. A separate category from model
-            omission — never blamed on the model. It is a run-level count: the
+            omission - never blamed on the model. It is a run-level count: the
             scorer reports it alongside the per-field outcomes but cannot
             re-bucket individual omissions as call-failed without per-path
             attribution the caller does not supply.
@@ -166,7 +166,7 @@ class ScoreReport:
 
         The closed-book headline. Unlike value accuracy, a wrong answer scores worse than an
         abstention, so confidently filling fields the model does not know lowers the score
-        (accuracy-only scoring instead rewards that guessing — Nature s41586-026-10549-w).
+        (accuracy-only scoring instead rewards that guessing - Nature s41586-026-10549-w).
         """
         if not self.n_fields:
             return 0.0

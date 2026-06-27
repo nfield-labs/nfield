@@ -1,6 +1,6 @@
 """The Adapter protocol and its uniform output record.
 
-Every method under test — nfield and each baseline — implements :class:`Adapter`
+Every method under test - nfield and each baseline - implements :class:`Adapter`
 and returns an :class:`AdapterOutput`. Same signature, same return shape, so the
 runner sweeps them identically and the scorer compares apples to apples. The
 fairness rules (same model, same prompt budget, same retry budget) live in the
@@ -25,7 +25,7 @@ class AdapterOutput:
 
     Args:
         data: Extracted fields as a nested dict matching the schema. Empty when
-            the call failed — the scorer then judges every gold field a miss.
+            the call failed - the scorer then judges every gold field a miss.
         fields_total: Schema field count the method targeted (the x-axis, N).
         fields_extracted: Count of fields the method returned a value for.
         k: Number of model calls the method made (1 for single-call baselines).
@@ -34,7 +34,7 @@ class AdapterOutput:
             failing to extract them. Carried into the scorer as its own category.
         elapsed_seconds: Wall-clock latency of the run.
         error: Failure message if the run errored, else ``None``. A non-``None``
-            error means ``data`` is unreliable and the run scores as a miss —
+            error means ``data`` is unreliable and the run scores as a miss -
             it is never dropped from the denominator. Carries a clean, classified
             reason (see ``error_category``), not a raw SDK dump.
         error_category: Stable failure category (e.g. ``single_call_output_ceiling``,
@@ -65,7 +65,7 @@ class Adapter(Protocol):
     """Uniform interface every benchmarked method implements.
 
     Implementations must catch their own model/API failures and return an
-    :class:`AdapterOutput` with :attr:`AdapterOutput.error` set — never raise.
+    :class:`AdapterOutput` with :attr:`AdapterOutput.error` set - never raise.
     Refusing a hard schema is exactly the capability the benchmark measures, so
     a failure must stay in the denominator, not abort the sweep.
     """

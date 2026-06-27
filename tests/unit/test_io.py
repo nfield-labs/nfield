@@ -1,4 +1,4 @@
-"""Tests for nfield.io — load document/schema, save/load results."""
+"""Tests for nfield.io - load document/schema, save/load results."""
 
 from __future__ import annotations
 

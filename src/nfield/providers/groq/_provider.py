@@ -42,7 +42,7 @@ def _is_transient_error(exc: Exception) -> bool | None:
     """Whether *exc* is a transient network failure that should be retried.
 
     Returns ``True`` for timeout/connection errors (which carry no HTTP status),
-    or ``None`` to defer to status-code classification when undeterminable — never
+    or ``None`` to defer to status-code classification when undeterminable - never
     ``False``, so a status-coded error is still judged by its code.
 
     Args:
@@ -67,7 +67,7 @@ def _retry_after_seconds(exc: Exception) -> float | None:
 
     Returns:
         The delay in seconds, or ``None`` when absent or not a plain number (an
-        HTTP-date form is ignored — the backoff loop falls back to its own timing).
+        HTTP-date form is ignored - the backoff loop falls back to its own timing).
     """
     response = getattr(exc, "response", None)
     headers = getattr(response, "headers", None)
@@ -117,14 +117,14 @@ class GroqProvider(BaseProvider):
             model_name: Groq model name (e.g., "llama-3.1-8b").
             context_window: Total context window size in tokens. If None, uses a
                 conservative 8192. Pass the model's real window (e.g. 131072 for
-                llama-3.3-70b) so capacity planning fills it — the small default is
+                llama-3.3-70b) so capacity planning fills it - the small default is
                 safe but packs many more, smaller calls than necessary.
             max_output_tokens: Maximum output tokens. If None, uses default 8192.
                 Provide this if you know the actual limit for your model.
             max_retries: Transient-failure retry budget per call. If None, the
                 base provider default applies.
             api_key: Groq API key. If None (default), the SDK reads ``GROQ_API_KEY``
-                from the environment — the recommended path. Pass it explicitly only
+                from the environment - the recommended path. Pass it explicitly only
                 for secret-vault / multi-tenant setups. It is stored solely to build
                 the client and is never logged or echoed in errors.
             base_url: Override the Groq API base URL (proxy, gateway, or

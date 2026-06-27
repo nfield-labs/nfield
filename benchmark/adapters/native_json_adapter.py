@@ -1,4 +1,4 @@
-"""Native JSON-mode baseline — the provider's ``response_format`` enforcement.
+"""Native JSON-mode baseline - the provider's ``response_format`` enforcement.
 
 The same single call as the raw baseline, but with the provider's JSON mode
 turned on so the model is constrained to emit syntactically valid JSON. This

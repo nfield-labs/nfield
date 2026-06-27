@@ -1,4 +1,4 @@
-"""ContextGem competitor — concept-based extraction over the same Groq model.
+"""ContextGem competitor - concept-based extraction over the same Groq model.
 
 ContextGem (https://github.com/shcherbak-ai/contextgem) models extraction as a set
 of *concepts* attached to a Document: each concept carries a name + description and

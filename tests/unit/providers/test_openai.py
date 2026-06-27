@@ -1,4 +1,4 @@
-"""Tests for providers.openai._provider — OpenAIProvider implementation."""
+"""Tests for providers.openai._provider - OpenAIProvider implementation."""
 
 from __future__ import annotations
 

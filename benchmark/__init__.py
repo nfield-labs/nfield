@@ -1,7 +1,7 @@
-"""nfield-bench — the field-count scaling benchmark for grounded extraction.
+"""nfield-bench - the field-count scaling benchmark for grounded extraction.
 
 A development/research artifact (not part of the shipped wheel). It turns the
-metrics the pipeline already emits — coverage, K, K_min, latency — plus a single
+metrics the pipeline already emits - coverage, K, K_min, latency - plus a single
 new gold-diff scorer into an honest, single-model, dated, reproducible curve of
 field-level Value Accuracy as a function of schema field count N.
 

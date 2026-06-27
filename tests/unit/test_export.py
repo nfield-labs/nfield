@@ -1,4 +1,4 @@
-"""Tests for nfield.export — DataFrame / CSV export (optional pandas)."""
+"""Tests for nfield.export - DataFrame / CSV export (optional pandas)."""
 
 from __future__ import annotations
 

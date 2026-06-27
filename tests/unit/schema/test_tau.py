@@ -1,4 +1,4 @@
-"""Tests for schema._tau — SOTP token predictor."""
+"""Tests for schema._tau - SOTP token predictor."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ def make_field(
     constraints: dict | None = None,  # type: ignore[type-arg]
 ) -> Field:
     """Build a minimal Field for testing."""
-    # flatten_schema stores items in schema_node, not constraints — mirror that here
+    # flatten_schema stores items in schema_node, not constraints - mirror that here
     schema_node: dict = {}  # type: ignore[type-arg]
     final_constraints: dict = constraints or {}  # type: ignore[type-arg]
 

@@ -1,6 +1,6 @@
 """Stage 4: Extraction.
 
-Makes K API calls — one per CapacityLeaf — in the order defined by
+Makes K API calls - one per CapacityLeaf - in the order defined by
 state.execution_order. Leaves in the same round are executed concurrently
 via asyncio.gather. Results are written to state.blackboard.
 
@@ -126,11 +126,11 @@ async def _extract_leaf(
         err_str = str(exc).lower()
         if any(kw in err_str for kw in _CONTEXT_ERROR_KEYWORDS):
             # Emergency split: leaf is too large, split in half and retry
-            logger.warning("Context overflow on leaf %d — emergency split", leaf.leaf_id)
+            logger.warning("Context overflow on leaf %d - emergency split", leaf.leaf_id)
             await _emergency_split(leaf, provider, state)
             return
         # Non-context error: the call itself failed (after provider retries), so the
-        # fields are call-failures, not absent — mark transient for honest reporting.
+        # fields are call-failures, not absent - mark transient for honest reporting.
         for f in leaf.fields:
             state.blackboard.mark_failed(f.path, f"provider error: {exc}", transient=True)
         return
@@ -162,7 +162,7 @@ async def _extract_leaf_self_consistent(
         raw_a = await _call_provider(leaf, provider, state)
         raw_b = await _call_provider(leaf, provider, state)
     except Exception as exc:
-        # The call failed after retries — a transient call failure, not absence.
+        # The call failed after retries - a transient call failure, not absence.
         for f in leaf.fields:
             state.blackboard.mark_failed(f.path, f"provider error: {exc}", transient=True)
         return
@@ -250,7 +250,7 @@ async def _emergency_split(
 
     Greedy split: first half = fields[:mid], second half = fields[mid:].
     The excerpt is also halved so the retry shrinks both the field count and
-    the context — overflow can be driven by either.
+    the context - overflow can be driven by either.
 
     Args:
         leaf: Oversized leaf to split.
@@ -260,7 +260,7 @@ async def _emergency_split(
     from nfield.schema._types import CapacityLeaf
 
     assert state.blackboard is not None
-    # Halve the excerpt as well — the overflow may be excerpt-driven.
+    # Halve the excerpt as well - the overflow may be excerpt-driven.
     half_excerpt = leaf.document_excerpt[: max(1, len(leaf.document_excerpt) // 2)]
 
     mid = max(1, len(leaf.fields) // 2)

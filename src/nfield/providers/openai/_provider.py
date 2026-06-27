@@ -2,7 +2,7 @@
 
 Connects to any endpoint that speaks the OpenAI ``/v1/chat/completions`` API.
 The default target is OpenAI itself; a ``base_url`` retargets the same class at
-any compatible service — hosted (Together, Fireworks, OpenRouter, DeepSeek, xAI,
+any compatible service - hosted (Together, Fireworks, OpenRouter, DeepSeek, xAI,
 Mistral, Azure) or local (Ollama, vLLM, LM Studio). The openai SDK is imported
 lazily, only when a call is made.
 """
@@ -28,7 +28,7 @@ from nfield.providers._reasoning import (
 # Kept small on purpose: under-stating the window only costs throughput (more,
 # smaller leaves), while over-stating it overflows the real window and fails the
 # call. Cloud models are far larger (gpt-4o ~128K), local servers often smaller
-# (Ollama default ~2-8K), so there is no safe larger blind default — pass the
+# (Ollama default ~2-8K), so there is no safe larger blind default - pass the
 # real context_window / max_output_tokens to plan capacity against the true size.
 _DEFAULT_OPENAI_CONTEXT_WINDOW: int = 8_192
 _DEFAULT_OPENAI_MAX_OUTPUT_TOKENS: int = 8_192
@@ -46,7 +46,7 @@ def _is_transient_error(exc: Exception) -> bool | None:
     """Whether *exc* is a transient network failure that should be retried.
 
     Returns ``True`` for timeout/connection errors (which carry no HTTP status),
-    or ``None`` to defer to status-code classification when undeterminable — never
+    or ``None`` to defer to status-code classification when undeterminable - never
     ``False``, so a status-coded error is still judged by its code.
 
     Args:
@@ -71,7 +71,7 @@ def _retry_after_seconds(exc: Exception) -> float | None:
 
     Returns:
         The delay in seconds, or ``None`` when absent or not a plain number (an
-        HTTP-date form is ignored — the backoff loop falls back to its own timing).
+        HTTP-date form is ignored - the backoff loop falls back to its own timing).
     """
     response = getattr(exc, "response", None)
     headers = getattr(response, "headers", None)
@@ -125,14 +125,14 @@ class OpenAIProvider(BaseProvider):
                 "meta-llama/Llama-3.1-8B-Instruct", "llama3.2").
             context_window: Total context window size in tokens. If None, uses a
                 conservative 8192. Pass the model's real window (e.g. 128000 for
-                gpt-4o) so capacity planning fills it — the small default is safe
+                gpt-4o) so capacity planning fills it - the small default is safe
                 but packs many more, smaller calls than necessary on large models.
             max_output_tokens: Maximum output tokens. If None, uses default 8192.
                 Provide this if you know the actual limit for your model.
             max_retries: Transient-failure retry budget per call. If None, the
                 base provider default applies.
             api_key: API key. If None (default), the SDK reads ``OPENAI_API_KEY``
-                from the environment — the recommended path. Pass it explicitly
+                from the environment - the recommended path. Pass it explicitly
                 only for secret-vault / multi-tenant setups, or to supply the key
                 of a non-OpenAI compatible service. It is stored solely to build
                 the client and is never logged or echoed in errors. Local servers

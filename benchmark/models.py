@@ -3,7 +3,7 @@
 The benchmark compares methods under two budgets: ``native`` (the model's real
 ceilings) and ``constrained`` (a fixed small budget). The native ceilings are a
 property of the model/provider, not of any method, so they live here in one
-registry. Adding a provider or model is a single row — nothing else changes.
+registry. Adding a provider or model is a single row - nothing else changes.
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ class ModelLimits:
         max_output_tokens: Provider-published maximum output tokens per call.
         reliable_output_tokens: Largest single-call output that *reliably* returns,
             bounded by the provider's wall-clock completion limit rather than the
-            token ceiling. The ``native`` budget uses this — see below.
+            token ceiling. The ``native`` budget uses this - see below.
     """
 
     context_window: int

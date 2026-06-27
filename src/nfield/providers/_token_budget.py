@@ -2,8 +2,8 @@
 
 Capacity planning converts a model's token-denominated context window into a
 character budget, which needs a characters-per-token ratio. The exact ratio is
-the target model's own tokenizer — unavailable for an arbitrary model behind a
-``base_url`` — so a static, script-keyed estimate stands in. It is
+the target model's own tokenizer - unavailable for an arbitrary model behind a
+``base_url`` - so a static, script-keyed estimate stands in. It is
 provider-agnostic (no tokenizer dependency), needs no network call, and carries
 no per-model table that goes stale on each release. Callers that know their
 model's exact ratio override it via ``ExtractionConfig.chars_per_token``.
@@ -25,7 +25,7 @@ _CHARS_PER_TOKEN_EN: float = 4.0
 # CJK character, so chars/token is far lower than Latin (tokenizer fertility).
 _CHARS_PER_TOKEN_CJK: float = 1.5
 # Other scripts (Cyrillic/Arabic/Indic/code, non-English Latin): fragment more
-# than English yet pack more per character than CJK — a middle estimate.
+# than English yet pack more per character than CJK - a middle estimate.
 _CHARS_PER_TOKEN_OTHER: float = 3.0
 
 # CJK primary subtags (ISO 639) that map to the CJK ratio.

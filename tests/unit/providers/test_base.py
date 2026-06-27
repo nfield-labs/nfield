@@ -1,4 +1,4 @@
-"""Tests for providers._base — BaseProvider ABC."""
+"""Tests for providers._base - BaseProvider ABC."""
 
 from __future__ import annotations
 
@@ -231,7 +231,7 @@ class TestRetryBehavior:
 
         monkeypatch.setattr(_base.asyncio, "sleep", record)
         # A full-window TPM Retry-After (~55s) is capped to rate_limit_backoff_max
-        # (8s) + jitter — the bucket refills continuously, so we don't sleep a window.
+        # (8s) + jitter - the bucket refills continuously, so we don't sleep a window.
         err = ProviderError("rate", status_code=429, retry_after=55.0)
         provider = _FlakyProvider(fail_times=1, error=err)
         await provider.complete([], max_tokens=10)

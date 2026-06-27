@@ -1,4 +1,4 @@
-"""Sweep orchestrator — generate raw outputs, score them, and pin reproducibility.
+"""Sweep orchestrator - generate raw outputs, score them, and pin reproducibility.
 
 Generation and scoring are deliberately decoupled: ``run`` writes per-record raw
 outputs as readable indented JSON arrays (rewritten after each seed, so a crash
@@ -260,7 +260,7 @@ def _write_scored(
     coverage_mean = _mean([r.coverage for r in reports])
     accuracies = [r.value_accuracy for r in reports]
     # Coverage is the primary metric (how many fields the system surfaces vs
-    # leaves NULL — what the decomposition/retrieval architecture drives); Value
+    # leaves NULL - what the decomposition/retrieval architecture drives); Value
     # Accuracy is reported alongside as the secondary check that the surfaced
     # values are also correct.
     payload = {

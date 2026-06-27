@@ -1,17 +1,17 @@
-"""NField validation module — field validation and surgical retry.
+"""NField validation module - field validation and surgical retry.
 
 Public surface
 --------------
-* :func:`validate_field` — validate a value against its field's type and constraints.
-* :func:`constraint_check` — return all constraint violations for a value.
-* :func:`classify_failure` — classify the root cause of a field failure.
-* :func:`orchestrate_retry` — run up to 2 rounds of surgical field retry.
-* :func:`surgical_field_retry` — execute one targeted retry API call.
-* :func:`build_retry_prompt` — build the messages list for a retry call.
-* :func:`split_retry_batches` — group failed fields by dependency closure.
-* :func:`handle_missing_fields` — tree backtrack for absent fields.
-* :class:`FailureCause` — enum of the 4 MVP failure causes.
-* :func:`grounding_score` / :func:`is_grounded` / :func:`is_groundable` — score whether
+* :func:`validate_field` - validate a value against its field's type and constraints.
+* :func:`constraint_check` - return all constraint violations for a value.
+* :func:`classify_failure` - classify the root cause of a field failure.
+* :func:`orchestrate_retry` - run up to 2 rounds of surgical field retry.
+* :func:`surgical_field_retry` - execute one targeted retry API call.
+* :func:`build_retry_prompt` - build the messages list for a retry call.
+* :func:`split_retry_batches` - group failed fields by dependency closure.
+* :func:`handle_missing_fields` - tree backtrack for absent fields.
+* :class:`FailureCause` - enum of the 4 MVP failure causes.
+* :func:`grounding_score` / :func:`is_grounded` / :func:`is_groundable` - score whether
   an extracted value is supported by the source text (anti-hallucination).
 """
 

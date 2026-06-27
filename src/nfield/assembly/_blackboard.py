@@ -153,8 +153,8 @@ class Blackboard:
         if state == FieldState.FILLED:
             existing = self._values.get(path)
             if existing == value:
-                return  # Same value from a second leaf — no conflict
-            # Different value from a second leaf — conflict
+                return  # Same value from a second leaf - no conflict
+            # Different value from a second leaf - conflict
             self._conflict_values.setdefault(path, [existing])
             if value not in self._conflict_values[path]:
                 self._conflict_values[path].append(value)
@@ -162,13 +162,13 @@ class Blackboard:
             return
 
         if state == FieldState.CONFLICT:
-            # Already conflicted — accumulate additional values
+            # Already conflicted - accumulate additional values
             if value not in self._conflict_values.get(path, []):
                 self._conflict_values.setdefault(path, []).append(value)
             return
 
         if state == FieldState.NEEDS_REVALIDATION:
-            # Terminal state — no further writes
+            # Terminal state - no further writes
             return
 
         # EMPTY / PENDING / FAILED → FILLED
@@ -199,7 +199,7 @@ class Blackboard:
         state = self._states[path]
 
         if state == FieldState.FILLED:
-            # Dependency changed while this field already has a value —
+            # Dependency changed while this field already has a value -
             # flag for revalidation without overwriting
             self._states[path] = FieldState.NEEDS_REVALIDATION
             return
@@ -369,7 +369,7 @@ class Blackboard:
 
         ``None`` is excluded on purpose: the recovery pass marks tree-backtracked
         "confirmed absent" fields ``FILLED`` with ``None`` (:meth:`write_raw`), but
-        such a field has no value — it was confirmed missing, not extracted. Counting
+        such a field has no value - it was confirmed missing, not extracted. Counting
         it as filled would overstate the extraction rate, so it is omitted here and
         therefore counted as missing by the quality metrics.
 
@@ -482,7 +482,7 @@ class Blackboard:
         """
         if path not in self._states:
             raise AssemblyError(
-                f"Unknown field path {path!r} — "
+                f"Unknown field path {path!r} - "
                 "path must be registered at Blackboard construction",
                 path=path,
             )

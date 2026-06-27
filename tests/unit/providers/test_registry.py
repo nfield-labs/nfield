@@ -1,4 +1,4 @@
-"""Tests for providers._registry — provider factory."""
+"""Tests for providers._registry - provider factory."""
 
 from __future__ import annotations
 

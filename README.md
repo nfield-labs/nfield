@@ -9,14 +9,14 @@
 
 ## The problem
 
-Asking an LLM for one large nested JSON object degrades as the schema grows — the
+Asking an LLM for one large nested JSON object degrades as the schema grows - the
 model spends attention on brackets, commas, and quotes instead of the values, and
 accuracy falls off a cliff on schemas with hundreds of fields. Most structured-output
 tools cap out well before that scale.
 
 NField decomposes the schema into capacity-bounded groups, retrieves only the
 relevant document spans per group, and extracts a flat `path = value` format (SFEP)
-instead of nested JSON — then validates per field, retries failures surgically, and
+instead of nested JSON - then validates per field, retries failures surgically, and
 reassembles valid nested JSON.
 
 ## Install
@@ -46,7 +46,7 @@ result = nfield(
     document_text,
     schema,
     "groq/llama-3.1-8b-instant",
-    context_window=131_072,      # the model's real limits — NField's
+    context_window=131_072,      # the model's real limits - NField's
     max_output_tokens=32_768,    # capacity planning is a function of these
 )
 print(result.data)
@@ -55,7 +55,7 @@ print(result.data)
 The model is a `"provider/model-name"` string (`groq/…` and `openai/…` today).
 Unlike single-call libraries, NField **plans** how to split a wide schema across
 calls, so it needs the model's real `context_window` (C_eff) and
-`max_output_tokens` (M_O). Omit them and a conservative 8192 default applies —
+`max_output_tokens` (M_O). Omit them and a conservative 8192 default applies -
 safe, but it under-fills large models (gpt-4o and llama-3.3-70b are ~128K), so
 pass the real window for full throughput. Pydantic models and dataclasses work as
 schemas too. For many documents, reuse a `NField` (sync) or `AsyncNField` (async)
@@ -77,8 +77,8 @@ nfield extract doc.txt --schema schema.json --model groq/llama-3.1-8b-instant
 
 ## Supported providers
 
-- **Groq** — `from_model("groq/<model>")`, install `nfield[groq]`.
-- **OpenAI-compatible** — `from_model("openai/<model>")`, install `nfield[openai]`. A
+- **Groq** - `from_model("groq/<model>")`, install `nfield[groq]`.
+- **OpenAI-compatible** - `from_model("openai/<model>")`, install `nfield[openai]`. A
   `base_url` retargets the same provider at any compatible endpoint, hosted
   (Together, Fireworks, OpenRouter, DeepSeek, xAI, Mistral, Azure) or local
   (Ollama, vLLM, LM Studio).
@@ -87,7 +87,7 @@ For a reasoning/thinking model (Qwen3, DeepSeek-R1, QwQ), pass
 `ExtractionConfig(reasoning_model=True)` so its thinking is disabled per call and
 does not consume the answer's output budget.
 
-The provider layer is a small Protocol; adding one is a single registry entry —
+The provider layer is a small Protocol; adding one is a single registry entry -
 see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Contributing

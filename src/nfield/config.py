@@ -1,6 +1,6 @@
 """NField extraction configuration.
 
-Exposes ``ExtractionConfig`` — the per-call settings that control chunking
+Exposes ``ExtractionConfig`` - the per-call settings that control chunking
 ratios, retry rounds, model selection, and more.
 """
 
@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 __all__ = ["ExtractionConfig"]
 
 # ---------------------------------------------------------------------------
-# Named constants — never use magic numbers inline
+# Named constants - never use magic numbers inline
 # ---------------------------------------------------------------------------
 
 DEFAULT_CONTEXT_UTILIZATION_RATIO: float = 0.50
@@ -22,14 +22,14 @@ DEFAULT_MAX_RETRY_ROUNDS: int = 2
 DEFAULT_MAX_API_RETRIES: int = 10
 # Max leaf extraction calls in flight at once. Firing every leaf of a round
 # simultaneously overwhelms provider rate limits (429 storms) and, with retries,
-# spirals into far more calls. A bounded concurrency window smooths the burst —
+# spirals into far more calls. A bounded concurrency window smooths the burst -
 # the standard token-bucket / max-concurrency control for batched LLM calls
 # (rate-limiting systems, arXiv:2602.11741; LLM batching guidance). Conservative
 # default for free tiers; raise it on higher-throughput plans.
 DEFAULT_MAX_CONCURRENT_CALLS: int = 4
 # Hard cap on fields per leaf (one API call), enforced as a difficulty-weighted load
 # (see _reliability_load): ~50 easy fields, fewer hard ones. Cramming many fields into
-# one call degrades reliability — instruction-following accuracy falls as the number
+# one call degrades reliability - instruction-following accuracy falls as the number
 # of simultaneous instructions rises (IFScale, arXiv:2507.11538: even frontier models
 # drop to ~68% at 500 instructions, biased toward earlier ones), and relevant content
 # in a long packed context is missed (Lost-in-the-Middle, arXiv:2307.03172). The value
@@ -42,7 +42,7 @@ DEFAULT_THINK_PHASE_BUDGET_MIN: int = 100
 DEFAULT_THINK_PHASE_BUDGET_MAX: int = 150
 DEFAULT_EVIDENCE_SCORE_THRESHOLD: float = 0.3
 # Grounding accept threshold in [0, 1]: 0.5 admits exact (1.0) / all-words (0.85) / fuzzy
-# (0.7) and rejects partial (0.4) / absent (0.0) — the natural cut in the score ladder.
+# (0.7) and rejects partial (0.4) / absent (0.0) - the natural cut in the score ladder.
 DEFAULT_GROUNDING_MIN_SCORE: float = 0.5
 
 
@@ -96,7 +96,7 @@ class ExtractionConfig:
             ``inject_dependencies`` is also ``True``, if a retry round changes a
             value that other fields depend on, those dependents are flagged
             ``NEEDS_REVALIDATION`` (CADTR). It is a no-op without
-            ``inject_dependencies`` — a dependent is only stale if it consumed
+            ``inject_dependencies`` - a dependent is only stale if it consumed
             the upstream value via injection. Default ``False``.
         knowledge_fallback: When ``True``, fields the document does not state may
             be filled from the model's own knowledge instead of left ``NULL``. Best
@@ -106,7 +106,7 @@ class ExtractionConfig:
             units. A leaf grows while ``Σ (1 + λ·D(f)) <= max_fields_per_call``,
             where ``D(f)`` is each field's difficulty: a trivial field costs ~1
             unit, a hard one more. So a leaf holds up to ~``max_fields_per_call``
-            easy fields, or fewer hard ones — bounding by reliability, not raw
+            easy fields, or fewer hard ones - bounding by reliability, not raw
             count or token budget alone (a large window cannot cram hundreds of
             fields into one unreliable call). Default 50 (the production
             reliability heuristic); forces K = O(load / budget) small leaves.
@@ -178,7 +178,7 @@ class ExtractionConfig:
     # rather than reporting them unresolved.
     recover_conflicts: bool = True
     # Give fields whose Stage 4 call exhausted its transient budget (429 / timeout) one
-    # more try in recovery — the rolling-window rate limit has refilled by then. Set False
+    # more try in recovery - the rolling-window rate limit has refilled by then. Set False
     # to leave them unrecovered (no extra load on a still-throttled API).
     recover_call_failed: bool = True
     # Reject a provably-unsatisfiable schema (e.g. minimum > maximum, empty enum) before

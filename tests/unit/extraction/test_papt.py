@@ -1,4 +1,4 @@
-"""Unit tests for extraction._papt — PAPT template selection."""
+"""Unit tests for extraction._papt - PAPT template selection."""
 
 from __future__ import annotations
 
@@ -35,7 +35,7 @@ def make_field(
 
 
 # ---------------------------------------------------------------------------
-# select_template — budget tier selection
+# select_template - budget tier selection
 # ---------------------------------------------------------------------------
 
 
@@ -76,7 +76,7 @@ class TestSelectTemplate:
 
 
 # ---------------------------------------------------------------------------
-# classify_cluster — cluster type detection
+# classify_cluster - cluster type detection
 # ---------------------------------------------------------------------------
 
 
@@ -124,7 +124,7 @@ class TestClassifyCluster:
 
 
 # ---------------------------------------------------------------------------
-# describe_field — field description at each tier
+# describe_field - field description at each tier
 # ---------------------------------------------------------------------------
 
 
@@ -135,7 +135,7 @@ class TestDescribeField:
         assert describe_field(f, TemplateType.CONCISE) == "age (integer)"
 
     def test_description_always_sent_even_in_concise(self):
-        # Description is never dropped — the model needs it to understand the field.
+        # Description is never dropped - the model needs it to understand the field.
         f = Field(
             path="age",
             type="integer",
@@ -157,7 +157,7 @@ class TestDescribeField:
         )
         for tier in (TemplateType.CONCISE, TemplateType.STANDARD, TemplateType.VERBOSE):
             result = describe_field(f, tier)
-            assert result == "year_first_elected (integer): Year joined board — >= 1950"
+            assert result == "year_first_elected (integer): Year joined board - >= 1950"
 
     def test_standard_no_description_falls_back(self):
         f = make_field("age", "integer")

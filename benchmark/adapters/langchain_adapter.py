@@ -1,4 +1,4 @@
-"""LangChain baseline — ``.with_structured_output()`` over the same model.
+"""LangChain baseline - ``.with_structured_output()`` over the same model.
 
 LangChain wraps a single model call with its structured-output runnable, which
 accepts a JSON Schema directly. Like the other Track-A baselines it sends the

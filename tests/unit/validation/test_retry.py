@@ -1,4 +1,4 @@
-"""Unit tests for validation._retry — surgical field retry (SFR)."""
+"""Unit tests for validation._retry - surgical field retry (SFR)."""
 
 from __future__ import annotations
 
@@ -80,7 +80,7 @@ class TestFailureCause:
 
 
 # ---------------------------------------------------------------------------
-# classify_failure — 4 MVP causes
+# classify_failure - 4 MVP causes
 # ---------------------------------------------------------------------------
 
 
@@ -97,7 +97,7 @@ class TestClassifyFailure:
 
     def test_format_cause_on_parse_error(self):
         f = make_field("x")
-        cause = classify_failure(f, None, "sfep parse error — malformed line")
+        cause = classify_failure(f, None, "sfep parse error - malformed line")
         assert cause == FailureCause.FORMAT
 
     def test_dependency_changed_cause(self):
@@ -107,7 +107,7 @@ class TestClassifyFailure:
 
     def test_constraint_violation_returns_type_constraint(self):
         f = make_field("score", "number")
-        cause = classify_failure(f, 150, "maximum constraint violated — 150 > 100")
+        cause = classify_failure(f, 150, "maximum constraint violated - 150 > 100")
         assert cause == FailureCause.TYPE_CONSTRAINT
 
 
@@ -268,7 +268,7 @@ class TestOrchestrateRetry:
         provider.complete = AsyncMock(side_effect=RuntimeError("API error"))
         config = make_config(max_retry_rounds=1)
 
-        # Should not raise — returns empty dict for failed provider call
+        # Should not raise - returns empty dict for failed provider call
         result = await orchestrate_retry(
             [f],
             {"y": "missing"},

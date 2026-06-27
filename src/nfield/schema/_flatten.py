@@ -31,7 +31,7 @@ MAX_SCHEMA_DEPTH: int = 32
 # D=32 ⇒ T ≈ 2^32 ≈ 4.3e9 expansions ⇒ OOM/hang).
 #
 # This constant bounds T directly: the loop raises once pops > C, so work is O(C)
-# for any (b, D); and since |fields| ≤ pops, memory is O(T) ≤ O(C) too — one bound
+# for any (b, D); and since |fields| ≤ pops, memory is O(T) ≤ O(C) too - one bound
 # covers both. Choose C by the constraint
 #     N_legit ≤ C ≪ b^D,
 # where N_legit = node count of the largest schema to admit (a flat schema of F
@@ -73,12 +73,12 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
 
     Handles:
     - $ref with cycle detection (tracks visited ref strings)
-    - anyOf/oneOf — takes first non-null option
-    - prefixItems — creates indexed paths path[0], path[1], ...
-    - allOf — merges all sub-schemas' properties
-    - patternProperties — creates wildcard path with .* suffix
-    - items (homogeneous arrays) — creates path[] path
-    - additionalProperties (dict schema) — creates wildcard path with .* suffix
+    - anyOf/oneOf - takes first non-null option
+    - prefixItems - creates indexed paths path[0], path[1], ...
+    - allOf - merges all sub-schemas' properties
+    - patternProperties - creates wildcard path with .* suffix
+    - items (homogeneous arrays) - creates path[] path
+    - additionalProperties (dict schema) - creates wildcard path with .* suffix
 
     Args:
         schema: A valid JSON Schema dict. Top-level must be a dict.
@@ -115,7 +115,7 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
     seen_paths: set[str] = set()
 
     # Stack items: (node, path, parent_path, depth, required_set, ref_chain).
-    # ref_chain holds the $refs already expanded on the CURRENT branch — this
+    # ref_chain holds the $refs already expanded on the CURRENT branch - this
     # detects cycles (a ref pointing back into its own ancestry) without
     # suppressing diamonds (the same $def reused by two sibling fields, e.g. a
     # Pydantic model with two Address fields). A global "seen refs" set would
@@ -164,7 +164,7 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
             stack.append((merged, path, parent_path, depth, required_set, ref_chain | {ref_str}))
             continue
 
-        # ── anyOf / oneOf — pick first non-null option ───────────────────
+        # ── anyOf / oneOf - pick first non-null option ───────────────────
         for combo_key in ("anyOf", "oneOf"):
             if combo_key in node:
                 options: list[dict[str, Any]] = node[combo_key]
@@ -214,7 +214,7 @@ def _process_node(
     seen_paths: set[str],
 ) -> None:
     """Process one schema node and push children onto the stack or emit a Field."""
-    # ── allOf — merge all sub-schema properties ───────────────────────────
+    # ── allOf - merge all sub-schema properties ───────────────────────────
     if "allOf" in node:
         merged_props: dict[str, Any] = {}
         merged_req: list[str] = list(node.get("required", []))
@@ -233,7 +233,7 @@ def _process_node(
 
     node_type = _determine_type(node)
 
-    # ── object — push children ────────────────────────────────────────────
+    # ── object - push children ────────────────────────────────────────────
     if node_type == "object" or "properties" in node:
         child_required: frozenset[str] = frozenset(node.get("required", []))
         properties: dict[str, Any] = node.get("properties", {})
@@ -310,7 +310,7 @@ def _process_node(
             stack.append((items_node, array_path, path, depth + 1, frozenset(), ref_chain))
             return
 
-        # Array with no items/prefixItems — emit array leaf
+        # Array with no items/prefixItems - emit array leaf
         if path and path not in seen_paths:
             seen_paths.add(path)
             field_name = path.rsplit(".", 1)[-1].rstrip("[]")

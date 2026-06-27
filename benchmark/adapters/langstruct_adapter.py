@@ -1,10 +1,10 @@
-"""LangStruct competitor — DSPy-based extraction over the same Groq model.
+"""LangStruct competitor - DSPy-based extraction over the same Groq model.
 
 LangStruct (https://langstruct.dev) takes a Pydantic schema and runs its own
 DSPy/LiteLLM chunk-and-merge extraction, so it accepts the shared model id
 ("groq/...") directly. It extracts reliably for flat schemas but collapses to an
-empty result on a deeply-nested wide schema, so — to compare on the *same* target
-fields, not on schema shape — we flatten the JSON Schema's leaves to a flat
+empty result on a deeply-nested wide schema, so - to compare on the *same* target
+fields, not on schema shape - we flatten the JSON Schema's leaves to a flat
 Pydantic model (one typed field per leaf, keyed by its full path) and re-nest the
 extracted values back into the schema shape for scoring.
 """
@@ -102,7 +102,7 @@ class LangStructAdapter:
 
         started = time.perf_counter()
         try:
-            # Fit the document to the shared input window before LangStruct chunks it —
+            # Fit the document to the shared input window before LangStruct chunks it -
             # the same budget rule every competitor adapter applies (_common).
             fitted = _common._fit_document(document, context_window, max_output_tokens)
             leaves = _leaf_paths(schema)

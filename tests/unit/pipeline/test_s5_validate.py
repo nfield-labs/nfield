@@ -97,7 +97,7 @@ class TestRunStage5:
 
     @pytest.mark.asyncio
     async def test_call_failed_fields_are_not_sfr_retried(self):
-        # Fix B: a transient call/API failure (429) must not be re-fired via SFR —
+        # Fix B: a transient call/API failure (429) must not be re-fired via SFR -
         # that retry-storm is what amplifies a 429 into a coverage collapse.
         from nfield.assembly._blackboard import FieldState
 

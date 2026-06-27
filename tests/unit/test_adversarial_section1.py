@@ -108,7 +108,7 @@ class TestComputeTauAdversarial:
         The architecture: IF type==array AND maxItems: tau = item_tau * maxItems
         Current code: always uses expected_array_size parameter.
 
-        This test documents the gap — it will FAIL if the bug is fixed.
+        This test documents the gap - it will FAIL if the bug is fixed.
         Marked xfail to track when it's resolved.
         """
         f = _make_field(
@@ -124,13 +124,13 @@ class TestComputeTauAdversarial:
         assert tau_with_maxitems >= 1.0  # always passes
         # Document expected fix value:
         expected_if_fixed = 1.0 * 10  # boolean_tau * maxItems
-        # If this assertion fails, the bug was fixed — update and celebrate
+        # If this assertion fails, the bug was fixed - update and celebrate
         if tau_with_maxitems == expected_if_fixed:
             pass  # bug is fixed, test passes
         else:
             # Current behavior: maxItems not used
             assert tau_with_maxitems != expected_if_fixed, (
-                "maxItems now respected — update this test to verify correctness"
+                "maxItems now respected - update this test to verify correctness"
             )
 
     # Negative chars_per_token guard
@@ -158,7 +158,7 @@ class TestComputeTauAdversarial:
         assert math.isfinite(tau)
         assert math.isfinite(var_tau)
 
-    # Array variance formula — the architecture compound term missing
+    # Array variance formula - the architecture compound term missing
     def test_array_variance_compound_term_documented(self) -> None:
         """The architecture formula: var = item_var*n + item_tau^2*VAR_ARRAY_SIZE.
         Current code: var = item_var * expected_array_size (missing compound term).
@@ -173,7 +173,7 @@ class TestComputeTauAdversarial:
         # boolean: item_tau=1.0, item_var=0.0
         # Code: var = 0.0 * 5 = 0.0
         # The architecture: var = 0.0 * 5 + 1.0^2 * VAR_ARRAY_SIZE (> 0)
-        # Current result is 0.0 — documents the gap
+        # Current result is 0.0 - documents the gap
         assert var_tau == 0.0  # current behavior
         # NOTE: Fix would make this non-zero
 
@@ -277,7 +277,7 @@ class TestFlattenAdversarial:
         fields = flatten_schema(schema)
         paths = {f.path for f in fields}
         assert "valid" in paths
-        # broken ref may or may not produce a field — no crash is the requirement
+        # broken ref may or may not produce a field - no crash is the requirement
         # (we only care that it doesn't crash, not what gets produced)
 
     # Large schema (performance sanity)
@@ -314,7 +314,7 @@ class TestFlattenAdversarial:
         fields = flatten_schema(schema)
         assert fields[0].type == "string"
 
-    # Hypothesis property test — flatten_schema never crashes
+    # Hypothesis property test - flatten_schema never crashes
     @given(
         st.dictionaries(
             st.text(
@@ -342,7 +342,7 @@ class TestFlattenAdversarial:
             # SchemaError is allowed (e.g. depth exceeded)
             pass
 
-    # Hypothesis — all paths are non-empty strings
+    # Hypothesis - all paths are non-empty strings
     @given(
         st.dictionaries(
             st.text(
@@ -390,7 +390,7 @@ class TestDifficultyAdversarial:
         # (Current: (2/10)*0.2 = 0.04; the architecture: (1/2)*0.2 = 0.1)
         assert d > 0.0  # has some dep contribution
 
-    # D_dep O(N²) exposure — large dep_dag
+    # D_dep O(N²) exposure - large dep_dag
     def test_d_dep_large_dep_dag_completes(self) -> None:
         """_compute_d_dep scans all dep_dag values for out-degree.
         For N=500 fields all depending on one field, this is O(N).
@@ -399,7 +399,7 @@ class TestDifficultyAdversarial:
         center = "hub_field"
         dep_dag = {f"field_{i}": {center} for i in range(500)}
         f = _make_field("string", path=center)
-        # This is O(N) for the single center field — documents the pattern
+        # This is O(N) for the single center field - documents the pattern
         d = compute_difficulty(f, dep_dag)
         assert 0.0 <= d <= 1.0
 
@@ -415,17 +415,17 @@ class TestDifficultyAdversarial:
         total = _D_WEIGHT_TYPE + _D_WEIGHT_CONSTRAINT + _D_WEIGHT_DEP
         assert abs(total - 1.0) < 1e-9, f"Weights sum to {total}, expected 1.0"
 
-    # D_type values — document gap with the architecture
+    # D_type values - document gap with the architecture
     def test_d_type_boolean_value_documented(self) -> None:
         """Code has boolean D_type=0.05; the architecture example calibration shows 0.02.
         Test documents current value to detect drift.
         """
         from nfield.schema._difficulty import _D_TYPE
 
-        # Current code value — if this changes, the test will fail
+        # Current code value - if this changes, the test will fail
         assert _D_TYPE["boolean"] == 0.05
         # The architecture DeepJSONEval Table 3 example: 1 - 0.98 = 0.02
-        # Flagged as calibration gap — not a blocking bug
+        # Flagged as calibration gap - not a blocking bug
 
     # difficulty for boolean with no deps = just D_type * weight
     def test_boolean_no_constraints_no_deps_exact_formula(self) -> None:
@@ -436,7 +436,7 @@ class TestDifficultyAdversarial:
 
     # string with many constraints stays clamped at 1.0
     def test_many_constraints_clamped_at_1(self) -> None:
-        """Multiple heavy constraints can exceed 1.0 raw — must be clamped."""
+        """Multiple heavy constraints can exceed 1.0 raw - must be clamped."""
         constraints = {
             "pattern": r"^\d+$",
             "format": "date",

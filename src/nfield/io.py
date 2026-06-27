@@ -2,7 +2,7 @@
 
 The library API takes a document ``str`` and a schema ``dict``; these helpers do
 the file reading so callers do not hand-roll it (the same step the CLI does). Input
-loading is text/JSON only — no PDF/DOCX/CSV parsing, which stays the caller's job —
+loading is text/JSON only - no PDF/DOCX/CSV parsing, which stays the caller's job -
 keeping the "text in, structured out" boundary. Results are persisted as JSON Lines
 (one result per line), the de-facto format for a stream of records.
 """

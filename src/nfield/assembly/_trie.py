@@ -1,4 +1,4 @@
-"""Radix Trie Assembler — flat key=value pairs to nested JSON.
+"""Radix Trie Assembler - flat key=value pairs to nested JSON.
 
 Implements the inverse of the SFEP Bijection (Theorem 1): given a flat dict
 of dot-notation paths and typed Python values, reconstructs the original
@@ -19,7 +19,7 @@ deeper than ``_MAX_PATH_DEPTH`` segments or carrying an array index above
 exhaustion) and a path like ``a.a.a…`` (thousands deep) would overflow the
 recursion stack. Both now raise :class:`AssemblyError` instead.
 
-Invariant (Theorem 1 — SFEP Bijection)
+Invariant (Theorem 1 - SFEP Bijection)
 ---------------------------------------
 ``assemble_json(parse_sfep(sfep_text)) == original_json``
 
@@ -66,7 +66,7 @@ _RE_BRACKET_INDEX: re.Pattern[str] = re.compile(r"\[(\d*)\]")
 # Resource bounds on untrusted (LLM-produced) paths. An array index drives list
 # growth (``array.append`` per slot) and path depth drives recursion, so both must
 # be capped or a crafted path can exhaust memory or the stack. The limits are far
-# above any real schema — they only fire on adversarial input, where they raise
+# above any real schema - they only fire on adversarial input, where they raise
 # AssemblyError instead of crashing the process.
 #
 # _MAX_ARRAY_INDEX: a list grown to index N costs ~N*8 bytes of pointers, so the cap
@@ -144,7 +144,7 @@ def parse_path_segments(path: str) -> list[str | int]:
         segments.append(key)
 
         # Append each bracket as an integer index. Empty brackets ("[]",
-        # homogeneous array) map to index 0 — a single representative element.
+        # homogeneous array) map to index 0 - a single representative element.
         for idx_match in _RE_BRACKET_INDEX.finditer(index_str):
             raw = idx_match.group(1)
             idx = int(raw) if raw else 0
@@ -260,7 +260,7 @@ class RadixTrie:
             )
 
         if not remaining:
-            # Leaf node — store the value
+            # Leaf node - store the value
             node[current_seg] = value
             return
 

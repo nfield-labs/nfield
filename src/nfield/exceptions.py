@@ -7,11 +7,11 @@ having the option to handle individual error kinds precisely.
 Hierarchy
 ---------
 NFieldError
-├── SchemaError        — invalid or unsupported JSON Schema
-├── ProviderError      — LLM provider call failed
-├── ExtractionError    — extraction pipeline failure
-├── ValidationError    — a field value failed post-extraction validation
-└── AssemblyError      — final assembly / serialization failure
+├── SchemaError        - invalid or unsupported JSON Schema
+├── ProviderError      - LLM provider call failed
+├── ExtractionError    - extraction pipeline failure
+├── ValidationError    - a field value failed post-extraction validation
+└── AssemblyError      - final assembly / serialization failure
 """
 
 from __future__ import annotations
@@ -91,7 +91,7 @@ class ProviderError(NFieldError):
         message: Human-readable description of the error.
         status_code: HTTP status code returned by the provider, if applicable.
         retryable: Explicit transient/permanent override. Providers set this for
-            errors that carry no HTTP status — chiefly timeouts and connection
+            errors that carry no HTTP status - chiefly timeouts and connection
             resets, which are transient but have ``status_code=None``. Left as
             ``None`` (no override), retryability is inferred from ``status_code``.
         retry_after: Seconds the server asked the caller to wait (the ``Retry-After``

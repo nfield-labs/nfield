@@ -1,12 +1,12 @@
-"""Source grounding — does an extracted value actually appear in the document?
+"""Source grounding - does an extracted value actually appear in the document?
 
 Type/constraint validation (``_type_check``) checks a value's shape, not its truth: a
-well-typed, in-range value can still be invented. This adds that axis — a **grounding
+well-typed, in-range value can still be invented. This adds that axis - a **grounding
 score** in ``[0, 1]`` for how well the source text supports a value. Two pure tiers:
 
-* Tier 1 — deterministic ladder: exact substring → all word-tokens present → partial.
-* Tier 2 — fuzzy LCS (borderline band): ``difflib`` matching blocks gated by coverage
-  AND density (enough of the value, matched tightly, not scattered) — the standard
+* Tier 1 - deterministic ladder: exact substring → all word-tokens present → partial.
+* Tier 2 - fuzzy LCS (borderline band): ``difflib`` matching blocks gated by coverage
+  AND density (enough of the value, matched tightly, not scattered) - the standard
   span-grounding accept rule, scoring *support* rather than emitting a span.
 
 Type-aware: only string/number/integer/enum are grounded. Booleans/null/structural types
@@ -38,7 +38,7 @@ __all__ = [
 
 # Types whose extracted value is expected to appear (near-)verbatim in the source, so a
 # text search is a meaningful support signal. Booleans/null/object/array are inferred or
-# structural — grounding them would penalise correct inference — and are skipped.
+# structural - grounding them would penalise correct inference - and are skipped.
 GROUNDABLE_TYPES: frozenset[str] = frozenset({"string", "number", "integer", "enum"})
 
 # Score ladder. A value is "grounded" when its score clears the caller's threshold
@@ -47,10 +47,10 @@ _SCORE_EXACT: float = 1.0  # value is a verbatim substring of the text
 _SCORE_WORDS: float = 0.85  # every word token of the value is present in the text
 _SCORE_FUZZY: float = 0.7  # LCS token coverage clears the fuzzy threshold
 _SCORE_PARTIAL: float = 0.4  # some, but not enough, of the value is present
-_SCORE_NONE: float = 0.0  # no meaningful overlap — likely hallucinated
+_SCORE_NONE: float = 0.0  # no meaningful overlap - likely hallucinated
 
 # Tier-2 two-gate accept rule (LCS-alignment defaults). Coverage: fraction of the value's
-# tokens that must align, in order. Density: matched / source-span length — rejects a
+# tokens that must align, in order. Density: matched / source-span length - rejects a
 # match whose tokens are scattered across noise (high coverage but spread thin).
 _FUZZY_COVERAGE_THRESHOLD: float = 0.75
 _FUZZY_MIN_DENSITY: float = 1 / 3
@@ -127,7 +127,7 @@ def grounding_score(value: Any, text: str, field_type: str) -> float:
         return _SCORE_NONE
     text_lower = text.lower()
 
-    # Tier 1a — exact substring of any candidate rendering of the value.
+    # Tier 1a - exact substring of any candidate rendering of the value.
     for candidate in _value_candidates(value, field_type):
         if candidate and candidate.lower() in text_lower:
             return _SCORE_EXACT
@@ -138,16 +138,16 @@ def grounding_score(value: Any, text: str, field_type: str) -> float:
     text_tokens = _tokens(text)
     text_token_set = set(text_tokens)
 
-    # Tier 1b — every word token of the value is present somewhere in the text.
+    # Tier 1b - every word token of the value is present somewhere in the text.
     if all(tok in text_token_set for tok in value_tokens):
         return _SCORE_WORDS
 
-    # Tier 2 — order-preserving fuzzy match (coverage + density gates) for the
+    # Tier 2 - order-preserving fuzzy match (coverage + density gates) for the
     # borderline band where not every token is present.
     if _fuzzy_accept(value_tokens, text_tokens):
         return _SCORE_FUZZY
 
-    # Tier 1c — partial: any significant word token, or a 4-char slice, occurs in text.
+    # Tier 1c - partial: any significant word token, or a 4-char slice, occurs in text.
     if _has_partial_support(value_tokens, str(value), text_lower, text_token_set):
         return _SCORE_PARTIAL
 
@@ -230,9 +230,9 @@ def _fuzzy_accept(value_tokens: list[str], text_tokens: list[str]) -> bool:
     blocks of :class:`difflib.SequenceMatcher` stand in for the LCS (a standard, faster
     approximation than the full O(n·m²) DP), then **both** gates must hold:
 
-    * **coverage** — ``matched >= ceil(len(value) * threshold)``: enough of the value
+    * **coverage** - ``matched >= ceil(len(value) * threshold)``: enough of the value
       was found;
-    * **density** — ``matched / span_len >= min_density``: the matched tokens are tight
+    * **density** - ``matched / span_len >= min_density``: the matched tokens are tight
       in the source, not scattered across noise (``span_len`` spans the first to the last
       matched source token).
 
@@ -268,8 +268,8 @@ def _has_partial_support(
 ) -> bool:
     """Return whether the value has *some* presence in the text (partial tier).
 
-    True when a significant (length-gated) value token appears in the text, or — for a
-    value with no significant word — when a short character slice of it occurs in the
+    True when a significant (length-gated) value token appears in the text, or - for a
+    value with no significant word - when a short character slice of it occurs in the
     text. This separates "a fragment is there" from "nothing is there".
 
     Args:

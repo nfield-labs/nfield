@@ -1,7 +1,7 @@
 """Shared coverage-set logic for Stage 2C packing and Stage 3 excerpt.
 
 A leaf's coverage set is its must-have evidence: each group's single best segment
-plus each typed field's own best segment (Set-Union Bin Packing — groups in one
+plus each typed field's own best segment (Set-Union Bin Packing - groups in one
 leaf share the document, so the cost is the deduplicated union; Nemhauser-Wolsey-
 Fisher 1978). Stage 2C costs this set to decide when to split a leaf; Stage 3 builds
 the excerpt from it. Defining it once keeps the two stages consistent.
@@ -36,7 +36,7 @@ def coverage_segment_ids(
 
     Args:
         groups: The groups in (or being packed into) the leaf.
-        leaf_field_paths: Paths of the fields actually extracted in this leaf —
+        leaf_field_paths: Paths of the fields actually extracted in this leaf -
             scopes coverage so a split leaf never reserves a sibling's evidence.
 
     Returns:

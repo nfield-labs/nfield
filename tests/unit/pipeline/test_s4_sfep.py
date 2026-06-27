@@ -179,6 +179,6 @@ class TestEmergencySplit:
         state = _build_state()
         provider = _PlainErrorProvider()
         state = await run_stage_4(state, provider)
-        # Only the single full-leaf call was made — no split retries
+        # Only the single full-leaf call was made - no split retries
         assert provider.call_count == 1
         assert len(state.blackboard.get_failed()) >= 1

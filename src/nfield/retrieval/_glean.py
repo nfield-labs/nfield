@@ -1,10 +1,10 @@
-"""GLEAN — schema-typed fusion retriever (Stage 2.5).
+"""GLEAN - schema-typed fusion retriever (Stage 2.5).
 
 Ranks document segments for a group of typed fields by combining two signals:
 
 - Lexical: the BMX score (:mod:`_bmx`).
 - Morphological (:mod:`_morphology`): whether a segment carries the surface form a
-  field's value takes — a literal enum value, a ``format``/``pattern`` match, or a
+  field's value takes - a literal enum value, a ``format``/``pattern`` match, or a
   field's label positioned near a token of its expected type (LMC,
   lexical-morphological co-location, scored ``exp(-gap/sigma)``).
 
@@ -186,11 +186,11 @@ def field_best_segments(
 
     Used by Stage 3 coverage to additionally guarantee each *typed* field its own
     evidence on top of the group's single best segment. Only fields with a
-    morphological signal (enum / format / number / date / boolean) are scored —
+    morphological signal (enum / format / number / date / boolean) are scored -
     plain-string fields are left to per-group coverage, since reserving a chunk per
     string field merely fragments the excerpt budget without adding signal. Each
     field is scored over its group's already-retrieved *candidates* only (bounded),
-    reading the existing morphology index — no BMX recompute.
+    reading the existing morphology index - no BMX recompute.
 
     Per-field score is label-term overlap plus the type-weighted morphological
     evidence ``tau_d * M(D, f)``. A field with no evidence in *candidates* is

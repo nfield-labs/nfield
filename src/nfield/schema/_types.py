@@ -82,7 +82,7 @@ class Field:
 
     Attributes:
         path: Dot-notation path, e.g. "address.city".
-        type: JSON Schema type string — "string", "integer", "number",
+        type: JSON Schema type string - "string", "integer", "number",
             "boolean", "array", "object", "null", or "enum".
         constraints: JSON Schema constraint keywords present on this node
             (maxLength, minimum, enum, pattern, etc.).

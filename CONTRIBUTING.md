@@ -24,7 +24,7 @@ All four must pass before a PR is merged. Integration tests run only when
 - `src/` layout; every public name is re-exported lazily from a facade `__init__.py`
   (no implementation in `__init__.py`).
 - Modern typing (`str | None`, `list[int]`); `mypy --strict` clean, no `# type: ignore`.
-- Optional parameters are keyword-only. No magic numbers — name every constant.
+- Optional parameters are keyword-only. No magic numbers - name every constant.
 - Every raised error inherits from `NFieldError`.
 - Comments cite published work or name algorithms; they do not reference internal
   design docs.

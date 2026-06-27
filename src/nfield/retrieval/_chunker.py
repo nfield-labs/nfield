@@ -328,7 +328,7 @@ def _find_split_point(text: str, start: int, target_end: int) -> int:
     Considers every separator and splits just after the occurrence whose end is
     nearest ``target_end`` (the largest valid chunk that still ends on a boundary),
     keeping the separator with the left chunk so no character is lost. Taking the
-    boundary closest to the budget — rather than the highest-priority separator —
+    boundary closest to the budget - rather than the highest-priority separator -
     avoids tiny chunks when a paragraph/line break happens to fall early in the
     window (common in hard-wrapped text). Falls back to ``target_end`` (a hard
     split) when no boundary is found.

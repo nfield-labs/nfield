@@ -1,10 +1,10 @@
-"""Instructor baseline — Pydantic-validated structured output with a retry loop.
+"""Instructor baseline - Pydantic-validated structured output with a retry loop.
 
 Instructor's mechanism is a single call whose response is validated against a
 Pydantic model, re-asking on validation failure. To run it against an arbitrary
 JSON Schema we build a permissive Pydantic model from the schema (every field
 optional, so partial extraction is not rejected outright). The model is still a
-single whole-schema call — no decomposition — which is the point of comparison.
+single whole-schema call - no decomposition - which is the point of comparison.
 """
 
 from __future__ import annotations
