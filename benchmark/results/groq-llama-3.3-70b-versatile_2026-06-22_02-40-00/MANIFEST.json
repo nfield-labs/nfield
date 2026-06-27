@@ -1,0 +1,49 @@
+{
+  "model": "groq/llama-3.3-70b-versatile",
+  "date": "2026-06-22",
+  "temperature": 0,
+  "library_version": "0.1.dev100+g4c049cd2e.d20260622",
+  "python_version": "3.12.0",
+  "runs": [
+    {
+      "method": "nfield",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-22T02:41:35+00:00"
+    },
+    {
+      "method": "langstruct",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-22T02:57:24+00:00"
+    },
+    {
+      "method": "langextract",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-22T03:00:02+00:00"
+    },
+    {
+      "method": "contextgem",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-06-22T03:00:09+00:00"
+    }
+  ]
+}

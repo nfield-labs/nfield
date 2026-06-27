@@ -1,0 +1,1634 @@
+[
+  {
+    "method": "nfield",
+    "fixture": "factbook_multi",
+    "budget": "constrained",
+    "seed": 0,
+    "fields_total": 1045,
+    "fields_extracted": 1038,
+    "coverage": 0.9933014354066986,
+    "k": 31,
+    "k_min": 29,
+    "optimality_gap": 0.06896551724137931,
+    "call_failed": 0,
+    "elapsed_seconds": 80.055,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "usa": {
+        "introduction": {
+          "background": "Thirteen of Britain's American colonies broke with the mother country in 1776 and were recognized as the new nation of the United States of America following the Treaty of Paris in 1783. During the 19th and 20th centuries, 37 new states were added as the nation expanded across the North American continent and acquired a number of overseas possessions. Two of the most traumatic experiences in the nation's history were the Civil War (1861-65), in which a northern Union of states defeated a secessionist Confederacy of 11 southern slave states, and the Great Depression of the 1930s, an economic downturn during which about a quarter of the labor force lost its jobs. Buoyed by victories in World Wars I and II and the end of the Cold War in 1991, the US remains the world's most powerful nation state. Since the end of World War II, the economy has achieved relatively steady growth, low unemployment, and rapid advances in technology."
+        },
+        "geography": {
+          "location": "North America, bordering both the North Atlantic Ocean and the North Pacific Ocean, between Canada and Mexico",
+          "geographic_coordinates": "38 00 N, 97 00 W",
+          "map_references": "North America",
+          "area": {
+            "total": "9,833,517 sq km",
+            "land": "9,147,593 sq km",
+            "water": "685,924 sq km"
+          },
+          "area_comparative": "about half the size of Russia; about three-tenths the size of Africa; about half the size of South America (or slightly larger than Brazil); slightly larger than China; more than twice the size of the European Union",
+          "land_boundaries": {
+            "total": "total: 12,002 km",
+            "border_countries": "Canada 8,891 km (including 2,475 km with Alaska); Mexico 3,111 km"
+          },
+          "coastline": "19,924 km",
+          "maritime_claims": {
+            "territorial_sea": "territorial sea: 12 nm",
+            "contiguous_zone": "contiguous zone: 24 nm",
+            "exclusive_economic_zone": "exclusive economic zone: 200 nm",
+            "continental_shelf": "continental shelf: not specified"
+          },
+          "climate": "mostly temperate, but tropical in Hawaii and Florida, arctic in Alaska, semiarid in the great plains west of the Mississippi River, and arid in the Great Basin of the southwest; low winter temperatures in the northwest are ameliorated occasionally in January and February by warm chinook winds from the eastern slopes of the Rocky Mountains",
+          "terrain": "vast central plain, mountains in west, hills and low mountains in east; rugged mountains and broad river valleys in Alaska; rugged, volcanic topography in Hawaii",
+          "elevation": {
+            "highest_point": "Mount McKinley 6,190 m (highest point in North America)",
+            "lowest_point": "Death Valley (lowest point in North America) -86 m",
+            "mean_elevation": "760 m"
+          },
+          "natural_resources": "coal, copper, lead, molybdenum, phosphates, rare earth elements, uranium, bauxite, gold, iron, mercury, nickel, potash, silver, tungsten, zinc, petroleum, natural gas, timber, arable land",
+          "land_use": {
+            "agricultural_land": "46.1% (2023 est.)",
+            "agricultural_land_arable_land": "16.6% (2023 est.)",
+            "agricultural_land_permanent_crops": "0.3% (2023 est.)",
+            "agricultural_land_permanent_pasture": "29.2% (2023 est.)",
+            "forest": "33.8% (2023 est.)",
+            "other": "18.7% (2023 est.)"
+          },
+          "irrigated_land": "234,782 sq km (2017)",
+          "major_lakes_area_sq_km": {
+            "fresh_water_lake_s": "Great Lakes (shared with Canada) - Lake Superior, Lake Michigan, Lake Huron, Lake Erie, Lake Ontario",
+            "salt_water_lake_s": "Great Salt Lake"
+          },
+          "major_watersheds_area_sq_km": {
+            "atlantic_ocean_drainage": "(Gulf of America) Mississippi* (3,202,185 sq km); Rio Grande (607,965 sq km); (Gulf of Saint Lawrence) Saint Lawrence* (1,049,636 sq km total, US only 505,000 sq km)",
+            "pacific_ocean_drainage": "Yukon* (847,620 sq km, US only 23,820 sq km); Colorado (703,148 sq km); Columbia* (657,501 sq km, US only 554,501 sq km)"
+          },
+          "population_distribution": "large urban clusters are spread throughout the eastern part of the country, with major cities along the Atlantic coast and a string of cities running along the Great Lakes from the US-Canada border in the north to the US-Mexico border in the south; significant urban populations also exist in the western states of California and Arizona",
+          "natural_hazards": "tsunamis, hurricanes, earthquake activity around Pacific Basin, volcanic eruptions, tornadoes, forest fires, flooding, landslides",
+          "geography_note": "world's third-largest country by size (after Russia and Canada) and by population (after China and India); Denali (formerly known as Mount McKinley) is the highest peak in North America and Death Valley the lowest point on the continent"
+        },
+        "people_and_society": {
+          "population": {
+            "total": "total: 338,016,259 (2025 est.)",
+            "male": "male: 167,543,554",
+            "female": "female: 170,472,705"
+          },
+          "nationality": {
+            "noun": "American(s)",
+            "adjective": "American"
+          },
+          "ethnic_groups": "White 61.6%, Black or African American 12.4%, Asian 6%, Indigenous and Alaska native 1.1%, Native Hawaiian and Other Pacific Islander 0.2%, other 8.4%, two or more races 10.2% (2020 est.)",
+          "languages": "English only (official) 78.2%, Spanish 13.4%, Chinese 1.1%, other 7.3% (2017 est.)",
+          "religions": "Protestant 46.5%, Roman Catholic 20.8%, Jewish 1.9%, Church of Jesus Christ 1.6%, other Christian 0.9%, Muslim 0.9%, Jehovah's Witness 0.8%, Buddhist 0.7%, Hindu 0.7%, other 1.8%, unaffiliated 22.8%, don't know/refused 0.6% (2014 est.)",
+          "age_structure": {
+            "0_14_years": "18.1% (male 31,618,532/female 30,254,223)",
+            "15_64_years": "63.4% (male 108,553,822/female 108,182,491)",
+            "65_years_and_over": "18.5% (2024 est.) (male 28,426,426/female 34,927,914)"
+          },
+          "dependency_ratios": {
+            "total_dependency_ratio": "56 (2025 est.)",
+            "youth_dependency_ratio": "26.8 (2025 est.)",
+            "elderly_dependency_ratio": "29.2 (2025 est.)",
+            "potential_support_ratio": "3.4 (2025 est.)"
+          },
+          "median_age": {
+            "total": "39.5 years (2025 est.)",
+            "male": "37.8 years",
+            "female": "40 years"
+          },
+          "population_growth_rate": "0.45% (2025 est.)",
+          "birth_rate": "10.75 births/1,000 population (2025 est.)",
+          "death_rate": "8.76 deaths/1,000 population (2025 est.)",
+          "net_migration_rate": "2.54 migrant(s)/1,000 population (2025 est.)",
+          "population_distribution": "large urban clusters are spread throughout the eastern half of the US (particularly the Great Lakes area, northeast, east, and southeast) and the western-tier states; mountainous areas such as the Rocky Mountains and Appalachians, deserts in the southwest, the dense boreal forests in the extreme north, and the central prairie states are less densely populated; Alaska's population is concentrated along its southern coast, particularly around Anchorage, and Hawaii's is centered on the island of Oahu",
+          "urbanization": {
+            "urban_population": "83.3% of total population (2023)",
+            "rate_of_urbanization": "0.96% annual rate of change (2020-25 est.)"
+          },
+          "major_urban_areas_population": "18.937 million New York-Newark, 12.534 million Los Angeles-Long Beach-Santa Ana, 8.937 million Chicago, 6.707 million Houston, 6.574 million Dallas-Fort Worth, 5.490 million WASHINGTON, D.C. (capital) (2023)",
+          "sex_ratio": {
+            "at_birth": "1.05 male(s)/female",
+            "0_14_years": "1.05 male(s)/female",
+            "15_64_years": "1 male(s)/female",
+            "65_years_and_over": "0.81 male(s)/female",
+            "total_population": "0.97 male(s)/female (2024 est.)"
+          },
+          "mother_s_mean_age_at_first_birth": "27.5 years (2023 est.)",
+          "maternal_mortality_ratio": "17 deaths/100,000 live births (2023 est.)",
+          "infant_mortality_rate": {
+            "total": "5 deaths/1,000 live births (2025 est.)",
+            "male": "5.4 deaths/1,000 live births",
+            "female": "4.7 deaths/1,000 live births"
+          },
+          "life_expectancy_at_birth": {
+            "total_population": "80.9 years (2024 est.)",
+            "male": "78.7 years",
+            "female": "83.1 years"
+          },
+          "total_fertility_rate": "1.63 children born/woman (2025 est.)",
+          "gross_reproduction_rate": "0.02 (2025 est.)",
+          "drinking_water_source": {
+            "improved_urban": "100% of population (2022 est.)",
+            "improved_rural": "100% of population (2022 est.)",
+            "improved_total": "100% of population (2022 est.)",
+            "unimproved_urban": "0% of population (2022 est.)",
+            "unimproved_rural": "0% of population (2022 est.)",
+            "unimproved_total": "0% of population (2022 est.)"
+          },
+          "health_expenditure": {
+            "health_expenditure_as_of_gdp": "16.9% (2022 est.)",
+            "health_expenditure_as_of_national_budget": "25.4% (2022 est.)"
+          },
+          "physician_density": "3.68 physicians/1,000 population (2022)",
+          "hospital_bed_density": "2.7 beds/1,000 population (2020 est.)",
+          "sanitation_facility_access": {
+            "improved_urban": "urban: 99.9% of population (2022 est.)",
+            "improved_rural": "rural: 98.5% of population (2022 est.)",
+            "improved_total": "total: 99.6% of population (2022 est.)",
+            "unimproved_urban": "urban: 0.1% of population (2022 est.)",
+            "unimproved_rural": "rural: 1.5% of population (2022 est.)",
+            "unimproved_total": "total: 0.4% of population (2022 est.)"
+          },
+          "obesity_adult_prevalence_rate": "36.2% (2016)",
+          "alcohol_consumption_per_capita": {
+            "total": "8.93 liters of pure alcohol (2019 est.)",
+            "beer": "3.97 liters of pure alcohol (2019 est.)",
+            "wine": "1.67 liters of pure alcohol (2019 est.)",
+            "spirits": "3.29 liters of pure alcohol (2019 est.)",
+            "other_alcohols": "0 liters of pure alcohol (2019 est.)"
+          },
+          "tobacco_use": {
+            "total": "22.1% (2025 est.)",
+            "male": "27.7% (2025 est.)",
+            "female": "16.7% (2025 est.)"
+          },
+          "children_under_the_age_of_5_years_underweight": "0.4% (2018 est.)",
+          "currently_married_women_ages_15_49": "52.1% (2022 est.)",
+          "education_expenditure": {
+            "education_expenditure_gdp": "11.3% national budget (2021 est.)",
+            "education_expenditure_national_budget": "11.3% national budget (2021 est.)"
+          },
+          "school_life_expectancy_primary_to_tertiary_education": {
+            "total": "16 years (2022 est.)",
+            "male": "15 years (2022 est.)",
+            "female": "17 years (2022 est.)"
+          }
+        },
+        "environment": {
+          "environmental_issues": "air pollution; water pollution from runoff of pesticides and fertilizers; declining natural freshwater resources in the west; deforestation; mining; desertification; species conservation; invasive species",
+          "international_environmental_agreements": {
+            "party_to": "party to: Air Pollution, Air Pollution-Heavy Metals, Air Pollution-Multi-effect Protocol, Air Pollution-Nitrogen Oxides, Antarctic-Environmental Protection, Antarctic-Marine Living Resources, Antarctic Seals, Antarctic Treaty, Climate Change, Desertification, Endangered Species,",
+            "signed_but_not_ratified": "Air Pollution-Persistent Organic Pollutants, Air Pollution-Volatile Organic Compounds, Biodiversity, Climate Change-Kyoto Protocol, Comprehensive Nuclear Test Ban, Hazardous Wastes, Marine Dumping-London Protocol"
+          },
+          "climate": "mostly temperate, but tropical in Hawaii and Florida, arctic in Alaska, semiarid in the great plains west of the Mississippi River, and arid in the Great Basin of the southwest; low winter temperatures in the northwest are ameliorated occasionally in January and February by warm chinook winds from the eastern slopes of the Rocky Mountains",
+          "land_use": {
+            "agricultural_land": "46.1% (2023 est.)",
+            "agricultural_land_arable_land": "16.6% (2023 est.)",
+            "agricultural_land_permanent_crops": "0.3% (2023 est.)",
+            "agricultural_land_permanent_pasture": "29.2% (2023 est.)",
+            "forest": "33.8% (2023 est.)",
+            "other": "18.7% (2023 est.)"
+          },
+          "urbanization": {
+            "urban_population": "83.3% of total population (2023)",
+            "rate_of_urbanization": "0.96% annual rate of change (2020-25 est.)"
+          },
+          "carbon_dioxide_emissions": {
+            "total_emissions": "4.795 billion metric tonnes of CO2 (2023 est.)",
+            "from_coal_and_metallurgical_coke": "777.302 million metric tonnes of CO2 (2023 est.)",
+            "from_petroleum_and_other_liquids": "2.258 billion metric tonnes of CO2 (2023 est.)",
+            "from_consumed_natural_gas": "1.76 billion metric tonnes of CO2 (2023 est.)"
+          },
+          "particulate_matter_emissions": "7.4 micrograms per cubic meter (2019 est.)",
+          "methane_emissions": {
+            "energy": "20,500.6 kt (2022-2024 est.)",
+            "agriculture": "9,063.9 kt (2019-2021 est.)",
+            "waste": "4,974 kt (2019-2021 est.)",
+            "other": "758.6 kt (2019-2021 est.)"
+          },
+          "waste_and_recycling": {
+            "municipal_solid_waste_generated_annually": "189.75 million tons (2024 est.)",
+            "percent_of_municipal_solid_waste_recycled": "17.8% (2022 est.)"
+          },
+          "total_water_withdrawal": {
+            "municipal": "58.39 billion cubic meters (2022 est.)",
+            "industrial": "209.7 billion cubic meters (2022 est.)",
+            "agricultural": "176.2 billion cubic meters (2022 est.)"
+          },
+          "total_renewable_water_resources": "3.069 trillion cubic meters (2022 est.)"
+        },
+        "government": {
+          "country_name": {
+            "conventional_long_form": "United States of America",
+            "conventional_short_form": "United States",
+            "abbreviation": "US or USA",
+            "etymology": "the name America was first used in 1507 and is derived from the first name of Amerigo VESPUCCI (1454-1512), an Italian explorer, navigator, and cartographer; the name United States first appeared in a document subtitle during the discussions that led to the Declaration of Independence in 1776"
+          },
+          "government_type": "constitutional federal republic",
+          "capital": {
+            "name": "Washington, D.C.",
+            "geographic_coordinates": "38 53 N, 77 02 W",
+            "time_difference": "UTC-5 (during Standard Time)",
+            "daylight_saving_time": "+1hr, begins second Sunday in March; ends first Sunday in November; note - no DST for Hawaii and most of Arizona",
+            "time_zone_note": "the 50 United States cover six time zones",
+            "etymology": "named after George WASHINGTON (1732-1799), the first president of the United States"
+          },
+          "administrative_divisions": "50 states and 1 district*; Alabama, Alaska, Arizona, Arkansas, California, Colorado, Connecticut, Delaware, District of Columbia*, Florida, Georgia, Hawaii, Idaho, Illinois, Indiana, Iowa, Kansas, Kentucky, Louisiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, Mississippi, Missouri, Montana, Nebraska, Nevada, New Hampshire, New Jersey, New Mexico, New York, North Carolina, North Dakota, Ohio, Oklahoma, Oregon, Pennsylvania, Rhode Island, South Carolina, South Dakota, Tennessee, Texas, Utah, Vermont, Virginia, Washington, West Virginia, Wisconsin, Wyoming",
+          "dependent_areas": "American Samoa, Baker Island, Guam, Howland Island, Jarvis Island, Johnston Atoll, Kingman Reef, Midway Islands, Navassa Island, Northern Mariana Islands, Palmyra Atoll, Puerto Rico, Virgin Islands, Wake Island (14)",
+          "legal_system": "common law system based on English common law at the federal level; state legal systems based on common law, except Louisiana, where state law is based on Napoleonic civil code; judicial review of legislative acts",
+          "constitution": {
+            "history": "several previous; latest promulgated 4 December 1982",
+            "amendment_process": "proposed as a \"joint resolution\" by Congress, which requires a two-thirds majority vote in both the House of Representatives and the Senate or by a constitutional convention called for by at least two thirds of the state legislatures; passage requires ratification by three fourths of the state legislatures or passage in state-held constitutional conventions as specified by Congress; the US president has no role in the constitutional amendment process"
+          },
+          "international_law_organization_participation": "has not submitted an ICJ jurisdiction declaration; non-party state to the ICCt",
+          "citizenship": {
+            "citizenship_by_birth": "yes",
+            "citizenship_by_descent_only": "yes",
+            "dual_citizenship_recognized": "no, but the US government acknowledges such situations exist; US citizens are not encouraged to seek dual citizenship since it limits protection by the US",
+            "residency_requirement_for_naturalization": "5 years"
+          },
+          "suffrage": "18 years of age; universal",
+          "executive_branch": {
+            "chief_of_state": "President Donald J. TRUMP (since 20 January 2025)",
+            "head_of_government": "President Donald J. TRUMP (since 20 January 2025)",
+            "cabinet": "Cabinet appointed by the president, approved by the Senate",
+            "election_appointment_process": "president and vice president indirectly elected on the same ballot by the Electoral College of electors chosen from each state; president and vice president serve a 4-year term (eligible for a second term)",
+            "most_recent_election_date": "5 November 2024",
+            "election_results": "2024: Donald J. TRUMP elected president; electoral vote - Donald J. TRUMP (Republican Party) 312, Kamala HARRIS (Democratic Party) 226; percent of direct popular vote - Donald J. TRUMP 49.8%, Kamala HARRIS 48.3%, other 1.9%",
+            "expected_date_of_next_election": "7 November 2028"
+          },
+          "legislative_branch": {
+            "legislature_name": "Congress",
+            "legislative_structure": "bicameral"
+          },
+          "legislative_branch_lower_chamber": {
+            "chamber_name": "House of Representatives",
+            "number_of_seats": "435 (all directly elected)",
+            "electoral_system": "plurality/majority",
+            "scope_of_elections": "full renewal",
+            "term_in_office": "2 years",
+            "most_recent_election_date": "11/5/2024",
+            "parties_elected_and_seats_per_party": "Republican Party (220); Democratic Party (215)",
+            "percentage_of_women_in_chamber": "28.9%",
+            "expected_date_of_next_election": "November 2026"
+          },
+          "legislative_branch_upper_chamber": {
+            "chamber_name": "Senate",
+            "number_of_seats": "100",
+            "electoral_system": "plurality/majority",
+            "scope_of_elections": "partial renewal",
+            "term_in_office": "6 years",
+            "most_recent_election_date": "11/5/2024",
+            "parties_elected_and_seats_per_party": "Republican Party (15); Democratic Party (19)",
+            "percentage_of_women_in_chamber": "26%",
+            "expected_date_of_next_election": "November 2026"
+          },
+          "judicial_branch": {
+            "highest_court_s": "US Supreme Court (consists of 9 justices -- the chief justice and 8 associate justices)",
+            "judge_selection_and_term_of_office": "president nominates and, with the advice and consent of the Senate, appoints Supreme Court justices; justices serve for life",
+            "subordinate_courts": "Courts of Appeal (includes the US Court of Appeal for the Federal District and 12 regional appeals courts); 94 federal district courts in 50 states and territories"
+          },
+          "political_parties": "Alliance PartyConstitution PartyDemocratic PartyGreen PartyLibertarian PartyRepublican PartyVermont Progressive Party",
+          "international_organization_participation": "ADB (nonregional member), AfDB (nonregional member), ANZUS, APEC, Arctic Council, ARF, ASEAN (dialogue partner), Australia Group, BIS, BSEC (observer), CBSS (observer), CD, CE (observer), CERN (observer), CICA (observer), CP, EAPC, EAS, EBRD, EITI (implementing country), FAO, FATF, G-5, G-7, G-8, G-10, G-20, IADB, IAEA, IBRD, ICAO, ICC (national committees), ICRM, IDA, IEA, IFAD, IFC, IFRCS, IGAD (partners), IHO, ILO, IMF, IMO, IMSO, Interpol, IOC, IOM, ISO, ITSO, ITU, ITUC (NGOs), MIGA, MINUSTAH, MONUSCO, NAFTA, NATO, NEA, NSG, OAS, OECD, OPCW, OSCE, Pacific Alliance (observer), PCA, PIF (partner), SAARC (observer), SELEC (observer), SICA (observer), SPC, UN, UNCTAD, UNESCO, UNHCR, UNITAR, UNMIL, UNMISS, UNOOSA, UN Security Council (permanent), UNTSO, UPU, WCO, WHO, WIPO, WMO, WTO, ZC",
+          "independence": "4 July 1776 (declared independence from Great Britain); 3 September 1783 (recognized by Great Britain)",
+          "national_holiday": "Independence Day, 4 July (1776)",
+          "flag": "description: 13 equal horizontal stripes of red (top and bottom) alternating with white; a blue rectangle in the upper-left corner has 50 five-pointed white stars, arranged in nine offset horizontal rows of six stars (top and bottom) alternating with rows of five stars",
+          "national_symbol_s": "bald eagle",
+          "national_color_s": "red, white, blue",
+          "national_anthem_s": {
+            "title": "The Star-Spangled Banner",
+            "lyrics_music": "Francis Scott KEY/John Stafford SMITH",
+            "history": "adopted 1931; during the War of 1812, Francis Scott KEY witnessed the successful American defense of Baltimore's Fort McHenry against a British naval bombardment, later writing a poem about it that would become the US national anthem; the lyrics were set to the tune of \"The Anacreontic Song;\" there are four"
+          },
+          "national_heritage": {
+            "total_world_heritage_sites": "24",
+            "selected_world_heritage_site_locales": "Grand Canyon, Yellowstone National Park, Yosemite National Park, Yellowstone and Grand Teton National Parks, Redwood National and State Parks, Great Smoky Mountains National Park, La Fortaleza and San Juan National Historic Site in Puerto Rico, Chaco Culture, Hawaii Volcanoes National Park, Taos Pueblo, Carlsbad Caverns National Park, Waterton Glacier International Peace Park, Moravian Church Settlements, San Antonio Missions, Hopewell Ceremonial Earthworks, Papahānaumokuākea, Monumental Earthworks of Poverty Point, The 20th-Century Architecture of Frank Lloyd Wright, The Mammoth Cave System, Aerial Lift Bridge, The Pueblo of Jemez, Mesa Verde National Park, Olympic National Park, Cahokia Mounds State Historic Site, The Statue of Liberty, The Ransom House, Glacier National Park, Acadia National Park, Congaree National Park, The Great Dismal Swamp and The Albemarle Sound"
+          }
+        },
+        "economy": {
+          "economic_overview": "world’s largest economy by nominal GDP; largest importer and second-largest exporter; home to leading financial exchanges and global reserve currency; high and growing public debt; inflation moderating but remains above pre-pandemic levels",
+          "real_gdp_purchasing_power_parity": {
+            "real_gdp_purchasing_power_parity_2024": "$25.676 trillion (2024 est.)",
+            "real_gdp_purchasing_power_parity_2023": "$24.977 trillion (2023 est.)",
+            "real_gdp_purchasing_power_parity_2022": "$24.276 trillion (2022 est.)"
+          },
+          "real_gdp_growth_rate": {
+            "real_gdp_growth_rate_2024": "2.8% (2024 est.)",
+            "real_gdp_growth_rate_2023": "2.9% (2023 est.)",
+            "real_gdp_growth_rate_2022": "2.5% (2022 est.)"
+          },
+          "real_gdp_per_capita": {
+            "real_gdp_per_capita_2024": "$75,500 (2024 est.)",
+            "real_gdp_per_capita_2023": "$74,200 (2023 est.)",
+            "real_gdp_per_capita_2022": "$72,700 (2022 est.)"
+          },
+          "gdp_official_exchange_rate": "$29.185 trillion (2024 est.)",
+          "inflation_rate_consumer_prices": {
+            "inflation_rate_consumer_prices_2024": "2.9% (2024 est.)",
+            "inflation_rate_consumer_prices_2023": "4.1% (2023 est.)",
+            "inflation_rate_consumer_prices_2022": "8% (2022 est.)"
+          },
+          "gdp_composition_by_sector_of_origin": {
+            "agriculture": "0.9% (2024 est.)",
+            "industry": "17.3% (2024 est.)",
+            "services": "79.7% (2024 est.)"
+          },
+          "gdp_composition_by_end_use": {
+            "household_consumption": "67.9% (2024 est.)",
+            "government_consumption": "13.4% (2024 est.)",
+            "investment_in_fixed_capital": "21.6% (2024 est.)",
+            "investment_in_inventories": "0.1% (2024 est.)",
+            "exports_of_goods_and_services": "10.9% (2024 est.)",
+            "imports_of_goods_and_services": "-14% (2024 est.)"
+          },
+          "agricultural_products": "maize, soybeans, milk, wheat, sugar beets, sugarcane, potatoes, chicken, pork, tomatoes (2023)",
+          "industries": "highly diversified, world leading, high-technology innovator, second-largest industrial output in the world; petroleum, steel, motor vehicles, aerospace, telecommunications, chemicals, electronics, food processing, consumer goods, lumber, mining",
+          "industrial_production_growth_rate": "3.25% (2021 est.)",
+          "labor_force": "174.174 million (2024 est.)",
+          "unemployment_rate": {
+            "unemployment_rate_2024": "4.2% (2024 est.)",
+            "unemployment_rate_2023": "3.7% (2023 est.)",
+            "unemployment_rate_2022": "3.7% (2022 est.)"
+          },
+          "youth_unemployment_rate_ages_15_24": {
+            "total": "9.4% (2024 est.)",
+            "male": "10.4% (2024 est.)",
+            "female": "8.3% (2024 est.)"
+          },
+          "gini_index_coefficient_distribution_of_family_income": {
+            "gini_index_coefficient_distribution_of_family_income_2023": "41.8 (2023 est.)"
+          },
+          "average_household_expenditures": {
+            "on_food": "6.8% of household expenditures (2023 est.)",
+            "on_alcohol_and_tobacco": "1.9% of household expenditures (2023 est.)"
+          },
+          "household_income_or_consumption_by_percentage_share": {
+            "lowest_10": "1.8% (2023 est.)",
+            "highest_10": "30.4% (2023 est.)"
+          },
+          "remittances": {
+            "remittances_2024": "0% of GDP (2024 est.)",
+            "remittances_2023": "0% of GDP (2023 est.)",
+            "remittances_2022": "0% of GDP (2022 est.)"
+          },
+          "budget": {
+            "revenues": "$4.877 trillion (2023 est.)",
+            "expenditures": "$6.857 trillion (2023 est.)"
+          },
+          "public_debt": {
+            "public_debt_2023": "114.8% of GDP (2023 est.)"
+          },
+          "taxes_and_other_revenues": "10.6% (of GDP) (2023 est.)",
+          "current_account_balance": {
+            "current_account_balance_2024": "-$1.134 trillion (2024 est.)",
+            "current_account_balance_2023": "-$905.378 billion (2023 est.)",
+            "current_account_balance_2022": "-$1.012 trillion (2022 est.)"
+          },
+          "exports": {
+            "exports_2024": "$3.191 trillion (2024 est.)",
+            "exports_2023": "$3.072 trillion (2023 est.)",
+            "exports_2022": "$3.039 trillion (2022 est.)"
+          },
+          "exports_partners": "Canada 14%, Mexico 13%, China 8%, Germany 5%, Japan 4% (2023)",
+          "exports_commodities": "crude petroleum, refined petroleum, natural gas, gas turbines, cars (2023)",
+          "imports": {
+            "imports_2024": "$4.108 trillion (2024 est.)",
+            "imports_2023": "$3.857 trillion (2023 est.)",
+            "imports_2022": "$3.984 trillion (2022 est.)"
+          },
+          "imports_partners": "Mexico 15%, China 15%, Canada 14%, Germany 5%, Japan 5% (2023)",
+          "imports_commodities": "cars, crude petroleum, broadcasting equipment, computers, garments (2023)",
+          "reserves_of_foreign_exchange_and_gold": {
+            "reserves_of_foreign_exchange_and_gold_2024": "$910.037 billion (2024 est.)",
+            "reserves_of_foreign_exchange_and_gold_2023": "$773.426 billion (2023 est.)",
+            "reserves_of_foreign_exchange_and_gold_2022": "$706.644 billion (2022 est.)"
+          },
+          "exchange_rates": "British pounds per US dollar: 0.782 (2024 est.), 0.805 (2023 est.), 0.811 (2022 est.), 0.727 (2021 est.), 0.780 (2020 est.)"
+        },
+        "energy": {
+          "electricity_access": {
+            "electrification_total_population": "100% (2022 est.)"
+          },
+          "electricity": {
+            "installed_generating_capacity": "1.235 billion kW (2023 est.)",
+            "consumption": "4.085 trillion kWh (2023 est.)",
+            "exports": "19.87 billion kWh (2023 est.)",
+            "imports": "38.874 billion kWh (2023 est.)",
+            "transmission_distribution_losses": "191.104 billion kWh (2023 est.)"
+          },
+          "electricity_generation_sources": {
+            "fossil_fuels": "58.9% of total installed capacity (2023 est.)",
+            "nuclear": "18.2% of total installed capacity (2023 est.)",
+            "solar": "5.6% of total installed capacity (2023 est.)",
+            "wind": "9.9% of total installed capacity (2023 est.)",
+            "hydroelectricity": "5.6% of total installed capacity (2023 est.)",
+            "geothermal": "0.4% of total installed capacity (2023 est.)",
+            "biomass_and_waste": "1.3% of total installed capacity (2023 est.)"
+          },
+          "nuclear_energy": {
+            "number_of_operational_nuclear_reactors": "94 (2025)",
+            "net_capacity_of_operational_nuclear_reactors": "96.95GW (2025 est.)",
+            "percent_of_total_electricity_production": "18.5% (2023 est.)",
+            "number_of_nuclear_reactors_permanently_shut_down": "41 (2025)"
+          },
+          "coal": {
+            "production": "534.234 million metric tons (2023 est.)",
+            "consumption": "495.156 million metric tons (2023 est.)",
+            "exports": "92.28 million metric tons (2023 est.)",
+            "imports": "3.825 million metric tons (2023 est.)",
+            "proven_reserves": "247.883 billion metric tons (2023 est.)"
+          },
+          "petroleum": {
+            "total_petroleum_production": "20.953 million bbl/day (2023 est.)",
+            "refined_petroleum_consumption": "20.307 million bbl/day (2024 est.)",
+            "crude_oil_estimated_reserves": "38.212 billion barrels (2021 est.)"
+          },
+          "natural_gas": {
+            "production": "1.072 trillion cubic meters (2023 est.)",
+            "consumption": "920.47 billion cubic meters (2023 est.)",
+            "exports": "215.48 billion cubic meters (2023 est.)",
+            "imports": "82.917 billion cubic meters (2023 est.)",
+            "proven_reserves": "13.402 trillion cubic meters (2021 est.)"
+          },
+          "energy_consumption_per_capita": {
+            "total_energy_consumption_per_capita_2023": "278.474 million Btu/person (2023 est.)"
+          }
+        },
+        "communications": {
+          "telephones_fixed_lines": {
+            "total_subscriptions": "87.987 million (2023 est.)",
+            "subscriptions_per_100_inhabitants": "26 (2023 est.)"
+          },
+          "telephones_mobile_cellular": {
+            "total_subscriptions": "391 million (2024 est.)",
+            "subscriptions_per_100_inhabitants": "113 (2024 est.)"
+          },
+          "broadcast_media": "4 major terrestrial TV networks with affiliate stations, plus cable and satellite networks, independent stations, and a limited public broadcasting sector; thousands of TV stations broadcasting; multiple national radio networks with many affiliate stations; over 15,000 radio stations, most commercial; National Public Radio (NPR) has a network of about 900 member stations; satellite radio available (2018)",
+          "internet_country_code": ".us",
+          "internet_users": {
+            "percent_of_population": "NOT FOUND"
+          },
+          "broadband_fixed_subscriptions": {
+            "total": "131 million (2023 est.)",
+            "subscriptions_per_100_inhabitants": "38 (2023 est.)"
+          }
+        },
+        "transportation": {
+          "civil_aircraft_registration_country_code_prefix": "N",
+          "airports": "16,116 (2025)",
+          "heliports": "8,130 (2025)",
+          "railways": {
+            "total": "293,564.2 km (2014)",
+            "standard_gauge": "293,564.2 km (2014) 1.435-m gauge"
+          },
+          "merchant_marine": {
+            "total": "3,533 (2023)",
+            "by_type": "bulk carrier 4, container ship 60, general cargo 96, oil tanker 68, other 3,305"
+          },
+          "ports": {
+            "total_ports": "666 (2024)",
+            "large": "21",
+            "medium": "38",
+            "small": "132",
+            "very_small": "475",
+            "ports_with_oil_terminals": "204",
+            "key_ports": "Baltimore, Boston, Brooklyn, Buffalo, Chester, Cleveland, Detroit, Galveston, Houston, Los Angeles, Louisiana Offshore Oil Port (LOOP), Mobile, New Orleans, New York City, Norfolk, Oakland, Philadelphia, Portland, San Francisco, Seattle, Tri-City Port"
+          }
+        },
+        "military_and_security": {
+          "military_and_security_forces": "United States Armed Forces (aka US Military): US Army (USA), US Navy (USN; includes US Marine Corps or USMC), US Air Force (USAF), US Space Force (USSF); US Coast Guard (USCG); National Guard (Army National Guard and Air National Guard) (2025)",
+          "military_expenditures": {
+            "military_expenditures_2025": "3.2% of GDP (2025 est.)",
+            "military_expenditures_2024": "3.2% of GDP (2024 est.)",
+            "military_expenditures_2023": "3.1% of GDP (2023 est.)",
+            "military_expenditures_2022": "3.2% of GDP (2022 est.)",
+            "military_expenditures_2021": "3.5% of GDP (2021 est.)"
+          },
+          "military_and_security_service_personnel_strengths": "approximately 1.28 million active duty Armed Forces (450,000 Army; 334,000 Navy; 317,000 Air Force; 10,000 Space Force; 168,000 Marine Corps); 42,000 Coast Guard) (2025)",
+          "military_equipment_inventories_and_acquisitions": "the US military's inventory is comprised almost entirely of domestically produced weapons systems (some assembled with foreign components) along with a smaller mix of imported equipment from a variety of countries such as Germany and the UK; the US defense industry is capable of designing, developing, maintaining, and producing the full spectrum of weapons systems; the US is the world's leading arms exporter (2025)",
+          "military_service_age_and_obligation": "17 years of age (under 18 with parental consent) for voluntary service for men and women; maximum enlistment age varies by service; 8-year initial service obligation, including 2-5 years active duty depending on the particular military service (2025)",
+          "military_deployments": "the US has approximately 200,000 military personnel deployed overseas on a permanent or a long-term rotational (typically 3-9 months) basis (2025)",
+          "military_note": "the US military's primary missions are to deter potential enemies, provide for the defense of the US, its Territories, Commonwealths and possessions, and any areas occupied by the US, and to protect US national interests; its responsibilities are worldwide and include providing humanitarian assistance, disaster relief, non-combatant evacuation operations, support to peacekeeping, enforcement of no-fly zones, and maritime interdiction"
+        },
+        "space": {
+          "space_agency_agencies": "National Aeronautics and Space Administration (NASA; established 1958) (2025)",
+          "key_space_program_milestones": "1964 - launched first successful Mars probe (Mariner), 1969 - first manned Moon landing, 1970s - operated Skylab space station, 1990 - launched Hubble Space Telescope, 1993 - began participating in International Space Station project, 2003 - launched surface rover vehicles (Spirit and Opportunity) to Mars, 2011 - launched orbital probe (Juno) to Jupiter, 2016 - launched OSIRIS-REx mission to retrieve asteroid sample, 2021 - initiated Artemis lunar landing project, 2024 - successfully placed a commercial lander on the Moon and launched probe (Europa Clipper) to study Jupiter's Europa moon"
+        },
+        "terrorism": {
+          "terrorist_group_s": "al-Qa'ida; Hizballah; Islamic Revolutionary Guard Corps (IRGC)/Qods Force; Islamic State of Iraq and ash-Sham (ISIS); La Mara Salvatruche (MS-13); Lashkar-e Tayyiba (LeT); Tren de Aragua (TdA)"
+        }
+      },
+      "china": {
+        "introduction": {
+          "background": "China's historical civilization dates to at least the 13th century B.C., first under the Shang (to 1046 B.C.) and then the Zhou (1046-221 B.C.) dynasties. The imperial era of China began in 221 B.C. under the Qin Dynasty and lasted until the fall of the Qing Dynasty in 1912. During this period,"
+        },
+        "geography": {
+          "location": "Eastern Asia, bordering the East China Sea, Korea Bay, Yellow Sea, and South China Sea, between North Korea and Vietnam",
+          "geographic_coordinates": "35 00 N, 105 00 E",
+          "map_references": "Asia",
+          "area": {
+            "total": "9,596,960 sq km",
+            "land": "9,326,410 sq km",
+            "water": "270,550 sq km"
+          },
+          "area_comparative": "slightly smaller than the US",
+          "land_boundaries": {
+            "total": "22,457 km",
+            "border_countries": "Afghanistan 91 km; Bhutan 477 km; Burma 2,129 km; India 2,659 km; Kazakhstan 1,765 km; North Korea 1,352 km; Kyrgyzstan 1,063 km; Laos 475 km; Mongolia 4,630 km; Nepal 1,389 km; Pakistan 438 km; Russia (northeast) 4,133 km and Russia (northwest) 46 km; Tajikistan 477 km; Vietnam 1,297 km"
+          },
+          "coastline": "14,500 km",
+          "maritime_claims": {
+            "territorial_sea": "12 nm",
+            "contiguous_zone": "24 nm",
+            "exclusive_economic_zone": "200 nm",
+            "continental_shelf": "not specified"
+          },
+          "climate": "extremely diverse; tropical in south to subarctic in north",
+          "terrain": "mostly mountains, high plateaus, deserts in west; plains, deltas, and hills in east",
+          "elevation": {
+            "highest_point": "Mount Everest 8,849 m",
+            "lowest_point": "Turpan Pendi (Turfan Depression) -154 m",
+            "mean_elevation": "1,840 m"
+          },
+          "natural_resources": "coal, iron ore, helium, petroleum, natural gas, arsenic, bismuth, cobalt, cadmium, ferrosilicon, gallium, germanium, hafnium, indium, lithium, mercury, tantalum, tellurium, tin, titanium, tungsten, antimony, manganese, magnesium, molybdenum, selenium, strontium, vanadium, magnetite, aluminum, lead, zinc, rare earth elements, uranium, hydropower potential (world's largest), arable land",
+          "land_use": {
+            "agricultural_land": "55.3% (2023 est.)",
+            "agricultural_land_arable_land": "11.6% (2023 est.)",
+            "agricultural_land_permanent_crops": "2.1% (2023 est.)",
+            "agricultural_land_permanent_pasture": "41.7% (2023 est.)",
+            "forest": "23.8% (2023 est.)",
+            "other": "20.6% (2023 est.)"
+          },
+          "irrigated_land": "690,070 sq km (2012)",
+          "major_lakes_area_sq_km": {
+            "fresh_water_lake_s": "Dongting Hu - 3,100 sq km; Poyang Hu - 3,350 sq km; Hongze Hu - 2,700 sq km; Tai Hu - 2,210 sq km; Hulun Nur - 1,590",
+            "salt_water_lake_s": "Quinghai Hu - 4,460 sq km; Nam Co - 2,500 sq km; Siling Co - 1,860 sq km; Tangra Yumco - 1,400 sq km; Bosten Hu 1,380 sq km"
+          },
+          "major_rivers_by_length_in_km": "Yangtze - 6,300 km; Huang He - 5,464 km; Amur river source (shared with Mongolia and Russia [m]) - 4,444 km; Lancang Jiang (Mekong) river source (shared with Burma, Laos, Thailand, Cambodia, and Vietnam [m]) - 4,350 km; Yarlung Zangbo Jiang (Brahmaputra) river source (shared with India and Bangladesh [m]) - 3,969 km; Yin-tu Ho (Indus) river source (shared with India and Pakistan [m]) - 3,610 km; Nu Jiang (Salween) river source (shared with Thailand and Burma [m]) - 3,060 km; Irrawaddy river source (shared with Burma [m]) - 2,809 km; Zhu Jiang (Pearl) (shared with Vietnam [s]) - 2,200 km; Yuan Jiang (Red river) source (shared with Vietnam [m]) - 1,149 km",
+          "major_watersheds_area_sq_km": {
+            "arctic_ocean_drainage": "Ob (2,972,493 sq km)",
+            "indian_ocean_drainage": "Brahmaputra (651,335 sq km), Ganges (1,016,124 sq km), Indus (1,081,718 sq km), Irrawaddy (413,710 sq km), Salween (271,914 sq km)",
+            "pacific_ocean_drainage": "Amur (1,929,955 sq km), Huang He (944,970 sq km), Mekong (805,604 sq km), Yangtze (1,722,193 sq km)",
+            "internal_endorheic_basin_drainage": "Tarim Basin (1,152,448 sq km), Amu Darya (534,739 sq km), Syr Darya (782,617 sq km), Lake Balkash (510,015 sq km)"
+          },
+          "major_aquifers": "North China Aquifer System (Huang Huai Hai Plain), Song-Liao Plain, Tarim Basin",
+          "population_distribution": "overwhelming majority of the population is found in the eastern half of the country; the west, with its vast mountainous and desert areas, remains sparsely populated; though ranked first in the world in total population, overall density is less than that of many Asian and European countries; high population density is found along the Yangtze and Yellow River valleys, the Xi Jiang River delta, the Sichuan Basin (around Chengdu), in and around Beijing, and the industrial area around Shenyang",
+          "natural_hazards": "frequent typhoons (about five per year along southern and eastern coasts); damaging floods; tsunamis; earthquakes; droughts; land subsidence volcanism: China contains some historically active volcanoes including Changbaishan (also known as Baitoushan, Baegdu, or P'aektu-san), Hainan Dao, and Kunlun although most have been relatively inactive in recent centuries",
+          "geography_note": "note 1: world's fourth largest country (after Russia, Canada, and the US) and largest country situated entirely in Asia; Mount Everest, on the border with Nepal, is the world's tallest peak above sea levelnote 2: the largest cave chamber in the world is the Miao Room, in the Gebihe cave system at China's Ziyun Getu He Chuandong National Park, which encloses about 10.78 million cu m (380.7 million cu ft); the world's largest sinkhole is the Xiaoxhai Tiankeng sinkhole in Chongqing Municipality, which is 660 m deep, with a volume of 130 million cu m"
+        },
+        "people_and_society": {
+          "population": {
+            "total": "1,407,181,209 (2025 est.)",
+            "male": "716,908,592",
+            "female": "690,272,617"
+          },
+          "nationality": {
+            "noun": "Chinese (singular and plural)",
+            "adjective": "Chinese"
+          },
+          "ethnic_groups": "Han Chinese 91.1%, ethnic minorities 8.9% (includes Zhang, Hui, Manchu, Uighur, Miao, Yi, Tujia, Tibetan, Mongol, Dong, Buyei, Yao, Bai, Korean, Hani, Li, Kazakh, Dai, and other nationalities) (2021 est.)",
+          "languages": {
+            "languages": "Standard Chinese or Mandarin (official; Putonghua, based on the Beijing dialect), Yue (Cantonese), Wu (Shanghainese), Minbei (Fuzhou), Minnan (Hokkien-Taiwanese), Xiang, Gan, Hakka dialects, minority languages (see Ethnic groups field)",
+            "major_language_sample_s": "Mandarin, Cantonese, Wu, Min Nan, Xiang, Hakka, Gan"
+          },
+          "religions": "folk religion 21.9%, Buddhist 18.2%, Christian 5.1%, Muslim 1.8%, Hindu < 0.1%, Jewish < 0.1%, other 0.7% (includes Daoist (Taoist)), unaffiliated 52.1% (2021 est.)",
+          "age_structure": {
+            "0_14_years": "16.3% (male 122,644,111/female 107,926,176)",
+            "15_64_years": "69.3% (male 505,412,555/female 476,599,793)",
+            "65_years_and_over": "14.4% (2024 est.) (male 94,144,838/female 109,315,797)"
+          },
+          "dependency_ratios": {
+            "total_dependency_ratio": "43.4 (2025 est.)",
+            "youth_dependency_ratio": "22.4 (2025 est.)",
+            "elderly_dependency_ratio": "21 (2025 est.)",
+            "potential_support_ratio": "4.8 (2025 est.)"
+          },
+          "median_age": {
+            "total": "40.8 years (2025 est.)",
+            "male": "39 years",
+            "female": "41.5 years"
+          },
+          "population_growth_rate": "-0.08% (2025 est.)",
+          "birth_rate": "7.28 births/1,000 population (2025 est.)",
+          "death_rate": "7.97 deaths/1,000 population (2025 est.)",
+          "net_migration_rate": "-0.11 migrant(s)/1,000 population (2025 est.)",
+          "population_distribution": "overwhelming majority of the population is found in the eastern half of the country; the west, with its vast mountainous and desert areas, remains sparsely populated; though ranked first in the world in total population, overall density is less than that of many Asian and European countries; high population density is found along the Yangtze and Yellow River valleys, the Xi Jiang River delta, the Sichuan Basin (around Chengdu), in and around Beijing, and the industrial area around Shenyang",
+          "urbanization": {
+            "urban_population": "64.6% of total population (2023)",
+            "rate_of_urbanization": "1.78% annual rate of change (2020-25 est.)"
+          },
+          "major_urban_areas_population": "29.211 million Shanghai, 21.766 million BEIJING (capital), 17.341 million Chongqing, 14.284 million Guangzhou, 14.239 million Tianjin, 13.073 million Shenzhen (2023)",
+          "sex_ratio": {
+            "at_birth": "1.09 male(s)/female",
+            "0_14_years": "1.14 male(s)/female",
+            "15_64_years": "1.06 male(s)/female",
+            "65_years_and_over": "0.86 male(s)/female",
+            "total_population": "1.04 male(s)/female (2024 est.)"
+          },
+          "maternal_mortality_ratio": "16 deaths/100,000 live births (2023 est.)",
+          "infant_mortality_rate": {
+            "total": "6 deaths/1,000 live births (2025 est.)",
+            "male": "6.7 deaths/1,000 live births",
+            "female": "5.7 deaths/1,000 live births"
+          },
+          "life_expectancy_at_birth": {
+            "total_population": "78.7 years (2024 est.)",
+            "male": "76 years",
+            "female": "81.7 years"
+          },
+          "total_fertility_rate": "1.2 children born/woman (2025 est.)",
+          "gross_reproduction_rate": "0.57 (2025 est.)",
+          "drinking_water_source": {
+            "improved_urban": "urban: 98.4% of population (2022 est.)",
+            "improved_rural": "rural: 94.2% of population (2022 est.)",
+            "improved_total": "total: 96.4% of population (2022 est.)",
+            "unimproved_urban": "urban: 1.6% of population (2022 est.)",
+            "unimproved_rural": "rural: 5.8% of population (2022 est.)",
+            "unimproved_total": "total: 3.6% of population (2022 est.)"
+          },
+          "health_expenditure": {
+            "health_expenditure_as_of_gdp": "5.4% of GDP (2021 est.)",
+            "health_expenditure_as_of_national_budget": "11.3% national budget (2021 est.)"
+          },
+          "physician_density": "3.11 physicians/1,000 population (2022)",
+          "hospital_bed_density": "5 beds/1,000 population (2020 est.)",
+          "sanitation_facility_access": {
+            "improved_urban": "urban: 97.9% of population (2022 est.)",
+            "improved_rural": "rural: 77.1% of population (2022 est.)",
+            "improved_total": "total: 86.6% of population (2022 est.)",
+            "unimproved_urban": "urban: 2.1% of population (2022 est.)",
+            "unimproved_rural": "rural: 22.9% of population (2022 est.)",
+            "unimproved_total": "total: 13.4% of population (2022 est.)"
+          },
+          "obesity_adult_prevalence_rate": "6.2% (2016)",
+          "alcohol_consumption_per_capita": {
+            "total": "total: 4.48 liters of pure alcohol (2019 est.)",
+            "beer": "beer: 1.66 liters of pure alcohol (2019 est.)",
+            "wine": "wine: 0.18 liters of pure alcohol (2019 est.)",
+            "spirits": "spirits: 2.63 liters of pure alcohol (2019 est.)",
+            "other_alcohols": "other alcohols: 0 liters of pure alcohol (2019 est.)"
+          },
+          "tobacco_use": {
+            "total": "24.5% (2025 est.)",
+            "male": "46.6% (2025 est.)",
+            "female": "1.9% (2025 est.)"
+          },
+          "children_under_the_age_of_5_years_underweight": "2.4% (2013)",
+          "currently_married_women_ages_15_49": "69.5% (2021 est.)",
+          "child_marriage": {
+            "women_married_by_age_15": "0.1% (2020)",
+            "women_married_by_age_18": "2.8% (2020)",
+            "men_married_by_age_18": "0.7% (2020)"
+          },
+          "education_expenditure": {
+            "education_expenditure_gdp": "4% of GDP (2020)",
+            "education_expenditure_national_budget": "15% of national budget (2020)"
+          },
+          "literacy": {
+            "total_population": "96.7% (2020 est.)",
+            "male": "98.4% (2020 est.)",
+            "female": "95.1% (2020 est.)"
+          },
+          "people_note": "in October 2015, the Chinese Government announced that it would change its rules to allow all couples to have two children, loosening a 1979 mandate that restricted many couples to one child; the new policy was implemented on 1 January 2016 to address China’s rapidly aging population and future economic needs"
+        },
+        "environment": {
+          "environmental_issues": "air pollution and acid rain from reliance on coal; carbon dioxide emissions from the burning of fossil fuels; water shortages, particularly in the north; water pollution from untreated wastes; coastal destruction due to land reclamation, industrial development, and aquaculture; deforestation and habitat destruction; poor land management leading to soil erosion, landslides, floods, droughts, dust storms, and desertification; trade in endangered species",
+          "international_environmental_agreements": {
+            "party_to": "Antarctic-Environmental Protection, Antarctic-Marine Living Resources, Antarctic Treaty, Biodiversity, Climate Change, Climate Change-Kyoto Protocol, Climate Change-Paris Agreement, Desertification, Endangered Species, Environmental Modification, Hazardous Wastes, Law of the Sea, Marine Dumping-London Convention, Marine Dumping-London Protocol, Ozone Layer Protection, Ship Pollution, Tropical Timber 2006, Wetlands, Whaling",
+            "signed_but_not_ratified": "Comprehensive Nuclear Test Ban"
+          },
+          "climate": "extremely diverse; tropical in south to subarctic in north",
+          "land_use": {
+            "agricultural_land": "55.3% (2023 est.)",
+            "agricultural_land_arable_land": "11.6% (2023 est.)",
+            "agricultural_land_permanent_crops": "2.1% (2023 est.)",
+            "agricultural_land_permanent_pasture": "41.7% (2023 est.)",
+            "forest": "23.8% (2023 est.)",
+            "other": "20.6% (2023 est.)"
+          },
+          "urbanization": {
+            "urban_population": "64.6% of total population (2023)",
+            "rate_of_urbanization": "1.78% annual rate of change (2020-25 est.)"
+          },
+          "carbon_dioxide_emissions": {
+            "total_emissions": "12.196 billion metric tonnes of CO2 (2023 est.)",
+            "from_coal_and_metallurgical_coke": "9.575 billion metric tonnes of CO2 (2023 est.)",
+            "from_petroleum_and_other_liquids": "1.847 billion metric tonnes of CO2 (2023 est.)",
+            "from_consumed_natural_gas": "774.076 million metric tonnes of CO2 (2023 est.)"
+          },
+          "particulate_matter_emissions": "41.4 micrograms per cubic meter (2019 est.)",
+          "methane_emissions": {
+            "energy": "27,832.7 kt (2022-2024 est.)",
+            "agriculture": "18,177.8 kt (2019-2021 est.)",
+            "waste": "9,402.4 kt (2019-2021 est.)",
+            "other": "1,186.9 kt (2019-2021 est.)"
+          },
+          "waste_and_recycling": {
+            "municipal_solid_waste_generated_annually": "395.081 million tons (2024 est.)",
+            "percent_of_municipal_solid_waste_recycled": "24.4% (2022 est.)"
+          },
+          "total_water_withdrawal": {
+            "municipal": "117.01 billion cubic meters (2022 est.)",
+            "industrial": "103.04 billion cubic meters (2022 est.)",
+            "agricultural": "361.24 billion cubic meters (2022 est.)"
+          },
+          "total_renewable_water_resources": "3.069 trillion cubic meters (2022 est.)",
+          "geoparks": {
+            "total_global_geoparks_and_regional_networks": "49 (2025)",
+            "global_geoparks_and_regional_networks": "Alxa; Arxan; Dali-Cangshan; Danxiashan; Dunhuang; Enshi Grand Canyon-Tenglongdong; Fangshan; Funiushan; Guangwushan-Noushuihe; Hexigten; Hong Kong; Huanggang Dabieshan; Huangshan; Jingpohu; Jiuhuashan; Kanbula; Keketuohai; Leiqiong; Leye Fengshan; Linxia; Longhushan; Longyan;"
+          }
+        },
+        "government": {
+          "country_name": {
+            "conventional_long_form": "People's Republic of China",
+            "conventional_short_form": "China",
+            "local_long_form": "Zhonghua Renmin Gongheguo",
+            "local_short_form": "Zhongguo",
+            "abbreviation": "PRC",
+            "etymology": "English name could be derived from the Qin (Chin, Ts'in) rulers in the 3rd century B.C., or from the province of Shaanxi (Shensi) with its capital of Xi'an (Sian); the Chinese name Zhongguo translates as \"Central Nation\" or \"Middle Country\""
+          },
+          "government_type": "civil law influenced by Soviet and continental European civil law systems; legislature retains power to interpret statutes",
+          "capital": {
+            "name": "Beijing",
+            "geographic_coordinates": "39 55 N, 116 23 E",
+            "time_difference": "UTC+8 (13 hours ahead of Washington, DC, during Standard Time)",
+            "time_zone_note": "China is the largest country (in terms of area) with just one time zone; before 1949 it was divided into five",
+            "etymology": "the name is of unknown origin; one theory says it may come from the Chinese words bei (north) and jing (capital)"
+          },
+          "administrative_divisions": "23 provinces (sheng, singular and plural), 5 autonomous regions (zizhiqu, singular and plural), and 4 municipalities (shi, singular and plural)",
+          "legal_system": "civil law system based on Soviet and continental European civil law systems; legislature retains power to interpret statutes",
+          "constitution": {
+            "history": "several previous; latest promulgated 4 December 1982",
+            "amendment_process": "proposed by the Standing Committee of the National People’s Congress or supported by more than one fifth of the National People’s Congress membership; passage requires more than two-thirds majority vote of the Congress membership"
+          },
+          "international_law_organization_participation": "has not submitted an ICJ jurisdiction declaration; non-party state to the ICCt",
+          "citizenship": {
+            "citizenship_by_birth": "no",
+            "citizenship_by_descent_only": "least one parent must be a citizen of China",
+            "dual_citizenship_recognized": "no",
+            "residency_requirement_for_naturalization": "while naturalization is theoretically possible, in practical terms it is extremely difficult; residency is required but not specified"
+          },
+          "suffrage": "18 years of age; universal",
+          "executive_branch": {
+            "chief_of_state": "President XI Jinping (since 14 March 2013)",
+            "head_of_government": "Premier LI Qiang (since 11 March 2023)",
+            "cabinet": "State Council appointed by National People's Congress",
+            "election_appointment_process": "president and vice president indirectly elected by National People's Congress; premier nominated by president, confirmed by National People's Congress",
+            "most_recent_election_date": "10 March 2023",
+            "election_results": "2023: XI Jinping reelected president; National People's Congress vote - 2,952 (unanimously); HAN Zheng elected vice president with 2,952 votes; LI Qiang elected premier with 2,936 votes",
+            "expected_date_of_next_election": "March 2028"
+          },
+          "legislative_branch": {
+            "legislature_name": "National People's Congress",
+            "legislative_structure": "unicameral",
+            "number_of_seats": "3000",
+            "scope_of_elections": "full renewal",
+            "term_in_office": "5 years",
+            "most_recent_election_date": "3/5/2023",
+            "percentage_of_women_in_chamber": "26.5%",
+            "expected_date_of_next_election": "March 2028"
+          },
+          "judicial_branch": {
+            "highest_court_s": "Supreme People's Court (consists of over 340 judges, including the chief justice and 13 grand justices organized into a civil committee and tribunals for civil, economic, administrative, complaint and appeal, and communication and transportation cases)",
+            "judge_selection_and_term_of_office": "chief justice appointed by the People's National Congress (NPC); limited to 2 consecutive 5-year-terms; other justices and judges nominated by the chief justice and appointed by the Standing Committee of the NPC; term of other justices and judges determined by the NPC",
+            "subordinate_courts": "Higher People's Courts; Intermediate People's Courts; District and County People's Courts; Autonomous Region People's Courts; International Commercial Courts; Special People's Courts for military, maritime, transportation, and forestry issues"
+          },
+          "political_parties": "Chinese Communist Party or CCP",
+          "diplomatic_representation_in_the_us": {
+            "chief_of_mission": "Ambassador XIE Feng (since 30 June 2023)",
+            "chancery": "3505 International Place NW, Washington, DC 20008",
+            "telephone": "[1] (202) 495-2266",
+            "fax": "[1] (202) 495-2138",
+            "email_address_and_website": "chinaemppress_us@mfa.gov.cn, http://www.china-embassy.org/eng/",
+            "consulate_s_general": "Chicago, Los Angeles, New York, San Francisco"
+          },
+          "diplomatic_representation_from_the_us": {
+            "chief_of_mission": "Ambassador-designate Sergio GOR (since 11 October 2025)",
+            "embassy": "Shantipath, Chanakyapuri, New Delhi - 110021",
+            "mailing_address": "9000 New Delhi Place, Washington DC  20521-9000",
+            "telephone": "[91] (11) 2419-8000",
+            "fax": "[91] (11) 2419-0017",
+            "email_address_and_website": "acsnd@state.govhttps://in.usembassy.gov/",
+            "consulate_s_general": "Chennai (Madras), Hyderabad, Kolkata (Calcutta), Mumbai (Bombay)"
+          },
+          "international_organization_participation": "ADB, AfDB (nonregional member), APEC, ARF, ASEAN (dialogue partner), BIS, BRICS, CDB, CICA, EAS, FAO, FATF, G-20, G-24 (observer), G-5, G-77, IADB, IAEA, IBRD, ICAO, ICC (national committees), ICRM, IDA, IFAD, IFC, IFRCS, IHO, ILO, IMF, IMO, IMSO, Interpol, IOC, IOM (observer), IPU, ISO, ITSO, ITU, ITUC (NGOs), MIGA, MINUSTAH, MONUSCO, NAM (observer), NSG, OAS (observer), OPCW, Pacific Alliance (observer), PCA, PIF (partner), SAARC (observer), SCO, SICA (observer), UN, UNAMID, UNCTAD, UNESCO, UNFICYP, UNHCR, UNHRC, UNIDO, UNIFIL, UNISFA, UNMIL, UNMISS, UNOCI, UNOOSA, UN Security Council (permanent), UNTSO, UPU, WCO, WHO, WIPO, WMO, WTO, ZC",
+          "independence": "1 October 1949 (People's Republic of China established); notable earlier dates: 221 B.C. (unification under the Qin Dynasty); 1 January 1912 (Qing Dynasty replaced by the Republic of China)",
+          "national_holiday": "National Day (anniversary of the founding of the People's Republic of China), 1 October (1949)",
+          "flag": "description: red with a large five-pointed yellow star and four smaller ones in the upper-left corner; the small stars are arranged in a vertical arc around the large one",
+          "national_symbol_s": "dragon, giant panda",
+          "national_color_s": "red, yellow",
+          "national_anthem_s": {
+            "title": "\"Yiyongjun Jinxingqu\" (The March of the Volunteers)",
+            "lyrics_music": "TIAN Han/NIE Er",
+            "history": "adopted 1982; the anthem, which was banned during the Cultural Revolution, is more commonly known as \"Zhongguo Guoge\" (Chinese National Song)"
+          },
+          "national_heritage": {
+            "total_world_heritage_sites": "60 (41 cultural, 15 natural, 4 mixed)",
+            "selected_world_heritage_site_locales": "Mount Wutai (c); China Danxia (n); West Lake Cultural Landscape of Hangzhou (c); Chengjiang Fossil Site (c); Site of Xanadu (c); Cultural Landscape of Honghe Hani Rice Terraces(c); Xinjiang Tianshan (n); Silk Roads: the Routes Network of Chang'an-Tianshan Corridor (c); Tusi Sites (c); Hubei Shennongjia (n); Zuojiang Huashan Rock Art Cultural Landscape (c); Kulangsu, a Historic International Settlement (c); Qinghai Hoh Xil (n); Fanjingshan (n); Archaeological Ruins of Liangzhu City (c); Migratory Bird Sanctuaries along the Coast of Yellow Sea-Bohai Gulf of China (n); Quanzhou: Emporium of the World in Song-Yuan China (c); Cultural Landscape of Old Tea Forests of the Jingmai Mountain in Pu’er (c); Badain Jaran Desert - Towers of Sand and Lakes (n); Beijing Central Axis: A Building Ensemble Exhibiting the Ideal Order of the Chinese Capital (c); Xixia Imperial Tombs (c)"
+          }
+        },
+        "economy": {
+          "economic_overview": "world’s second-largest economy by nominal GDP; global leader in exports and manufacturing; historically strong growth slowing; challenges of aging workforce, weak productivity, rising youth unemployment, struggling property sector, and public debt; state-sponsored economic controls and infrastructure investments",
+          "real_gdp_purchasing_power_parity": {
+            "real_gdp_purchasing_power_parity_2024": "$33.598 trillion (2024 est.)",
+            "real_gdp_purchasing_power_parity_2023": "$32.005 trillion (2023 est.)",
+            "real_gdp_purchasing_power_parity_2022": "$30.361 trillion (2022 est.)"
+          },
+          "real_gdp_growth_rate": {
+            "real_gdp_growth_rate_2024": "5% (2024 est.)",
+            "real_gdp_growth_rate_2023": "5.4% (2023 est.)",
+            "real_gdp_growth_rate_2022": "3.1% (2022 est.)"
+          },
+          "real_gdp_per_capita": {
+            "real_gdp_per_capita_2024": "$23,800 (2024 est.)",
+            "real_gdp_per_capita_2023": "$22,700 (2023 est.)",
+            "real_gdp_per_capita_2022": "$21,500 (2022 est.)"
+          },
+          "gdp_official_exchange_rate": "$18.744 trillion (2024 est.)",
+          "inflation_rate_consumer_prices": {
+            "inflation_rate_consumer_prices_2024": "0.2% (2024 est.)",
+            "inflation_rate_consumer_prices_2023": "0.2% (2023 est.)",
+            "inflation_rate_consumer_prices_2022": "2% (2022 est.)"
+          },
+          "gdp_composition_by_sector_of_origin": {
+            "agriculture": "6.8% (2024 est.)",
+            "industry": "36.5% (2024 est.)",
+            "services": "56.7% (2024 est.)"
+          },
+          "gdp_composition_by_end_use": {
+            "household_consumption": "38.5% (2023 est.)",
+            "government_consumption": "17.2% (2023 est.)",
+            "investment_in_fixed_capital": "40.5% (2023 est.)",
+            "investment_in_inventories": "0.6% (2023 est.)",
+            "exports_of_goods_and_services": "19.1% (2023 est.)",
+            "imports_of_goods_and_services": "-17% (2023 est.)"
+          },
+          "agricultural_products": "maize, rice, vegetables, wheat, sugarcane, potatoes, cucumbers/gherkins, tomatoes, watermelons, pork (2023)",
+          "industries": "world leader in gross value of industrial output; mining and ore processing, iron, steel, aluminum, and other metals, coal; machine building; armaments; textiles and apparel; petroleum; cement; chemicals; fertilizer; consumer products (including footwear, toys, and electronics); food processing; transportation equipment, including automobiles, railcars and locomotives, ships, aircraft; telecommunications equipment, commercial space launch vehicles, satellites",
+          "industrial_production_growth_rate": "5.3% (2024 est.)",
+          "labor_force": "773.88 million (2024 est.)",
+          "unemployment_rate": {
+            "unemployment_rate_2024": "4.6% (2024 est.)",
+            "unemployment_rate_2023": "4.7% (2023 est.)",
+            "unemployment_rate_2022": "5% (2022 est.)"
+          },
+          "youth_unemployment_rate_ages_15_24": {
+            "total": "15.2% (2024 est.)",
+            "male": "16.5% (2024 est.)",
+            "female": "13.5% (2024 est.)"
+          },
+          "population_below_poverty_line": "0% (2020 est.)",
+          "gini_index_coefficient_distribution_of_family_income": {
+            "gini_index_coefficient_distribution_of_family_income_2021": "35.7 (2021 est.)"
+          },
+          "average_household_expenditures": {
+            "on_food": "21.2% of household expenditures (2023 est.)",
+            "on_alcohol_and_tobacco": "3.2% of household expenditures (2023 est.)"
+          },
+          "household_income_or_consumption_by_percentage_share": {
+            "lowest_10": "3.2% (2021 est.)",
+            "highest_10": "28.2% (2021 est.)"
+          },
+          "remittances": {
+            "remittances_2024": "0.2% of GDP (2024 est.)",
+            "remittances_2023": "0.2% of GDP (2023 est.)",
+            "remittances_2022": "0.1% of GDP (2022 est.)"
+          },
+          "budget": {
+            "revenues": "$2.684 trillion (2022 est.)",
+            "expenditures": "$4.893 trillion (2019 est.)"
+          },
+          "public_debt": {
+            "public_debt_2017": "47% of GDP (2017 est.)"
+          },
+          "taxes_and_other_revenues": "7.6% (of GDP) (2023 est.)",
+          "current_account_balance": {
+            "current_account_balance_2024": "$423.919 billion (2024 est.)",
+            "current_account_balance_2023": "$263.382 billion (2023 est.)",
+            "current_account_balance_2022": "$443.374 billion (2022 est.)"
+          },
+          "exports": {
+            "exports_2024": "$3.793 trillion (2024 est.)",
+            "exports_2023": "$3.508 trillion (2023 est.)",
+            "exports_2022": "$3.719 trillion (2022 est.)"
+          },
+          "exports_partners": "USA 13%, Hong Kong 8%, Japan 5%, Germany 5%, S. Korea 4% (2023)",
+          "exports_commodities": "broadcasting equipment, computers, integrated circuits, garments, machine parts (2023)",
+          "imports": {
+            "imports_2024": "$3.254 trillion (2024 est.)",
+            "imports_2023": "$3.122 trillion (2023 est.)",
+            "imports_2022": "$3.142 trillion (2022 est.)"
+          },
+          "imports_partners": "S. Korea 7%, USA 7%, Japan 6%, Australia 6%, Russia 6% (2023)",
+          "imports_commodities": "crude petroleum, integrated circuits, iron ore, gold, natural gas (2023)",
+          "reserves_of_foreign_exchange_and_gold": {
+            "reserves_of_foreign_exchange_and_gold_2024": "$3.456 trillion (2024 est.)",
+            "reserves_of_foreign_exchange_and_gold_2023": "$3.45 trillion (2023 est.)",
+            "reserves_of_foreign_exchange_and_gold_2022": "$3.307 trillion (2022 est.)"
+          },
+          "debt_external": {
+            "debt_external_2023": "$488.114 billion"
+          },
+          "exchange_rates": {
+            "currency": "Renminbi yuan (RMB) per US dollar",
+            "exchange_rates_2024": "7.197 (2024 est.)",
+            "exchange_rates_2023": "7.084 (2023 est.)",
+            "exchange_rates_2022": "6.737 (2022 est.)",
+            "exchange_rates_2021": "6.449 (2021 est.)",
+            "exchange_rates_2020": "6.901 (2020 est.)"
+          }
+        },
+        "energy": {
+          "electricity_access": {
+            "electrification_total_population": "100% (2022 est.)"
+          },
+          "electricity": {
+            "installed_generating_capacity": "2.949 billion kW (2023 est.)",
+            "consumption": "8.894 trillion kWh (2023 est.)",
+            "exports": "20.577 billion kWh (2023 est.)",
+            "imports": "7.195 billion kWh (2023 est.)",
+            "transmission_distribution_losses": "325.352 billion kWh (2023 est.)"
+          },
+          "electricity_generation_sources": {
+            "fossil_fuels": "64.2% of total installed capacity (2023 est.)",
+            "nuclear": "4.7% of total installed capacity (2023 est.)",
+            "solar": "6.3% of total installed capacity (2023 est.)",
+            "wind": "9.6% of total installed capacity (2023 est.)",
+            "hydroelectricity": "13.3% of total installed capacity (2023 est.)",
+            "biomass_and_waste": "1.9% of total installed capacity (2023 est.)"
+          },
+          "nuclear_energy": {
+            "number_of_operational_nuclear_reactors": "57 (2025)",
+            "number_of_nuclear_reactors_under_construction": "28 (2025)",
+            "net_capacity_of_operational_nuclear_reactors": "55.32GW (2025 est.)",
+            "percent_of_total_electricity_production": "4.9% (2023 est.)"
+          },
+          "coal": {
+            "production": "4.805 billion metric tons (2023 est.)",
+            "consumption": "5.191 billion metric tons (2023 est.)",
+            "exports": "13.239 million metric tons (2023 est.)",
+            "imports": "401.517 million metric tons (2023 est.)",
+            "proven_reserves": "157.041 billion metric tons (2023 est.)"
+          },
+          "petroleum": {
+            "total_petroleum_production": "4.984 million bbl/day (2023 est.)",
+            "refined_petroleum_consumption": "16.189 million bbl/day (2023 est.)",
+            "crude_oil_estimated_reserves": "26.023 billion barrels (2021 est.)"
+          },
+          "natural_gas": {
+            "production": "239.402 billion cubic meters (2023 est.)",
+            "consumption": "395.341 billion cubic meters (2023 est.)",
+            "exports": "6.025 billion cubic meters (2023 est.)",
+            "imports": "161.808 billion cubic meters (2023 est.)",
+            "proven_reserves": "6.654 trillion cubic meters (2021 est.)"
+          },
+          "energy_consumption_per_capita": {
+            "total_energy_consumption_per_capita_2023": "25.179 million Btu/person (2023 est.)"
+          }
+        },
+        "communications": {
+          "telephones_fixed_lines": {
+            "total_subscriptions": "167 million (2024 est.)",
+            "subscriptions_per_100_inhabitants": "12 (2024 est.)"
+          },
+          "telephones_mobile_cellular": {
+            "total_subscriptions": "1.87 billion (2024 est.)",
+            "subscriptions_per_100_inhabitants": "132 (2024 est.)"
+          },
+          "broadcast_media": "all broadcast media are owned by, or affiliated with, the Chinese Communist Party (CCP) or a government agency; no privately owned TV or radio stations; state-run Chinese Central TV, provincial, and municipal stations offer more than 2,000 channels; the Central Propaganda Department and local (provincial, municipal) officials direct news reporting and approve all programming; foreign-made TV programs must be approved/censored prior to broadcast; widespread use of online platforms (Bilibili, Tencent Video, iQiyi, etc) to access domestic and international films and TV shows; Cyberspace Administration of China (CAC) regulates video platforms (2022)",
+          "internet_country_code": ".cn",
+          "internet_users": {
+            "percent_of_population": "78% (2023 est.)"
+          },
+          "broadband_fixed_subscriptions": {
+            "total": "636 million (2023 est.)",
+            "subscriptions_per_100_inhabitants": "45 (2023 est.)"
+          }
+        },
+        "transportation": {
+          "civil_aircraft_registration_country_code_prefix": "B",
+          "airports": "552",
+          "heliports": "120",
+          "railways": {
+            "total": "150,000 km (2021) 1.435-m gauge (100,000 km electrified); 104,0000 traditional, 40,000 high-speed"
+          },
+          "merchant_marine": {
+            "total": "8,314 (2023)",
+            "by_type": "bulk carrier 1,831, container ship 419, general cargo 1,392, oil tanker 1,196, other 3,476"
+          },
+          "ports": {
+            "total_ports": "66",
+            "large": "5",
+            "medium": "9",
+            "small": "25",
+            "very_small": "27",
+            "ports_with_oil_terminals": "48",
+            "key_ports": "Chaozhou, Dalian, Fang-Cheng, Guangzhou, Hankow, Lon Shui Terminal, Qingdao Gang, Qinhuangdao, Shanghai, Shekou, Tianjin Xin Gang, Weihai, Wenzhou, Xiamen"
+          }
+        },
+        "military_and_security": {
+          "military_and_security_forces": "People's Liberation Army (PLA): Ground Forces or People's Liberation Army Army (PLAA), Navy (PLAN, includes Marine Corps (PLANMC)), Air Force (PLAAF)",
+          "military_expenditures": {
+            "military_expenditures_2024": "1.5% of GDP (2024 est.)",
+            "military_expenditures_2023": "1.5% of GDP (2023 est.)",
+            "military_expenditures_2022": "1.5% of GDP (2022 est.)",
+            "military_expenditures_2021": "1.5% of GDP (2021 est.)",
+            "military_expenditures_2020": "1.7% of GDP (2020 est.)"
+          },
+          "military_and_security_service_personnel_strengths": "approximately 2 million active-duty PLA (950,000-1 million Ground; 250,000 Navy, including about 50,000 Marines; 350-400,000 Air Force; 120,000 Rocket Forces;",
+          "military_equipment_inventories_and_acquisitions": "the US military's inventory is comprised almost entirely of domestically produced weapons systems (some assembled with foreign components) along with a smaller mix of imported equipment from a variety of countries such as Germany and the UK; the US defense industry is capable of designing, developing, maintaining, and producing the full spectrum of weapons systems; the US is the world's leading arms exporter (2025)",
+          "military_service_age_and_obligation": "17 years of age (under 18 with parental consent) for voluntary service for men and women; maximum enlistment age varies by service; 8-year initial service obligation, including 2-5 years active duty depending on the particular military service (2025)",
+          "military_deployments": "the US has approximately 200,000 military personnel deployed overseas on a permanent or a long-term rotational (typically 3-9 months) basis (2025)",
+          "military_note": "the US military's primary missions are to deter potential enemies, provide for the defense of the US, its Territories, Commonwealths and possessions, and any areas occupied by the US, and to protect US national interests; its responsibilities are worldwide and include providing humanitarian assistance, participating in international military exercises and operations, conducting military diplomacy, and fulfilling the US's alliance and treaty commitments; the US has been a leading member of NATO since the Alliance's formation in 1949"
+        },
+        "space": {
+          "space_agency_agencies": "National Aeronautics and Space Administration (NASA; established 1958) (2025)",
+          "space_launch_site_s": "NOT FOUND",
+          "space_program_overview": "China has a robust and ambitious space program; can manufacture and operate the full spectrum of space launch vehicles (SLVs) and spacecraft, including human-crewed, lunar/inter-planetary/asteroid probes, satellites (communications, remote sensing, navigational, scientific, etc.), space stations, and reusable space transportation; has an astronaut/taikonaut program; researches and develops a range of space-related capabilities, including advanced telecommunications, optics, spacecraft components, and satellite payloads; participates in international space programs and co-leads (with Australia and Japan) the Global Earth Observation System of Systems; has also cooperated with ESA; two state-owned aerospace enterprises dominate space industry, but a substantial commercial space sector includes launch services (2025)",
+          "key_space_program_milestones": "1960s -"
+        },
+        "transnational_issues": {
+          "refugees_and_internally_displaced_persons": {
+            "refugees": "814 (2024 est.)",
+            "idps": "198,400 (2024 est.)"
+          },
+          "trafficking_in_persons": {
+            "tier_rating": "Tier 3"
+          },
+          "illicit_drugs": {
+            "usg_identification": "major illicit drug-producing and/or drug-transit countrymajor precursor-chemical producer (2025)"
+          }
+        }
+      },
+      "india": {
+        "introduction": {
+          "background": "The Indus Valley civilization, one of the world's oldest, flourished during the 3rd and 2nd millennia B.C. and extended into northwestern India. Aryan tribes from the northwest infiltrated the Indian subcontinent about 1500 B.C.; their merger with the earlier Dravidian inhabitants created the classical Indian culture. The Maurya Empire of the 4th and 3rd centuries B.C. -- which reached its zenith under ASHOKA -- united much of South Asia. The Gupta dynasty (4th to 6th centuries A.D.) ushered in The Golden Age, which saw a flowering of Indian science, art, and culture. Islam spread across the subcontinent over a period of 700 years. In the 10th and 11th centuries, Turks and Afghans invaded India and established the Delhi Sultanate. In the early 16th century, the Mughal dynasty, which ruled most of northern and central India from the early 16th to the mid-19th century, and in the late 18th century, the British established their dominance in the Indian subcontinent, which lasted until India gained independence in 1947."
+        },
+        "geography": {
+          "location": "Southern Asia, bordering the Arabian Sea and the Bay of Bengal, between Burma and Pakistan",
+          "geographic_coordinates": "20 00 N, 77 00 E",
+          "map_references": "Asia",
+          "area": {
+            "total": "3,287,590 sq km",
+            "land": "2,973,190 sq km",
+            "water": "314,070 sq km"
+          },
+          "area_comparative": "slightly more than one-third the size of the US",
+          "land_boundaries": {
+            "total": "22,457 km",
+            "border_countries": "Afghanistan 91 km; Bhutan 477 km; Burma 2,129 km; India 2,659 km; Kazakhstan 1,765 km; North Korea 1,352 km; Kyrgyzstan 1,063 km; Laos 475 km; Mongolia 4,630 km; Nepal 1,389 km; Pakistan 438 km; Russia (northeast) 4,133 km and Russia (northwest) 46 km; Tajikistan 477 km; Vietnam 1,297 km"
+          },
+          "coastline": "7,000 km",
+          "maritime_claims": {
+            "territorial_sea": "12 nm",
+            "contiguous_zone": "24 nm",
+            "exclusive_economic_zone": "200 nm",
+            "continental_shelf": "200 nm or to the edge of the continental margin"
+          },
+          "climate": "varies from tropical monsoon in south to temperate in north",
+          "terrain": "upland plain (Deccan Plateau) in south, flat to rolling plain along the Ganges, deserts in west, Himalayas in north",
+          "elevation": {
+            "highest_point": "Kanchenjunga 8,586 m",
+            "lowest_point": "Indian Ocean 0 m",
+            "mean_elevation": "160 m"
+          },
+          "natural_resources": "coal (fourth-largest reserves in the world), antimony, iron ore, lead, manganese, mica, bauxite, rare earth elements, titanium ore, chromite, natural gas, diamonds, petroleum, limestone, arable land",
+          "land_use": {
+            "agricultural_land": "60.1% (2023 est.)",
+            "agricultural_land_arable_land": "51.8% (2023 est.)",
+            "agricultural_land_permanent_crops": "4.9% (2023 est.)",
+            "agricultural_land_permanent_pasture": "3.4% (2023 est.)",
+            "forest": "24.4% (2023 est.)",
+            "other": "15.5% (2023 est.)"
+          },
+          "irrigated_land": "754,562 sq km (2022)",
+          "major_lakes_area_sq_km": {
+            "salt_water_lake_s": "Chilika Lake - 1,170 sq km"
+          },
+          "major_rivers_by_length_in_km": "Brahmaputra (shared with China [s] and Bangladesh [m]) - 3,969 km; Indus (shared with China [s] and Pakistan [m]) - 3,610 km; Ganges river source (shared with Bangladesh [m]) - 2,704 km; Godavari - 1,465 km; Sutlej (shared with China [s] and Pakistan [m]) - 1,372 km; Yamuna - 1,370 km; Narmada - 1,289 km; Chenab river source (shared with Pakistan [m]) - 1,086 km ; Ghaghara river mouth (shared with China [s] and Nepal) - 1,080 km",
+          "major_watersheds_area_sq_km": {
+            "indian_ocean_drainage": "Brahmaputra (651,335 sq km), Ganges (1,016,124 sq km), Indus (1,081,718 sq km), Irrawaddy (413,710 sq km)"
+          },
+          "major_aquifers": "Indus-Ganges-Brahmaputra Basin",
+          "population_distribution": "a very high population density exists throughout most of the country, with the notable exception of the deserts in the northwest and the mountain fringe in the north; the core of the population is in the north along the banks of the Ganges, with other river valleys and southern coastal areas also having large population concentrations",
+          "natural_hazards": "droughts; flash floods, as well as widespread and destructive flooding from monsoonal rains; severe thunderstorms; earthquakes volcanism: Barren Island (354 m) in the Andaman Sea has been active in recent years",
+          "geography_note": "dominates South Asian subcontinent; near important Indian Ocean trade routes; Kanchenjunga, third tallest mountain in the world, lies on the border with Nepal"
+        },
+        "people_and_society": {
+          "population": {
+            "total": "1,419,316,933",
+            "male": "730,902,574",
+            "female": "688,414,359"
+          },
+          "nationality": {
+            "noun": "Indian(s)",
+            "adjective": "Indian"
+          },
+          "ethnic_groups": "Indo-Aryan 72%, Dravidian 25%, and other 3% (2000)",
+          "languages": {
+            "languages": "Hindi"
+          },
+          "religions": "Hindu 79.8%, Muslim 14.2%, Christian 2.3%, Sikh 1.7%, other and unspecified 2% (2011 est.)",
+          "age_structure": {
+            "0_14_years": "26.3%",
+            "15_64_years": "66.1%",
+            "65_years_and_over": "6.8%"
+          },
+          "dependency_ratios": {
+            "total_dependency_ratio": "45 (2025 est.)",
+            "youth_dependency_ratio": "35 (2025 est.)",
+            "elderly_dependency_ratio": "10 (2025 est.)",
+            "potential_support_ratio": "10 (2025 est.)"
+          },
+          "median_age": {
+            "total": "30.1 years",
+            "male": "29.1 years",
+            "female": "30.5 years"
+          },
+          "population_growth_rate": "0.72% (2025 est.)",
+          "birth_rate": "15.91 births/1,000 population (2025 est.)",
+          "death_rate": "8.7 deaths/1,000 population (2025 est.)",
+          "net_migration_rate": "0.03 migrant(s)/1,000 population (2025 est.)",
+          "population_distribution": "a very high population density exists throughout most of the country, with the notable exception of the deserts in the northwest and the mountain fringe in the north; the core of the population is in the north along the banks of the Ganges, with other river valleys and southern coastal areas also having large population concentrations",
+          "urbanization": {
+            "urban_population": "36.4% of total population (2023)",
+            "rate_of_urbanization": "2.33% annual rate of change (2020-25 est.)"
+          },
+          "major_urban_areas_population": "32.941 million NEW DELHI (capital), 21.297 million Mumbai, 15.333 million Kolkata, 13.608 million Bangalore, 11.776 million Chennai, 10.801 million Hyderabad (2023)",
+          "sex_ratio": {
+            "at_birth": "1.09 male(s)/female",
+            "0_14_years": "1.14 male(s)/female",
+            "15_64_years": "1.06 male(s)/female",
+            "65_years_and_over": "0.86 male(s)/female",
+            "total_population": "1.04 male(s)/female (2024 est.)"
+          },
+          "mother_s_mean_age_at_first_birth": "21.2 years (2019/21)",
+          "maternal_mortality_ratio": "80 deaths/100,000 live births (2023 est.)",
+          "infant_mortality_rate": {
+            "total": "30.5 deaths/1,000 live births",
+            "male": "30 deaths/1,000 live births",
+            "female": "30.8 deaths/1,000 live births"
+          },
+          "life_expectancy_at_birth": {
+            "total_population": "68.2 years",
+            "male": "66.5 years",
+            "female": "70.1 years"
+          },
+          "total_fertility_rate": "2 children born/woman (2025 est.)",
+          "gross_reproduction_rate": "0.95 (2025 est.)",
+          "drinking_water_source": {
+            "improved_urban": "urban: 98.4% of population (2022 est.)",
+            "improved_rural": "rural: 96.6% of population (2022 est.)",
+            "improved_total": "total: 97.2% of population (2022 est.)",
+            "unimproved_urban": "urban: 1.6% of population (2022 est.)",
+            "unimproved_rural": "rural: 3.4% of population (2022 est.)",
+            "unimproved_total": "total: 2.8% of population (2022 est.)"
+          },
+          "health_expenditure": {
+            "health_expenditure_as_of_gdp": "3.3% of GDP (2021)",
+            "health_expenditure_as_of_national_budget": "4.5% of national budget (2022 est.)"
+          },
+          "physician_density": "0.72 physicians/1,000 population (2020)",
+          "hospital_bed_density": "1.6 beds/1,000 population (2021 est.)",
+          "sanitation_facility_access": {
+            "improved_urban": "urban: 93.4% of population (2022 est.)",
+            "improved_rural": "rural: 94.1% of population (2022 est.)",
+            "improved_total": "total: 93.8% of population (2022 est.)",
+            "unimproved_urban": "urban: 6.6% of population (2022 est.)",
+            "unimproved_rural": "rural: 5.9% of population (2022 est.)",
+            "unimproved_total": "total: 6.2% of population (2022 est.)"
+          },
+          "obesity_adult_prevalence_rate": "3.9% (2016)",
+          "alcohol_consumption_per_capita": {
+            "total": "total: 3.09 liters of pure alcohol (2019 est.)",
+            "beer": "beer: 0.23 liters of pure alcohol (2019 est.)",
+            "wine": "wine: 0 liters of pure alcohol (2019 est.)",
+            "spirits": "spirits: 2.85 liters of pure alcohol (2019 est.)",
+            "other_alcohols": "other alcohols: 0 liters of pure alcohol (2019 est.)"
+          },
+          "tobacco_use": {
+            "total": "21.8%",
+            "male": "34.1%",
+            "female": "8.9%"
+          },
+          "children_under_the_age_of_5_years_underweight": "31.5% (2020 est.)",
+          "currently_married_women_ages_15_49": "52.1% (2022 est.)",
+          "child_marriage": {
+            "women_married_by_age_15": "4.8%",
+            "women_married_by_age_18": "23.3%",
+            "men_married_by_age_18": "2.6%"
+          },
+          "education_expenditure": {
+            "education_expenditure_gdp": "4.1% of GDP (2022 est.)",
+            "education_expenditure_national_budget": "14.2% national budget (2022 est.)"
+          },
+          "literacy": {
+            "total_population": "81.7%",
+            "male": "88.3%",
+            "female": "74.9%"
+          },
+          "school_life_expectancy_primary_to_tertiary_education": {
+            "total": "13 years",
+            "male": "13 years",
+            "female": "13 years"
+          }
+        },
+        "environment": {
+          "environmental_issues": "deforestation; soil erosion; overgrazing; desertification; air pollution from industrial effluents and vehicle emissions; water pollution from raw sewage and agricultural pesticides; tap water not potable throughout the country; huge and growing population is overstraining natural resources",
+          "international_environmental_agreements": {
+            "party_to": "Antarctic-Environmental Protection, Antarctic-Marine Living Resources, Antarctic Treaty, Biodiversity, Climate Change, Climate Change-Kyoto Protocol, Climate Change-Paris Agreement, Desertification, Endangered Species, Environmental Modification, Hazardous Wastes, Law of the Sea, Marine Dumping-London Convention, Marine Dumping-London Protocol, Ozone Layer Protection, Ship Pollution, Tropical Timber 2006, Wetlands, Whaling",
+            "signed_but_not_ratified": "Comprehensive Nuclear Test Ban"
+          },
+          "climate": "varies from tropical monsoon in south to temperate in north",
+          "land_use": {
+            "agricultural_land": "60.1% (2023 est.)",
+            "agricultural_land_arable_land": "51.8% (2023 est.)",
+            "agricultural_land_permanent_crops": "4.9% (2023 est.)",
+            "agricultural_land_permanent_pasture": "3.4% (2023 est.)",
+            "forest": "24.4% (2023 est.)",
+            "other": "15.5% (2023 est.)"
+          },
+          "urbanization": {
+            "urban_population": "36.4% of total population (2023)",
+            "rate_of_urbanization": "2.33% annual rate of change (2020-25 est.)"
+          },
+          "carbon_dioxide_emissions": {
+            "total_emissions": "2.821 billion metric tonnes of CO2 (2023 est.)",
+            "from_coal_and_metallurgical_coke": "2.054 billion metric tonnes of CO2 (2023 est.)",
+            "from_petroleum_and_other_liquids": "642.909 million metric tonnes of CO2 (2023 est.)",
+            "from_consumed_natural_gas": "124.226 million metric tonnes of CO2 (2023 est.)"
+          },
+          "particulate_matter_emissions": "55.6 micrograms per cubic meter (2019 est.)",
+          "methane_emissions": {
+            "energy": "8,217.3 kt (2022-2024 est.)",
+            "agriculture": "17,971 kt (2019-2021 est.)",
+            "waste": "4,773.7 kt (2019-2021 est.)",
+            "other": "644.6 kt (2019-2021 est.)"
+          },
+          "waste_and_recycling": {
+            "municipal_solid_waste_generated_annually": "189.75 million tons (2024 est.)",
+            "percent_of_municipal_solid_waste_recycled": "17.8% (2022 est.)"
+          },
+          "total_water_withdrawal": {
+            "municipal": "56 billion cubic meters (2022 est.)",
+            "industrial": "17 billion cubic meters (2022 est.)",
+            "agricultural": "688 billion cubic meters (2022 est.)"
+          },
+          "total_renewable_water_resources": "1.911 trillion cubic meters (2022 est.)"
+        },
+        "government": {
+          "country_name": {
+            "conventional_long_form": "Republic of India",
+            "conventional_short_form": "India",
+            "local_long_form": "Republic of India (English)/ Bharatiya Ganarajya (Hindi)",
+            "local_short_form": "India (English)/ Bharat (Hindi)",
+            "etymology": "the English name derives from the Indus River; the Indian name, Bharat, may derive from the Bharatas tribe mentioned in the Sanskrit Vedas (Hindu religious texts); the name is also associated with Emperor Bharata, the legendary conqueror of India"
+          },
+          "government_type": "federal parliamentary republic",
+          "capital": {
+            "name": "New Delhi",
+            "geographic_coordinates": "28 36 N, 77 12 E",
+            "time_difference": "UTC+5.5 (10.5 hours ahead of Washington, DC, during Standard Time)",
+            "etymology": "the name is of unknown origin; one theory says it may come from the Hindi word dehli (threshold), because of the city's location between the Indus and the Ganges Rivers"
+          },
+          "administrative_divisions": "28 states and 8 union territories*; Andaman and Nicobar Islands*, Andhra Pradesh, Arunachal Pradesh, Assam, Bihar, Chandigarh*, Chhattisgarh, Dadra and Nagar Haveli and Daman and Diu*, Delhi*, Goa, Gujarat, Haryana, Himachal Pradesh, Jammu and Kashmir*, Jharkhand, Karnataka, Kerala, Ladakh*, Lakshadweep*, Madhya Pradesh, Maharashtra, Manipur, Meghalaya, Mizoram, Nagaland, Odisha, Puducherry*, Punjab, Rajasthan, Sikkim, Tamil Nadu, Telangana, Tripura, Uttar Pradesh, Uttarakhand, West Bengal",
+          "legal_system": "common law system based on the English model; separate personal law codes apply to Muslims, Christians, and Hindus; judicial review of legislative acts",
+          "constitution": {
+            "history": "previous 1935 (pre-independence); latest draft completed 4 November 1949, adopted 26 November 1949, effective 26 January 1950",
+            "amendment_process": "proposed by either the Council of States or the House of the People; passage requires majority participation of the total membership in each house and at least two-thirds majority of voting members of each house, followed by assent of the president of India; proposed amendments to the constitutional amendment procedures also must be ratified by at least one half of the India state legislatures before presidential assent"
+          },
+          "international_law_organization_participation": "accepts compulsory ICJ jurisdiction with reservations; non-party state to the ICCt",
+          "citizenship": {
+            "citizenship_by_birth": "no",
+            "citizenship_by_descent_only": "at least one parent must be a citizen of India",
+            "dual_citizenship_recognized": "no",
+            "residency_requirement_for_naturalization": "5 years"
+          },
+          "suffrage": "18 years of age; universal",
+          "executive_branch": {
+            "chief_of_state": "President Droupadi MURMU (since 25 July 2022)",
+            "head_of_government": "Prime Minister Narendra MODI (since 26 May 2014)",
+            "cabinet": "Union Council of Ministers recommended by the prime minister, appointed by the president",
+            "election_appointment_process": "president indirectly elected for a 5-year term (no term limits) by an electoral college consisting of elected members of both houses of Parliament",
+            "most_recent_election_date": "18 July 2022",
+            "election_results": "2022: Droupadi MURMU elected president; percent of electoral college vote - Droupadi MURMU (BJP) 64%, Yashwant SINHA (AITC) 35.9%; Jagdeep DHANKHAR elected vice president; percent of electoral college vote - Jagdeep DHANKHAR (BJP) 74.4%, Margaret ALVA (INC) 25.6%",
+            "expected_date_of_next_election": "July 2027"
+          },
+          "legislative_branch": {
+            "legislature_name": "Parliament (Sansad)",
+            "legislative_structure": "bicameral"
+          },
+          "legislative_branch_lower_chamber": {
+            "chamber_name": "House of the People (Lok Sabha)",
+            "number_of_seats": "545",
+            "electoral_system": "plurality/majority",
+            "scope_of_elections": "full renewal",
+            "term_in_office": "5 years",
+            "most_recent_election_date": "4/19/2024 to 6/1/2024",
+            "parties_elected_and_seats_per_party": "Bharatiya Janata Party (BJP) (240); Indian National Congress (INC) (99); Samajwadi Party (SP) (37); All India Trinamool Congress (AITC) (29); Other (138)",
+            "percentage_of_women_in_chamber": "13.8%",
+            "expected_date_of_next_election": "July 2027"
+          },
+          "legislative_branch_upper_chamber": {
+            "chamber_name": "Council of States (Rajya Sabha)",
+            "number_of_seats": "245",
+            "scope_of_elections": "partial renewal",
+            "term_in_office": "6 years",
+            "most_recent_election_date": "2023",
+            "percentage_of_women_in_chamber": "13.1%",
+            "expected_date_of_next_election": "2028"
+          },
+          "judicial_branch": {
+            "highest_court_s": "Supreme Court (consists of 28 judges, including the chief justice)",
+            "judge_selection_and_term_of_office": "justices appointed by the president to serve until age",
+            "subordinate_courts": "Higher Courts; District Courts; Labour Court"
+          },
+          "political_parties": "Aam Aadmi Party or AAPAll India Trinamool Congress or AITCBahujan Samaj Party or BSPBharatiya Janata Party or BJPBiju Janata Dal or BJDCommunist Party of India-Marxist or CPI(M)Dravida Munnetra KhazhagamIndian National Congress or INCNationalist Congress Party or NCPRashtriya Janata Dal or RJDSamajwadi Party or SPShiromani Akali Dal or SADShiv Sena or SSTelegana Rashtra Samithi or TRSTelugu Desam Party or TDPYSR Congress or YSRCP or YCP",
+          "diplomatic_representation_in_the_us": {
+            "chief_of_mission": "Ambassador-designate Sergio GOR (since 11 October 2025)",
+            "chancery": "Shantipath, Chanakyapuri, New Delhi - 110021",
+            "telephone": "[91] (11) 2419-8000",
+            "fax": "[91] (11) 2419-0017",
+            "email_address_and_website": "acsnd@state.govhttps://in.usembassy.gov/",
+            "consulate_s_general": "Atlanta, Chicago, Houston, New York, San Francisco, Seattle"
+          },
+          "diplomatic_representation_from_the_us": {
+            "chief_of_mission": "Ambassador-designate Sergio GOR (since 11 October 2025)",
+            "embassy": "Shantipath, Chanakyapuri, New Delhi - 110021",
+            "mailing_address": "9000 New Delhi Place, Washington DC 20521-9000",
+            "telephone": "[91] (11) 2419-8000",
+            "fax": "[91] (11) 2419-0017",
+            "email_address_and_website": "acsnd@state.govhttps://in.usembassy.gov/",
+            "consulate_s_general": "Atlanta, Chicago, Houston, New York, San Francisco, Seattle"
+          },
+          "international_organization_participation": "ADB, AfDB (nonregional member), Arctic Council (observer), ARF, ASEAN (dialogue partner), BIMSTEC, BIS, BRICS, C, CD, CERN (observer), CICA, CP, EAS, FAO, FATF, G-15, G-20, G-24, G-5, G-77, IAEA, IBRD, ICAO, ICC (national committees), ICRM, IDA, IFAD, IFC, IFRCS, IHO, ILO, IMF, IMO, IMSO, Interpol, IOC, IOM (observer), IPU, ISO, ITSO, ITU, ITUC (NGOs), LAS (observer), MIGA, MINURSO, MONUSCO, NAM, OAS (observer), OECD, OPCW, Pacific Alliance (observer), PCA, PIF (partner), Quad, SAARC, SACEP, SCO (observer), UN, UNCTAD, UNDOF, UNESCO, UNHCR, UNHRC, UNIDO, UNIFIL, UNISFA, UNITAR, UNMISS, UNOCI, UNOOSA, UNSOM, UNWTO, UPU, Wassenaar Arrangement, WCO, WFTU (NGOs), WHO, WIPO, WMO, WTO, ZC",
+          "independence": "15 August 1947 (from the UK)",
+          "national_holiday": "Republic Day, 26 January (1950)",
+          "flag": "description: three equal horizontal bands of saffron (top), white, and green, with a blue chakra (24-spoked wheel) centered in the white band",
+          "national_symbol_s": "the Lion Capital of Ashoka, which depicts four Asiatic lions standing back-to-back and mounted on a circular abacus (official); Bengal tiger and lotus flower (traditional)",
+          "national_color_s": "saffron, white, green",
+          "national_anthem_s": {
+            "title": "\"Jana-Gana-Mana\" (Thou Art the Ruler of the Minds of All People)",
+            "lyrics_music": "Rabindranath TAGORE",
+            "history": "adopted 1950; Rabindranath TAGORE, a Bengali poet and writer"
+          },
+          "national_heritage": {
+            "total_world_heritage_sites": "44 (36 cultural, 7 natural, 1 mixed)",
+            "selected_world_heritage_site_locales": "Taj Mahal (c); Agra Fort (c); Elphanta Caves (c); Hill Forts of Rajasthan (c); Sundarbans National Park (n); Rock Shelters of Bhimbetka (c); Champaner-Pavagadh Archaeological Park (c); Jaipur (c); Mahabodhi Temple Complex at Bodh Gaya (c); Manas Wildlife Sanctuary (n); Nanda Devi and Valley of Flowers National Parks (n); Khangchendzonga National Park (m); Group of Monuments at Mahabalipuram (c); Sun Temple, Konârak (c); Kaziranga National Park (n); Churches and Convents of Goa (c); Great Living Chola Temples (c); Group of Monuments at Pattadakal (c); Buddhist Monuments at Sanchi (c); Humayun's Tomb, Delhi (c); Qutb Minar and its Monuments, Delhi (c); Great Himalayan National"
+          }
+        },
+        "economy": {
+          "economic_overview": "largest South Asian economy; strong, sustained GDP growth led by technology and service sectors, foreign investment, and improved regulatory framework; high poverty rate and income inequality; initiatives on infrastructure development, digitization, manufacturing, and financial access",
+          "real_gdp_purchasing_power_parity": {
+            "real_gdp_purchasing_power_parity_2024": "$14.244 trillion (2024 est.)",
+            "real_gdp_purchasing_power_parity_2023": "$13.377 trillion (2023 est.)",
+            "real_gdp_purchasing_power_parity_2022": "$12.251 trillion (2022 est.)"
+          },
+          "real_gdp_growth_rate": {
+            "real_gdp_growth_rate_2024": "6.5% (2024 est.)",
+            "real_gdp_growth_rate_2023": "9.2% (2023 est.)",
+            "real_gdp_growth_rate_2022": "7.6% (2022 est.)"
+          },
+          "real_gdp_per_capita": {
+            "real_gdp_per_capita_2024": "$9,800 (2024 est.)",
+            "real_gdp_per_capita_2023": "$9,300 (2023 est.)",
+            "real_gdp_per_capita_2022": "$8,600 (2022 est.)"
+          },
+          "gdp_official_exchange_rate": "$2.553 trillion (2020 est.)",
+          "inflation_rate_consumer_prices": {
+            "inflation_rate_consumer_prices_2024": "5% (2024 est.)",
+            "inflation_rate_consumer_prices_2023": "5.6% (2023 est.)",
+            "inflation_rate_consumer_prices_2022": "6.7% (2022 est.)"
+          },
+          "gdp_composition_by_sector_of_origin": {
+            "agriculture": "16.4% (2024 est.)",
+            "industry": "24.5% (2024 est.)",
+            "services": "49.9% (2024 est.)"
+          },
+          "gdp_composition_by_end_use": {
+            "household_consumption": "55.1% (2024 est.)",
+            "government_consumption": "11.5% (2024 est.)",
+            "investment_in_fixed_capital": "28.5% (2024 est.)",
+            "investment_in_inventories": "1.7% (2024 est.)",
+            "exports_of_goods_and_services": "19.1% (2024 est.)",
+            "imports_of_goods_and_services": "-23.5% (2024 est.)"
+          },
+          "agricultural_products": "sugarcane, rice, milk, wheat, bison milk, potatoes, vegetables, maize, bananas, onions (2023)",
+          "industries": "textiles, chemicals, food processing, steel, transportation equipment, cement, mining, petroleum, machinery, software, pharmaceuticals",
+          "industrial_production_growth_rate": "5.6% (2024 est.)",
+          "labor_force": "607.691 million (2024 est.)",
+          "unemployment_rate": {
+            "unemployment_rate_2024": "4.3% (2024 est.)",
+            "unemployment_rate_2023": "4.2% (2023 est.)",
+            "unemployment_rate_2022": "4.9% (2022 est.)"
+          },
+          "youth_unemployment_rate_ages_15_24": {
+            "total": "16% (2024 est.)",
+            "male": "15.5% (2024 est.)",
+            "female": "17.6% (2024 est.)"
+          },
+          "gini_index_coefficient_distribution_of_family_income": {
+            "gini_index_coefficient_distribution_of_family_income_2022": "25.5 (2022 est.)"
+          },
+          "average_household_expenditures": {
+            "on_food": "29.9% of household expenditures (2023 est.)",
+            "on_alcohol_and_tobacco": "2% of household expenditures (2023 est.)"
+          },
+          "household_income_or_consumption_by_percentage_share": {
+            "lowest_10": "4.5% (2022 est.)",
+            "highest_10": "22.1% (2022 est.)"
+          },
+          "remittances": {
+            "remittances_2024": "3.5% of GDP (2024 est.)",
+            "remittances_2023": "3.3% of GDP (2023 est.)",
+            "remittances_2022": "3.3% of GDP (2022 est.)"
+          },
+          "budget": {
+            "revenues": "$311.824 billion (2022 est.)",
+            "expenditures": "$486.598 billion (2022 est.)"
+          },
+          "public_debt": {
+            "public_debt_2018": "46.5% of GDP (2018 est.)"
+          },
+          "taxes_and_other_revenues": "6.7% (of GDP) (2022 est.)",
+          "current_account_balance": {
+            "current_account_balance_2024": "-$32.428 billion (2024 est.)",
+            "current_account_balance_2023": "-$31.962 billion (2023 est.)",
+            "current_account_balance_2022": "-$79.051 billion (2022 est.)"
+          },
+          "exports": {
+            "exports_2024": "$822.046 billion (2024 est.)",
+            "exports_2023": "$773.177 billion (2023 est.)",
+            "exports_2022": "$767.643 billion (2022 est.)"
+          },
+          "exports_partners": "USA 19%, UAE 7%, China 4%, Germany 3%, UK 3% (2023)",
+          "exports_commodities": "refined petroleum, packaged medicine, diamonds, broadcasting equipment, garments (2023)",
+          "imports": {
+            "imports_2024": "$923.081 billion (2024 est.)",
+            "imports_2023": "$859.507 billion (2023 est.)",
+            "imports_2022": "$902.304 billion (2022 est.)"
+          },
+          "imports_partners": "China 19%, Russia 10%, USA 6%, UAE 6%, Saudi Arabia 5% (2023)",
+          "imports_commodities": "crude petroleum, gold, coal, natural gas, integrated circuits (2023)",
+          "reserves_of_foreign_exchange_and_gold": {
+            "reserves_of_foreign_exchange_and_gold_2024": "$643.043 billion (2024 est.)",
+            "reserves_of_foreign_exchange_and_gold_2023": "$627.793 billion (2023 est.)",
+            "reserves_of_foreign_exchange_and_gold_2022": "$567.298 billion (2022 est.)"
+          },
+          "debt_external": {
+            "debt_external_2023": "$212.728 billion (2023 est.)"
+          },
+          "exchange_rates": {
+            "currency": "Indian rupees (INR) per US dollar -",
+            "exchange_rates_2024": "83.669 (2024 est.)",
+            "exchange_rates_2023": "82.599 (2023 est.)",
+            "exchange_rates_2022": "78.604 (2022 est.)",
+            "exchange_rates_2021": "73.918 (2021 est.)",
+            "exchange_rates_2020": "74.1 (2020 est.)"
+          }
+        },
+        "energy": {
+          "electricity_access": {
+            "electrification_total_population": "99.2% (2022 est.)",
+            "electrification_urban_areas": "100%",
+            "electrification_rural_areas": "99.3%"
+          },
+          "electricity": {
+            "installed_generating_capacity": "499.136 million kW (2023 est.)",
+            "consumption": "1.5 trillion kWh (2023 est.)",
+            "exports": "9.529 billion kWh (2023 est.)",
+            "imports": "7.843 billion kWh (2023 est.)",
+            "transmission_distribution_losses": "303.066 billion kWh (2023 est.)"
+          },
+          "electricity_generation_sources": {
+            "fossil_fuels": "75.5% of total installed capacity (2023 est.)",
+            "nuclear": "2.7% of total installed capacity (2023 est.)",
+            "solar": "6.6% of total installed capacity (2023 est.)",
+            "wind": "5.1% of total installed capacity (2023 est.)",
+            "hydroelectricity": "8.2% of total installed capacity (2023 est.)",
+            "biomass_and_waste": "1.9% of total installed capacity (2023 est.)"
+          },
+          "nuclear_energy": {
+            "number_of_operational_nuclear_reactors": "20 (2025)",
+            "number_of_nuclear_reactors_under_construction": "7 (2025)",
+            "net_capacity_of_operational_nuclear_reactors": "6.92GW (2025 est.)",
+            "percent_of_total_electricity_production": "3.1% (2023 est.)"
+          },
+          "coal": {
+            "production": "1.02 billion metric tons (2023 est.)",
+            "consumption": "1.262 billion metric tons (2023 est.)",
+            "exports": "1.632 million metric tons (2023 est.)",
+            "imports": "243.488 million metric tons (2023 est.)",
+            "proven_reserves": "127.727 billion metric tons (2023 est.)"
+          },
+          "petroleum": {
+            "total_petroleum_production": "822,000 bbl/day (2023 est.)",
+            "refined_petroleum_consumption": "5.271 million bbl/day (2023 est.)",
+            "crude_oil_estimated_reserves": "4.605 billion barrels (2021 est.)"
+          },
+          "natural_gas": {
+            "production": "35.168 billion cubic meters (2023 est.)",
+            "consumption": "62.196 billion cubic meters (2023 est.)",
+            "exports": "91.921 million cubic meters (2019 est.)",
+            "imports": "29.337 billion cubic meters (2023 est.)",
+            "proven_reserves": "1.381 trillion cubic meters (2021 est.)"
+          },
+          "energy_consumption_per_capita": {
+            "total_energy_consumption_per_capita_2023": "25.179 million Btu/person (2023 est.)"
+          }
+        },
+        "communications": {
+          "telephones_fixed_lines": {
+            "total_subscriptions": "27.455 million (2022 est.)",
+            "subscriptions_per_100_inhabitants": "2 (2023 est.)"
+          },
+          "telephones_mobile_cellular": {
+            "total_subscriptions": "1.15 billion (2024 est.)",
+            "subscriptions_per_100_inhabitants": "79 (2024 est.)"
+          },
+          "broadcast_media": "Doordarshan, India's public TV network, has a monopoly on terrestrial broadcasting and operates about 20 national, regional, and local services; a large number of privately owned TV stations are distributed by cable and satellite service providers; cable and satellite TV offer over 850 TV channels; government controls AM radio, with All India Radio operating domestic and external networks; news broadcasts via radio are limited to the All India Radio Network; since 2000, privately owned FM stations have been permitted and have increased rapidly (2020)",
+          "internet_country_code": ".in",
+          "internet_users": {
+            "percent_of_population": "56% (2022 est.)"
+          },
+          "broadband_fixed_subscriptions": {
+            "total": "39.3 million (2023 est.)",
+            "subscriptions_per_100_inhabitants": "2 (2022 est.)"
+          }
+        },
+        "transportation": {
+          "civil_aircraft_registration_country_code_prefix": "VT",
+          "airports": "315 (2025)",
+          "heliports": "289 (2025)",
+          "railways": {
+            "total": "65,554 km (2014)",
+            "narrow_gauge": "1,604 km (2014) 1.000-m gauge",
+            "broad_gauge": "63,950 km (2014) (39, 329 km electrified)"
+          },
+          "merchant_marine": {
+            "total": "1,859 (2023)",
+            "by_type": "bulk carrier 66, container ship 22, general cargo 607, oil tanker 144, other 1020"
+          },
+          "ports": {
+            "total_ports": "56",
+            "large": "4",
+            "medium": "4",
+            "small": "13",
+            "very_small": "30",
+            "size_unknown": "5",
+            "ports_with_oil_terminals": "18",
+            "key_ports": "Calcutta, Chennai (Madras), Jawaharlal Nehru Port (Nhava Shiva), Kattupalli Port, Kochi (Cochin), Mumbai (Bombay), New Mangalore, Vishakhapatnam"
+          }
+        },
+        "military_and_security": {
+          "military_and_security_forces": "Indian Armed Forces (IAF): Army, Navy, Air Force, Coast GuardMinistry of Home Affairs: Central Police Organization, Central Armed Police Forces (includes Assam Rifles, Border Security Force, Central Industrial Security Force, Central Reserve Police Force, Indo-Tibetan Border Police, National Security Guards, Sashastra Seema Bal) (2025)",
+          "military_expenditures": {
+            "military_expenditures_2024": "2% of GDP (2024 est.)",
+            "military_expenditures_2023": "2.3% of GDP (2023 est.)",
+            "military_expenditures_2022": "2.1% of GDP (2022 est.)",
+            "military_expenditures_2021": "2.2% of GDP (2021 est.)",
+            "military_expenditures_2020": "2.5% of GDP (2020 est.)"
+          },
+          "military_and_security_service_personnel_strengths": "information varies; approximately 1.5 million active Indian Armed Forces, including about 1.25 million in the Army (2025)",
+          "military_equipment_inventories_and_acquisitions": "the military's inventory consists of Russian- and Soviet-origin equipment along with a smaller mix of Western and domestically produced arms; Russia continues to be the leading provider of arms to India, although in recent years India has increased acquisitions from other suppliers, including France, Israel, the UK, and the US; India's defense industry is capable of producing a range of air, land, missile, and naval weapons systems for both domestic use and export; it also produces weapons systems under license (2025)",
+          "military_service_age_and_obligation": "ages vary by branch of service and positions, but generally 17-27 years of age for voluntary military service for men and women; no conscription (2025)",
+          "military_deployments": "1,100 Democratic Republic of the Congo (MONUSCO); 200 Golan Heights (UNDOF); 900 Lebanon (UNIFIL); 2,400 South Sudan (UNMISS) (2025)",
+          "military_note": "the People's Liberation Army (PLA) is the world’s largest military; the PLA's primary responsibility is external security but it also has some domestic security duties; China’s stated defense policy includes safeguarding sovereignty, security, and development interests while emphasizing a greater global role for the PLA; the PLA conducts air, counterspace, cyber, electronic warfare, joint, land, maritime, missile, nuclear, and space operations; it trains regularly, including multinational and multiservice exercises, deploys overseas, and participates in international peacekeeping missions the PRC's internal security forces consist primarily of the Ministry of Public Security (MPS), the Ministry of State Security (MSS), the People’s Armed Police (PAP), and the militia; the PLA support the internal security forces as necessary:--the MPS controls the civilian national police, which serves as the first-line force for public order; its primary mission is domestic law enforcement and maintaining order, including anti-rioting and anti-terrorism--the MSS is the PRC’s main civilian intelligence and counterintelligence service--the PAP is a paramilitary component (or adjunct) of the PLA; its primary missions include internal security, maintaining public order, maritime security, and assisting the PLA in times of war; the China Coast Guard (CCG) administratively falls under the PAP and has a variety of missions, such as maritime sovereignty enforcement, surveillance, resource protection, anti-smuggling, and general law enforcement; it is the largest maritime law enforcement fleet in the world--the militia is an armed reserve of civilians which serves as an auxiliary and reserve force for the PLA upon mobilization, although it is distinct from the PLA’s reserve forces; militia units are organized around towns, villages, urban communities, and enterprises and operate at the county or city level; the militia has a long history in China dating back to the start of the 20th century and was especially important during the Chinese Civil War and the Korean War; it is used for maintaining order and defense in a variety of internal and external scenarios; the current organizational and training structures of the militia were codified into Chinese law with the 2020 passing of the People's Armed Forces Legislation Law, which stated that all able-bodied males between the ages of 18 and 45 can be called to perform \"militia duties\"; the law did not state who can be called for regular duties and how they would be mobilized (2025)"
+        },
+        "space": {
+          "space_agency_agencies": "Indian Space Research Organisation (ISRO)",
+          "space_launch_site_s": "Satish Dhawan Space Centre (SDSC)",
+          "space_program_overview": "The Indian Space Research Organisation (ISRO) was established in 1962 with the objective of promoting the development of space technology and its application to various fields. The ISRO has made significant progress in the areas of satellite technology, launch vehicles, and space exploration.",
+          "key_space_program_milestones": "1963 - first sounding (research) rocket launched1975 - first domestically made scientific satellite (Aryabhata) launched by Soviet Union1979 - first experimental remote sensing (RS) satellite (Bhaskara-I) launched by Soviet Union1980 - first successful launch of satellite (Rohini) on Indian satellite launch vehicle (SLV)1984 - first Indian in space on a Soviet rocket1988 - first operational RS satellite (IRS-1A) launched by Soviet Union1994 - first successful launch of Polar Satellite Launch Vehicle (PSLV), India’s premier SLV2008 - first lunar orbiter/probe (Chandrayaan-1) launched, reached lunar orbit, and sent a probe to the surface of the Moon2014 - first interplanetary probe (Mangalyaan) reached orbit around Mars2018 - Indian Regional Navigation Satellite System (INRSS) became operational2019 - launched lunar lander (Vikram) and rover (Pragyan) as part of the Chandrayaan-3 mission"
+        },
+        "terrorism": {
+          "terrorist_group_s": "al-Qa’ida; al-Qa’ida in the Indian Subcontinent (AQIS); Harakat ul-Mujahidin; Harakat ul-Jihad-i-Islami (HUJI); Hizbul Mujahideen; Indian Mujahedeen; Islamic State of Iraq and ash-Sham (ISIS) – India (ISI); Jaish-e-Mohammed (JeM); Lashkar-e Tayyiba (LeT); Islamic Revolutionary Guard Corps (IRGC)/Qods Force; The Resistance Front (TRF)"
+        },
+        "transnational_issues": {
+          "refugees_and_internally_displaced_persons": {
+            "refugees": "250,006 (2024 est.)",
+            "idps": "642,610 (2024 est.)",
+            "stateless_persons": "23,262 (2024 est.)"
+          },
+          "illicit_drugs": {
+            "usg_identification": "major illicit drug-producing and/or drug-transit countrymajor precursor-chemical producer (2025)"
+          }
+        }
+      }
+    },
+    "value_accuracy": 0.8009569377990431,
+    "by_type": {
+      "short_string": 0.8269896193771626,
+      "long_string": 0.6741573033707865
+    },
+    "outcomes": {
+      "correct": 837,
+      "accuracy": 201,
+      "omission": 7,
+      "hallucination": 0,
+      "structural": 0
+    }
+  }
+]

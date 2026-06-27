@@ -1,0 +1,12 @@
+version: 2
+updates:
+  # Python dependencies only. GitHub Actions are pinned by major version in the
+  # workflows and updated by hand, so Dependabot does not watch them.
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"

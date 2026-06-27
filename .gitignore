@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Distribution
+dist/
+build/
+*.egg-info/
+
+# Virtual environment
+.venv/
+
+# Tools
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+htmlcov/
+
+# Environment
+.env
+
+# MkDocs build output
+site/
+
+# Packaging lockfile (keep uv.lock tracked — omit if you prefer not to)
+# uv.lock
+
+# Large downloaded test fixtures (fetched on-demand by integration tests)
+tests/fixtures/documents/_cache/
+tests/fixtures/documents/*.txt
+tests/fixtures/documents/_mtsamples.csv
+tests/fixtures/documents/clinical_note.txt
+
+# Closed-book benchmark source dumps (downloadable; build_fixtures.py lists the URLs and
+# regenerates the committed fixture folders). The fixtures themselves are tracked.
+benchmark/datasets/closed_book/*.json
+benchmark/datasets/closed_book/*.dat
+
+# Benchmark documents are committed for reproducibility (the War & Peace text is
+# public domain, from Project Gutenberg). Benchmark results ARE committed too —
+# raw outputs are the reproducibility evidence — so benchmark/results/ is tracked.

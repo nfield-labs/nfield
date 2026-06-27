@@ -1,0 +1,1027 @@
+{
+  "type": "object",
+  "properties": {
+    "book": {
+      "type": "object",
+      "description": "Book-level metadata",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the novel"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author's full name"
+        },
+        "original_language": {
+          "type": "string",
+          "description": "Language the novel was originally written in"
+        },
+        "genre": {
+          "type": "string",
+          "description": "Literary genre of the work"
+        },
+        "setting_country": {
+          "type": "string",
+          "description": "Primary country where the story is set"
+        },
+        "central_conflict": {
+          "type": "string",
+          "description": "The main war/conflict depicted"
+        },
+        "time_period": {
+          "type": "string",
+          "description": "Historical time period covered"
+        },
+        "emperor_of_france": {
+          "type": "string",
+          "description": "Name of the French emperor in the story"
+        },
+        "russian_commander": {
+          "type": "string",
+          "description": "Name of the Russian commander-in-chief"
+        },
+        "longest_battle_setting": {
+          "type": "string",
+          "description": "Major battle that is a centerpiece of the novel"
+        },
+        "narrative_style": {
+          "type": "string",
+          "description": "Narrative point of view / style"
+        },
+        "number_of_main_families": {
+          "type": "integer",
+          "description": "Number of central aristocratic families followed"
+        },
+        "ends_with_epilogue": {
+          "type": "boolean",
+          "description": "Whether the novel ends with an epilogue"
+        }
+      }
+    },
+    "characters": {
+      "type": "object",
+      "description": "Major characters",
+      "properties": {
+        "pierre": {
+          "type": "object",
+          "description": "The character Pierre Bezukhov",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Pierre Bezukhov"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Pierre Bezukhov"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Pierre Bezukhov"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Pierre Bezukhov (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Pierre Bezukhov"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Pierre Bezukhov in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Pierre Bezukhov"
+            }
+          }
+        },
+        "natasha": {
+          "type": "object",
+          "description": "The character Natasha Rostova",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Natasha Rostova"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Natasha Rostova"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Natasha Rostova"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Natasha Rostova (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Natasha Rostova"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Natasha Rostova in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Natasha Rostova"
+            }
+          }
+        },
+        "andrei": {
+          "type": "object",
+          "description": "The character Prince Andrei Bolkonsky",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Prince Andrei Bolkonsky"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Prince Andrei Bolkonsky"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Prince Andrei Bolkonsky"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Prince Andrei Bolkonsky (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Prince Andrei Bolkonsky"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Prince Andrei Bolkonsky in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Prince Andrei Bolkonsky"
+            }
+          }
+        },
+        "nikolai": {
+          "type": "object",
+          "description": "The character Nikolai Rostov",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Nikolai Rostov"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Nikolai Rostov"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Nikolai Rostov"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Nikolai Rostov (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Nikolai Rostov"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Nikolai Rostov in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Nikolai Rostov"
+            }
+          }
+        },
+        "marya": {
+          "type": "object",
+          "description": "The character Princess Marya Bolkonskaya",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Princess Marya Bolkonskaya"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Princess Marya Bolkonskaya"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Princess Marya Bolkonskaya"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Princess Marya Bolkonskaya (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Princess Marya Bolkonskaya"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Princess Marya Bolkonskaya in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Princess Marya Bolkonskaya"
+            }
+          }
+        },
+        "helene": {
+          "type": "object",
+          "description": "The character Helene Kuragina",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Helene Kuragina"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Helene Kuragina"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Helene Kuragina"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Helene Kuragina (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Helene Kuragina"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Helene Kuragina in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Helene Kuragina"
+            }
+          }
+        },
+        "anatole": {
+          "type": "object",
+          "description": "The character Anatole Kuragin",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Anatole Kuragin"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Anatole Kuragin"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Anatole Kuragin"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Anatole Kuragin (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Anatole Kuragin"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Anatole Kuragin in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Anatole Kuragin"
+            }
+          }
+        },
+        "boris": {
+          "type": "object",
+          "description": "The character Boris Drubetskoy",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Boris Drubetskoy"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Boris Drubetskoy"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Boris Drubetskoy"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Boris Drubetskoy (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Boris Drubetskoy"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Boris Drubetskoy in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Boris Drubetskoy"
+            }
+          }
+        },
+        "sonya": {
+          "type": "object",
+          "description": "The character Sonya",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Sonya"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Sonya"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Sonya"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Sonya (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Sonya"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Sonya in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Sonya"
+            }
+          }
+        },
+        "dolokhov": {
+          "type": "object",
+          "description": "The character Dolokhov",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Dolokhov"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Dolokhov"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Dolokhov"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Dolokhov (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Dolokhov"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Dolokhov in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Dolokhov"
+            }
+          }
+        },
+        "denisov": {
+          "type": "object",
+          "description": "The character Vasili Denisov",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Vasili Denisov"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Vasili Denisov"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Vasili Denisov"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Vasili Denisov (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Vasili Denisov"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Vasili Denisov in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Vasili Denisov"
+            }
+          }
+        },
+        "old_bolkonsky": {
+          "type": "object",
+          "description": "The character old Prince Nikolai Bolkonsky",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of old Prince Nikolai Bolkonsky"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of old Prince Nikolai Bolkonsky"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of old Prince Nikolai Bolkonsky"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of old Prince Nikolai Bolkonsky (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of old Prince Nikolai Bolkonsky"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of old Prince Nikolai Bolkonsky in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of old Prince Nikolai Bolkonsky"
+            }
+          }
+        },
+        "vasili": {
+          "type": "object",
+          "description": "The character Prince Vasili Kuragin",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Prince Vasili Kuragin"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Prince Vasili Kuragin"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Prince Vasili Kuragin"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Prince Vasili Kuragin (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Prince Vasili Kuragin"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Prince Vasili Kuragin in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Prince Vasili Kuragin"
+            }
+          }
+        },
+        "napoleon": {
+          "type": "object",
+          "description": "The character Napoleon Bonaparte",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Napoleon Bonaparte"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Napoleon Bonaparte"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Napoleon Bonaparte"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Napoleon Bonaparte (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Napoleon Bonaparte"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Napoleon Bonaparte in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Napoleon Bonaparte"
+            }
+          }
+        },
+        "kutuzov": {
+          "type": "object",
+          "description": "The character General Kutuzov",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of General Kutuzov"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of General Kutuzov"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of General Kutuzov"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of General Kutuzov (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of General Kutuzov"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of General Kutuzov in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of General Kutuzov"
+            }
+          }
+        },
+        "karataev": {
+          "type": "object",
+          "description": "The character Platon Karataev",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "description": "Full name of Platon Karataev"
+            },
+            "family_name": {
+              "type": "string",
+              "description": "Family/surname of Platon Karataev"
+            },
+            "gender": {
+              "type": "string",
+              "description": "Gender of Platon Karataev"
+            },
+            "social_class": {
+              "type": "string",
+              "description": "Social class or rank of Platon Karataev (e.g., nobility, peasant, military)"
+            },
+            "nationality": {
+              "type": "string",
+              "description": "Nationality of Platon Karataev"
+            },
+            "primary_role": {
+              "type": "string",
+              "description": "Primary role of Platon Karataev in the story"
+            },
+            "notable_trait": {
+              "type": "string",
+              "description": "A notable personality trait of Platon Karataev"
+            }
+          }
+        }
+      }
+    },
+    "locations": {
+      "type": "object",
+      "description": "Important places",
+      "properties": {
+        "location_00": {
+          "type": "object",
+          "description": "The place: Moscow",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the place (Moscow)"
+            },
+            "country": {
+              "type": "string",
+              "description": "Country where Moscow is located"
+            },
+            "significance": {
+              "type": "string",
+              "description": "Why Moscow is significant in the novel"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of place (city, estate, battlefield) for Moscow"
+            }
+          }
+        },
+        "location_01": {
+          "type": "object",
+          "description": "The place: Saint Petersburg",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the place (Saint Petersburg)"
+            },
+            "country": {
+              "type": "string",
+              "description": "Country where Saint Petersburg is located"
+            },
+            "significance": {
+              "type": "string",
+              "description": "Why Saint Petersburg is significant in the novel"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of place (city, estate, battlefield) for Saint Petersburg"
+            }
+          }
+        },
+        "location_02": {
+          "type": "object",
+          "description": "The place: Bald Hills estate",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the place (Bald Hills estate)"
+            },
+            "country": {
+              "type": "string",
+              "description": "Country where Bald Hills estate is located"
+            },
+            "significance": {
+              "type": "string",
+              "description": "Why Bald Hills estate is significant in the novel"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of place (city, estate, battlefield) for Bald Hills estate"
+            }
+          }
+        },
+        "location_03": {
+          "type": "object",
+          "description": "The place: Borodino",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the place (Borodino)"
+            },
+            "country": {
+              "type": "string",
+              "description": "Country where Borodino is located"
+            },
+            "significance": {
+              "type": "string",
+              "description": "Why Borodino is significant in the novel"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of place (city, estate, battlefield) for Borodino"
+            }
+          }
+        },
+        "location_04": {
+          "type": "object",
+          "description": "The place: Austerlitz",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the place (Austerlitz)"
+            },
+            "country": {
+              "type": "string",
+              "description": "Country where Austerlitz is located"
+            },
+            "significance": {
+              "type": "string",
+              "description": "Why Austerlitz is significant in the novel"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of place (city, estate, battlefield) for Austerlitz"
+            }
+          }
+        },
+        "location_05": {
+          "type": "object",
+          "description": "The place: Smolensk",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the place (Smolensk)"
+            },
+            "country": {
+              "type": "string",
+              "description": "Country where Smolensk is located"
+            },
+            "significance": {
+              "type": "string",
+              "description": "Why Smolensk is significant in the novel"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of place (city, estate, battlefield) for Smolensk"
+            }
+          }
+        },
+        "location_06": {
+          "type": "object",
+          "description": "The place: Otradnoe estate",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the place (Otradnoe estate)"
+            },
+            "country": {
+              "type": "string",
+              "description": "Country where Otradnoe estate is located"
+            },
+            "significance": {
+              "type": "string",
+              "description": "Why Otradnoe estate is significant in the novel"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of place (city, estate, battlefield) for Otradnoe estate"
+            }
+          }
+        },
+        "location_07": {
+          "type": "object",
+          "description": "The place: the Rostov home",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the place (the Rostov home)"
+            },
+            "country": {
+              "type": "string",
+              "description": "Country where the Rostov home is located"
+            },
+            "significance": {
+              "type": "string",
+              "description": "Why the Rostov home is significant in the novel"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of place (city, estate, battlefield) for the Rostov home"
+            }
+          }
+        },
+        "location_08": {
+          "type": "object",
+          "description": "The place: the battlefield",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the place (the battlefield)"
+            },
+            "country": {
+              "type": "string",
+              "description": "Country where the battlefield is located"
+            },
+            "significance": {
+              "type": "string",
+              "description": "Why the battlefield is significant in the novel"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of place (city, estate, battlefield) for the battlefield"
+            }
+          }
+        },
+        "location_09": {
+          "type": "object",
+          "description": "The place: Russia",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the place (Russia)"
+            },
+            "country": {
+              "type": "string",
+              "description": "Country where Russia is located"
+            },
+            "significance": {
+              "type": "string",
+              "description": "Why Russia is significant in the novel"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of place (city, estate, battlefield) for Russia"
+            }
+          }
+        }
+      }
+    },
+    "events": {
+      "type": "object",
+      "description": "Major battles and events",
+      "properties": {
+        "event_00": {
+          "type": "object",
+          "description": "The event: Battle of Austerlitz",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the event (Battle of Austerlitz)"
+            },
+            "year": {
+              "type": "integer",
+              "description": "Year the event (Battle of Austerlitz) takes place"
+            },
+            "location": {
+              "type": "string",
+              "description": "Where the event (Battle of Austerlitz) happens"
+            },
+            "outcome": {
+              "type": "string",
+              "description": "Outcome or result of Battle of Austerlitz"
+            },
+            "key_participant": {
+              "type": "string",
+              "description": "A key participant in Battle of Austerlitz"
+            }
+          }
+        },
+        "event_01": {
+          "type": "object",
+          "description": "The event: Battle of Borodino",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the event (Battle of Borodino)"
+            },
+            "year": {
+              "type": "integer",
+              "description": "Year the event (Battle of Borodino) takes place"
+            },
+            "location": {
+              "type": "string",
+              "description": "Where the event (Battle of Borodino) happens"
+            },
+            "outcome": {
+              "type": "string",
+              "description": "Outcome or result of Battle of Borodino"
+            },
+            "key_participant": {
+              "type": "string",
+              "description": "A key participant in Battle of Borodino"
+            }
+          }
+        },
+        "event_02": {
+          "type": "object",
+          "description": "The event: French invasion of Russia 1812",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the event (French invasion of Russia 1812)"
+            },
+            "year": {
+              "type": "integer",
+              "description": "Year the event (French invasion of Russia 1812) takes place"
+            },
+            "location": {
+              "type": "string",
+              "description": "Where the event (French invasion of Russia 1812) happens"
+            },
+            "outcome": {
+              "type": "string",
+              "description": "Outcome or result of French invasion of Russia 1812"
+            },
+            "key_participant": {
+              "type": "string",
+              "description": "A key participant in French invasion of Russia 1812"
+            }
+          }
+        },
+        "event_03": {
+          "type": "object",
+          "description": "The event: Burning of Moscow",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the event (Burning of Moscow)"
+            },
+            "year": {
+              "type": "integer",
+              "description": "Year the event (Burning of Moscow) takes place"
+            },
+            "location": {
+              "type": "string",
+              "description": "Where the event (Burning of Moscow) happens"
+            },
+            "outcome": {
+              "type": "string",
+              "description": "Outcome or result of Burning of Moscow"
+            },
+            "key_participant": {
+              "type": "string",
+              "description": "A key participant in Burning of Moscow"
+            }
+          }
+        },
+        "event_04": {
+          "type": "object",
+          "description": "The event: French retreat from Moscow",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the event (French retreat from Moscow)"
+            },
+            "year": {
+              "type": "integer",
+              "description": "Year the event (French retreat from Moscow) takes place"
+            },
+            "location": {
+              "type": "string",
+              "description": "Where the event (French retreat from Moscow) happens"
+            },
+            "outcome": {
+              "type": "string",
+              "description": "Outcome or result of French retreat from Moscow"
+            },
+            "key_participant": {
+              "type": "string",
+              "description": "A key participant in French retreat from Moscow"
+            }
+          }
+        },
+        "event_05": {
+          "type": "object",
+          "description": "The event: Pierre's capture",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the event (Pierre's capture)"
+            },
+            "year": {
+              "type": "integer",
+              "description": "Year the event (Pierre's capture) takes place"
+            },
+            "location": {
+              "type": "string",
+              "description": "Where the event (Pierre's capture) happens"
+            },
+            "outcome": {
+              "type": "string",
+              "description": "Outcome or result of Pierre's capture"
+            },
+            "key_participant": {
+              "type": "string",
+              "description": "A key participant in Pierre's capture"
+            }
+          }
+        },
+        "event_06": {
+          "type": "object",
+          "description": "The event: Natasha's first ball",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the event (Natasha's first ball)"
+            },
+            "year": {
+              "type": "integer",
+              "description": "Year the event (Natasha's first ball) takes place"
+            },
+            "location": {
+              "type": "string",
+              "description": "Where the event (Natasha's first ball) happens"
+            },
+            "outcome": {
+              "type": "string",
+              "description": "Outcome or result of Natasha's first ball"
+            },
+            "key_participant": {
+              "type": "string",
+              "description": "A key participant in Natasha's first ball"
+            }
+          }
+        }
+      }
+    }
+  }
+}

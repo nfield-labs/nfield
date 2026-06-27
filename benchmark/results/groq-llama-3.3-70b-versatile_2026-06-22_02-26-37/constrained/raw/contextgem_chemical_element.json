@@ -1,0 +1,62 @@
+[
+  {
+    "method": "contextgem",
+    "fixture": "chemical_element",
+    "budget": "constrained",
+    "seed": 0,
+    "fields_total": 20,
+    "fields_extracted": 20,
+    "coverage": 1.0,
+    "k": 1,
+    "k_min": 1,
+    "optimality_gap": 0.0,
+    "call_failed": 0,
+    "elapsed_seconds": 3.925,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "identity": {
+        "name": "Gold",
+        "symbol": "Au",
+        "atomic_number": "79",
+        "relative_atomic_mass": "196.967"
+      },
+      "classification": {
+        "group": "11",
+        "period": "6",
+        "block": "d",
+        "element_category": "transition metal",
+        "electron_configuration": "[Xe] 4f14 5d10 6s1"
+      },
+      "physical": {
+        "melting_point": "1064.18",
+        "boiling_point": "2836",
+        "density": "19.3",
+        "state_at_20c": "solid",
+        "atomic_radius": "2.14"
+      },
+      "chemical": {
+        "oxidation_states": "5, 4, 3, 2, 1, -1",
+        "electronegativity": "2.4"
+      },
+      "discovery": {
+        "discovery_year": "3000 BC",
+        "discovered_by": "Unknown"
+      },
+      "cas_number": "7440-57-5",
+      "common_uses": "jewelry, coinage, electroplating, dental work, industrial catalyst"
+    },
+    "value_accuracy": 0.75,
+    "by_type": {
+      "integer": 1.0,
+      "short_string": 0.7058823529411765
+    },
+    "outcomes": {
+      "correct": 15,
+      "accuracy": 5,
+      "omission": 0,
+      "hallucination": 0,
+      "structural": 0
+    }
+  }
+]

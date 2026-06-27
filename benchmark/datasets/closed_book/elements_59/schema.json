@@ -1,0 +1,210 @@
+{
+  "type": "object",
+  "properties": {
+    "Hydrogen": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "integer"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "period": {
+          "type": "integer"
+        },
+        "group": {
+          "type": "integer"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "block": {
+          "type": "string"
+        },
+        "atomic_mass": {
+          "type": "number"
+        },
+        "electronegativity_pauling": {
+          "type": "number"
+        },
+        "density": {
+          "type": "number"
+        },
+        "melt": {
+          "type": "number"
+        },
+        "boil": {
+          "type": "number"
+        }
+      }
+    },
+    "Helium": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "integer"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "period": {
+          "type": "integer"
+        },
+        "group": {
+          "type": "integer"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "block": {
+          "type": "string"
+        },
+        "atomic_mass": {
+          "type": "number"
+        },
+        "electronegativity_pauling": {
+          "type": "number"
+        },
+        "density": {
+          "type": "number"
+        },
+        "melt": {
+          "type": "number"
+        },
+        "boil": {
+          "type": "number"
+        }
+      }
+    },
+    "Lithium": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "integer"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "period": {
+          "type": "integer"
+        },
+        "group": {
+          "type": "integer"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "block": {
+          "type": "string"
+        },
+        "atomic_mass": {
+          "type": "number"
+        },
+        "electronegativity_pauling": {
+          "type": "number"
+        },
+        "density": {
+          "type": "number"
+        },
+        "melt": {
+          "type": "number"
+        },
+        "boil": {
+          "type": "number"
+        }
+      }
+    },
+    "Beryllium": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "integer"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "period": {
+          "type": "integer"
+        },
+        "group": {
+          "type": "integer"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "block": {
+          "type": "string"
+        },
+        "atomic_mass": {
+          "type": "number"
+        },
+        "electronegativity_pauling": {
+          "type": "number"
+        },
+        "density": {
+          "type": "number"
+        },
+        "melt": {
+          "type": "number"
+        },
+        "boil": {
+          "type": "number"
+        }
+      }
+    },
+    "Boron": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "integer"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "period": {
+          "type": "integer"
+        },
+        "group": {
+          "type": "integer"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "block": {
+          "type": "string"
+        },
+        "atomic_mass": {
+          "type": "number"
+        },
+        "electronegativity_pauling": {
+          "type": "number"
+        },
+        "density": {
+          "type": "number"
+        },
+        "melt": {
+          "type": "number"
+        },
+        "boil": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

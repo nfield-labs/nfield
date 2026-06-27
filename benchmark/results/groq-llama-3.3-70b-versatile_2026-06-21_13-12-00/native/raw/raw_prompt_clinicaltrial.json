@@ -1,0 +1,664 @@
+[
+  {
+    "method": "raw_prompt",
+    "fixture": "clinicaltrial",
+    "budget": "native",
+    "seed": 0,
+    "fields_total": 304,
+    "fields_extracted": 348,
+    "coverage": 0.930921052631579,
+    "k": 1,
+    "k_min": 1,
+    "optimality_gap": 0.0,
+    "call_failed": 0,
+    "elapsed_seconds": 36.895,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "identificationModule": {
+        "nctId": "NCT04368728",
+        "orgStudyIdInfo": {
+          "id": "C4591001"
+        },
+        "secondaryIdInfos": {
+          "item_0": {
+            "id": "2020-002641-42",
+            "type": "EUDRACT_NUMBER"
+          }
+        },
+        "organization": {
+          "fullName": "BioNTech SE",
+          "class": "INDUSTRY"
+        },
+        "briefTitle": "Study to Describe the Safety, Tolerability, Immunogenicity, and Efficacy of RNA Vaccine Candidates Against COVID-19 in Healthy Individuals",
+        "officialTitle": "A PHASE 1/2/3, PLACEBO-CONTROLLED, RANDOMIZED, OBSERVER-BLIND, DOSE-FINDING STUDY TO EVALUATE THE SAFETY, TOLERABILITY, IMMUNOGENICITY, AND EFFICACY OF SARS-COV-2 RNA VACCINE CANDIDATES AGAINST COVID-19 IN HEALTHY INDIVIDUALS"
+      },
+      "statusModule": {
+        "statusVerifiedDate": "2026-03",
+        "overallStatus": "COMPLETED",
+        "expandedAccessInfo": {
+          "hasExpandedAccess": false
+        },
+        "startDateStruct": {
+          "date": "2020-04-29",
+          "type": "ACTUAL"
+        },
+        "primaryCompletionDateStruct": {
+          "date": "2023-02-10",
+          "type": "ACTUAL"
+        },
+        "completionDateStruct": {
+          "date": "2023-02-10",
+          "type": "ACTUAL"
+        },
+        "studyFirstSubmitDate": "2020-04-27",
+        "studyFirstSubmitQcDate": "2020-04-29",
+        "studyFirstPostDateStruct": {
+          "date": "2020-04-30",
+          "type": "ACTUAL"
+        },
+        "resultsFirstSubmitDate": "2024-02-09",
+        "resultsFirstSubmitQcDate": "2026-03-03",
+        "resultsFirstPostDateStruct": {
+          "date": "2026-03-25",
+          "type": "ACTUAL"
+        },
+        "lastUpdateSubmitDate": "2026-03-03",
+        "lastUpdatePostDateStruct": {
+          "date": "2026-03-25",
+          "type": "ACTUAL"
+        }
+      },
+      "sponsorCollaboratorsModule": {
+        "responsibleParty": {
+          "type": "SPONSOR"
+        },
+        "leadSponsor": {
+          "name": "BioNTech SE",
+          "class": "INDUSTRY"
+        },
+        "collaborators": {
+          "item_0": {
+            "name": "Pfizer",
+            "class": "INDUSTRY"
+          }
+        }
+      },
+      "oversightModule": {
+        "oversightHasDmc": true,
+        "isFdaRegulatedDrug": true,
+        "isFdaRegulatedDevice": false
+      },
+      "descriptionModule": {
+        "briefSummary": "This is a Phase 1/2/3, randomized, placebo-controlled, observer-blind, dose-finding, vaccine candidate-selection, and efficacy study in healthy individuals."
+      },
+      "conditionsModule": {
+        "conditions": [
+          "SARS-CoV-2 Infection",
+          "COVID-19"
+        ],
+        "keywords": [
+          "COVID-19",
+          "Coronavirus",
+          "Vaccine",
+          "SARS-CoV-2",
+          "RNA Vaccine"
+        ]
+      },
+      "designModule": {
+        "studyType": "INTERVENTIONAL",
+        "phases": [
+          "PHASE2",
+          "PHASE3"
+        ],
+        "designInfo": {
+          "allocation": "RANDOMIZED",
+          "interventionModel": "PARALLEL",
+          "primaryPurpose": "PREVENTION",
+          "maskingInfo": {
+            "masking": "TRIPLE",
+            "whoMasked": [
+              "PARTICIPANT",
+              "CARE_PROVIDER",
+              "INVESTIGATOR"
+            ]
+          }
+        },
+        "enrollmentInfo": {
+          "count": 46969,
+          "type": "ACTUAL"
+        }
+      },
+      "armsInterventionsModule": {
+        "armGroups": {
+          "item_0": {
+            "label": "10 µg dose, 18-55 years of age (2 doses)",
+            "type": "EXPERIMENTAL",
+            "interventionNames": [
+              "Biological: BNT162b1",
+              "Biological: BNT162b2"
+            ]
+          },
+          "item_1": {
+            "label": "20 µg dose, 18-55 years of age (2 doses)",
+            "type": "EXPERIMENTAL",
+            "interventionNames": [
+              "Biological: BNT162b1",
+              "Biological: BNT162b2"
+            ]
+          },
+          "item_2": {
+            "label": "30 µg dose, 18-55 years of age (2 doses)",
+            "type": "EXPERIMENTAL",
+            "interventionNames": [
+              "Biological: BNT162b1",
+              "Biological: BNT162b2"
+            ]
+          },
+          "item_3": {
+            "label": "10 µg dose, 65-85 years of age (2 doses)",
+            "type": "EXPERIMENTAL",
+            "interventionNames": [
+              "Biological: BNT162b1",
+              "Biological: BNT162b2"
+            ]
+          },
+          "item_4": {
+            "label": "20 µg dose, 65-85 years of age (2 doses)",
+            "type": "EXPERIMENTAL",
+            "interventionNames": [
+              "Biological: BNT162b1",
+              "Biological: BNT162b2"
+            ]
+          },
+          "item_5": {
+            "label": "30 µg dose, 65-85 years of age (2 doses)",
+            "type": "EXPERIMENTAL",
+            "interventionNames": [
+              "Biological: BNT162b1",
+              "Biological: BNT162b2"
+            ]
+          },
+          "item_6": {
+            "label": "30 µg dose, ≥12 years of age (2 doses)",
+            "type": "EXPERIMENTAL",
+            "interventionNames": [
+              "Biological: BNT162b2"
+            ]
+          },
+          "item_7": {
+            "label": "Placebo, 18-55 years of age",
+            "type": "PLACEBO_COMPARATOR",
+            "interventionNames": [
+              "Other: Placebo"
+            ]
+          },
+          "item_8": {
+            "label": "Placebo, 65-85 years of age",
+            "type": "PLACEBO_COMPARATOR",
+            "interventionNames": [
+              "Other: Placebo"
+            ]
+          },
+          "item_9": {
+            "label": "Placebo, ≥12 years of age",
+            "type": "PLACEBO_COMPARATOR",
+            "interventionNames": [
+              "Other: Placebo"
+            ]
+          },
+          "item_10": {
+            "label": "100 µg dose, 18-55 years of age (2 doses)",
+            "type": "EXPERIMENTAL",
+            "interventionNames": [
+              "Biological: BNT162b1"
+            ]
+          },
+          "item_11": {
+            "label": "Vaccination of Placebo recipients with BNT162b2 - Stage 1",
+            "type": "OTHER",
+            "description": "Participants ≥16 years of age who originally received placebo and are eligible for COVID-19 vaccination following any local or national recommendations will be offered the opportunity to receive BNT162b2 as part of the study.",
+            "interventionNames": [
+              "Biological: BNT162b2"
+            ]
+          }
+        },
+        "interventions": {
+          "item_0": {
+            "type": "BIOLOGICAL",
+            "name": "BNT162b1",
+            "description": "Intramuscular injection",
+            "armGroupLabels": [
+              "10 µg dose, 18-55 years of age (2 doses)",
+              "10 µg dose, 65-85 years of age (2 doses)",
+              "100 µg dose, 18-55 years of age (2 doses)",
+              "20 µg dose, 18-55 years of age (2 doses)",
+              "20 µg dose, 65-85 years of age (2 doses)",
+              "30 µg dose, 18-55 years of age (2 doses)",
+              "30 µg dose, 65-85 years of age (2 doses)"
+            ]
+          },
+          "item_1": {
+            "type": "BIOLOGICAL",
+            "name": "BNT162b2",
+            "description": "Intramuscular injection",
+            "armGroupLabels": [
+              "10 µg dose, 18-55 years of age (2 doses)",
+              "10 µg dose, 65-85 years of age (2 doses)",
+              "20 µg dose, 18-55 years of age (2 doses)",
+              "20 µg dose, 65-85 years of age (2 doses)",
+              "30 µg dose, 18-55 years of age (2 doses)",
+              "30 µg dose, 65-85 years of age (2 doses)",
+              "30 µg dose, ≥12 years of age (2 doses)",
+              "Booster vaccination of Phase 1 participants with BNT162b2 at a dose of 30 µg",
+              "Booster vaccination of Phase 3 participants with BNT162b2 at a dose of 10 µg",
+              "Booster vaccination of Phase 3 participants with BNT162b2 at a dose of 30 µg",
+              "Booster vaccination of Phase 3 participants with BNT162b2 at a dose of 5 µg",
+              "Vaccination of Placebo recipients with BNT162b2 - Stage 1",
+              "Vaccination of placebo recipients with BNT162b2 - Stage 2"
+            ]
+          },
+          "item_2": {
+            "type": "OTHER",
+            "name": "Placebo",
+            "description": "Intramuscular injection",
+            "armGroupLabels": [
+              "Placebo, 18-55 years of age",
+              "Placebo, 65-85 years of age",
+              "Placebo, ≥12 years of age"
+            ]
+          },
+          "item_3": {
+            "type": "BIOLOGICAL",
+            "name": "BNT162b2SA",
+            "description": "Intramuscular injection",
+            "armGroupLabels": [
+              "Booster and further vaccination of Phase 3 participants with BNT162b2SA at a dose of 30 µg",
+              "Booster vaccination of Phase 3 participants with BNT162b2SA at a dose of 30 µg",
+              "Vaccination of BNT162b2-naive participants with BNT162b2SA at a dose of 30 µg"
+            ]
+          }
+        }
+      },
+      "outcomesModule": {
+        "primaryOutcomes": {
+          "item_0": {
+            "measure": "Percentage of Participants With Local Reactions Within 7 Days After Dose 1: Phase 1",
+            "description": "Local reactions included redness, swelling and, pain at the injection site, recorded by participants in an electronic diary (e-diary). Redness and swelling were measured and recorded in measuring device units. 1 measuring device unit =0.5 cm. Redness and swelling were graded as mild (> 2.0 to 5.0 cm), moderate (> 5.0 to 10.0 cm), severe (>10.0 cm) and Grade 4 (necrosis or exfoliative dermatitis for redness and necrosis for swelling). Pain at injection site was graded as mild (does not interfere with activity), moderate (interferes with activity), severe (prevents daily activity) and Grade 4 (emergency room visit or hospitalization for severe pain).",
+            "timeFrame": "Within 7 days after Dose 1"
+          },
+          "item_1": {
+            "measure": "Percentage of Participants With Local Reactions Within 7 Days After Dose 2: Phase 1",
+            "description": "Local reactions included redness, swelling and, pain at the injection site, recorded by participants in an e-diary. Redness and swelling were measured and recorded in measuring device units. 1 measuring device unit =0.5 cm. Redness and swelling were graded as mild (> 2.0 to 5.0 cm), moderate (> 5.0 to 10.0 cm), severe (>10.0 cm) and Grade 4 (necrosis or exfoliative dermatitis for redness and necrosis for swelling). Pain at injection site was graded as mild (does not interfere with activity), moderate (interferes with activity), severe (prevents daily activity) and Grade 4 (emergency room visit or hospitalization for severe pain).",
+            "timeFrame": "Within 7 days after Dose 2"
+          },
+          "item_2": {
+            "measure": "Percentage of Participants With Systemic Events Within 7 Days After Dose 1: Phase 1",
+            "description": "Systemic events included fever, fatigue, headache, chills, vomiting, diarrhea, new or worsened muscle pain, new or worsened joint pain recorded by participants or parents/legal guardians of participants using e-diary. Fever=temperature >=38.0 deg C categorized as >=38.0 to 38.4, >38.4 to 38.9, >38.9 to 40.0 and >40.0 deg C. Fatigue, headache, chills, new or worsened muscle pain, new or worsened joint pain graded as mild (does not interfere with activity), moderate (some interference with activity), severe (prevents daily routine activity), Grade 4 (Emergency room visit/hospitalization). Vomiting: mild (1-2 times in 24 h), moderate (>2 times in 24 h), severe (requires IV hydration), Grade 4 (emergency room visit/hospitalization for hypotensive shock). Diarrhea: mild (2-3 loose stools in 24h), moderate (4-5 loose stools in 24 h), severe (>=6 loose stools in 24 h) and Grade 4 (emergency room visit/hospitalization).",
+            "timeFrame": "Within 7 days after Dose 1"
+          },
+          "item_3": {
+            "measure": "Percentage of Participants With Systemic Events Within 7 Days After Dose 2: Phase 1",
+            "description": "Systemic events included fever, fatigue, headache, chills, vomiting, diarrhea, new or worsened muscle pain, new or worsened joint pain recorded by participants or parents/legal guardians of participants using e-diary. Fever=temperature >=38.0 deg C categorized as >=38.0 to 38.4, >38.4 to 38.9, >38.9 to 40.0 and >40.0 deg C. Fatigue, headache, chills, new or worsened muscle pain, new or worsened joint pain graded as mild (does not interfere with activity), moderate (some interference with activity), severe (prevents daily routine activity), Grade 4 (Emergency room visit/hospitalization). Vomiting: mild (1-2 times in 24 h), moderate (>2 times in 24 h), severe (requires IV hydration), Grade 4 (emergency room visit/hospitalization for hypotensive shock). Diarrhea: mild (2-3 loose stools in 24h), moderate (4-5 loose stools in 24 h), severe (>=6 loose stools in 24 h) and Grade 4 (emergency room visit/hospitalization).",
+            "timeFrame": "Within 7 days after Dose 2"
+          },
+          "item_4": {
+            "measure": "Percentage of Participants Reporting Adverse Events From Dose 1 to 1 Month After Dose 2: Phase 1",
+            "description": "An AE was any untoward medical occurrence in a participant, temporally associated with the use of study treatment, whether or not considered related to the study treatment. For BNT162b1 100 mcg, participants received one dose of 100 mcg, followed by one dose of 10 mcg.",
+            "timeFrame": "From Dose 1 to 1 Month After Dose 2"
+          },
+          "item_5": {
+            "measure": "Percentage of Participants Reporting Serious Adverse Events From Dose 1 to 6 Months After Dose 2: Phase 1",
+            "description": "An SAE was any untoward medical occurrence that occurred, at any dose: resulted in death; required inpatient hospitalization or prolongation of existing hospitalization; was life-threatening; resulted in persistent or significant disability/ incapacity; was a congenital anomaly/birth defect and other important medical events. For BNT162b1 100 mcg, participants received one dose of 100 mcg, followed by one dose of 10 mcg.",
+            "timeFrame": "From Dose 1 to 6 Months After Dose 2"
+          },
+          "item_6": {
+            "measure": "Percentage of Participants With Abnormalities in Hematology Parameters 1 Day After Dose 1: Phase 1",
+            "description": "Hematology parameters that were assessed included hemoglobin, hematocrit, erythrocytes, Ery. mean corpuscular volume, Ery. mean corpuscular hemoglobin, Ery. mean corpuscular HGB concentration, platelets, leukocytes, lymphocytes, neutrophils, basophils, eosinophils and monocytes. Abnormal parameters were determined by following criteria: Hemoglobin : <0.8x lower limit of normal (LLN), Hematocrit : <0.8x LLN, Erythrocytes : <0.8x LLN, Ery. Mean Corpuscular Volume: <0.9x LLN, Ery. Mean Corpuscular Hemoglobin : <0.9x LLN Ery. Mean Corpuscular HGB Concentration : <0.9x LLN, Platelets : <0.5x LLN, Leukocytes : <0.6x LLN, Lymphocytes : <0.8x LLN, Neutrophils : <0.8x LLN, Basophils: >1.2x upper limit of normal (ULN), Eosinophils >1.2x ULN, Monocytes >1.2x ULN. Only parameters with abnormal values were reported in this outcome measure.",
+            "timeFrame": "1 Day After Dose 1"
+          },
+          "item_7": {
+            "measure": "Percentage of Participants With Abnormalities in Hematology Parameters 7 Days After Dose 1: Phase 1",
+            "description": "Hematology parameters that were assessed included hemoglobin, hematocrit, erythrocytes, Ery. mean corpuscular volume, Ery. mean corpuscular hemoglobin, Ery. mean corpuscular HGB concentration, platelets, leukocytes, lymphocytes, neutrophils, basophils, eosinophils and monocytes. Abnormal parameters were determined by following criteria: Hemoglobin : <0.8x lower limit of normal (LLN), Hematocrit : <0.8x LLN, Erythrocytes : <0.8x LLN, Ery. Mean Corpuscular Volume: <0.9x LLN, Ery. Mean Corpuscular Hemoglobin : <0.9x LLN Ery. Mean Corpuscular HGB Concentration : <0.9x LLN, Platelets : <0.5x LLN, Leukocytes : <0.6x LLN, Lymphocytes : <0.8x LLN, Neutrophils : <0.8x LLN, Basophils: >1.2x upper limit of normal (ULN), Eosinophils >1.2x ULN, Monocytes >1.2x ULN. Only parameters with abnormal values were reported in this outcome measure.",
+            "timeFrame": "7 Days After Dose 1"
+          },
+          "item_8": {
+            "measure": "Percentage of Participants With Abnormalities in Hematology Parameters Before Dose 2: Phase 1",
+            "description": "Hematology parameters that were assessed included hemoglobin, hematocrit, erythrocytes, Ery. mean corpuscular volume, Ery. mean corpuscular hemoglobin, Ery. mean corpuscular HGB concentration, platelets, leukocytes, lymphocytes, neutrophils, basophils, eosinophils and monocytes. Abnormal parameters were determined by following criteria: Hemoglobin : <0.8x lower limit of normal (LLN), Hematocrit : <0.8x LLN, Erythrocytes : <0.8x LLN, Ery. Mean Corpuscular Volume: <0.9x LLN, Ery. Mean Corpuscular Hemoglobin : <0.9x LLN Ery. Mean Corpuscular HGB Concentration : <0.9x LLN, Platelets : <0.5x LLN, Leukocytes : <0.6x LLN, Lymphocytes : <0.8x LLN, Neutrophils : <0.8x LLN, Basophils: >1.2x upper limit of normal (ULN), Eosinophils >1.2x ULN, Monocytes >1.2x ULN. Only parameters with abnormal values were reported in this outcome measure.",
+            "timeFrame": "Before Dose 2"
+          },
+          "item_9": {
+            "measure": "Percentage of Participants With Abnormalities in Hematology Parameters 7 Days After Dose 2: Phase 1",
+            "description": "Hematology parameters that were assessed included hemoglobin, hematocrit, erythrocytes, Ery. mean corpuscular volume, Ery. mean corpuscular hemoglobin, Ery. mean corpuscular HGB concentration, platelets, leukocytes, lymphocytes, neutrophils, basophils, eosinophils and monocytes. Abnormal parameters were determined by following criteria: Hemoglobin : <0.8x lower limit of normal (LLN), Hematocrit : <0.8x LLN, Erythrocytes : <0.8x LLN, Ery. Mean Corpuscular Volume: <0.9x LLN, Ery. Mean Corpuscular Hemoglobin : <0.9x LLN Ery. Mean Corpuscular HGB Concentration : <0.9x LLN, Platelets : <0.5x LLN, Leukocytes : <0.6x LLN, Lymphocytes : <0.8x LLN, Neutrophils : <0.8x LLN, Basophils: >1.2x upper limit of normal (ULN), Eosinophils >1.2x ULN, Monocytes >1.2x ULN. Only parameters with abnormal values were reported in this outcome measure.",
+            "timeFrame": "7 Days After Dose 2"
+          },
+          "item_10": {
+            "measure": "Percentage of Participants With Abnormalities in Chemistry Parameters 1 Day After Dose 1: Phase 1",
+            "description": "Chemistry parameters that were assessed included bilirubin, aspartate aminotransferase (AST), alanine aminotransferase (ALT), alkaline phosphatase (ALP), urea nitrogen, creatinine. Abnormal parameters were determined by following criteria: bilirubin: >1.5x ULN, AST: >3.0x ULN, ALT: >3.0x ULN, ALP: >3.0x ULN, urea nitrogen: >1.3x ULN, creatinine: >1.3x ULN. Abnormal values reported for this outcome measure are for bilirubin.",
+            "timeFrame": "1 Day After Dose 1"
+          },
+          "item_11": {
+            "measure": "Percentage of Participants With Abnormalities in Chemistry Parameters 7 Days After Dose 1: Phase 1",
+            "description": "Chemistry parameters that were assessed included bilirubin, AST, ALT, ALP, urea nitrogen, creatinine. Abnormal parameters were determined by following criteria: bilirubin: >1.5x ULN, AST: >3.0x ULN, ALT: >3.0x ULN, ALP: >3.0x ULN, urea nitrogen: >1.3x ULN, creatinine: >1.3x ULN. Abnormal values reported for this outcome measure are for bilirubin.",
+            "timeFrame": "7 Days After Dose 1"
+          },
+          "item_12": {
+            "measure": "Percentage of Participants With Abnormalities in Chemistry Parameters 7 Days After Dose 1: Phase 1",
+            "description": "Chemistry parameters that were assessed included bilirubin, AST, ALT, ALP, urea nitrogen, creatinine. Abnormal parameters were determined by following criteria: bilirubin: >1.5x ULN, AST: >3.0x ULN, ALT: >3.0x ULN, ALP: >3.0x ULN, urea nitrogen: >1.3x ULN, creatinine: >1.3x ULN. Abnormal values reported for this outcome measure are for bilirubin.",
+            "timeFrame": "7 Days After Dose 1"
+          }
+        },
+        "secondaryOutcomes": {
+          "item_0": {
+            "measure": "Geometric Mean Titers (GMTs) of Severe Acute Respiratory Syndrome Coronavirus 2 Neutralizing Titers: Phase 1",
+            "description": "GMTs of severe acute respiratory syndrome coronavirus 2 neutralizing titers were reported in this outcome measure. SARS-CoV-2 neutralization assay - NT50 and SARS-CoV-2 neutralization assay - NT90 were evaluated and reported in this outcome measure.",
+            "timeFrame": "7, 21 days after Dose 1; 7, 14 days and 1, 6 months after Dose 2"
+          },
+          "item_1": {
+            "measure": "Geometric Mean Concentrations (GMCs) of Severe Acute Respiratory Syndrome Coronavirus 2: S1-binding and RBD-binding IgG Level Assay: Phase 1",
+            "description": "GMCs of severe acute respiratory syndrome coronavirus S1-binding and RBD-binding IgG level were reported in this outcome measure.",
+            "timeFrame": "7, 21 days after Dose 1; 7, 14 days and 1, 6 months after Dose 2"
+          },
+          "item_2": {
+            "measure": "Geometric Mean Fold Rise (GMFR) of SARS-CoV-2 Neutralizing Titers: Phase 1",
+            "description": "GMFR of SARS-CoV-2 neutralizing titers were reported in this outcome measure. HIV positive participants excluded.",
+            "timeFrame": "7, 21 days after Dose 1; 7, 14 days and 1, 6 months after Dose 2"
+          },
+          "item_3": {
+            "measure": "Geometric Mean Fold Rise (GMFR) of SARS-CoV-2 S1-binding and RBD-binding IgG Level Assay: Phase 1",
+            "description": "GMFR of SARS-CoV-2 S1-binding and RBD-binding IgG level assay in Phase 1 were reported in this outcome measure. HIV positive participants were excluded from this analysis.",
+            "timeFrame": "7, 21 days after Dose 1; 7, 14 days and 1, 6 months after Dose 2"
+          },
+          "item_4": {
+            "measure": "Percentage of Participants Achieving a >= 4-Fold Rise From Before Vaccination to After Vaccination: Neutralizing Titers: Phase 1",
+            "description": "Percentage of participants achieving a >= 4-fold rise from before vaccination to after vaccination: neutralizing titers in Phase 1 were reported in this outcome measure. HIV positive participants were excluded from this analysis.",
+            "timeFrame": "7, 21 days after Dose 1; 7, 14 days and 1, 6 months after Dose 2"
+          },
+          "item_5": {
+            "measure": "Percentage of Participants Achieving a >= 4-Fold Rise From Before Vaccination to After Vaccination: S1-binding and RBD-binding IgG Level Assay: Phase 1",
+            "description": "Percentage of participants achieving a >= 4-fold rise from before vaccination to after vaccination: S1-binding and RBD-binding IgG level assay in Phase 1 were reported in this outcome measure. HIV positive participants were excluded from this analysis.",
+            "timeFrame": "From before vaccination to after vaccination"
+          },
+          "item_6": {
+            "measure": "GMR Based on Reference Strain NT - Comparison of Participants 12 to 15 Years of Age to Participants 16 to 25 Years of Age- Participants Without Evidence of Infection up to 1 Month After Dose 2 - Dose 2 Evaluable Immunogenicity Population: Phase2/3",
+            "description": "GMR based on reference strain NT, comparison of participants 12 to 15 years of age to participants 16 to 25 years of age of participants without evidence of infection up to 1 month after dose 2 in Phase2/3 were reported in this outcome measure. HIV positive participants were excluded from this analysis.",
+            "timeFrame": "1 Month After Dose 2"
+          },
+          "item_7": {
+            "measure": "Incidence of Asymptomatic SARS-CoV-2 Infection Per 1000 Person Years Follow-up Without Serological or Virological Evidence (Up to Start of Asymptomatic Surveillance Period) of Past Infection: Phase 3",
+            "description": "Incidence of asymptomatic SARS-CoV-2 infection per 1000 person years follow-up without serological or virological evidence (up to start of asymptomatic surveillance period) of past infection were reported in this outcome measure.",
+            "timeFrame": "From start of asymptomatic surveillance (Surveillance time [1000 person-years]: BNT162b2 - 0.383; Placebo - 0.200"
+          },
+          "item_8": {
+            "measure": "Incidence of Asymptomatic SARS-CoV-2 Infection Per 1000 Person Years Follow-up Without Serological or Virological Evidence of Past Infection Based on N-binding Antibody Seroconversion: Phase 3",
+            "description": "Incidence of asymptomatic SARS-CoV-2 infection per 1000 person years follow-up without serological or virological evidence of past infection based on N-binding antibody seroconversion were reported in this outcome measure.",
+            "timeFrame": "From Dose 2 to the end of the surveillance period ([1000 person-years]: BNT162b2 - 13.840, Placebo - 6.481)"
+          },
+          "item_9": {
+            "measure": "COVID-19 Incidence Per 1000 Person-Years of Follow-up With or Without Evidence of Infection 7 Days After Second Dose of BNT162b2 Based on CDC-Defined Symptoms (Analysis for EUA): Phase 3",
+            "description": "COVID-19 incidence per 1000 person years follow-up with or without the evidence of infection were reported in this outcome measure.",
+            "timeFrame": "From 7 Days After Dose 2 (Surveillance time [1000 person-years]: BNT162b2 - 2.330, Placebo - 2.343)"
+          },
+          "item_10": {
+            "measure": "COVID-19 Incidence Per 1000 Person-Years of Follow-up With or Without Evidence of Infection 14 Days After Second Dose of BNT162b2 Based on CDC-Defined Symptoms (Analysis for EUA): Phase 3",
+            "description": "COVID-19 incidence per 1000 person years follow-up with or without the evidence of infection were reported in this outcome measure.",
+            "timeFrame": "From 14 Days After Dose 2 (Surveillance time [1000 person-years]: BNT162b2 - 1.983, Placebo - 1.993)"
+          },
+          "item_11": {
+            "measure": "COVID-19 Incidence Per 1000 Person-Years of Follow-up Without Evidence of Infection: 7 Days After Dose 2 Based on CDC Defined Symptoms (Analysis for EUA): Phase 3",
+            "description": "COVID-19 incidence per 1000 person years follow-up without the evidence of infection (analysis for EUA) were reported in this outcome measure.",
+            "timeFrame": "From 7 days after Dose 2 (Surveillance time [1000 person-years]: BNT162b2 - 2.213; Placebo - 2.220)"
+          },
+          "item_12": {
+            "measure": "COVID-19 Incidence Per 1000 Person-Years of Follow-up Without Evidence of Infection: 7 Days After Dose 2 Based on CDC Defined Symptoms (Analysis for EUA): Phase 3",
+            "description": "COVID-19 incidence per 1000 person years follow-up without the evidence of infection (analysis for EUA) were reported in this outcome measure.",
+            "timeFrame": "From 7 days after Dose 2 (Surveillance time [1000 person-years]: BNT162b2 - 2.213; Placebo - 2.220)"
+          }
+        }
+      },
+      "eligibilityModule": {
+        "eligibilityCriteria": "Inclusion Criteria: Male or female participants between the ages of 18 and 55 years, inclusive, 65 and 85 years, inclusive, or ≥12 years, inclusive, at randomization (dependent upon study phase). For the boostability and protection-against-VOCs subset: Existing participants enrolled to receive a third dose of BNT162b2 at 30 µg or BNT162b2SA; male or female participants between the ages of 18 and 55 years, inclusive, at rerandomization. Newly enrolled participants enrolled to receive 2 doses of BNT162b2SA; male or female participants between the ages of 18 and 55 years, inclusive, at enrollment. Existing participants enrolled to receive a third dose of BNT162b2 at 5 or 10 µg; male or female participants ≥18 years at rerandomization. Note that participants <18 years of age cannot be enrolled in the EU. * Participants who are willing and able to comply with all scheduled visits, vaccination plan, laboratory tests, lifestyle considerations, and other study procedures. * Healthy participants who are determined by medical history, physical examination, and clinical judgment of the investigator to be eligible for inclusion in the study. * Participants who, in the judgment of the investigator, are at risk for acquiring COVID-19. * Boostability and protection-against-VOCs existing participant subset only: Participants who provided a serum sample at Visit 3, with Visit 3 occurring within the protocol-specified window. * Capable of giving personal signed informed consent Exclusion Criteria: * Other medical or psychiatric condition including recent (within the past year) or active suicidal ideation/behavior or laboratory abnormality that may increase the risk of study participation or, in the investigator's judgment, make the participant inappropriate for the study. * Phases 1 and 2 only: Known infection with human immunodeficiency virus (HIV), hepatitis C virus (HCV), or hepatitis B virus (HBV). * History of severe adverse reaction associated with a vaccine and/or severe allergic reaction (eg, anaphylaxis) to any component of the study intervention(s). * Receipt of medications intended to prevent COVID 19. * Previous clinical (based on COVID-19 symptoms/signs alone, if a SARS-CoV-2 NAAT result was not available) or microbiological (based on COVID-19 symptoms/signs and a positive SARS-CoV-2 NAAT result) diagnosis of COVID 19 * Phase 1 only: Individuals at high risk for severe COVID-19, including those with any of the following risk factors: Hypertension Diabetes mellitus Chronic pulmonary disease Asthma Current vaping or smoking History of chronic smoking within the prior year BMI >30 kg/m2 Anticipating the need for immunosuppressive treatment within the next 6 months * Phase 1 only: Individuals currently working in occupations with high risk of exposure to SARS-CoV-2 (eg, healthcare worker, emergency response personnel). * Immunocompromised individuals with known or suspected immunodeficiency, as determined by history and/or laboratory/physical examination. * Phase 1 only: Individuals with a history of autoimmune disease or an active autoimmune disease requiring therapeutic intervention. * Bleeding diathesis or condition associated with prolonged bleeding that would, in the opinion of the investigator, contraindicate intramuscular injection. * Women who are pregnant or breastfeeding. * Previous vaccination with any coronavirus vaccine. * Individuals who receive treatment with immunosuppressive therapy, including cytotoxic agents or systemic corticosteroids, eg, for cancer or an autoimmune disease, or planned receipt throughout the study. * Phase 1 only: Regular receipt of inhaled/nebulized corticosteroids. * Receipt of blood/plasma products or immunoglobulin, from 60 days before study intervention administration or planned receipt throughout the study. * Participation in other studies involving study intervention within 28 days prior to study entry through and including 6 months after the last dose of study intervention, with the exception of non-Pfizer interventional studies for prevention of COVID 19, which are prohibited throughout study participation. * Previous participation in other studies involving study intervention containing lipid nanoparticles. * Phase 1 only: Positive serological test for SARS-CoV-2 IgM and/or IgG antibodies at the screening visit. * Phase 1 only: Any screening hematology and/or blood chemistry laboratory value that meets the definition of a ≥ Grade 1 abnormality. * Phase 1 only: Positive test for HIV, hepatitis B surface antigen (HBsAg), hepatitis B core antibodies (HBc Abs), or hepatitis C virus antibodies (HCV Abs) at the screening visit. * Phase 1 only: SARS-CoV-2 NAAT-positive nasal swab within 24 hours before receipt of study intervention. * Investigator site staff or Pfizer employees directly involved in the conduct of the study, site staff otherwise supervised by the investigator, and their respective family members.",
+        "healthyVolunteers": true,
+        "sex": "ALL",
+        "minimumAge": "12 Years",
+        "stdAges": [
+          "CHILD",
+          "ADULT",
+          "OLDER_ADULT"
+        ]
+      },
+      "contactsLocationsModule": {
+        "overallOfficials": {
+          "item_0": {
+            "name": "Pfizer CT.gov Call Center",
+            "affiliation": "Pfizer",
+            "role": "STUDY_DIRECTOR"
+          }
+        },
+        "locations": {
+          "item_0": {
+            "facility": "North Alabama Research Center, LLC",
+            "city": "Athens",
+            "state": "Alabama",
+            "zip": "35611",
+            "country": "United States",
+            "geoPoint": {
+              "lat": 34.80243,
+              "lon": -86.97219
+            }
+          },
+          "item_1": {
+            "facility": "Birmingham Clinical Research Unit",
+            "city": "Birmingham",
+            "state": "Alabama",
+            "zip": "35216",
+            "country": "United States",
+            "geoPoint": {
+              "lat": 33.52066,
+              "lon": -86.80249
+            }
+          },
+          "item_2": {
+            "facility": "Medical Affiliated Research Center",
+            "city": "Huntsville",
+            "state": "Alabama",
+            "zip": "35801",
+            "country": "United States",
+            "geoPoint": {
+              "lat": 34.7304,
+              "lon": -86.58594
+            }
+          },
+          "item_3": {
+            "facility": "Optimal Research, LLC",
+            "city": "Huntsville",
+            "state": "Alabama",
+            "zip": "35802",
+            "country": "United States",
+            "geoPoint": {
+              "lat": 34.7304,
+              "lon": -86.58594
+            }
+          },
+          "item_4": {
+            "facility": "Alliance for Multispecialty Research, LLC",
+            "city": "Mobile",
+            "state": "Alabama",
+            "zip": "36608",
+            "country": "United States",
+            "geoPoint": {
+              "lat": 30.69436,
+              "lon": -88.04305
+            }
+          },
+          "item_5": {
+            "facility": "Chinle Comprehensive Health Care Facility",
+            "city": "Chinle",
+            "state": "Arizona",
+            "zip": "86503",
+            "country": "United States",
+            "geoPoint": {
+              "lat": 36.15445,
+              "lon": -109.55261
+            }
+          },
+          "item_6": {
+            "facility": "Johns Hopkins Center for American Indian Health",
+            "city": "Chinle",
+            "state": "Arizona",
+            "zip": "86503",
+            "country": "United States",
+            "geoPoint": {
+              "lat": 36.15445,
+              "lon": -109.55261
+            }
+          },
+          "item_7": {
+            "facility": "HOPE Research Institute",
+            "city": "Phoenix",
+            "state": "Arizona",
+            "zip": "85018",
+            "country": "United States",
+            "geoPoint": {
+              "lat": 33.44838,
+              "lon": -112.07404
+            }
+          },
+          "item_8": {
+            "facility": "The Pain Center of Arizona",
+            "city": "Phoenix",
+            "state": "Arizona",
+            "zip": "85018",
+            "country": "United States",
+            "geoPoint": {
+              "lat": 33.44838,
+              "lon": -112.07404
+            }
+          },
+          "item_9": {
+            "facility": "HOPE Research Institute",
+            "city": "Phoenix",
+            "state": "Arizona",
+            "zip": "85023",
+            "country": "United States",
+            "geoPoint": {
+              "lat": 33.44838,
+              "lon": -112.07404
+            }
+          },
+          "item_10": {
+            "facility": "Alliance for Multispecialty Research, LLC",
+            "city": "Tempe",
+            "state": "Arizona",
+            "zip": "85281",
+            "country": "United States",
+            "geoPoint": {
+              "lat": 33.41477,
+              "lon": -111.90931
+            }
+          },
+          "item_11": {
+            "facility": "Johns Hopkins Center for American Indian Health",
+            "city": "Whiteriver",
+            "state": "Arizona",
+            "zip": "85941",
+            "country": "United States",
+            "geoPoint": {
+              "lat": 33.83699,
+              "lon": -109.96427
+            }
+          }
+        }
+      },
+      "referencesModule": {
+        "references": {
+          "item_0": {
+            "pmid": "40396505",
+            "type": "DERIVED",
+            "citation": "Zorger AM, Hirsch C, Baumann M, Feldmann M, Brockelmann PJ, Mellinghoff S, Monsef I, Skoetz N, Kreuzberger N. Vaccines for preventing infections in adults with haematological malignancies. Cochrane Database Syst Rev. 2025 May 21;5(5):CD015530. doi: 10.1002/14651858.CD015530.pub2."
+          },
+          "item_1": {
+            "pmid": "40237463",
+            "type": "DERIVED",
+            "citation": "Hirsch C, Zorger AM, Baumann M, Park YS, Brockelmann PJ, Mellinghoff S, Monsef I, Skoetz N, Kreuzberger N. Vaccines for preventing infections in adults with solid tumours. Cochrane Database Syst Rev. 2025 Apr 16;4(4):CD015551. doi: 10.1002/14651858.CD015551.pub2."
+          },
+          "item_2": {
+            "pmid": "39197299",
+            "type": "DERIVED",
+            "citation": "Pather S, Charpentier N, van den Ouweland F, Rizzi R, Finlayson A, Salisch N, Muik A, Lindemann C, Khanim R, Abduljawad S, Smith ER, Gurwith M, Chen RT; Benefit-Risk Assessment of VAccines by TechnolOgy Working Group (BRAVATO; ex-V3SWG). A Brighton Collaboration standardized template with key considerations for a benefit-risk assessment for the Comirnaty COVID-19 mRNA vaccine. Vaccine. 2024 Sep 17;42(22):126165. doi: 10.1016/j.vaccine.2024.126165. Epub 2024 Aug 27."
+          },
+          "item_3": {
+            "pmid": "38012751",
+            "type": "DERIVED",
+            "citation": "Killeen T, Kermer V, Troxler Saxer R. mRNA vaccine development during the COVID-19 pandemic: a retrospective review from the perspective of the Swiss affiliate of a global biopharmaceutical company. J Pharm Policy Pract. 2023 Nov 27;16(1):158. doi: 10.1186/s40545-023-00652-y."
+          },
+          "item_4": {
+            "pmid": "36055877",
+            "type": "DERIVED",
+            "citation": "Fraiman J, Erviti J, Jones M, Greenland S, Whelan P, Kaplan RM, Doshi P. Serious adverse events of special interest following mRNA COVID-19 vaccination in randomized trials in adults. Vaccine. 2022 Sep 22;40(40):5798-5805. doi: 10.1016/j.vaccine.2022.08.036. Epub 2022 Aug 31."
+          },
+          "item_5": {
+            "pmid": "35792746",
+            "type": "DERIVED",
+            "citation": "Kurhade C, Zou J, Xia H, Liu M, Yang Q, Cutler M, Cooper D, Muik A, Sahin U, Jansen KU, Ren P, Xie X, Swanson KA, Shi PY. Neutralization of Omicron sublineages and Deltacron SARS-CoV-2 by three doses of BNT162b2 vaccine or BA.1 infection. Emerg Microbes Infect. 2022 Dec;11(1):1828-1832. doi: 10.1080/22221751.2022.2099305."
+          },
+          "item_6": {
+            "pmid": "35739094",
+            "type": "DERIVED",
+            "citation": "Kurhade C, Zou J, Xia H, Cai H, Yang Q, Cutler M, Cooper D, Muik A, Jansen KU, Xie X, Swanson KA, Shi PY. Neutralization of Omicron BA.1, BA.2, and BA.3 SARS-CoV-2 by 3 doses of BNT162b2 vaccine. Nat Commun. 2022 Jun 23;13(1):3602. doi: 10.1038/s41467-022-30681-1."
+          },
+          "item_7": {
+            "pmid": "35472295",
+            "type": "DERIVED",
+            "citation": "De Santis F, Gubbiotti S. Borrowing historical information for non-inferiority trials on Covid-19 vaccines. Int J Biostat. 2022 Apr 27;19(1):177-189. doi: 10.1515/ijb-2021-0120. eCollection 2023 May 1."
+          },
+          "item_8": {
+            "pmid": "35131133",
+            "type": "DERIVED",
+            "citation": "Thomas SJ, Perez JL, Lockhart SP, Hariharan S, Kitchin N, Bailey R, Liau K, Lagkadinou E, Tureci O, Sahin U, Xu X, Koury K, Dychter SS, Lu C, Gentile TC, Gruber WC. Efficacy and safety of the BNT162b2 mRNA COVID-19 vaccine in participants with a history of cancer: subgroup analysis of a global phase 3 randomized clinical trial. Vaccine. 2022 Mar 1;40(10):1483-1492. doi: 10.1016/j.vaccine.2021.12.046. Epub 2021 Dec 24."
+          },
+          "item_9": {
+            "pmid": "34525277",
+            "type": "DERIVED",
+            "citation": "Thomas SJ, Moreira ED Jr, Kitchin N, Absalon J, Gurtman A, Lockhart S, Perez JL, Perez Marc G, Polack FP, Zerbini C, Bailey R, Swanson KA, Xu X, Roychoudhury S, Koury K, Bouguermouh S, Kalina WV, Cooper D, Frenck RW Jr, Hammitt LL, Tureci O, Nell H, Schaefer A, Unal S, Yang Q, Liberator P, Tresnan DB, Mather S, Dormitzer PR, Sahin U, Gruber WC, Jansen KU; C4591001 Clinical Trial Group. Safety and Efficacy of the BNT162b2 mRNA Covid-19 Vaccine through 6 Months. N Engl J Med. 2021 Nov 4;385(19):1761-1773. doi: 10.1056/NEJMoa2110345. Epub 2021 Sep 15."
+          },
+          "item_10": {
+            "pmid": "34043894",
+            "type": "DERIVED",
+            "citation": "Frenck RW Jr, Klein NP, Kitchin N, Gurtman A, Absalon J, Lockhart S, Perez JL, Walter EB, Senders S, Bailey R, Swanson KA, Ma H, Xu X, Koury K, Kalina WV, Cooper D, Jennings T, Brandon DM, Thomas SJ, Tureci O, Tresnan DB, Mather S, Dormitzer PR, Sahin U, Jansen KU, Gruber WC; C4591001 Clinical Trial Group. Safety, Immunogenicity, and Efficacy of the BNT162b2 Covid-19 Vaccine in Adolescents. N Engl J Med. 2021 Jul 15;385(3):239-250. doi: 10.1056/NEJMoa2107456. Epub 2021 May 27."
+          },
+          "item_11": {
+            "pmid": "33524990",
+            "type": "DERIVED",
+            "citation": "Vogel AB, Kanevsky I, Che Y, Swanson KA, Muik A, Vormehr M, Kranz LM, Walzer KC, Hein S, Guler A, Loschko J, Maddur MS, Ota-Setlik A, Tompkins K, Cole J, Lui BG, Ziegenhals T, Plaschke A, Eisel D, Dany SC, Fesser S, Erbar S, Bates F, Schneider D, Jesionek B, Sanger B, Wallisch AK, Feuchter Y, Junginger H, Krumm SA, Heinen AP, Adams-Quack P, Schlereth J, Schille S, Kroner C, de la Caridad Guimil Garcia R, Hiller T, Fischer L, Sellers RS, Choudhary S, Gonzalez O, Vascotto F, Gutman MR, Fontenot JA, Hall-Ursone S, Brasky K, Griffor MC, Han S, Su AAH, Lees JA, Nedoma NL, Mashalidis EH, Sahasrabudhe PV, Tan CY, Pavliakova D, Singh G, Fontes-Garfias C, Pride M, Scully IL, Ciolino T, Obregon J, Gazi M, Carrion R Jr, Alfson KJ, Kalina WV, Kaushal D, Shi PY, Klamp T, Rosenbaum C, Kuhn AN, Tureci O, Dormitzer PR, Jansen KU, Sahin U. BNT162b vaccines protect rhesus macaques from SARS-CoV-2. Nature. 2021 Apr;592(7853):283-289. doi: 10.1038/s41586-021-03275-y. Epub 2021 Feb 1."
+          }
+        },
+        "seeAlsoLinks": {
+          "item_0": {
+            "label": "To obtain contact information for a study center near you, click here.",
+            "url": "https://pmiform.com/clinical-trial-info-request?StudyID=C4591001"
+          }
+        }
+      },
+      "ipdSharingStatementModule": {
+        "ipdSharing": "NO"
+      }
+    },
+    "value_accuracy": 0.9276315789473685,
+    "by_type": {
+      "boolean": 1.0,
+      "enum": 1.0,
+      "integer": 1.0,
+      "number": 1.0,
+      "short_string": 0.8944723618090452,
+      "long_string": 0.9855072463768116
+    },
+    "outcomes": {
+      "correct": 282,
+      "accuracy": 1,
+      "omission": 0,
+      "hallucination": 0,
+      "structural": 21
+    }
+  }
+]

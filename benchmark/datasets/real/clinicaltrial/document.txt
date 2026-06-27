@@ -1,0 +1,414 @@
+CLINICAL TRIAL RECORD (ClinicalTrials.gov NCT04368728)
+
+
+== IDENTIFICATION MODULE ==
+
+Nct id: NCT04368728
+Org study id info - Id: C4591001
+Secondary id infos - #1 - Id: 2020-002641-42
+Secondary id infos - #1 - Type: EUDRACT_NUMBER
+Organization - Full name: BioNTech SE
+Organization - Class: INDUSTRY
+Brief title: Study to Describe the Safety, Tolerability, Immunogenicity, and Efficacy of RNA Vaccine Candidates Against COVID-19 in Healthy Individuals
+Official title: A PHASE 1/2/3, PLACEBO-CONTROLLED, RANDOMIZED, OBSERVER-BLIND, DOSE-FINDING STUDY TO EVALUATE THE SAFETY, TOLERABILITY, IMMUNOGENICITY, AND EFFICACY OF SARS-COV-2 RNA VACCINE CANDIDATES AGAINST COVID-19 IN HEALTHY INDIVIDUALS
+
+== STATUS MODULE ==
+
+Status verified date: 2026-03
+Overall status: COMPLETED
+Expanded access info - Has expanded access: False
+Start date struct - Date: 2020-04-29
+Start date struct - Type: ACTUAL
+Primary completion date struct - Date: 2023-02-10
+Primary completion date struct - Type: ACTUAL
+Completion date struct - Date: 2023-02-10
+Completion date struct - Type: ACTUAL
+Study first submit date: 2020-04-27
+Study first submit qc date: 2020-04-29
+Study first post date struct - Date: 2020-04-30
+Study first post date struct - Type: ACTUAL
+Results first submit date: 2024-02-09
+Results first submit qc date: 2026-03-03
+Results first post date struct - Date: 2026-03-25
+Results first post date struct - Type: ACTUAL
+Last update submit date: 2026-03-03
+Last update post date struct - Date: 2026-03-25
+Last update post date struct - Type: ACTUAL
+
+== SPONSOR COLLABORATORS MODULE ==
+
+Responsible party - Type: SPONSOR
+Lead sponsor - Name: BioNTech SE
+Lead sponsor - Class: INDUSTRY
+Collaborators - #1 - Name: Pfizer
+Collaborators - #1 - Class: INDUSTRY
+
+== OVERSIGHT MODULE ==
+
+Oversight has dmc: True
+Is fda regulated drug: True
+Is fda regulated device: False
+
+== DESCRIPTION MODULE ==
+
+Brief summary: This is a Phase 1/2/3, randomized, placebo-controlled, observer-blind, dose-finding, vaccine candidate-selection, and efficacy study in healthy individuals.
+
+The study consists of 2 parts: Phase 1: to identify preferred vaccine candidate(s) and dose level(s); Phase 2/3: an expanded cohort and efficacy part.
+
+The study will evaluate the safety, tolerability, and immunogenicity of 3 different SARS-CoV-2 RNA vaccine candidates against COVID-19 and the efficacy of 1 candidate:
+
+* As a 2-dose (separated by 21 days) schedule;
+* At various different dose levels in Phase 1;
+* As a booster;
+* In 3 age groups (Phase 1: 18 to 55 years of age, 65 to 85 years of age; Phase 2/3: ≥12 years of age \[stratified as 12-15, 16-55 or \>55 years of age\]).
+
+The candidate selected for efficacy evaluation in Phase 2/3 is BNT162b2 at a dose of 30 µg.
+
+Participants who originally received placebo will be offered the opportunity to receive BNT162b2 at defined points as part of the study.
+
+In order to describe the boostability of BNT162, and potential heterologous protection against emerging SARS-CoV-2 VOCs, an additional dose of BNT162b2 at 30 µg will be given to Phase 1 participants approximately 6 to 12 months after their second dose of BNT162b1 or BNT162b2. This will provide an early assessment of the safety of a third dose of BNT162, as well as its immunogenicity.
+
+The assessment of boostability will be further expanded in a subset of Phase 3 participants at selected sites in the US who will receive a third dose of BNT162b2 at 30 µg or a third and potentially a fourth dose of prototype BNT162b2VOC at 30 µg (BNT162b2s01, based upon the South African variant and hereafter referred to as BNT162b2SA). A further subset of Phase 3 participants will receive a third, lower, dose of BNT162b2 at 5 or 10 µg.
+
+To further describe potential homologous and heterologous protection against emerging SARS-CoV-2 VOCs, a new cohort of participants will be enrolled who are COVID-19 vaccine-naïve (ie, BNT162b2-naïve) and have not experienced COVID-19. They will receive BNT162b2SA given as a 2-dose series, separated by 21 days.
+
+To reflect current and anticipated recommendations for COVID 19 vaccine boosters, participants in C4591001 who meet specified recommendations and have not already received one, will be offered a third dose of BNT162b2 after their second dose of BNT162.
+
+== CONDITIONS MODULE ==
+
+Conditions: SARS-CoV-2 Infection, COVID-19
+Keywords: COVID-19, Coronavirus, Vaccine, SARS-CoV-2, RNA Vaccine
+
+== DESIGN MODULE ==
+
+Study type: INTERVENTIONAL
+Phases: PHASE2, PHASE3
+Design info - Allocation: RANDOMIZED
+Design info - Intervention model: PARALLEL
+Design info - Primary purpose: PREVENTION
+Design info - Masking info - Masking: TRIPLE
+Design info - Masking info - Who masked: PARTICIPANT, CARE_PROVIDER, INVESTIGATOR
+Enrollment info - Count: 46969
+Enrollment info - Type: ACTUAL
+
+== ARMS INTERVENTIONS MODULE ==
+
+Arm groups - #1 - Label: 10 µg dose, 18-55 years of age (2 doses)
+Arm groups - #1 - Type: EXPERIMENTAL
+Arm groups - #1 - Intervention names: Biological: BNT162b1, Biological: BNT162b2
+Arm groups - #2 - Label: 20 µg dose, 18-55 years of age (2 doses)
+Arm groups - #2 - Type: EXPERIMENTAL
+Arm groups - #2 - Intervention names: Biological: BNT162b1, Biological: BNT162b2
+Arm groups - #3 - Label: 30 µg dose, 18-55 years of age (2 doses)
+Arm groups - #3 - Type: EXPERIMENTAL
+Arm groups - #3 - Intervention names: Biological: BNT162b1, Biological: BNT162b2
+Arm groups - #4 - Label: 10 µg dose, 65-85 years of age (2 doses)
+Arm groups - #4 - Type: EXPERIMENTAL
+Arm groups - #4 - Intervention names: Biological: BNT162b1, Biological: BNT162b2
+Arm groups - #5 - Label: 20 µg dose, 65-85 years of age (2 doses)
+Arm groups - #5 - Type: EXPERIMENTAL
+Arm groups - #5 - Intervention names: Biological: BNT162b1, Biological: BNT162b2
+Arm groups - #6 - Label: 30 µg dose, 65-85 years of age (2 doses)
+Arm groups - #6 - Type: EXPERIMENTAL
+Arm groups - #6 - Intervention names: Biological: BNT162b1, Biological: BNT162b2
+Arm groups - #7 - Label: 30 µg dose, ≥12 years of age (2 doses)
+Arm groups - #7 - Type: EXPERIMENTAL
+Arm groups - #7 - Intervention names: Biological: BNT162b2
+Arm groups - #8 - Label: Placebo, 18-55 years of age
+Arm groups - #8 - Type: PLACEBO_COMPARATOR
+Arm groups - #8 - Intervention names: Other: Placebo
+Arm groups - #9 - Label: Placebo, 65-85 years of age
+Arm groups - #9 - Type: PLACEBO_COMPARATOR
+Arm groups - #9 - Intervention names: Other: Placebo
+Arm groups - #10 - Label: Placebo, ≥12 years of age
+Arm groups - #10 - Type: PLACEBO_COMPARATOR
+Arm groups - #10 - Intervention names: Other: Placebo
+Arm groups - #11 - Label: 100 µg dose, 18-55 years of age (2 doses)
+Arm groups - #11 - Type: EXPERIMENTAL
+Arm groups - #11 - Intervention names: Biological: BNT162b1
+Arm groups - #12 - Label: Vaccination of Placebo recipients with BNT162b2 - Stage 1
+Arm groups - #12 - Type: OTHER
+Arm groups - #12 - Description: Participants ≥16 years of age who originally received placebo and are eligible for COVID-19 vaccination following any local or national recommendations will be offered the opportunity to receive BNT162b2 as part of the study.
+Arm groups - #12 - Intervention names: Biological: BNT162b2
+Interventions - #1 - Type: BIOLOGICAL
+Interventions - #1 - Name: BNT162b1
+Interventions - #1 - Description: Intramuscular injection
+Interventions - #1 - Arm group labels: 10 µg dose, 18-55 years of age (2 doses), 10 µg dose, 65-85 years of age (2 doses), 100 µg dose, 18-55 years of age (2 doses), 20 µg dose, 18-55 years of age (2 doses), 20 µg dose, 65-85 years of age (2 doses), 30 µg dose, 18-55 years of age (2 doses), 30 µg dose, 65-85 years of age (2 doses)
+Interventions - #2 - Type: BIOLOGICAL
+Interventions - #2 - Name: BNT162b2
+Interventions - #2 - Description: Intramuscular injection
+Interventions - #2 - Arm group labels: 10 µg dose, 18-55 years of age (2 doses), 10 µg dose, 65-85 years of age (2 doses), 20 µg dose, 18-55 years of age (2 doses), 20 µg dose, 65-85 years of age (2 doses), 30 µg dose, 18-55 years of age (2 doses), 30 µg dose, 65-85 years of age (2 doses), 30 µg dose, ≥12 years of age (2 doses), Booster vaccination of Phase 1 participants with BNT162b2 at a dose of 30 µg, Booster vaccination of Phase 3 participants with BNT162b2 at a dose of 10 µg, Booster vaccination of Phase 3 participants with BNT162b2 at a dose of 30 µg, Booster vaccination of Phase 3 participants with BNT162b2 at a dose of 5 µg, Vaccination of Placebo recipients with BNT162b2 - Stage 1, Vaccination of placebo recipients with BNT162b2 - Stage 2
+Interventions - #3 - Type: OTHER
+Interventions - #3 - Name: Placebo
+Interventions - #3 - Description: Intramuscular injection
+Interventions - #3 - Arm group labels: Placebo, 18-55 years of age, Placebo, 65-85 years of age, Placebo, ≥12 years of age
+Interventions - #4 - Type: BIOLOGICAL
+Interventions - #4 - Name: BNT162b2SA
+Interventions - #4 - Description: Intramuscular injection
+Interventions - #4 - Arm group labels: Booster and further vaccination of Phase 3 participants with BNT162b2SA at a dose of 30 µg, Booster vaccination of Phase 3 participants with BNT162b2SA at a dose of 30 µg, Vaccination of BNT162b2-naive participants with BNT162b2SA at a dose of 30 µg
+
+== OUTCOMES MODULE ==
+
+Primary outcomes - #1 - Measure: Percentage of Participants With Local Reactions Within 7 Days After Dose 1: Phase 1
+Primary outcomes - #1 - Description: Local reactions included redness, swelling and, pain at the injection site, recorded by participants in an electronic diary (e-diary). Redness and swelling were measured and recorded in measuring device units. 1 measuring device unit =0.5 centimeter (cm). Redness and swelling were graded as mild (greater than \[\>\] 2.0 to 5.0 cm), moderate (\> 5.0 to 10.0 cm), severe (\>10.0 cm) and Grade 4 (necrosis or exfoliative dermatitis for redness and necrosis for swelling). Pain at injection site was graded as mild (does not interfere with activity), moderate (interferes with activity), severe (prevents daily activity) and Grade 4 (emergency room visit or hospitalization for severe pain).
+Primary outcomes - #1 - Time frame: Within 7 days after Dose 1
+Primary outcomes - #2 - Measure: Percentage of Participants With Local Reactions Within 7 Days After Dose 2: Phase 1
+Primary outcomes - #2 - Description: Local reactions included redness, swelling and, pain at the injection site, recorded by participants in an e-diary. Redness and swelling were measured and recorded in measuring device units. 1 measuring device unit =0.5 cm. Redness and swelling were graded as mild (\> 2.0 to 5.0 cm), moderate (\> 5.0 to 10.0 cm), severe (\>10.0 cm) and Grade 4 (necrosis or exfoliative dermatitis for redness and necrosis for swelling). Pain at injection site was graded as mild (does not interfere with activity), moderate (interferes with activity), severe (prevents daily activity) and Grade 4 (emergency room visit or hospitalization for severe pain).
+Primary outcomes - #2 - Time frame: Within 7 days after Dose 2
+Primary outcomes - #3 - Measure: Percentage of Participants With Systemic Events Within 7 Days After Dose 1: Phase 1
+Primary outcomes - #3 - Description: Systemic events included fever, fatigue, headache, chills, vomiting, diarrhea, new or worsened muscle pain, new or worsened joint pain recorded by participants or parents/legal guardians of participants using e-diary. Fever=temperature \>=38.0 deg C categorized as \>=38.0 to 38.4, \>38.4 to 38.9, \>38.9 to 40.0 and \>40.0 deg C. Fatigue, headache, chills, new or worsened muscle pain, new or worsened joint pain graded as mild (does not interfere with activity), moderate (some interference with activity), severe (prevents daily routine activity), Grade 4 (Emergency room visit/hospitalization). Vomiting: mild (1-2 times in 24 hours\[h\]), moderate (\>2 times in 24 h), severe (requires IV hydration), Grade 4 (emergency room visit/hospitalization for hypotensive shock). Diarrhea: mild (2-3 loose stools in 24h), moderate (4-5 loose stools in 24 h), severe (\>=6 loose stools in 24 h) and Grade 4 (emergency room visit/hospitalization).
+Primary outcomes - #3 - Time frame: Within 7 days after Dose 1
+Primary outcomes - #4 - Measure: Percentage of Participants With Systemic Events Within 7 Days After Dose 2: Phase 1
+Primary outcomes - #4 - Description: Systemic events included fever, fatigue, headache, chills, vomiting, diarrhea, new or worsened muscle pain, new or worsened joint pain recorded by participants or parents/legal guardians of participants using e-diary. Fever=temperature \>=38.0 deg C categorized as \>=38.0 to 38.4, \>38.4 to 38.9, \>38.9 to 40.0 and \>40.0 deg C. Fatigue, headache, chills, new or worsened muscle pain, new or worsened joint pain graded as mild (does not interfere with activity), moderate (some interference with activity), severe (prevents daily routine activity), Grade 4 (Emergency room visit/hospitalization). Vomiting: mild (1-2 times in 24 h), moderate (\>2 times in 24 h), severe (requires IV hydration), Grade 4 (emergency room visit/hospitalization for hypotensive shock). Diarrhea: mild (2-3 loose stools in 24h), moderate (4-5 loose stools in 24 h), severe (\>=6 loose stools in 24 h) and Grade 4 (emergency room visit/hospitalization).
+Primary outcomes - #4 - Time frame: Within 7 days after Dose 2
+Primary outcomes - #5 - Measure: Percentage of Participants Reporting Adverse Events From Dose 1 to 1 Month After Dose 2: Phase 1
+Primary outcomes - #5 - Description: An AE was any untoward medical occurrence in a participant, temporally associated with the use of study treatment, whether or not considered related to the study treatment. For BNT162b1 100 mcg, participants received one dose of 100 mcg, followed by one dose of 10 mcg.
+Primary outcomes - #5 - Time frame: From Dose 1 to 1 Month After Dose 2
+Primary outcomes - #6 - Measure: Percentage of Participants Reporting Serious Adverse Events From Dose 1 to 6 Months After Dose 2: Phase 1
+Primary outcomes - #6 - Description: An SAE was any untoward medical occurrence that occurred, at any dose: resulted in death; required inpatient hospitalization or prolongation of existing hospitalization; was life-threatening; resulted in persistent or significant disability/ incapacity; was a congenital anomaly/birth defect and other important medical events. For BNT162b1 100 mcg, participants received one dose of 100 mcg, followed by one dose of 10 mcg.
+Primary outcomes - #6 - Time frame: From Dose 1 to 6 Months After Dose 2
+Primary outcomes - #7 - Measure: Percentage of Participants With Abnormalities in Hematology Parameters 1 Day After Dose 1: Phase 1
+Primary outcomes - #7 - Description: Hematology parameters that were assessed included hemoglobin, hematocrit, erythrocytes, Ery. mean corpuscular volume, Ery. mean corpuscular hemoglobin, Ery. mean corpuscular HGB concentration, platelets, leukocytes, lymphocytes, neutrophils, basophils, eosinophils and monocytes. Abnormal parameters were determined by following criteria: Hemoglobin : \<0.8x lower limit of normal (LLN), Hematocrit : \<0.8x LLN, Erythrocytes : \<0.8x LLN, Ery. Mean Corpuscular Volume: \<0.9x LLN, Ery. Mean Corpuscular Hemoglobin : \<0.9x LLN Ery. Mean Corpuscular HGB Concentration : \<0.9x LLN, Platelets : \<0.5x LLN, Leukocytes : \<0.6x LLN, Lymphocytes : \<0.8x LLN, Neutrophils : \<0.8x LLN, Basophils: \>1.2x upper limit of normal (ULN), Eosinophils \>1.2x ULN, Monocytes \>1.2x ULN. Only parameters with abnormal values were reported in this outcome measure.
+Primary outcomes - #7 - Time frame: 1 Day After Dose 1
+Primary outcomes - #8 - Measure: Percentage of Participants With Abnormalities in Hematology Parameters 7 Days After Dose 1: Phase 1
+Primary outcomes - #8 - Description: Hematology parameters that were assessed included hemoglobin, hematocrit, erythrocytes, Ery. mean corpuscular volume, Ery. mean corpuscular hemoglobin, Ery. mean corpuscular HGB concentration, platelets, leukocytes, lymphocytes, neutrophils, basophils, eosinophils and monocytes. Abnormal parameters were determined by following criteria: Hemoglobin : \<0.8x LLN, Hematocrit : \<0.8x LLN, Erythrocytes : \<0.8x LLN, Ery. Mean Corpuscular Volume: \<0.9x LLN, Ery. Mean Corpuscular Hemoglobin : \<0.9x LLN Ery. Mean Corpuscular HGB Concentration : \<0.9x LLN, Platelets : \<0.5x LLN, Leukocytes : \<0.6x LLN, Lymphocytes : \<0.8x LLN, Neutrophils : \<0.8x LLN, Basophils: \>1.2x ULN, Eosinophils \>1.2x ULN, Monocytes \>1.2x ULN. Only parameters with abnormal values were reported in this outcome measure.
+Primary outcomes - #8 - Time frame: 7 Days After Dose 1
+Primary outcomes - #9 - Measure: Percentage of Participants With Abnormalities in Hematology Parameters Before Dose 2: Phase 1
+Primary outcomes - #9 - Description: Hematology parameters that were assessed included hemoglobin, hematocrit, erythrocytes, Ery. mean corpuscular volume, Ery. mean corpuscular hemoglobin, Ery. mean corpuscular HGB concentration, platelets, leukocytes, lymphocytes, neutrophils, basophils, eosinophils and monocytes. Abnormal parameters were determined by following criteria: Hemoglobin : \<0.8x LLN, Hematocrit : \<0.8x LLN, Erythrocytes : \<0.8x LLN, Ery. Mean Corpuscular Volume: \<0.9x LLN, Ery. Mean Corpuscular Hemoglobin : \<0.9x LLN Ery. Mean Corpuscular HGB Concentration : \<0.9x LLN, Platelets : \<0.5x LLN, Leukocytes : \<0.6x LLN, Lymphocytes : \<0.8x LLN, Neutrophils : \<0.8x LLN, Basophils: \>1.2x ULN, Eosinophils \>1.2x ULN, Monocytes \>1.2x ULN. Only parameters with abnormal values were reported in this outcome measure.
+Primary outcomes - #9 - Time frame: Before Dose 2
+Primary outcomes - #10 - Measure: Percentage of Participants With Abnormalities in Hematology Parameters 7 Days After Dose 2: Phase 1
+Primary outcomes - #10 - Description: Hematology parameters that were assessed included hemoglobin, hematocrit, erythrocytes, Ery. mean corpuscular volume, Ery. mean corpuscular hemoglobin, Ery. mean corpuscular HGB concentration, platelets, leukocytes, lymphocytes, neutrophils, basophils, eosinophils and monocytes. Abnormal parameters were determined by following criteria: Hemoglobin : \<0.8x LLN, Hematocrit : \<0.8x LLN, Erythrocytes : \<0.8x LLN, Ery. Mean Corpuscular Volume: \<0.9x LLN, Ery. Mean Corpuscular Hemoglobin : \<0.9x LLN Ery. Mean Corpuscular HGB Concentration : \<0.9x LLN, Platelets : \<0.5x LLN, Leukocytes : \<0.6x LLN, Lymphocytes : \<0.8x LLN, Neutrophils : \<0.8x LLN, Basophils: \>1.2x ULN, Eosinophils \>1.2x ULN, Monocytes \>1.2x ULN. Only parameters with abnormal values were reported in this outcome measure.
+Primary outcomes - #10 - Time frame: 7 Days After Dose 2
+Primary outcomes - #11 - Measure: Percentage of Participants With Abnormalities in Chemistry Parameters 1 Day After Dose 1: Phase 1
+Primary outcomes - #11 - Description: Chemistry parameters that were assessed included bilirubin, aspartate aminotransferase (AST), alanine aminotransferase (ALT), alkaline phosphatase (ALP), urea nitrogen, creatinine. Abnormal parameters were determined by following criteria: bilirubin: \>1.5x ULN, AST: \>3.0x ULN, ALT: \>3.0x ULN, ALP: \>3.0x ULN, urea nitrogen: \>1.3x ULN, creatinine: \>1.3x ULN. Abnormal values reported for this outcome measure are for bilirubin.
+Primary outcomes - #11 - Time frame: 1 Day After Dose 1
+Primary outcomes - #12 - Measure: Percentage of Participants With Abnormalities in Chemistry Parameters 7 Days After Dose 1: Phase 1
+Primary outcomes - #12 - Description: Chemistry parameters that were assessed included bilirubin, AST, ALT, ALP, urea nitrogen, creatinine. Abnormal parameters were determined by following criteria: bilirubin: \>1.5x ULN, AST: \>3.0x ULN, ALT: \>3.0x ULN, ALP: \>3.0x ULN, urea nitrogen: \>1.3x ULN, creatinine: \>1.3x ULN. Abnormal values reported for this outcome measure are for bilirubin.
+Primary outcomes - #12 - Time frame: 7 Days After Dose 1
+Secondary outcomes - #1 - Measure: Geometric Mean Titers (GMTs) of Severe Acute Respiratory Syndrome Coronavirus 2 Neutralizing Titers: Phase 1
+Secondary outcomes - #1 - Description: GMTs of severe acute respiratory syndrome coronavirus 2 neutralizing titers were reported in this outcome measure. SARS-CoV-2 neutralization assay - NT50 and SARS-CoV-2 neutralization assay - NT90 were evaluated and reported in this outcome measure.
+Secondary outcomes - #1 - Time frame: 7, 21 days after Dose 1; 7, 14 days and 1, 6 months after Dose 2
+Secondary outcomes - #2 - Measure: Geometric Mean Concentrations (GMCs) of Severe Acute Respiratory Syndrome Coronavirus 2: S1-binding and RBD-binding IgG Level Assay: Phase 1
+Secondary outcomes - #2 - Description: GMCs of severe acute respiratory syndrome coronavirus S1-binding and RBD-binding IgG level were reported in this outcome measure.
+Secondary outcomes - #2 - Time frame: 7, 21 days after Dose 1; 7, 14 days and 1, 6 months after Dose 2
+Secondary outcomes - #3 - Measure: Geometric Mean Fold Rise (GMFR) of SARS-CoV-2 Neutralizing Titers: Phase 1
+Secondary outcomes - #3 - Description: GMFR of SARS-CoV-2 neutralizing titers were reported in this outcome measure. HIV positive participants excluded.
+Secondary outcomes - #3 - Time frame: 7, 21 days after Dose 1; 7, 14 days and 1, 6 months after Dose 2
+Secondary outcomes - #4 - Measure: Geometric Mean Fold Rise (GMFR) of SARS-CoV-2 S1-binding and RBD-binding IgG Level Assay: Phase 1
+Secondary outcomes - #4 - Description: GMFR of SARS-CoV-2 S1-binding and RBD-binding IgG level assay in Phase 1 were reported in this outcome measure. HIV positive participants were excluded from this analysis.
+Secondary outcomes - #4 - Time frame: 7, 21 days after Dose 1; 7, 14 days and 1, 6 months after Dose 2
+Secondary outcomes - #5 - Measure: Percentage of Participants Achieving a >= 4-Fold Rise From Before Vaccination to After Vaccination: Neutralizing Titers: Phase 1
+Secondary outcomes - #5 - Description: Percentage of participants achieving a \>= 4-fold rise from before vaccination to after vaccination: neutralizing titers in Phase 1 were reported in this outcome measure. HIV positive participants were excluded from this analysis.
+Secondary outcomes - #5 - Time frame: 7, 21 days after Dose 1; 7, 14 days and 1, 6 months after Dose 2
+Secondary outcomes - #6 - Measure: Percentage of Participants Achieving a >= 4-Fold Rise From Before Vaccination to After Vaccination: S1-binding and RBD-binding IgG Level Assay: Phase 1
+Secondary outcomes - #6 - Description: Percentage of participants achieving a \>= 4-fold rise from before vaccination to after vaccination: S1-binding and RBD-binding IgG level assay in Phase 1 were reported in this outcome measure. HIV positive participants were excluded from this analysis.
+Secondary outcomes - #6 - Time frame: From before vaccination to after vaccination
+Secondary outcomes - #7 - Measure: GMR Based on Reference Strain NT - Comparison of Participants 12 to 15 Years of Age to Participants 16 to 25 Years of Age- Participants Without Evidence of Infection up to 1 Month After Dose 2 - Dose 2 Evaluable Immunogenicity Population: Phase2/3
+Secondary outcomes - #7 - Description: GMR based on reference strain NT, comparison of participants 12 to 15 years of age to participants 16 to 25 years of age of participants without evidence of infection up to 1 month after dose 2 in Phase2/3 were reported in this outcome measure. HIV positive participants were excluded from this analysis.
+Secondary outcomes - #7 - Time frame: 1 Month After Dose 2
+Secondary outcomes - #8 - Measure: Incidence of Asymptomatic SARS-CoV-2 Infection Per 1000 Person Years Follow-up Without Serological or Virological Evidence (Up to Start of Asymptomatic Surveillance Period) of Past Infection: Phase 3
+Secondary outcomes - #8 - Description: Incidence of asymptomatic SARS-CoV-2 infection per 1000 person years follow-up without serological or virological evidence (up to start of asymptomatic surveillance period) of past infection were reported in this outcome measure.
+Secondary outcomes - #8 - Time frame: From start of asymptomatic surveillance (Surveillance time [1000 person-years]: BNT162b2 - 0.383; Placebo - 0.200
+Secondary outcomes - #9 - Measure: Incidence of Asymptomatic SARS-CoV-2 Infection Per 1000 Person Years Follow-up Without Serological or Virological Evidence of Past Infection Based on N-binding Antibody Seroconversion: Phase 3
+Secondary outcomes - #9 - Description: Incidence of asymptomatic SARS-CoV-2 infection per 1000 person years follow-up without serological or virological evidence of past infection based on N-binding antibody seroconversion were reported in this outcome measure.
+Secondary outcomes - #9 - Time frame: From Dose 2 to the end of the surveillance period ([1000 person-years]: BNT162b2 - 13.840, Placebo - 6.481)
+Secondary outcomes - #10 - Measure: COVID-19 Incidence Per 1000 Person-Years of Follow-up With or Without Evidence of Infection 7 Days After Second Dose of BNT162b2 Based on CDC-Defined Symptoms (Analysis for EUA): Phase 3
+Secondary outcomes - #10 - Description: COVID-19 incidence per 1000 person years follow-up with or without the evidence of infection were reported in this outcome measure.
+Secondary outcomes - #10 - Time frame: From 7 Days After Dose 2 (Surveillance time [1000 person-years]: BNT162b2 - 2.330, Placebo - 2.343)
+Secondary outcomes - #11 - Measure: COVID-19 Incidence Per 1000 Person-Years of Follow-up With or Without Evidence of Infection 14 Days After Second Dose of BNT162b2 Based on CDC-Defined Symptoms (Analysis for EUA): Phase 3
+Secondary outcomes - #11 - Description: COVID-19 incidence per 1000 person years follow-up with or without the evidence of infection were reported in this outcome measure.
+Secondary outcomes - #11 - Time frame: From 14 Days After Dose 2 (Surveillance time [1000 person-years]: BNT162b2 - 1.983, Placebo - 1.993)
+Secondary outcomes - #12 - Measure: COVID-19 Incidence Per 1000 Person-Years of Follow-up Without Evidence of Infection: 7 Days After Dose 2 Based on CDC Defined Symptoms (Analysis for EUA): Phase 3
+Secondary outcomes - #12 - Description: COVID-19 incidence per 1000 person years follow-up without the evidence of infection (analysis for EUA) were reported in this outcome measure.
+Secondary outcomes - #12 - Time frame: From 7 days after Dose 2 (Surveillance time [1000 person-years]: BNT162b2 - 2.213; Placebo - 2.220)
+
+== ELIGIBILITY MODULE ==
+
+Eligibility criteria: Inclusion Criteria:
+
+• Male or female participants between the ages of 18 and 55 years, inclusive, 65 and 85 years, inclusive, or ≥12 years, inclusive, at randomization (dependent upon study phase). For the boostability and protection-against-VOCs subset: Existing participants enrolled to receive a third dose of BNT162b2 at 30 µg or BNT162b2SA; male or female participants between the ages of 18 and 55 years, inclusive, at rerandomization.
+
+Newly enrolled participants enrolled to receive 2 doses of BNT162b2SA; male or female participants between the ages of 18 and 55 years, inclusive, at enrollment.
+
+Existing participants enrolled to receive a third dose of BNT162b2 at 5 or 10 µg; male or female participants ≥18 years at rerandomization.
+
+Note that participants \<18 years of age cannot be enrolled in the EU.
+
+* Participants who are willing and able to comply with all scheduled visits, vaccination plan, laboratory tests, lifestyle considerations, and other study procedures.
+* Healthy participants who are determined by medical history, physical examination, and clinical judgment of the investigator to be eligible for inclusion in the study.
+* Participants who, in the judgment of the investigator, are at risk for acquiring COVID-19.
+* Boostability and protection-against-VOCs existing participant subset only: Participants who provided a serum sample at Visit 3, with Visit 3 occurring within the protocol-specified window.
+* Capable of giving personal signed informed consent
+
+Exclusion Criteria:
+
+* Other medical or psychiatric condition including recent (within the past year) or active suicidal ideation/behavior or laboratory abnormality that may increase the risk of study participation or, in the investigator's judgment, make the participant inappropriate for the study.
+* Phases 1 and 2 only: Known infection with human immunodeficiency virus (HIV), hepatitis C virus (HCV), or hepatitis B virus (HBV).
+* History of severe adverse reaction associated with a vaccine and/or severe allergic reaction (eg, anaphylaxis) to any component of the study intervention(s).
+* Receipt of medications intended to prevent COVID 19.
+* Previous clinical (based on COVID-19 symptoms/signs alone, if a SARS-CoV-2 NAAT result was not available) or microbiological (based on COVID-19 symptoms/signs and a positive SARS-CoV-2 NAAT result) diagnosis of COVID 19
+* Phase 1 only: Individuals at high risk for severe COVID-19, including those with any of the following risk factors:
+
+  * Hypertension
+  * Diabetes mellitus
+  * Chronic pulmonary disease
+  * Asthma
+  * Current vaping or smoking
+  * History of chronic smoking within the prior year
+  * BMI \>30 kg/m2
+  * Anticipating the need for immunosuppressive treatment within the next 6 months
+* Phase 1 only: Individuals currently working in occupations with high risk of exposure to SARS-CoV-2 (eg, healthcare worker, emergency response personnel).
+* Immunocompromised individuals with known or suspected immunodeficiency, as determined by history and/or laboratory/physical examination.
+* Phase 1 only: Individuals with a history of autoimmune disease or an active autoimmune disease requiring therapeutic intervention.
+* Bleeding diathesis or condition associated with prolonged bleeding that would, in the opinion of the investigator, contraindicate intramuscular injection.
+* Women who are pregnant or breastfeeding.
+* Previous vaccination with any coronavirus vaccine.
+* Individuals who receive treatment with immunosuppressive therapy, including cytotoxic agents or systemic corticosteroids, eg, for cancer or an autoimmune disease, or planned receipt throughout the study.
+* Phase 1 only: Regular receipt of inhaled/nebulized corticosteroids.
+* Receipt of blood/plasma products or immunoglobulin, from 60 days before study intervention administration or planned receipt throughout the study.
+* Participation in other studies involving study intervention within 28 days prior to study entry through and including 6 months after the last dose of study intervention, with the exception of non-Pfizer interventional studies for prevention of COVID 19, which are prohibited throughout study participation.
+* Previous participation in other studies involving study intervention containing lipid nanoparticles.
+* Phase 1 only: Positive serological test for SARS-CoV-2 IgM and/or IgG antibodies at the screening visit.
+* Phase 1 only: Any screening hematology and/or blood chemistry laboratory value that meets the definition of a ≥ Grade 1 abnormality.
+* Phase 1 only: Positive test for HIV, hepatitis B surface antigen (HBsAg), hepatitis B core antibodies (HBc Abs), or hepatitis C virus antibodies (HCV Abs) at the screening visit.
+* Phase 1 only: SARS-CoV-2 NAAT-positive nasal swab within 24 hours before receipt of study intervention.
+* Investigator site staff or Pfizer employees directly involved in the conduct of the study, site staff otherwise supervised by the investigator, and their respective family members.
+Healthy volunteers: True
+Sex: ALL
+Minimum age: 12 Years
+Std ages: CHILD, ADULT, OLDER_ADULT
+
+== CONTACTS LOCATIONS MODULE ==
+
+Overall officials - #1 - Name: Pfizer CT.gov Call Center
+Overall officials - #1 - Affiliation: Pfizer
+Overall officials - #1 - Role: STUDY_DIRECTOR
+Locations - #1 - Facility: North Alabama Research Center, LLC
+Locations - #1 - City: Athens
+Locations - #1 - State: Alabama
+Locations - #1 - Zip: 35611
+Locations - #1 - Country: United States
+Locations - #1 - Geo point - Lat: 34.80243
+Locations - #1 - Geo point - Lon: -86.97219
+Locations - #2 - Facility: Birmingham Clinical Research Unit
+Locations - #2 - City: Birmingham
+Locations - #2 - State: Alabama
+Locations - #2 - Zip: 35216
+Locations - #2 - Country: United States
+Locations - #2 - Geo point - Lat: 33.52066
+Locations - #2 - Geo point - Lon: -86.80249
+Locations - #3 - Facility: Medical Affiliated Research Center
+Locations - #3 - City: Huntsville
+Locations - #3 - State: Alabama
+Locations - #3 - Zip: 35801
+Locations - #3 - Country: United States
+Locations - #3 - Geo point - Lat: 34.7304
+Locations - #3 - Geo point - Lon: -86.58594
+Locations - #4 - Facility: Optimal Research, LLC
+Locations - #4 - City: Huntsville
+Locations - #4 - State: Alabama
+Locations - #4 - Zip: 35802
+Locations - #4 - Country: United States
+Locations - #4 - Geo point - Lat: 34.7304
+Locations - #4 - Geo point - Lon: -86.58594
+Locations - #5 - Facility: Alliance for Multispecialty Research, LLC
+Locations - #5 - City: Mobile
+Locations - #5 - State: Alabama
+Locations - #5 - Zip: 36608
+Locations - #5 - Country: United States
+Locations - #5 - Geo point - Lat: 30.69436
+Locations - #5 - Geo point - Lon: -88.04305
+Locations - #6 - Facility: Chinle Comprehensive Health Care Facility
+Locations - #6 - City: Chinle
+Locations - #6 - State: Arizona
+Locations - #6 - Zip: 86503
+Locations - #6 - Country: United States
+Locations - #6 - Geo point - Lat: 36.15445
+Locations - #6 - Geo point - Lon: -109.55261
+Locations - #7 - Facility: Johns Hopkins Center for American Indian Health
+Locations - #7 - City: Chinle
+Locations - #7 - State: Arizona
+Locations - #7 - Zip: 86503
+Locations - #7 - Country: United States
+Locations - #7 - Geo point - Lat: 36.15445
+Locations - #7 - Geo point - Lon: -109.55261
+Locations - #8 - Facility: HOPE Research Institute
+Locations - #8 - City: Phoenix
+Locations - #8 - State: Arizona
+Locations - #8 - Zip: 85018
+Locations - #8 - Country: United States
+Locations - #8 - Geo point - Lat: 33.44838
+Locations - #8 - Geo point - Lon: -112.07404
+Locations - #9 - Facility: The Pain Center of Arizona
+Locations - #9 - City: Phoenix
+Locations - #9 - State: Arizona
+Locations - #9 - Zip: 85018
+Locations - #9 - Country: United States
+Locations - #9 - Geo point - Lat: 33.44838
+Locations - #9 - Geo point - Lon: -112.07404
+Locations - #10 - Facility: HOPE Research Institute
+Locations - #10 - City: Phoenix
+Locations - #10 - State: Arizona
+Locations - #10 - Zip: 85023
+Locations - #10 - Country: United States
+Locations - #10 - Geo point - Lat: 33.44838
+Locations - #10 - Geo point - Lon: -112.07404
+Locations - #11 - Facility: Alliance for Multispecialty Research, LLC
+Locations - #11 - City: Tempe
+Locations - #11 - State: Arizona
+Locations - #11 - Zip: 85281
+Locations - #11 - Country: United States
+Locations - #11 - Geo point - Lat: 33.41477
+Locations - #11 - Geo point - Lon: -111.90931
+Locations - #12 - Facility: Johns Hopkins Center for American Indian Health
+Locations - #12 - City: Whiteriver
+Locations - #12 - State: Arizona
+Locations - #12 - Zip: 85941
+Locations - #12 - Country: United States
+Locations - #12 - Geo point - Lat: 33.83699
+Locations - #12 - Geo point - Lon: -109.96427
+
+== REFERENCES MODULE ==
+
+References - #1 - Pmid: 40396505
+References - #1 - Type: DERIVED
+References - #1 - Citation: Zorger AM, Hirsch C, Baumann M, Feldmann M, Brockelmann PJ, Mellinghoff S, Monsef I, Skoetz N, Kreuzberger N. Vaccines for preventing infections in adults with haematological malignancies. Cochrane Database Syst Rev. 2025 May 21;5(5):CD015530. doi: 10.1002/14651858.CD015530.pub2.
+References - #2 - Pmid: 40237463
+References - #2 - Type: DERIVED
+References - #2 - Citation: Hirsch C, Zorger AM, Baumann M, Park YS, Brockelmann PJ, Mellinghoff S, Monsef I, Skoetz N, Kreuzberger N. Vaccines for preventing infections in adults with solid tumours. Cochrane Database Syst Rev. 2025 Apr 16;4(4):CD015551. doi: 10.1002/14651858.CD015551.pub2.
+References - #3 - Pmid: 39197299
+References - #3 - Type: DERIVED
+References - #3 - Citation: Pather S, Charpentier N, van den Ouweland F, Rizzi R, Finlayson A, Salisch N, Muik A, Lindemann C, Khanim R, Abduljawad S, Smith ER, Gurwith M, Chen RT; Benefit-Risk Assessment of VAccines by TechnolOgy Working Group (BRAVATO; ex-V3SWG). A Brighton Collaboration standardized template with key considerations for a benefit-risk assessment for the Comirnaty COVID-19 mRNA vaccine. Vaccine. 2024 Sep 17;42(22):126165. doi: 10.1016/j.vaccine.2024.126165. Epub 2024 Aug 27.
+References - #4 - Pmid: 38012751
+References - #4 - Type: DERIVED
+References - #4 - Citation: Killeen T, Kermer V, Troxler Saxer R. mRNA vaccine development during the COVID-19 pandemic: a retrospective review from the perspective of the Swiss affiliate of a global biopharmaceutical company. J Pharm Policy Pract. 2023 Nov 27;16(1):158. doi: 10.1186/s40545-023-00652-y.
+References - #5 - Pmid: 36055877
+References - #5 - Type: DERIVED
+References - #5 - Citation: Fraiman J, Erviti J, Jones M, Greenland S, Whelan P, Kaplan RM, Doshi P. Serious adverse events of special interest following mRNA COVID-19 vaccination in randomized trials in adults. Vaccine. 2022 Sep 22;40(40):5798-5805. doi: 10.1016/j.vaccine.2022.08.036. Epub 2022 Aug 31.
+References - #6 - Pmid: 35792746
+References - #6 - Type: DERIVED
+References - #6 - Citation: Kurhade C, Zou J, Xia H, Liu M, Yang Q, Cutler M, Cooper D, Muik A, Sahin U, Jansen KU, Ren P, Xie X, Swanson KA, Shi PY. Neutralization of Omicron sublineages and Deltacron SARS-CoV-2 by three doses of BNT162b2 vaccine or BA.1 infection. Emerg Microbes Infect. 2022 Dec;11(1):1828-1832. doi: 10.1080/22221751.2022.2099305.
+References - #7 - Pmid: 35739094
+References - #7 - Type: DERIVED
+References - #7 - Citation: Kurhade C, Zou J, Xia H, Cai H, Yang Q, Cutler M, Cooper D, Muik A, Jansen KU, Xie X, Swanson KA, Shi PY. Neutralization of Omicron BA.1, BA.2, and BA.3 SARS-CoV-2 by 3 doses of BNT162b2 vaccine. Nat Commun. 2022 Jun 23;13(1):3602. doi: 10.1038/s41467-022-30681-1.
+References - #8 - Pmid: 35472295
+References - #8 - Type: DERIVED
+References - #8 - Citation: De Santis F, Gubbiotti S. Borrowing historical information for non-inferiority trials on Covid-19 vaccines. Int J Biostat. 2022 Apr 27;19(1):177-189. doi: 10.1515/ijb-2021-0120. eCollection 2023 May 1.
+References - #9 - Pmid: 35131133
+References - #9 - Type: DERIVED
+References - #9 - Citation: Thomas SJ, Perez JL, Lockhart SP, Hariharan S, Kitchin N, Bailey R, Liau K, Lagkadinou E, Tureci O, Sahin U, Xu X, Koury K, Dychter SS, Lu C, Gentile TC, Gruber WC. Efficacy and safety of the BNT162b2 mRNA COVID-19 vaccine in participants with a history of cancer: subgroup analysis of a global phase 3 randomized clinical trial. Vaccine. 2022 Mar 1;40(10):1483-1492. doi: 10.1016/j.vaccine.2021.12.046. Epub 2021 Dec 24.
+References - #10 - Pmid: 34525277
+References - #10 - Type: DERIVED
+References - #10 - Citation: Thomas SJ, Moreira ED Jr, Kitchin N, Absalon J, Gurtman A, Lockhart S, Perez JL, Perez Marc G, Polack FP, Zerbini C, Bailey R, Swanson KA, Xu X, Roychoudhury S, Koury K, Bouguermouh S, Kalina WV, Cooper D, Frenck RW Jr, Hammitt LL, Tureci O, Nell H, Schaefer A, Unal S, Yang Q, Liberator P, Tresnan DB, Mather S, Dormitzer PR, Sahin U, Gruber WC, Jansen KU; C4591001 Clinical Trial Group. Safety and Efficacy of the BNT162b2 mRNA Covid-19 Vaccine through 6 Months. N Engl J Med. 2021 Nov 4;385(19):1761-1773. doi: 10.1056/NEJMoa2110345. Epub 2021 Sep 15.
+References - #11 - Pmid: 34043894
+References - #11 - Type: DERIVED
+References - #11 - Citation: Frenck RW Jr, Klein NP, Kitchin N, Gurtman A, Absalon J, Lockhart S, Perez JL, Walter EB, Senders S, Bailey R, Swanson KA, Ma H, Xu X, Koury K, Kalina WV, Cooper D, Jennings T, Brandon DM, Thomas SJ, Tureci O, Tresnan DB, Mather S, Dormitzer PR, Sahin U, Jansen KU, Gruber WC; C4591001 Clinical Trial Group. Safety, Immunogenicity, and Efficacy of the BNT162b2 Covid-19 Vaccine in Adolescents. N Engl J Med. 2021 Jul 15;385(3):239-250. doi: 10.1056/NEJMoa2107456. Epub 2021 May 27.
+References - #12 - Pmid: 33524990
+References - #12 - Type: DERIVED
+References - #12 - Citation: Vogel AB, Kanevsky I, Che Y, Swanson KA, Muik A, Vormehr M, Kranz LM, Walzer KC, Hein S, Guler A, Loschko J, Maddur MS, Ota-Setlik A, Tompkins K, Cole J, Lui BG, Ziegenhals T, Plaschke A, Eisel D, Dany SC, Fesser S, Erbar S, Bates F, Schneider D, Jesionek B, Sanger B, Wallisch AK, Feuchter Y, Junginger H, Krumm SA, Heinen AP, Adams-Quack P, Schlereth J, Schille S, Kroner C, de la Caridad Guimil Garcia R, Hiller T, Fischer L, Sellers RS, Choudhary S, Gonzalez O, Vascotto F, Gutman MR, Fontenot JA, Hall-Ursone S, Brasky K, Griffor MC, Han S, Su AAH, Lees JA, Nedoma NL, Mashalidis EH, Sahasrabudhe PV, Tan CY, Pavliakova D, Singh G, Fontes-Garfias C, Pride M, Scully IL, Ciolino T, Obregon J, Gazi M, Carrion R Jr, Alfson KJ, Kalina WV, Kaushal D, Shi PY, Klamp T, Rosenbaum C, Kuhn AN, Tureci O, Dormitzer PR, Jansen KU, Sahin U. BNT162b vaccines protect rhesus macaques from SARS-CoV-2. Nature. 2021 Apr;592(7853):283-289. doi: 10.1038/s41586-021-03275-y. Epub 2021 Feb 1.
+See also links - #1 - Label: To obtain contact information for a study center near you, click here.
+See also links - #1 - Url: https://pmiform.com/clinical-trial-info-request?StudyID=C4591001
+
+== IPD SHARING STATEMENT MODULE ==
+
+Ipd sharing: NO

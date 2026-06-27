@@ -1,0 +1,5927 @@
+================================================================
+COMMERCIAL REAL ESTATE RENT ROLL & LEASE ABSTRACT
+================================================================
+
+PROPERTY SUMMARY
+----------------
+Property Name: Beacon Commons
+Street Address: 5135 Granite Ave
+City: Austin
+State: TX
+Zip Code: 78701
+Property Subtype: Distribution
+Year Built: 2001
+Year Renovated: 2022
+Total Rentable Sqft: 1136617
+Total Units: 120
+Stories: 34
+Parking Spaces: 1080
+Occupancy: 96.7
+Weighted Avg Lease Term Months: 45.9
+Owner Entity: Cedar Group REIT
+Property Manager: Delta Management
+Leasing Agent: Harbor Capital
+Lender: Forge National Bank
+Loan Number: CMBS-924034
+Loan Balance: $127,274,531
+Interest Rate: 7.09
+Maturity Date: 2033-08-26
+Cap Rate: 6.91
+Gross Potential Rent: $25,175,265
+Vacancy Loss: $1,225,377
+Effective Gross Income: $23,949,888
+Operating Expenses: $9,202,678
+Net Operating Income: $14,747,210
+As Of Date: 2024-09-30
+Market: Austin
+Submarket: Austin CBD
+Appraised Value: $213,381,713
+Ltv: 59.6
+Debt Service Coverage Ratio: 1.72
+Price Per Sqft: 187.73
+Tax Parcel Id: 25-3801-470
+Zoning: C-2
+Flood Zone: AE
+Report Prepared By: Beacon Advisory
+Report Id: RR-2024-7201
+
+================================================================
+UNIT 1
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 100
+  Floor: 8
+  Space Type: Retail
+  Rentable SqFt: 42,904
+  Usable SqFt: 36,107
+  Load Factor (pct): 18.82
+  Tenant
+  ------
+  Tenant Name: Beacon Group
+  DBA: Atlas Co
+  Industry: Government
+  Credit Rating: B
+  Tenant Since: 2020-03-26
+  Guarantor: Atlas Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1000
+  Lease Status: HoldOver
+  Commencement Date: 2022-06-15
+  Expiration Date: 2025-05-30
+  Term (months): 36
+  Base Rent Annual: $2,509,884
+  Base Rent (PSF): 58.5
+  Annual Escalation (pct): 2.81
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 6.81
+  Real Estate Tax (PSF): 4.4
+  Insurance (PSF): 2.08
+  Management Fee (pct): 3.82
+  Concessions
+  -----------
+  TI Allowance (PSF): 18.75
+  Security Deposit: $418,314
+  Letter of Credit: $796,588
+  Percentage Rent (pct): 3.24
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 2
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 105
+  Floor: 21
+  Space Type: Industrial
+  Rentable SqFt: 39,708
+  Usable SqFt: 34,739
+  Load Factor (pct): 14.3
+  Tenant
+  ------
+  Tenant Name: Evergreen Partners
+  DBA: Atlas LLC
+  Industry: Technology
+  Credit Rating: BBB
+  Tenant Since: 2019-11-06
+  Guarantor: Evergreen Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1001
+  Lease Status: HoldOver
+  Commencement Date: 2020-05-23
+  Expiration Date: 2023-05-08
+  Term (months): 36
+  Base Rent Annual: $1,143,987
+  Base Rent (PSF): 28.81
+  Annual Escalation (pct): 3.15
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 7.68
+  Real Estate Tax (PSF): 6.46
+  Insurance (PSF): 1.06
+  Management Fee (pct): 4.09
+  Concessions
+  -----------
+  TI Allowance (PSF): 18.69
+  Security Deposit: $95,332
+  Letter of Credit: $478,160
+  Percentage Rent (pct): 2.18
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 3
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 110
+  Floor: 20
+  Space Type: Medical
+  Rentable SqFt: 3,470
+  Usable SqFt: 2,999
+  Load Factor (pct): 15.71
+  Tenant
+  ------
+  Tenant Name: Atlas Systems
+  DBA: Atlas LLC
+  Industry: Healthcare
+  Credit Rating: BB
+  Tenant Since: 2021-05-09
+  Guarantor: Harbor Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1002
+  Lease Status: MonthToMonth
+  Commencement Date: 2023-03-05
+  Expiration Date: 2033-01-11
+  Term (months): 120
+  Base Rent Annual: $210,282
+  Base Rent (PSF): 60.6
+  Annual Escalation (pct): 3.12
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 4.24
+  Real Estate Tax (PSF): 4.07
+  Insurance (PSF): 1.89
+  Management Fee (pct): 3.54
+  Concessions
+  -----------
+  TI Allowance (PSF): 83.29
+  Security Deposit: $35,047
+  Letter of Credit: $91,636
+  Percentage Rent (pct): 2.31
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 4
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 115
+  Floor: 11
+  Space Type: Medical
+  Rentable SqFt: 36,871
+  Usable SqFt: 34,829
+  Load Factor (pct): 5.86
+  Tenant
+  ------
+  Tenant Name: Forge Industries
+  DBA: Forge LLC
+  Industry: Government
+  Credit Rating: B
+  Tenant Since: 2019-06-08
+  Guarantor: Beacon Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1003
+  Lease Status: MonthToMonth
+  Commencement Date: 2019-09-18
+  Expiration Date: 2024-08-22
+  Term (months): 60
+  Base Rent Annual: $1,854,611
+  Base Rent (PSF): 50.3
+  Annual Escalation (pct): 3.1
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 7.96
+  Real Estate Tax (PSF): 6.56
+  Insurance (PSF): 0.91
+  Management Fee (pct): 2.07
+  Concessions
+  -----------
+  TI Allowance (PSF): 17.62
+  Security Deposit: $154,550
+  Letter of Credit: $463,989
+  Percentage Rent (pct): 6.92
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 5
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 120
+  Floor: 4
+  Space Type: Flex
+  Rentable SqFt: 21,323
+  Usable SqFt: 17,664
+  Load Factor (pct): 20.71
+  Tenant
+  ------
+  Tenant Name: Forge Partners
+  DBA: Cedar LLC
+  Industry: Finance
+  Credit Rating: NR
+  Tenant Since: 2019-02-28
+  Guarantor: Delta Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1004
+  Lease Status: Pending
+  Commencement Date: 2021-05-29
+  Expiration Date: 2031-08-05
+  Term (months): 124
+  Base Rent Annual: $1,222,021
+  Base Rent (PSF): 57.31
+  Annual Escalation (pct): 3.21
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 5.23
+  Real Estate Tax (PSF): 3.18
+  Insurance (PSF): 1.79
+  Management Fee (pct): 4.35
+  Concessions
+  -----------
+  TI Allowance (PSF): 20.41
+  Security Deposit: $101,835
+  Letter of Credit: $543,230
+  Percentage Rent (pct): 7.69
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 6
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 125
+  Floor: 1
+  Space Type: Flex
+  Rentable SqFt: 15,905
+  Usable SqFt: 13,889
+  Load Factor (pct): 14.52
+  Tenant
+  ------
+  Tenant Name: Granite Holdings
+  DBA: Harbor Co
+  Industry: Retail
+  Credit Rating: BBB
+  Tenant Since: 2022-12-09
+  Guarantor: Evergreen Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1005
+  Lease Status: Vacant
+  Commencement Date: 2023-10-02
+  Expiration Date: 2033-08-10
+  Term (months): 120
+  Base Rent Annual: $318,577
+  Base Rent (PSF): 20.03
+  Annual Escalation (pct): 2.43
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 3.95
+  Real Estate Tax (PSF): 4.6
+  Insurance (PSF): 1.86
+  Management Fee (pct): 3.41
+  Concessions
+  -----------
+  TI Allowance (PSF): 30.79
+  Security Deposit: $79,644
+  Letter of Credit: $70,518
+  Percentage Rent (pct): 5.06
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 7
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 130
+  Floor: 8
+  Space Type: Retail
+  Rentable SqFt: 5,799
+  Usable SqFt: 5,111
+  Load Factor (pct): 13.46
+  Tenant
+  ------
+  Tenant Name: Evergreen Group
+  DBA: Cedar Inc
+  Industry: Finance
+  Credit Rating: B
+  Tenant Since: 2018-11-19
+  Guarantor: Harbor Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1006
+  Lease Status: HoldOver
+  Commencement Date: 2020-03-20
+  Expiration Date: 2027-02-12
+  Term (months): 84
+  Base Rent Annual: $239,266
+  Base Rent (PSF): 41.26
+  Annual Escalation (pct): 3.43
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 8.23
+  Real Estate Tax (PSF): 3.9
+  Insurance (PSF): 1.86
+  Management Fee (pct): 4.33
+  Concessions
+  -----------
+  TI Allowance (PSF): 63.39
+  Security Deposit: $19,938
+  Letter of Credit: $89,362
+  Percentage Rent (pct): 5.39
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 120
+  Has Termination Option: Yes
+
+================================================================
+UNIT 8
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 135
+  Floor: 28
+  Space Type: Medical
+  Rentable SqFt: 18,483
+  Usable SqFt: 16,231
+  Load Factor (pct): 13.87
+  Tenant
+  ------
+  Tenant Name: Cedar Holdings
+  DBA: Harbor Co
+  Industry: Logistics
+  Credit Rating: A
+  Tenant Since: 2018-02-03
+  Guarantor: Forge Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1007
+  Lease Status: Vacant
+  Commencement Date: 2019-01-21
+  Expiration Date: 2023-12-26
+  Term (months): 60
+  Base Rent Annual: $921,562
+  Base Rent (PSF): 49.86
+  Annual Escalation (pct): 2.13
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 6.9
+  Real Estate Tax (PSF): 2.75
+  Insurance (PSF): 2.04
+  Management Fee (pct): 2.24
+  Concessions
+  -----------
+  TI Allowance (PSF): 22.56
+  Security Deposit: $230,390
+  Letter of Credit: $306,707
+  Percentage Rent (pct): 7.15
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 9
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 140
+  Floor: 29
+  Space Type: Retail
+  Rentable SqFt: 34,570
+  Usable SqFt: 31,692
+  Load Factor (pct): 9.08
+  Tenant
+  ------
+  Tenant Name: Harbor Group
+  DBA: Delta LLC
+  Industry: Government
+  Credit Rating: NR
+  Tenant Since: 2020-12-16
+  Guarantor: Delta Holdings
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1008
+  Lease Status: HoldOver
+  Commencement Date: 2022-01-15
+  Expiration Date: 2031-11-24
+  Term (months): 120
+  Base Rent Annual: $1,998,491
+  Base Rent (PSF): 57.81
+  Annual Escalation (pct): 3.81
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 8.86
+  Real Estate Tax (PSF): 5.21
+  Insurance (PSF): 2.27
+  Management Fee (pct): 3.24
+  Concessions
+  -----------
+  TI Allowance (PSF): 80.32
+  Security Deposit: $333,081
+  Letter of Credit: $317,669
+  Percentage Rent (pct): 3.05
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 10
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 145
+  Floor: 12
+  Space Type: Retail
+  Rentable SqFt: 43,838
+  Usable SqFt: 40,156
+  Load Factor (pct): 9.17
+  Tenant
+  ------
+  Tenant Name: Harbor Capital
+  DBA: Forge Co
+  Industry: Healthcare
+  Credit Rating: AA
+  Tenant Since: 2019-02-09
+  Guarantor: Atlas Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1009
+  Lease Status: MonthToMonth
+  Commencement Date: 2020-08-22
+  Expiration Date: 2030-07-01
+  Term (months): 120
+  Base Rent Annual: $2,283,521
+  Base Rent (PSF): 52.09
+  Annual Escalation (pct): 3.45
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 5.29
+  Real Estate Tax (PSF): 3.5
+  Insurance (PSF): 1.73
+  Management Fee (pct): 3.53
+  Concessions
+  -----------
+  TI Allowance (PSF): 28.96
+  Security Deposit: $570,880
+  Letter of Credit: $381,359
+  Percentage Rent (pct): 1.34
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 11
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 150
+  Floor: 22
+  Space Type: Retail
+  Rentable SqFt: 13,541
+  Usable SqFt: 12,420
+  Load Factor (pct): 9.03
+  Tenant
+  ------
+  Tenant Name: Forge Logistics
+  DBA: Granite Inc
+  Industry: Technology
+  Credit Rating: BB
+  Tenant Since: 2019-05-30
+  Guarantor: Evergreen Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1010
+  Lease Status: Vacant
+  Commencement Date: 2020-09-13
+  Expiration Date: 2030-07-23
+  Term (months): 120
+  Base Rent Annual: $515,641
+  Base Rent (PSF): 38.08
+  Annual Escalation (pct): 3.88
+  Free Rent (months): 2
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 3.35
+  Real Estate Tax (PSF): 4.65
+  Insurance (PSF): 1.68
+  Management Fee (pct): 4.41
+  Concessions
+  -----------
+  TI Allowance (PSF): 19.35
+  Security Deposit: $128,910
+  Letter of Credit: $205,347
+  Percentage Rent (pct): 5.82
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 270
+  Has Termination Option: Yes
+
+================================================================
+UNIT 12
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 155
+  Floor: 32
+  Space Type: Industrial
+  Rentable SqFt: 40,863
+  Usable SqFt: 36,264
+  Load Factor (pct): 12.68
+  Tenant
+  ------
+  Tenant Name: Cedar Group
+  DBA: Cedar LLC
+  Industry: Logistics
+  Credit Rating: A
+  Tenant Since: 2022-06-10
+  Guarantor: Atlas Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1011
+  Lease Status: MonthToMonth
+  Commencement Date: 2023-08-25
+  Expiration Date: 2026-08-09
+  Term (months): 36
+  Base Rent Annual: $1,433,474
+  Base Rent (PSF): 35.08
+  Annual Escalation (pct): 3.08
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 6.79
+  Real Estate Tax (PSF): 3.33
+  Insurance (PSF): 1.96
+  Management Fee (pct): 3.1
+  Concessions
+  -----------
+  TI Allowance (PSF): 52.09
+  Security Deposit: $238,912
+  Letter of Credit: $631,300
+  Percentage Rent (pct): 3.86
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 13
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 160
+  Floor: 14
+  Space Type: Flex
+  Rentable SqFt: 38,596
+  Usable SqFt: 35,633
+  Load Factor (pct): 8.32
+  Tenant
+  ------
+  Tenant Name: Atlas Systems
+  DBA: Cedar Inc
+  Industry: Finance
+  Credit Rating: B
+  Tenant Since: 2019-12-06
+  Guarantor: Delta Holdings
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1012
+  Lease Status: Active
+  Commencement Date: 2021-04-26
+  Expiration Date: 2028-03-20
+  Term (months): 84
+  Base Rent Annual: $2,277,549
+  Base Rent (PSF): 59.01
+  Annual Escalation (pct): 3.08
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 5.68
+  Real Estate Tax (PSF): 5.11
+  Insurance (PSF): 0.67
+  Management Fee (pct): 4.69
+  Concessions
+  -----------
+  TI Allowance (PSF): 65.31
+  Security Deposit: $569,387
+  Letter of Credit: $408,764
+  Percentage Rent (pct): 4.69
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 14
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 165
+  Floor: 12
+  Space Type: Flex
+  Rentable SqFt: 14,471
+  Usable SqFt: 13,439
+  Load Factor (pct): 7.68
+  Tenant
+  ------
+  Tenant Name: Granite Partners
+  DBA: Cedar Co
+  Industry: Retail
+  Credit Rating: AA
+  Tenant Since: 2021-08-07
+  Guarantor: Cedar Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1013
+  Lease Status: Vacant
+  Commencement Date: 2022-04-07
+  Expiration Date: 2032-06-13
+  Term (months): 124
+  Base Rent Annual: $885,046
+  Base Rent (PSF): 61.16
+  Annual Escalation (pct): 2.74
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 8.39
+  Real Estate Tax (PSF): 2.39
+  Insurance (PSF): 0.8
+  Management Fee (pct): 4.83
+  Concessions
+  -----------
+  TI Allowance (PSF): 56.79
+  Security Deposit: $73,753
+  Letter of Credit: $311,571
+  Percentage Rent (pct): 0.87
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 120
+  Has Termination Option: Yes
+
+================================================================
+UNIT 15
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 170
+  Floor: 25
+  Space Type: Office
+  Rentable SqFt: 26,090
+  Usable SqFt: 22,215
+  Load Factor (pct): 17.44
+  Tenant
+  ------
+  Tenant Name: Evergreen Systems
+  DBA: Beacon Co
+  Industry: Logistics
+  Credit Rating: AAA
+  Tenant Since: 2021-04-22
+  Guarantor: Forge Holdings
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1014
+  Lease Status: Active
+  Commencement Date: 2021-07-08
+  Expiration Date: 2028-06-01
+  Term (months): 84
+  Base Rent Annual: $741,738
+  Base Rent (PSF): 28.43
+  Annual Escalation (pct): 3.35
+  Free Rent (months): 2
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 5.88
+  Real Estate Tax (PSF): 4.19
+  Insurance (PSF): 1.79
+  Management Fee (pct): 4.76
+  Concessions
+  -----------
+  TI Allowance (PSF): 36.24
+  Security Deposit: $61,811
+  Letter of Credit: $361,761
+  Percentage Rent (pct): 6.07
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 16
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 175
+  Floor: 29
+  Space Type: Retail
+  Rentable SqFt: 35,970
+  Usable SqFt: 30,873
+  Load Factor (pct): 16.51
+  Tenant
+  ------
+  Tenant Name: Atlas Industries
+  DBA: Delta LLC
+  Industry: Government
+  Credit Rating: BB
+  Tenant Since: 2018-04-16
+  Guarantor: Cedar Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1015
+  Lease Status: Vacant
+  Commencement Date: 2020-05-25
+  Expiration Date: 2030-08-01
+  Term (months): 124
+  Base Rent Annual: $1,003,922
+  Base Rent (PSF): 27.91
+  Annual Escalation (pct): 3.92
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 5.74
+  Real Estate Tax (PSF): 2.95
+  Insurance (PSF): 2.49
+  Management Fee (pct): 2.06
+  Concessions
+  -----------
+  TI Allowance (PSF): 12.98
+  Security Deposit: $250,980
+  Letter of Credit: $363,948
+  Percentage Rent (pct): 7.26
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 180
+  Has Termination Option: Yes
+
+================================================================
+UNIT 17
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 180
+  Floor: 22
+  Space Type: Industrial
+  Rentable SqFt: 3,687
+  Usable SqFt: 3,234
+  Load Factor (pct): 14.01
+  Tenant
+  ------
+  Tenant Name: Delta Group
+  DBA: Atlas LLC
+  Industry: Retail
+  Credit Rating: BBB
+  Tenant Since: 2019-10-28
+  Guarantor: Cedar Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1016
+  Lease Status: Pending
+  Commencement Date: 2022-01-23
+  Expiration Date: 2025-01-07
+  Term (months): 36
+  Base Rent Annual: $176,533
+  Base Rent (PSF): 47.88
+  Annual Escalation (pct): 3.34
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 4.46
+  Real Estate Tax (PSF): 6.27
+  Insurance (PSF): 1.86
+  Management Fee (pct): 3.59
+  Concessions
+  -----------
+  TI Allowance (PSF): 71.88
+  Security Deposit: $44,133
+  Letter of Credit: $33,253
+  Percentage Rent (pct): 6.8
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 18
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 185
+  Floor: 24
+  Space Type: Office
+  Rentable SqFt: 7,632
+  Usable SqFt: 6,617
+  Load Factor (pct): 15.34
+  Tenant
+  ------
+  Tenant Name: Atlas Logistics
+  DBA: Forge Co
+  Industry: Healthcare
+  Credit Rating: BBB
+  Tenant Since: 2021-01-12
+  Guarantor: Beacon Logistics
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1017
+  Lease Status: HoldOver
+  Commencement Date: 2022-09-18
+  Expiration Date: 2032-07-27
+  Term (months): 120
+  Base Rent Annual: $471,047
+  Base Rent (PSF): 61.72
+  Annual Escalation (pct): 3.44
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 8.43
+  Real Estate Tax (PSF): 6.03
+  Insurance (PSF): 1.78
+  Management Fee (pct): 4.04
+  Concessions
+  -----------
+  TI Allowance (PSF): 46.14
+  Security Deposit: $39,253
+  Letter of Credit: $64,216
+  Percentage Rent (pct): 5.8
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 19
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 190
+  Floor: 19
+  Space Type: Retail
+  Rentable SqFt: 11,098
+  Usable SqFt: 9,191
+  Load Factor (pct): 20.75
+  Tenant
+  ------
+  Tenant Name: Harbor Capital
+  DBA: Evergreen Inc
+  Industry: Logistics
+  Credit Rating: AAA
+  Tenant Since: 2022-02-13
+  Guarantor: Granite Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1018
+  Lease Status: Pending
+  Commencement Date: 2023-05-16
+  Expiration Date: 2026-04-30
+  Term (months): 36
+  Base Rent Annual: $502,073
+  Base Rent (PSF): 45.24
+  Annual Escalation (pct): 3.61
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 5.17
+  Real Estate Tax (PSF): 3.57
+  Insurance (PSF): 0.95
+  Management Fee (pct): 4.43
+  Concessions
+  -----------
+  TI Allowance (PSF): 59.15
+  Security Deposit: $83,678
+  Letter of Credit: $149,160
+  Percentage Rent (pct): 4.64
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 20
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 195
+  Floor: 2
+  Space Type: Flex
+  Rentable SqFt: 12,627
+  Usable SqFt: 11,414
+  Load Factor (pct): 10.63
+  Tenant
+  ------
+  Tenant Name: Cedar Industries
+  DBA: Granite LLC
+  Industry: Logistics
+  Credit Rating: AAA
+  Tenant Since: 2020-07-25
+  Guarantor: Forge Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1019
+  Lease Status: Vacant
+  Commencement Date: 2022-12-30
+  Expiration Date: 2033-03-07
+  Term (months): 124
+  Base Rent Annual: $281,960
+  Base Rent (PSF): 22.33
+  Annual Escalation (pct): 3.61
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 3.42
+  Real Estate Tax (PSF): 4.37
+  Insurance (PSF): 1.13
+  Management Fee (pct): 2.06
+  Concessions
+  -----------
+  TI Allowance (PSF): 59.7
+  Security Deposit: $70,490
+  Letter of Credit: $68,314
+  Percentage Rent (pct): 7.0
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 120
+  Has Termination Option: Yes
+
+================================================================
+UNIT 21
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 200
+  Floor: 5
+  Space Type: Medical
+  Rentable SqFt: 22,215
+  Usable SqFt: 19,343
+  Load Factor (pct): 14.85
+  Tenant
+  ------
+  Tenant Name: Delta Holdings
+  DBA: Cedar Inc
+  Industry: Healthcare
+  Credit Rating: NR
+  Tenant Since: 2019-07-23
+  Guarantor: Cedar Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1020
+  Lease Status: Active
+  Commencement Date: 2019-10-09
+  Expiration Date: 2024-09-12
+  Term (months): 60
+  Base Rent Annual: $625,352
+  Base Rent (PSF): 28.15
+  Annual Escalation (pct): 2.85
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 7.69
+  Real Estate Tax (PSF): 3.8
+  Insurance (PSF): 2.3
+  Management Fee (pct): 2.45
+  Concessions
+  -----------
+  TI Allowance (PSF): 33.34
+  Security Deposit: $104,225
+  Letter of Credit: $80,409
+  Percentage Rent (pct): 2.02
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 22
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 205
+  Floor: 19
+  Space Type: Flex
+  Rentable SqFt: 34,040
+  Usable SqFt: 32,324
+  Load Factor (pct): 5.31
+  Tenant
+  ------
+  Tenant Name: Harbor Capital
+  DBA: Delta Co
+  Industry: Healthcare
+  Credit Rating: A
+  Tenant Since: 2020-08-26
+  Guarantor: Delta Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1021
+  Lease Status: Pending
+  Commencement Date: 2022-11-27
+  Expiration Date: 2027-11-01
+  Term (months): 60
+  Base Rent Annual: $1,568,563
+  Base Rent (PSF): 46.08
+  Annual Escalation (pct): 3.13
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 7.68
+  Real Estate Tax (PSF): 6.98
+  Insurance (PSF): 1.16
+  Management Fee (pct): 4.61
+  Concessions
+  -----------
+  TI Allowance (PSF): 31.48
+  Security Deposit: $130,713
+  Letter of Credit: $698,915
+  Percentage Rent (pct): 3.92
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 23
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 210
+  Floor: 1
+  Space Type: Office
+  Rentable SqFt: 23,442
+  Usable SqFt: 22,175
+  Load Factor (pct): 5.71
+  Tenant
+  ------
+  Tenant Name: Harbor Systems
+  DBA: Evergreen Co
+  Industry: Technology
+  Credit Rating: NR
+  Tenant Since: 2017-12-19
+  Guarantor: Granite Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1022
+  Lease Status: MonthToMonth
+  Commencement Date: 2019-06-16
+  Expiration Date: 2026-05-10
+  Term (months): 84
+  Base Rent Annual: $489,000
+  Base Rent (PSF): 20.86
+  Annual Escalation (pct): 3.0
+  Free Rent (months): 2
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 5.91
+  Real Estate Tax (PSF): 6.62
+  Insurance (PSF): 1.54
+  Management Fee (pct): 4.08
+  Concessions
+  -----------
+  TI Allowance (PSF): 13.11
+  Security Deposit: $122,250
+  Letter of Credit: $201,608
+  Percentage Rent (pct): 1.34
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 24
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 215
+  Floor: 27
+  Space Type: Industrial
+  Rentable SqFt: 41,773
+  Usable SqFt: 36,751
+  Load Factor (pct): 13.66
+  Tenant
+  ------
+  Tenant Name: Delta Systems
+  DBA: Forge Co
+  Industry: Legal
+  Credit Rating: BBB
+  Tenant Since: 2018-02-15
+  Guarantor: Beacon Logistics
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1023
+  Lease Status: MonthToMonth
+  Commencement Date: 2020-01-10
+  Expiration Date: 2022-12-25
+  Term (months): 36
+  Base Rent Annual: $1,134,554
+  Base Rent (PSF): 27.16
+  Annual Escalation (pct): 2.59
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 3.82
+  Real Estate Tax (PSF): 5.61
+  Insurance (PSF): 1.89
+  Management Fee (pct): 4.14
+  Concessions
+  -----------
+  TI Allowance (PSF): 64.56
+  Security Deposit: $189,092
+  Letter of Credit: $455,883
+  Percentage Rent (pct): 3.93
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 25
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 220
+  Floor: 2
+  Space Type: Retail
+  Rentable SqFt: 36,282
+  Usable SqFt: 29,895
+  Load Factor (pct): 21.36
+  Tenant
+  ------
+  Tenant Name: Cedar Capital
+  DBA: Beacon Inc
+  Industry: Healthcare
+  Credit Rating: BB
+  Tenant Since: 2020-11-28
+  Guarantor: Beacon Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1024
+  Lease Status: HoldOver
+  Commencement Date: 2022-08-01
+  Expiration Date: 2025-07-16
+  Term (months): 36
+  Base Rent Annual: $1,164,652
+  Base Rent (PSF): 32.1
+  Annual Escalation (pct): 3.65
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 7.07
+  Real Estate Tax (PSF): 4.14
+  Insurance (PSF): 0.95
+  Management Fee (pct): 3.77
+  Concessions
+  -----------
+  TI Allowance (PSF): 16.2
+  Security Deposit: $194,108
+  Letter of Credit: $564,142
+  Percentage Rent (pct): 0.2
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 270
+  Has Termination Option: Yes
+
+================================================================
+UNIT 26
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 225
+  Floor: 3
+  Space Type: Medical
+  Rentable SqFt: 39,215
+  Usable SqFt: 32,887
+  Load Factor (pct): 19.24
+  Tenant
+  ------
+  Tenant Name: Cedar Industries
+  DBA: Delta Co
+  Industry: Healthcare
+  Credit Rating: NR
+  Tenant Since: 2023-01-01
+  Guarantor: Forge Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1025
+  Lease Status: Pending
+  Commencement Date: 2023-08-22
+  Expiration Date: 2033-06-30
+  Term (months): 120
+  Base Rent Annual: $1,441,935
+  Base Rent (PSF): 36.77
+  Annual Escalation (pct): 3.86
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 5.45
+  Real Estate Tax (PSF): 4.84
+  Insurance (PSF): 1.11
+  Management Fee (pct): 2.04
+  Concessions
+  -----------
+  TI Allowance (PSF): 46.83
+  Security Deposit: $360,483
+  Letter of Credit: $209,853
+  Percentage Rent (pct): 5.68
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 27
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 230
+  Floor: 7
+  Space Type: Industrial
+  Rentable SqFt: 5,796
+  Usable SqFt: 5,052
+  Load Factor (pct): 14.73
+  Tenant
+  ------
+  Tenant Name: Delta Partners
+  DBA: Atlas LLC
+  Industry: Healthcare
+  Credit Rating: AA
+  Tenant Since: 2020-07-09
+  Guarantor: Forge Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1026
+  Lease Status: HoldOver
+  Commencement Date: 2022-11-18
+  Expiration Date: 2029-10-12
+  Term (months): 84
+  Base Rent Annual: $223,667
+  Base Rent (PSF): 38.59
+  Annual Escalation (pct): 2.33
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 3.26
+  Real Estate Tax (PSF): 3.67
+  Insurance (PSF): 1.91
+  Management Fee (pct): 3.17
+  Concessions
+  -----------
+  TI Allowance (PSF): 11.94
+  Security Deposit: $55,916
+  Letter of Credit: $23,005
+  Percentage Rent (pct): 0.64
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 28
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 235
+  Floor: 26
+  Space Type: Flex
+  Rentable SqFt: 27,394
+  Usable SqFt: 23,822
+  Load Factor (pct): 14.99
+  Tenant
+  ------
+  Tenant Name: Delta Capital
+  DBA: Evergreen Co
+  Industry: Retail
+  Credit Rating: BB
+  Tenant Since: 2019-11-05
+  Guarantor: Evergreen Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1027
+  Lease Status: Active
+  Commencement Date: 2021-12-28
+  Expiration Date: 2028-11-21
+  Term (months): 84
+  Base Rent Annual: $849,487
+  Base Rent (PSF): 31.01
+  Annual Escalation (pct): 2.49
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 6.57
+  Real Estate Tax (PSF): 6.34
+  Insurance (PSF): 1.21
+  Management Fee (pct): 2.9
+  Concessions
+  -----------
+  TI Allowance (PSF): 57.33
+  Security Deposit: $212,371
+  Letter of Credit: $97,506
+  Percentage Rent (pct): 5.01
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 29
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 240
+  Floor: 17
+  Space Type: Retail
+  Rentable SqFt: 21,168
+  Usable SqFt: 18,154
+  Load Factor (pct): 16.6
+  Tenant
+  ------
+  Tenant Name: Forge Capital
+  DBA: Cedar Co
+  Industry: Healthcare
+  Credit Rating: A
+  Tenant Since: 2020-07-05
+  Guarantor: Cedar Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1028
+  Lease Status: Active
+  Commencement Date: 2020-08-23
+  Expiration Date: 2023-08-08
+  Term (months): 36
+  Base Rent Annual: $954,465
+  Base Rent (PSF): 45.09
+  Annual Escalation (pct): 3.12
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 7.36
+  Real Estate Tax (PSF): 5.38
+  Insurance (PSF): 1.41
+  Management Fee (pct): 2.07
+  Concessions
+  -----------
+  TI Allowance (PSF): 62.99
+  Security Deposit: $238,616
+  Letter of Credit: $404,471
+  Percentage Rent (pct): 7.19
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 30
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 245
+  Floor: 13
+  Space Type: Retail
+  Rentable SqFt: 43,883
+  Usable SqFt: 37,852
+  Load Factor (pct): 15.93
+  Tenant
+  ------
+  Tenant Name: Evergreen Industries
+  DBA: Harbor Co
+  Industry: Technology
+  Credit Rating: AA
+  Tenant Since: 2018-12-23
+  Guarantor: Evergreen Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1029
+  Lease Status: HoldOver
+  Commencement Date: 2020-01-25
+  Expiration Date: 2029-12-03
+  Term (months): 120
+  Base Rent Annual: $2,057,673
+  Base Rent (PSF): 46.89
+  Annual Escalation (pct): 2.42
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 3.59
+  Real Estate Tax (PSF): 2.98
+  Insurance (PSF): 2.2
+  Management Fee (pct): 4.75
+  Concessions
+  -----------
+  TI Allowance (PSF): 63.5
+  Security Deposit: $342,945
+  Letter of Credit: $712,820
+  Percentage Rent (pct): 3.26
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 31
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 250
+  Floor: 23
+  Space Type: Retail
+  Rentable SqFt: 13,492
+  Usable SqFt: 11,088
+  Load Factor (pct): 21.68
+  Tenant
+  ------
+  Tenant Name: Cedar Industries
+  DBA: Beacon Inc
+  Industry: Retail
+  Credit Rating: A
+  Tenant Since: 2021-12-22
+  Guarantor: Delta Holdings
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1030
+  Lease Status: Active
+  Commencement Date: 2022-11-05
+  Expiration Date: 2033-01-11
+  Term (months): 124
+  Base Rent Annual: $373,458
+  Base Rent (PSF): 27.68
+  Annual Escalation (pct): 3.13
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 8.5
+  Real Estate Tax (PSF): 5.42
+  Insurance (PSF): 2.27
+  Management Fee (pct): 4.49
+  Concessions
+  -----------
+  TI Allowance (PSF): 65.62
+  Security Deposit: $62,243
+  Letter of Credit: $90,682
+  Percentage Rent (pct): 7.56
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 180
+  Has Termination Option: Yes
+
+================================================================
+UNIT 32
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 255
+  Floor: 30
+  Space Type: Office
+  Rentable SqFt: 17,433
+  Usable SqFt: 16,225
+  Load Factor (pct): 7.45
+  Tenant
+  ------
+  Tenant Name: Atlas Partners
+  DBA: Evergreen Inc
+  Industry: Healthcare
+  Credit Rating: BB
+  Tenant Since: 2019-03-13
+  Guarantor: Beacon Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1031
+  Lease Status: Active
+  Commencement Date: 2020-08-12
+  Expiration Date: 2025-07-17
+  Term (months): 60
+  Base Rent Annual: $878,623
+  Base Rent (PSF): 50.4
+  Annual Escalation (pct): 2.75
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 3.82
+  Real Estate Tax (PSF): 6.65
+  Insurance (PSF): 0.55
+  Management Fee (pct): 4.21
+  Concessions
+  -----------
+  TI Allowance (PSF): 78.2
+  Security Deposit: $146,437
+  Letter of Credit: $259,639
+  Percentage Rent (pct): 1.04
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 33
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 260
+  Floor: 7
+  Space Type: Industrial
+  Rentable SqFt: 27,859
+  Usable SqFt: 24,359
+  Load Factor (pct): 14.37
+  Tenant
+  ------
+  Tenant Name: Delta Industries
+  DBA: Harbor Co
+  Industry: Healthcare
+  Credit Rating: A
+  Tenant Since: 2019-08-29
+  Guarantor: Granite Logistics
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1032
+  Lease Status: HoldOver
+  Commencement Date: 2022-01-29
+  Expiration Date: 2031-12-08
+  Term (months): 120
+  Base Rent Annual: $1,676,554
+  Base Rent (PSF): 60.18
+  Annual Escalation (pct): 2.09
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 7.04
+  Real Estate Tax (PSF): 6.19
+  Insurance (PSF): 1.45
+  Management Fee (pct): 4.19
+  Concessions
+  -----------
+  TI Allowance (PSF): 55.63
+  Security Deposit: $139,712
+  Letter of Credit: $314,731
+  Percentage Rent (pct): 1.11
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 180
+  Has Termination Option: Yes
+
+================================================================
+UNIT 34
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 265
+  Floor: 15
+  Space Type: Retail
+  Rentable SqFt: 28,190
+  Usable SqFt: 26,570
+  Load Factor (pct): 6.1
+  Tenant
+  ------
+  Tenant Name: Cedar Systems
+  DBA: Harbor LLC
+  Industry: Legal
+  Credit Rating: AA
+  Tenant Since: 2019-02-23
+  Guarantor: Atlas Logistics
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1033
+  Lease Status: HoldOver
+  Commencement Date: 2019-12-22
+  Expiration Date: 2030-02-27
+  Term (months): 124
+  Base Rent Annual: $399,734
+  Base Rent (PSF): 14.18
+  Annual Escalation (pct): 3.27
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 7.63
+  Real Estate Tax (PSF): 3.1
+  Insurance (PSF): 0.55
+  Management Fee (pct): 4.99
+  Concessions
+  -----------
+  TI Allowance (PSF): 12.07
+  Security Deposit: $99,933
+  Letter of Credit: $172,387
+  Percentage Rent (pct): 1.46
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 35
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 270
+  Floor: 15
+  Space Type: Medical
+  Rentable SqFt: 8,115
+  Usable SqFt: 6,861
+  Load Factor (pct): 18.28
+  Tenant
+  ------
+  Tenant Name: Beacon Partners
+  DBA: Delta LLC
+  Industry: Retail
+  Credit Rating: AAA
+  Tenant Since: 2021-04-21
+  Guarantor: Atlas Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1034
+  Lease Status: Pending
+  Commencement Date: 2022-11-25
+  Expiration Date: 2029-10-19
+  Term (months): 84
+  Base Rent Annual: $315,024
+  Base Rent (PSF): 38.82
+  Annual Escalation (pct): 3.51
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 4.34
+  Real Estate Tax (PSF): 5.07
+  Insurance (PSF): 0.97
+  Management Fee (pct): 2.87
+  Concessions
+  -----------
+  TI Allowance (PSF): 80.29
+  Security Deposit: $52,504
+  Letter of Credit: $62,943
+  Percentage Rent (pct): 7.5
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 36
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 275
+  Floor: 3
+  Space Type: Flex
+  Rentable SqFt: 21,857
+  Usable SqFt: 20,690
+  Load Factor (pct): 5.64
+  Tenant
+  ------
+  Tenant Name: Beacon Capital
+  DBA: Beacon Co
+  Industry: Technology
+  Credit Rating: AAA
+  Tenant Since: 2020-06-18
+  Guarantor: Granite Holdings
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1035
+  Lease Status: Active
+  Commencement Date: 2022-04-15
+  Expiration Date: 2032-02-22
+  Term (months): 120
+  Base Rent Annual: $633,853
+  Base Rent (PSF): 29.0
+  Annual Escalation (pct): 2.9
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 8.15
+  Real Estate Tax (PSF): 5.14
+  Insurance (PSF): 0.56
+  Management Fee (pct): 2.81
+  Concessions
+  -----------
+  TI Allowance (PSF): 34.0
+  Security Deposit: $105,642
+  Letter of Credit: $243,117
+  Percentage Rent (pct): 1.82
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 37
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 280
+  Floor: 28
+  Space Type: Flex
+  Rentable SqFt: 2,051
+  Usable SqFt: 1,744
+  Load Factor (pct): 17.6
+  Tenant
+  ------
+  Tenant Name: Granite Group
+  DBA: Granite Co
+  Industry: Government
+  Credit Rating: AA
+  Tenant Since: 2018-02-05
+  Guarantor: Cedar Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1036
+  Lease Status: MonthToMonth
+  Commencement Date: 2020-04-01
+  Expiration Date: 2030-06-08
+  Term (months): 124
+  Base Rent Annual: $32,016
+  Base Rent (PSF): 15.61
+  Annual Escalation (pct): 3.82
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 7.72
+  Real Estate Tax (PSF): 4.18
+  Insurance (PSF): 0.66
+  Management Fee (pct): 2.86
+  Concessions
+  -----------
+  TI Allowance (PSF): 59.25
+  Security Deposit: $2,668
+  Letter of Credit: $8,571
+  Percentage Rent (pct): 6.79
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 38
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 285
+  Floor: 16
+  Space Type: Office
+  Rentable SqFt: 26,553
+  Usable SqFt: 24,594
+  Load Factor (pct): 7.97
+  Tenant
+  ------
+  Tenant Name: Beacon Capital
+  DBA: Evergreen Inc
+  Industry: Logistics
+  Credit Rating: A
+  Tenant Since: 2018-02-12
+  Guarantor: Evergreen Logistics
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1037
+  Lease Status: MonthToMonth
+  Commencement Date: 2020-05-24
+  Expiration Date: 2023-05-09
+  Term (months): 36
+  Base Rent Annual: $878,638
+  Base Rent (PSF): 33.09
+  Annual Escalation (pct): 3.65
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 7.6
+  Real Estate Tax (PSF): 2.31
+  Insurance (PSF): 1.75
+  Management Fee (pct): 3.07
+  Concessions
+  -----------
+  TI Allowance (PSF): 31.44
+  Security Deposit: $219,659
+  Letter of Credit: $332,880
+  Percentage Rent (pct): 7.87
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 39
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 290
+  Floor: 23
+  Space Type: Flex
+  Rentable SqFt: 39,359
+  Usable SqFt: 33,940
+  Load Factor (pct): 15.97
+  Tenant
+  ------
+  Tenant Name: Atlas Capital
+  DBA: Evergreen Co
+  Industry: Finance
+  Credit Rating: NR
+  Tenant Since: 2020-02-23
+  Guarantor: Harbor Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1038
+  Lease Status: HoldOver
+  Commencement Date: 2020-04-20
+  Expiration Date: 2030-06-27
+  Term (months): 124
+  Base Rent Annual: $1,617,261
+  Base Rent (PSF): 41.09
+  Annual Escalation (pct): 3.5
+  Free Rent (months): 2
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 6.89
+  Real Estate Tax (PSF): 5.0
+  Insurance (PSF): 1.95
+  Management Fee (pct): 2.9
+  Concessions
+  -----------
+  TI Allowance (PSF): 58.76
+  Security Deposit: $269,543
+  Letter of Credit: $383,052
+  Percentage Rent (pct): 4.59
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 40
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 295
+  Floor: 24
+  Space Type: Industrial
+  Rentable SqFt: 13,848
+  Usable SqFt: 12,384
+  Load Factor (pct): 11.82
+  Tenant
+  ------
+  Tenant Name: Cedar Partners
+  DBA: Granite Inc
+  Industry: Healthcare
+  Credit Rating: AAA
+  Tenant Since: 2018-02-10
+  Guarantor: Delta Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1039
+  Lease Status: Active
+  Commencement Date: 2019-11-28
+  Expiration Date: 2024-11-01
+  Term (months): 60
+  Base Rent Annual: $696,138
+  Base Rent (PSF): 50.27
+  Annual Escalation (pct): 3.2
+  Free Rent (months): 2
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 3.27
+  Real Estate Tax (PSF): 2.25
+  Insurance (PSF): 2.35
+  Management Fee (pct): 2.05
+  Concessions
+  -----------
+  TI Allowance (PSF): 72.2
+  Security Deposit: $174,034
+  Letter of Credit: $84,699
+  Percentage Rent (pct): 1.35
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 270
+  Has Termination Option: Yes
+
+================================================================
+UNIT 41
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 300
+  Floor: 2
+  Space Type: Retail
+  Rentable SqFt: 32,897
+  Usable SqFt: 29,169
+  Load Factor (pct): 12.78
+  Tenant
+  ------
+  Tenant Name: Harbor Capital
+  DBA: Atlas Co
+  Industry: Healthcare
+  Credit Rating: AAA
+  Tenant Since: 2021-08-01
+  Guarantor: Atlas Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1040
+  Lease Status: Vacant
+  Commencement Date: 2022-06-29
+  Expiration Date: 2025-06-13
+  Term (months): 36
+  Base Rent Annual: $1,384,305
+  Base Rent (PSF): 42.08
+  Annual Escalation (pct): 2.24
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 5.53
+  Real Estate Tax (PSF): 5.62
+  Insurance (PSF): 2.06
+  Management Fee (pct): 4.15
+  Concessions
+  -----------
+  TI Allowance (PSF): 22.76
+  Security Deposit: $115,358
+  Letter of Credit: $196,104
+  Percentage Rent (pct): 6.48
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 42
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 305
+  Floor: 7
+  Space Type: Retail
+  Rentable SqFt: 38,751
+  Usable SqFt: 36,701
+  Load Factor (pct): 5.59
+  Tenant
+  ------
+  Tenant Name: Evergreen Holdings
+  DBA: Forge LLC
+  Industry: Legal
+  Credit Rating: BBB
+  Tenant Since: 2020-05-13
+  Guarantor: Evergreen Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1041
+  Lease Status: Pending
+  Commencement Date: 2022-02-01
+  Expiration Date: 2032-04-09
+  Term (months): 124
+  Base Rent Annual: $2,021,639
+  Base Rent (PSF): 52.17
+  Annual Escalation (pct): 2.81
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 4.78
+  Real Estate Tax (PSF): 6.26
+  Insurance (PSF): 0.52
+  Management Fee (pct): 2.72
+  Concessions
+  -----------
+  TI Allowance (PSF): 80.22
+  Security Deposit: $168,469
+  Letter of Credit: $215,807
+  Percentage Rent (pct): 3.01
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 43
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 310
+  Floor: 14
+  Space Type: Office
+  Rentable SqFt: 5,951
+  Usable SqFt: 5,564
+  Load Factor (pct): 6.96
+  Tenant
+  ------
+  Tenant Name: Granite Partners
+  DBA: Forge Co
+  Industry: Healthcare
+  Credit Rating: NR
+  Tenant Since: 2023-05-20
+  Guarantor: Forge Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1042
+  Lease Status: Vacant
+  Commencement Date: 2023-09-21
+  Expiration Date: 2028-08-25
+  Term (months): 60
+  Base Rent Annual: $253,750
+  Base Rent (PSF): 42.64
+  Annual Escalation (pct): 2.76
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 6.62
+  Real Estate Tax (PSF): 2.4
+  Insurance (PSF): 1.3
+  Management Fee (pct): 2.03
+  Concessions
+  -----------
+  TI Allowance (PSF): 49.53
+  Security Deposit: $42,291
+  Letter of Credit: $71,804
+  Percentage Rent (pct): 3.48
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 270
+  Has Termination Option: Yes
+
+================================================================
+UNIT 44
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 315
+  Floor: 31
+  Space Type: Medical
+  Rentable SqFt: 4,457
+  Usable SqFt: 3,816
+  Load Factor (pct): 16.8
+  Tenant
+  ------
+  Tenant Name: Delta Systems
+  DBA: Granite Inc
+  Industry: Healthcare
+  Credit Rating: BB
+  Tenant Since: 2019-01-12
+  Guarantor: Beacon Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1043
+  Lease Status: Pending
+  Commencement Date: 2019-03-22
+  Expiration Date: 2026-02-13
+  Term (months): 84
+  Base Rent Annual: $245,981
+  Base Rent (PSF): 55.19
+  Annual Escalation (pct): 3.0
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 5.73
+  Real Estate Tax (PSF): 3.68
+  Insurance (PSF): 1.82
+  Management Fee (pct): 3.74
+  Concessions
+  -----------
+  TI Allowance (PSF): 59.61
+  Security Deposit: $61,495
+  Letter of Credit: $81,976
+  Percentage Rent (pct): 2.21
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 180
+  Has Termination Option: Yes
+
+================================================================
+UNIT 45
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 320
+  Floor: 12
+  Space Type: Medical
+  Rentable SqFt: 18,188
+  Usable SqFt: 16,050
+  Load Factor (pct): 13.32
+  Tenant
+  ------
+  Tenant Name: Forge Logistics
+  DBA: Evergreen Co
+  Industry: Legal
+  Credit Rating: B
+  Tenant Since: 2022-06-01
+  Guarantor: Cedar Holdings
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1044
+  Lease Status: Pending
+  Commencement Date: 2023-09-02
+  Expiration Date: 2033-07-11
+  Term (months): 120
+  Base Rent Annual: $902,306
+  Base Rent (PSF): 49.61
+  Annual Escalation (pct): 3.44
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 6.43
+  Real Estate Tax (PSF): 5.3
+  Insurance (PSF): 1.48
+  Management Fee (pct): 3.72
+  Concessions
+  -----------
+  TI Allowance (PSF): 20.51
+  Security Deposit: $150,384
+  Letter of Credit: $285,274
+  Percentage Rent (pct): 0.97
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 46
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 325
+  Floor: 21
+  Space Type: Medical
+  Rentable SqFt: 28,107
+  Usable SqFt: 23,979
+  Load Factor (pct): 17.22
+  Tenant
+  ------
+  Tenant Name: Harbor Capital
+  DBA: Beacon Co
+  Industry: Healthcare
+  Credit Rating: BB
+  Tenant Since: 2022-11-09
+  Guarantor: Evergreen Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1045
+  Lease Status: Active
+  Commencement Date: 2023-02-06
+  Expiration Date: 2028-01-11
+  Term (months): 60
+  Base Rent Annual: $459,549
+  Base Rent (PSF): 16.35
+  Annual Escalation (pct): 2.88
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 3.08
+  Real Estate Tax (PSF): 4.18
+  Insurance (PSF): 1.82
+  Management Fee (pct): 3.36
+  Concessions
+  -----------
+  TI Allowance (PSF): 60.2
+  Security Deposit: $114,887
+  Letter of Credit: $206,615
+  Percentage Rent (pct): 0.33
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 47
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 330
+  Floor: 29
+  Space Type: Medical
+  Rentable SqFt: 38,095
+  Usable SqFt: 31,403
+  Load Factor (pct): 21.31
+  Tenant
+  ------
+  Tenant Name: Harbor Group
+  DBA: Beacon LLC
+  Industry: Government
+  Credit Rating: B
+  Tenant Since: 2017-08-31
+  Guarantor: Beacon Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1046
+  Lease Status: Vacant
+  Commencement Date: 2019-09-16
+  Expiration Date: 2022-08-31
+  Term (months): 36
+  Base Rent Annual: $1,798,845
+  Base Rent (PSF): 47.22
+  Annual Escalation (pct): 2.31
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 4.24
+  Real Estate Tax (PSF): 4.76
+  Insurance (PSF): 1.62
+  Management Fee (pct): 2.63
+  Concessions
+  -----------
+  TI Allowance (PSF): 12.66
+  Security Deposit: $149,903
+  Letter of Credit: $885,131
+  Percentage Rent (pct): 2.79
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 48
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 335
+  Floor: 7
+  Space Type: Industrial
+  Rentable SqFt: 18,887
+  Usable SqFt: 16,975
+  Load Factor (pct): 11.26
+  Tenant
+  ------
+  Tenant Name: Cedar Logistics
+  DBA: Forge Co
+  Industry: Technology
+  Credit Rating: NR
+  Tenant Since: 2021-05-20
+  Guarantor: Delta Holdings
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1047
+  Lease Status: HoldOver
+  Commencement Date: 2021-05-26
+  Expiration Date: 2024-05-10
+  Term (months): 36
+  Base Rent Annual: $529,591
+  Base Rent (PSF): 28.04
+  Annual Escalation (pct): 3.1
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 7.85
+  Real Estate Tax (PSF): 4.51
+  Insurance (PSF): 0.96
+  Management Fee (pct): 2.43
+  Concessions
+  -----------
+  TI Allowance (PSF): 73.54
+  Security Deposit: $132,397
+  Letter of Credit: $229,150
+  Percentage Rent (pct): 2.06
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 120
+  Has Termination Option: Yes
+
+================================================================
+UNIT 49
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 340
+  Floor: 32
+  Space Type: Office
+  Rentable SqFt: 17,219
+  Usable SqFt: 14,791
+  Load Factor (pct): 16.42
+  Tenant
+  ------
+  Tenant Name: Delta Group
+  DBA: Granite Co
+  Industry: Technology
+  Credit Rating: BBB
+  Tenant Since: 2022-12-03
+  Guarantor: Delta Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1048
+  Lease Status: Vacant
+  Commencement Date: 2023-05-14
+  Expiration Date: 2030-04-07
+  Term (months): 84
+  Base Rent Annual: $774,510
+  Base Rent (PSF): 44.98
+  Annual Escalation (pct): 3.63
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 7.59
+  Real Estate Tax (PSF): 6.84
+  Insurance (PSF): 0.94
+  Management Fee (pct): 2.12
+  Concessions
+  -----------
+  TI Allowance (PSF): 21.0
+  Security Deposit: $64,542
+  Letter of Credit: $78,395
+  Percentage Rent (pct): 5.79
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 50
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 345
+  Floor: 1
+  Space Type: Flex
+  Rentable SqFt: 37,517
+  Usable SqFt: 35,298
+  Load Factor (pct): 6.29
+  Tenant
+  ------
+  Tenant Name: Cedar Industries
+  DBA: Cedar Inc
+  Industry: Finance
+  Credit Rating: B
+  Tenant Since: 2020-02-11
+  Guarantor: Forge Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1049
+  Lease Status: Pending
+  Commencement Date: 2020-06-10
+  Expiration Date: 2025-05-15
+  Term (months): 60
+  Base Rent Annual: $2,018,789
+  Base Rent (PSF): 53.81
+  Annual Escalation (pct): 3.58
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 6.86
+  Real Estate Tax (PSF): 3.96
+  Insurance (PSF): 1.37
+  Management Fee (pct): 2.74
+  Concessions
+  -----------
+  TI Allowance (PSF): 21.07
+  Security Deposit: $504,697
+  Letter of Credit: $593,384
+  Percentage Rent (pct): 7.94
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 51
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 350
+  Floor: 16
+  Space Type: Retail
+  Rentable SqFt: 7,506
+  Usable SqFt: 6,775
+  Load Factor (pct): 10.79
+  Tenant
+  ------
+  Tenant Name: Granite Capital
+  DBA: Evergreen Inc
+  Industry: Logistics
+  Credit Rating: BBB
+  Tenant Since: 2022-12-25
+  Guarantor: Evergreen Logistics
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1050
+  Lease Status: Pending
+  Commencement Date: 2023-01-07
+  Expiration Date: 2025-12-22
+  Term (months): 36
+  Base Rent Annual: $226,831
+  Base Rent (PSF): 30.22
+  Annual Escalation (pct): 2.13
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 4.68
+  Real Estate Tax (PSF): 3.1
+  Insurance (PSF): 0.88
+  Management Fee (pct): 2.25
+  Concessions
+  -----------
+  TI Allowance (PSF): 65.38
+  Security Deposit: $56,707
+  Letter of Credit: $51,922
+  Percentage Rent (pct): 2.5
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 52
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 355
+  Floor: 16
+  Space Type: Industrial
+  Rentable SqFt: 34,704
+  Usable SqFt: 29,084
+  Load Factor (pct): 19.32
+  Tenant
+  ------
+  Tenant Name: Delta Holdings
+  DBA: Beacon Co
+  Industry: Technology
+  Credit Rating: BBB
+  Tenant Since: 2019-05-20
+  Guarantor: Forge Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1051
+  Lease Status: HoldOver
+  Commencement Date: 2020-10-17
+  Expiration Date: 2027-09-11
+  Term (months): 84
+  Base Rent Annual: $762,446
+  Base Rent (PSF): 21.97
+  Annual Escalation (pct): 2.66
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 4.37
+  Real Estate Tax (PSF): 4.4
+  Insurance (PSF): 0.66
+  Management Fee (pct): 4.62
+  Concessions
+  -----------
+  TI Allowance (PSF): 52.61
+  Security Deposit: $127,074
+  Letter of Credit: $218,186
+  Percentage Rent (pct): 4.21
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 53
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 360
+  Floor: 10
+  Space Type: Industrial
+  Rentable SqFt: 36,172
+  Usable SqFt: 34,086
+  Load Factor (pct): 6.12
+  Tenant
+  ------
+  Tenant Name: Harbor Systems
+  DBA: Harbor LLC
+  Industry: Healthcare
+  Credit Rating: BBB
+  Tenant Since: 2020-06-22
+  Guarantor: Beacon Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1052
+  Lease Status: HoldOver
+  Commencement Date: 2022-08-28
+  Expiration Date: 2032-07-06
+  Term (months): 120
+  Base Rent Annual: $1,476,902
+  Base Rent (PSF): 40.83
+  Annual Escalation (pct): 2.03
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 8.29
+  Real Estate Tax (PSF): 6.57
+  Insurance (PSF): 1.68
+  Management Fee (pct): 3.1
+  Concessions
+  -----------
+  TI Allowance (PSF): 55.62
+  Security Deposit: $369,225
+  Letter of Credit: $431,877
+  Percentage Rent (pct): 6.45
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 54
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 365
+  Floor: 20
+  Space Type: Industrial
+  Rentable SqFt: 3,858
+  Usable SqFt: 3,185
+  Load Factor (pct): 21.13
+  Tenant
+  ------
+  Tenant Name: Granite Capital
+  DBA: Atlas Inc
+  Industry: Retail
+  Credit Rating: AAA
+  Tenant Since: 2020-02-06
+  Guarantor: Delta Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1053
+  Lease Status: MonthToMonth
+  Commencement Date: 2020-11-27
+  Expiration Date: 2030-10-06
+  Term (months): 120
+  Base Rent Annual: $164,775
+  Base Rent (PSF): 42.71
+  Annual Escalation (pct): 2.12
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 8.12
+  Real Estate Tax (PSF): 5.81
+  Insurance (PSF): 1.9
+  Management Fee (pct): 4.03
+  Concessions
+  -----------
+  TI Allowance (PSF): 38.24
+  Security Deposit: $13,731
+  Letter of Credit: $64,729
+  Percentage Rent (pct): 4.22
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 55
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 370
+  Floor: 30
+  Space Type: Office
+  Rentable SqFt: 25,922
+  Usable SqFt: 23,862
+  Load Factor (pct): 8.63
+  Tenant
+  ------
+  Tenant Name: Evergreen Industries
+  DBA: Forge Co
+  Industry: Retail
+  Credit Rating: NR
+  Tenant Since: 2018-05-16
+  Guarantor: Harbor Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1054
+  Lease Status: Active
+  Commencement Date: 2019-12-08
+  Expiration Date: 2030-02-13
+  Term (months): 124
+  Base Rent Annual: $1,513,844
+  Base Rent (PSF): 58.4
+  Annual Escalation (pct): 2.69
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 7.35
+  Real Estate Tax (PSF): 2.11
+  Insurance (PSF): 0.72
+  Management Fee (pct): 4.36
+  Concessions
+  -----------
+  TI Allowance (PSF): 71.36
+  Security Deposit: $252,307
+  Letter of Credit: $429,583
+  Percentage Rent (pct): 6.1
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 56
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 375
+  Floor: 21
+  Space Type: Medical
+  Rentable SqFt: 24,072
+  Usable SqFt: 22,488
+  Load Factor (pct): 7.04
+  Tenant
+  ------
+  Tenant Name: Granite Logistics
+  DBA: Harbor Inc
+  Industry: Healthcare
+  Credit Rating: AA
+  Tenant Since: 2020-05-05
+  Guarantor: Granite Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1055
+  Lease Status: Active
+  Commencement Date: 2021-05-22
+  Expiration Date: 2028-04-15
+  Term (months): 84
+  Base Rent Annual: $420,537
+  Base Rent (PSF): 17.47
+  Annual Escalation (pct): 2.05
+  Free Rent (months): 2
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 8.23
+  Real Estate Tax (PSF): 6.85
+  Insurance (PSF): 1.46
+  Management Fee (pct): 2.54
+  Concessions
+  -----------
+  TI Allowance (PSF): 80.03
+  Security Deposit: $70,089
+  Letter of Credit: $161,562
+  Percentage Rent (pct): 6.17
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 180
+  Has Termination Option: Yes
+
+================================================================
+UNIT 57
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 380
+  Floor: 21
+  Space Type: Medical
+  Rentable SqFt: 18,846
+  Usable SqFt: 15,556
+  Load Factor (pct): 21.15
+  Tenant
+  ------
+  Tenant Name: Delta Partners
+  DBA: Granite Inc
+  Industry: Technology
+  Credit Rating: AA
+  Tenant Since: 2018-10-27
+  Guarantor: Evergreen Holdings
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1056
+  Lease Status: MonthToMonth
+  Commencement Date: 2020-10-26
+  Expiration Date: 2030-09-04
+  Term (months): 120
+  Base Rent Annual: $323,774
+  Base Rent (PSF): 17.18
+  Annual Escalation (pct): 2.49
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 4.68
+  Real Estate Tax (PSF): 6.41
+  Insurance (PSF): 2.19
+  Management Fee (pct): 3.0
+  Concessions
+  -----------
+  TI Allowance (PSF): 34.13
+  Security Deposit: $26,981
+  Letter of Credit: $152,494
+  Percentage Rent (pct): 1.01
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 58
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 385
+  Floor: 29
+  Space Type: Flex
+  Rentable SqFt: 23,111
+  Usable SqFt: 20,988
+  Load Factor (pct): 10.12
+  Tenant
+  ------
+  Tenant Name: Forge Industries
+  DBA: Granite Co
+  Industry: Government
+  Credit Rating: AA
+  Tenant Since: 2021-09-28
+  Guarantor: Delta Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1057
+  Lease Status: Pending
+  Commencement Date: 2022-05-11
+  Expiration Date: 2029-04-04
+  Term (months): 84
+  Base Rent Annual: $1,262,322
+  Base Rent (PSF): 54.62
+  Annual Escalation (pct): 2.34
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 6.81
+  Real Estate Tax (PSF): 3.92
+  Insurance (PSF): 1.25
+  Management Fee (pct): 2.51
+  Concessions
+  -----------
+  TI Allowance (PSF): 37.24
+  Security Deposit: $105,193
+  Letter of Credit: $241,489
+  Percentage Rent (pct): 3.0
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 120
+  Has Termination Option: Yes
+
+================================================================
+UNIT 59
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 390
+  Floor: 32
+  Space Type: Retail
+  Rentable SqFt: 17,007
+  Usable SqFt: 15,555
+  Load Factor (pct): 9.33
+  Tenant
+  ------
+  Tenant Name: Atlas Holdings
+  DBA: Atlas Co
+  Industry: Healthcare
+  Credit Rating: AA
+  Tenant Since: 2018-10-06
+  Guarantor: Evergreen Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1058
+  Lease Status: Pending
+  Commencement Date: 2020-11-04
+  Expiration Date: 2031-01-11
+  Term (months): 124
+  Base Rent Annual: $546,775
+  Base Rent (PSF): 32.15
+  Annual Escalation (pct): 2.96
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 6.14
+  Real Estate Tax (PSF): 5.44
+  Insurance (PSF): 1.08
+  Management Fee (pct): 4.36
+  Concessions
+  -----------
+  TI Allowance (PSF): 75.15
+  Security Deposit: $45,564
+  Letter of Credit: $107,865
+  Percentage Rent (pct): 2.26
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 270
+  Has Termination Option: Yes
+
+================================================================
+UNIT 60
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 395
+  Floor: 28
+  Space Type: Retail
+  Rentable SqFt: 5,540
+  Usable SqFt: 4,642
+  Load Factor (pct): 19.35
+  Tenant
+  ------
+  Tenant Name: Forge Systems
+  DBA: Granite LLC
+  Industry: Logistics
+  Credit Rating: AA
+  Tenant Since: 2016-12-20
+  Guarantor: Forge Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1059
+  Lease Status: MonthToMonth
+  Commencement Date: 2019-05-21
+  Expiration Date: 2029-07-27
+  Term (months): 124
+  Base Rent Annual: $100,384
+  Base Rent (PSF): 18.12
+  Annual Escalation (pct): 3.41
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 5.51
+  Real Estate Tax (PSF): 3.97
+  Insurance (PSF): 0.67
+  Management Fee (pct): 3.08
+  Concessions
+  -----------
+  TI Allowance (PSF): 77.79
+  Security Deposit: $16,730
+  Letter of Credit: $45,817
+  Percentage Rent (pct): 0.42
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 61
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 400
+  Floor: 30
+  Space Type: Office
+  Rentable SqFt: 31,518
+  Usable SqFt: 27,255
+  Load Factor (pct): 15.64
+  Tenant
+  ------
+  Tenant Name: Beacon Group
+  DBA: Forge LLC
+  Industry: Retail
+  Credit Rating: AAA
+  Tenant Since: 2022-08-21
+  Guarantor: Forge Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1060
+  Lease Status: Pending
+  Commencement Date: 2023-10-15
+  Expiration Date: 2033-08-23
+  Term (months): 120
+  Base Rent Annual: $1,675,812
+  Base Rent (PSF): 53.17
+  Annual Escalation (pct): 3.01
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 8.96
+  Real Estate Tax (PSF): 4.25
+  Insurance (PSF): 2.4
+  Management Fee (pct): 4.64
+  Concessions
+  -----------
+  TI Allowance (PSF): 32.96
+  Security Deposit: $139,651
+  Letter of Credit: $403,174
+  Percentage Rent (pct): 0.79
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 180
+  Has Termination Option: Yes
+
+================================================================
+UNIT 62
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 405
+  Floor: 24
+  Space Type: Flex
+  Rentable SqFt: 40,276
+  Usable SqFt: 37,604
+  Load Factor (pct): 7.11
+  Tenant
+  ------
+  Tenant Name: Cedar Group
+  DBA: Forge Co
+  Industry: Retail
+  Credit Rating: B
+  Tenant Since: 2019-11-04
+  Guarantor: Cedar Logistics
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1061
+  Lease Status: Active
+  Commencement Date: 2022-04-22
+  Expiration Date: 2032-06-28
+  Term (months): 124
+  Base Rent Annual: $1,472,893
+  Base Rent (PSF): 36.57
+  Annual Escalation (pct): 2.86
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 7.55
+  Real Estate Tax (PSF): 6.71
+  Insurance (PSF): 1.36
+  Management Fee (pct): 3.65
+  Concessions
+  -----------
+  TI Allowance (PSF): 18.89
+  Security Deposit: $122,741
+  Letter of Credit: $152,960
+  Percentage Rent (pct): 2.24
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 63
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 410
+  Floor: 25
+  Space Type: Office
+  Rentable SqFt: 29,884
+  Usable SqFt: 27,885
+  Load Factor (pct): 7.17
+  Tenant
+  ------
+  Tenant Name: Cedar Holdings
+  DBA: Forge Inc
+  Industry: Technology
+  Credit Rating: AAA
+  Tenant Since: 2020-11-29
+  Guarantor: Forge Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1062
+  Lease Status: Pending
+  Commencement Date: 2021-12-24
+  Expiration Date: 2024-12-08
+  Term (months): 36
+  Base Rent Annual: $1,836,969
+  Base Rent (PSF): 61.47
+  Annual Escalation (pct): 3.62
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 6.01
+  Real Estate Tax (PSF): 2.38
+  Insurance (PSF): 0.66
+  Management Fee (pct): 4.79
+  Concessions
+  -----------
+  TI Allowance (PSF): 78.6
+  Security Deposit: $153,080
+  Letter of Credit: $898,175
+  Percentage Rent (pct): 4.92
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 64
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 415
+  Floor: 2
+  Space Type: Office
+  Rentable SqFt: 21,446
+  Usable SqFt: 19,239
+  Load Factor (pct): 11.47
+  Tenant
+  ------
+  Tenant Name: Harbor Logistics
+  DBA: Atlas Inc
+  Industry: Finance
+  Credit Rating: BB
+  Tenant Since: 2018-06-03
+  Guarantor: Forge Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1063
+  Lease Status: MonthToMonth
+  Commencement Date: 2020-08-22
+  Expiration Date: 2030-10-29
+  Term (months): 124
+  Base Rent Annual: $813,661
+  Base Rent (PSF): 37.94
+  Annual Escalation (pct): 2.29
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 4.4
+  Real Estate Tax (PSF): 5.81
+  Insurance (PSF): 2.33
+  Management Fee (pct): 2.17
+  Concessions
+  -----------
+  TI Allowance (PSF): 27.26
+  Security Deposit: $135,610
+  Letter of Credit: $389,449
+  Percentage Rent (pct): 0.68
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 65
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 420
+  Floor: 5
+  Space Type: Retail
+  Rentable SqFt: 22,667
+  Usable SqFt: 20,042
+  Load Factor (pct): 13.1
+  Tenant
+  ------
+  Tenant Name: Evergreen Holdings
+  DBA: Granite Inc
+  Industry: Healthcare
+  Credit Rating: A
+  Tenant Since: 2018-11-15
+  Guarantor: Forge Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1064
+  Lease Status: Active
+  Commencement Date: 2019-01-14
+  Expiration Date: 2021-12-29
+  Term (months): 36
+  Base Rent Annual: $1,389,260
+  Base Rent (PSF): 61.29
+  Annual Escalation (pct): 2.74
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 3.61
+  Real Estate Tax (PSF): 5.61
+  Insurance (PSF): 0.75
+  Management Fee (pct): 2.49
+  Concessions
+  -----------
+  TI Allowance (PSF): 45.14
+  Security Deposit: $347,315
+  Letter of Credit: $351,498
+  Percentage Rent (pct): 0.65
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 66
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 425
+  Floor: 24
+  Space Type: Industrial
+  Rentable SqFt: 36,401
+  Usable SqFt: 30,793
+  Load Factor (pct): 18.21
+  Tenant
+  ------
+  Tenant Name: Granite Group
+  DBA: Beacon Co
+  Industry: Technology
+  Credit Rating: B
+  Tenant Since: 2021-11-19
+  Guarantor: Evergreen Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1065
+  Lease Status: Pending
+  Commencement Date: 2022-09-06
+  Expiration Date: 2029-07-31
+  Term (months): 84
+  Base Rent Annual: $1,117,146
+  Base Rent (PSF): 30.69
+  Annual Escalation (pct): 2.84
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 6.81
+  Real Estate Tax (PSF): 3.23
+  Insurance (PSF): 1.37
+  Management Fee (pct): 2.02
+  Concessions
+  -----------
+  TI Allowance (PSF): 70.08
+  Security Deposit: $279,286
+  Letter of Credit: $153,631
+  Percentage Rent (pct): 5.87
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 67
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 430
+  Floor: 29
+  Space Type: Flex
+  Rentable SqFt: 7,264
+  Usable SqFt: 6,751
+  Load Factor (pct): 7.6
+  Tenant
+  ------
+  Tenant Name: Atlas Holdings
+  DBA: Harbor Co
+  Industry: Retail
+  Credit Rating: AA
+  Tenant Since: 2017-01-09
+  Guarantor: Granite Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1066
+  Lease Status: Vacant
+  Commencement Date: 2019-06-20
+  Expiration Date: 2029-08-26
+  Term (months): 124
+  Base Rent Annual: $198,452
+  Base Rent (PSF): 27.32
+  Annual Escalation (pct): 3.7
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 3.31
+  Real Estate Tax (PSF): 3.33
+  Insurance (PSF): 0.5
+  Management Fee (pct): 4.04
+  Concessions
+  -----------
+  TI Allowance (PSF): 21.29
+  Security Deposit: $33,075
+  Letter of Credit: $29,155
+  Percentage Rent (pct): 3.76
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 270
+  Has Termination Option: Yes
+
+================================================================
+UNIT 68
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 435
+  Floor: 20
+  Space Type: Medical
+  Rentable SqFt: 7,949
+  Usable SqFt: 7,210
+  Load Factor (pct): 10.25
+  Tenant
+  ------
+  Tenant Name: Forge Partners
+  DBA: Atlas Co
+  Industry: Finance
+  Credit Rating: A
+  Tenant Since: 2019-04-20
+  Guarantor: Beacon Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1067
+  Lease Status: Active
+  Commencement Date: 2020-03-20
+  Expiration Date: 2025-02-22
+  Term (months): 60
+  Base Rent Annual: $440,374
+  Base Rent (PSF): 55.4
+  Annual Escalation (pct): 2.85
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 5.51
+  Real Estate Tax (PSF): 5.79
+  Insurance (PSF): 1.17
+  Management Fee (pct): 2.14
+  Concessions
+  -----------
+  TI Allowance (PSF): 74.63
+  Security Deposit: $36,697
+  Letter of Credit: $88,361
+  Percentage Rent (pct): 0.88
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 120
+  Has Termination Option: Yes
+
+================================================================
+UNIT 69
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 440
+  Floor: 31
+  Space Type: Flex
+  Rentable SqFt: 15,155
+  Usable SqFt: 14,012
+  Load Factor (pct): 8.16
+  Tenant
+  ------
+  Tenant Name: Granite Partners
+  DBA: Delta Inc
+  Industry: Legal
+  Credit Rating: BBB
+  Tenant Since: 2021-02-19
+  Guarantor: Harbor Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1068
+  Lease Status: Active
+  Commencement Date: 2023-02-19
+  Expiration Date: 2032-12-28
+  Term (months): 120
+  Base Rent Annual: $272,638
+  Base Rent (PSF): 17.99
+  Annual Escalation (pct): 3.13
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 8.89
+  Real Estate Tax (PSF): 4.34
+  Insurance (PSF): 2.02
+  Management Fee (pct): 2.08
+  Concessions
+  -----------
+  TI Allowance (PSF): 74.23
+  Security Deposit: $68,159
+  Letter of Credit: $72,547
+  Percentage Rent (pct): 4.05
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 70
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 445
+  Floor: 22
+  Space Type: Flex
+  Rentable SqFt: 22,260
+  Usable SqFt: 18,273
+  Load Factor (pct): 21.82
+  Tenant
+  ------
+  Tenant Name: Beacon Industries
+  DBA: Beacon LLC
+  Industry: Finance
+  Credit Rating: AAA
+  Tenant Since: 2020-01-04
+  Guarantor: Harbor Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1069
+  Lease Status: MonthToMonth
+  Commencement Date: 2020-01-28
+  Expiration Date: 2030-04-05
+  Term (months): 124
+  Base Rent Annual: $1,017,059
+  Base Rent (PSF): 45.69
+  Annual Escalation (pct): 3.6
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 5.49
+  Real Estate Tax (PSF): 4.6
+  Insurance (PSF): 1.8
+  Management Fee (pct): 4.18
+  Concessions
+  -----------
+  TI Allowance (PSF): 28.83
+  Security Deposit: $84,754
+  Letter of Credit: $358,302
+  Percentage Rent (pct): 5.06
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 71
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 450
+  Floor: 27
+  Space Type: Flex
+  Rentable SqFt: 24,912
+  Usable SqFt: 21,423
+  Load Factor (pct): 16.29
+  Tenant
+  ------
+  Tenant Name: Delta Holdings
+  DBA: Atlas Co
+  Industry: Retail
+  Credit Rating: AAA
+  Tenant Since: 2019-10-19
+  Guarantor: Cedar Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1070
+  Lease Status: HoldOver
+  Commencement Date: 2020-06-21
+  Expiration Date: 2023-06-06
+  Term (months): 36
+  Base Rent Annual: $835,299
+  Base Rent (PSF): 33.53
+  Annual Escalation (pct): 3.57
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 5.78
+  Real Estate Tax (PSF): 2.29
+  Insurance (PSF): 1.54
+  Management Fee (pct): 3.06
+  Concessions
+  -----------
+  TI Allowance (PSF): 22.79
+  Security Deposit: $139,216
+  Letter of Credit: $270,122
+  Percentage Rent (pct): 0.25
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 72
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 455
+  Floor: 1
+  Space Type: Flex
+  Rentable SqFt: 37,809
+  Usable SqFt: 32,148
+  Load Factor (pct): 17.61
+  Tenant
+  ------
+  Tenant Name: Atlas Logistics
+  DBA: Forge LLC
+  Industry: Retail
+  Credit Rating: AA
+  Tenant Since: 2021-09-20
+  Guarantor: Evergreen Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1071
+  Lease Status: Active
+  Commencement Date: 2023-03-04
+  Expiration Date: 2033-05-10
+  Term (months): 124
+  Base Rent Annual: $2,044,332
+  Base Rent (PSF): 54.07
+  Annual Escalation (pct): 2.46
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 5.28
+  Real Estate Tax (PSF): 5.81
+  Insurance (PSF): 2.39
+  Management Fee (pct): 3.29
+  Concessions
+  -----------
+  TI Allowance (PSF): 54.06
+  Security Deposit: $170,361
+  Letter of Credit: $693,591
+  Percentage Rent (pct): 7.71
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 73
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 460
+  Floor: 4
+  Space Type: Medical
+  Rentable SqFt: 42,851
+  Usable SqFt: 36,307
+  Load Factor (pct): 18.02
+  Tenant
+  ------
+  Tenant Name: Granite Systems
+  DBA: Delta Inc
+  Industry: Government
+  Credit Rating: B
+  Tenant Since: 2022-08-15
+  Guarantor: Evergreen Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1072
+  Lease Status: Vacant
+  Commencement Date: 2023-02-08
+  Expiration Date: 2032-12-17
+  Term (months): 120
+  Base Rent Annual: $636,337
+  Base Rent (PSF): 14.85
+  Annual Escalation (pct): 2.11
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 4.12
+  Real Estate Tax (PSF): 3.3
+  Insurance (PSF): 1.81
+  Management Fee (pct): 3.05
+  Concessions
+  -----------
+  TI Allowance (PSF): 53.8
+  Security Deposit: $53,028
+  Letter of Credit: $229,961
+  Percentage Rent (pct): 5.1
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 74
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 465
+  Floor: 5
+  Space Type: Office
+  Rentable SqFt: 37,799
+  Usable SqFt: 35,700
+  Load Factor (pct): 5.88
+  Tenant
+  ------
+  Tenant Name: Atlas Holdings
+  DBA: Evergreen LLC
+  Industry: Technology
+  Credit Rating: A
+  Tenant Since: 2019-11-06
+  Guarantor: Cedar Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1073
+  Lease Status: Active
+  Commencement Date: 2020-10-03
+  Expiration Date: 2023-09-18
+  Term (months): 36
+  Base Rent Annual: $661,860
+  Base Rent (PSF): 17.51
+  Annual Escalation (pct): 3.97
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 7.59
+  Real Estate Tax (PSF): 2.07
+  Insurance (PSF): 1.9
+  Management Fee (pct): 3.6
+  Concessions
+  -----------
+  TI Allowance (PSF): 37.93
+  Security Deposit: $55,155
+  Letter of Credit: $106,575
+  Percentage Rent (pct): 1.56
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 75
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 470
+  Floor: 29
+  Space Type: Medical
+  Rentable SqFt: 16,969
+  Usable SqFt: 15,361
+  Load Factor (pct): 10.47
+  Tenant
+  ------
+  Tenant Name: Harbor Logistics
+  DBA: Cedar LLC
+  Industry: Technology
+  Credit Rating: NR
+  Tenant Since: 2018-11-28
+  Guarantor: Granite Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1074
+  Lease Status: Vacant
+  Commencement Date: 2020-03-27
+  Expiration Date: 2030-02-03
+  Term (months): 120
+  Base Rent Annual: $611,393
+  Base Rent (PSF): 36.03
+  Annual Escalation (pct): 3.81
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 5.24
+  Real Estate Tax (PSF): 2.02
+  Insurance (PSF): 1.16
+  Management Fee (pct): 2.06
+  Concessions
+  -----------
+  TI Allowance (PSF): 37.71
+  Security Deposit: $50,949
+  Letter of Credit: $64,094
+  Percentage Rent (pct): 4.71
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 76
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 475
+  Floor: 2
+  Space Type: Medical
+  Rentable SqFt: 26,313
+  Usable SqFt: 22,529
+  Load Factor (pct): 16.8
+  Tenant
+  ------
+  Tenant Name: Evergreen Logistics
+  DBA: Beacon Co
+  Industry: Healthcare
+  Credit Rating: B
+  Tenant Since: 2020-10-04
+  Guarantor: Delta Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1075
+  Lease Status: Pending
+  Commencement Date: 2021-12-19
+  Expiration Date: 2028-11-12
+  Term (months): 84
+  Base Rent Annual: $728,870
+  Base Rent (PSF): 27.7
+  Annual Escalation (pct): 3.07
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 8.63
+  Real Estate Tax (PSF): 2.82
+  Insurance (PSF): 2.47
+  Management Fee (pct): 2.34
+  Concessions
+  -----------
+  TI Allowance (PSF): 63.72
+  Security Deposit: $60,739
+  Letter of Credit: $94,811
+  Percentage Rent (pct): 5.5
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 77
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 480
+  Floor: 14
+  Space Type: Medical
+  Rentable SqFt: 42,464
+  Usable SqFt: 39,392
+  Load Factor (pct): 7.8
+  Tenant
+  ------
+  Tenant Name: Cedar Partners
+  DBA: Forge Inc
+  Industry: Healthcare
+  Credit Rating: A
+  Tenant Since: 2019-05-08
+  Guarantor: Forge Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1076
+  Lease Status: Vacant
+  Commencement Date: 2019-09-19
+  Expiration Date: 2029-11-25
+  Term (months): 124
+  Base Rent Annual: $659,465
+  Base Rent (PSF): 15.53
+  Annual Escalation (pct): 3.81
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 3.72
+  Real Estate Tax (PSF): 2.64
+  Insurance (PSF): 1.12
+  Management Fee (pct): 2.19
+  Concessions
+  -----------
+  TI Allowance (PSF): 40.36
+  Security Deposit: $109,910
+  Letter of Credit: $318,215
+  Percentage Rent (pct): 1.33
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 78
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 485
+  Floor: 25
+  Space Type: Office
+  Rentable SqFt: 22,807
+  Usable SqFt: 20,156
+  Load Factor (pct): 13.15
+  Tenant
+  ------
+  Tenant Name: Beacon Holdings
+  DBA: Forge Inc
+  Industry: Legal
+  Credit Rating: BB
+  Tenant Since: 2020-08-25
+  Guarantor: Cedar Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1077
+  Lease Status: Pending
+  Commencement Date: 2020-10-26
+  Expiration Date: 2030-09-04
+  Term (months): 120
+  Base Rent Annual: $848,420
+  Base Rent (PSF): 37.2
+  Annual Escalation (pct): 2.67
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 8.14
+  Real Estate Tax (PSF): 6.33
+  Insurance (PSF): 0.75
+  Management Fee (pct): 2.52
+  Concessions
+  -----------
+  TI Allowance (PSF): 23.6
+  Security Deposit: $212,105
+  Letter of Credit: $260,368
+  Percentage Rent (pct): 5.8
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 79
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 490
+  Floor: 25
+  Space Type: Flex
+  Rentable SqFt: 16,684
+  Usable SqFt: 14,116
+  Load Factor (pct): 18.19
+  Tenant
+  ------
+  Tenant Name: Beacon Industries
+  DBA: Cedar Co
+  Industry: Logistics
+  Credit Rating: A
+  Tenant Since: 2020-03-04
+  Guarantor: Cedar Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1078
+  Lease Status: Active
+  Commencement Date: 2020-11-22
+  Expiration Date: 2031-01-29
+  Term (months): 124
+  Base Rent Annual: $1,015,555
+  Base Rent (PSF): 60.87
+  Annual Escalation (pct): 3.99
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 7.55
+  Real Estate Tax (PSF): 5.58
+  Insurance (PSF): 2.09
+  Management Fee (pct): 3.59
+  Concessions
+  -----------
+  TI Allowance (PSF): 70.68
+  Security Deposit: $253,888
+  Letter of Credit: $458,413
+  Percentage Rent (pct): 0.86
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 80
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 495
+  Floor: 9
+  Space Type: Office
+  Rentable SqFt: 24,186
+  Usable SqFt: 21,423
+  Load Factor (pct): 12.9
+  Tenant
+  ------
+  Tenant Name: Delta Industries
+  DBA: Harbor LLC
+  Industry: Retail
+  Credit Rating: B
+  Tenant Since: 2019-09-12
+  Guarantor: Harbor Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1079
+  Lease Status: Pending
+  Commencement Date: 2020-03-24
+  Expiration Date: 2023-03-09
+  Term (months): 36
+  Base Rent Annual: $830,305
+  Base Rent (PSF): 34.33
+  Annual Escalation (pct): 3.39
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 5.3
+  Real Estate Tax (PSF): 4.33
+  Insurance (PSF): 2.01
+  Management Fee (pct): 2.44
+  Concessions
+  -----------
+  TI Allowance (PSF): 65.33
+  Security Deposit: $138,384
+  Letter of Credit: $358,209
+  Percentage Rent (pct): 1.58
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 81
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 500
+  Floor: 8
+  Space Type: Medical
+  Rentable SqFt: 25,493
+  Usable SqFt: 21,019
+  Load Factor (pct): 21.29
+  Tenant
+  ------
+  Tenant Name: Forge Logistics
+  DBA: Beacon LLC
+  Industry: Healthcare
+  Credit Rating: AAA
+  Tenant Since: 2018-06-09
+  Guarantor: Delta Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1080
+  Lease Status: Vacant
+  Commencement Date: 2020-06-20
+  Expiration Date: 2030-04-29
+  Term (months): 120
+  Base Rent Annual: $836,170
+  Base Rent (PSF): 32.8
+  Annual Escalation (pct): 3.81
+  Free Rent (months): 2
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 4.64
+  Real Estate Tax (PSF): 4.4
+  Insurance (PSF): 1.4
+  Management Fee (pct): 2.2
+  Concessions
+  -----------
+  TI Allowance (PSF): 20.08
+  Security Deposit: $139,361
+  Letter of Credit: $354,666
+  Percentage Rent (pct): 0.7
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 180
+  Has Termination Option: Yes
+
+================================================================
+UNIT 82
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 505
+  Floor: 7
+  Space Type: Medical
+  Rentable SqFt: 25,607
+  Usable SqFt: 21,711
+  Load Factor (pct): 17.94
+  Tenant
+  ------
+  Tenant Name: Cedar Logistics
+  DBA: Cedar Inc
+  Industry: Government
+  Credit Rating: A
+  Tenant Since: 2019-10-17
+  Guarantor: Forge Holdings
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1081
+  Lease Status: Vacant
+  Commencement Date: 2020-08-11
+  Expiration Date: 2027-07-06
+  Term (months): 84
+  Base Rent Annual: $1,233,489
+  Base Rent (PSF): 48.17
+  Annual Escalation (pct): 3.86
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 7.25
+  Real Estate Tax (PSF): 2.84
+  Insurance (PSF): 0.65
+  Management Fee (pct): 4.19
+  Concessions
+  -----------
+  TI Allowance (PSF): 83.57
+  Security Deposit: $308,372
+  Letter of Credit: $237,569
+  Percentage Rent (pct): 6.56
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 270
+  Has Termination Option: Yes
+
+================================================================
+UNIT 83
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 510
+  Floor: 2
+  Space Type: Flex
+  Rentable SqFt: 36,838
+  Usable SqFt: 32,138
+  Load Factor (pct): 14.62
+  Tenant
+  ------
+  Tenant Name: Forge Logistics
+  DBA: Cedar LLC
+  Industry: Healthcare
+  Credit Rating: BBB
+  Tenant Since: 2018-04-15
+  Guarantor: Atlas Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1082
+  Lease Status: Active
+  Commencement Date: 2019-11-24
+  Expiration Date: 2022-11-08
+  Term (months): 36
+  Base Rent Annual: $1,199,076
+  Base Rent (PSF): 32.55
+  Annual Escalation (pct): 3.13
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 6.49
+  Real Estate Tax (PSF): 2.89
+  Insurance (PSF): 1.32
+  Management Fee (pct): 4.98
+  Concessions
+  -----------
+  TI Allowance (PSF): 10.47
+  Security Deposit: $99,923
+  Letter of Credit: $352,605
+  Percentage Rent (pct): 3.15
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 84
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 515
+  Floor: 25
+  Space Type: Flex
+  Rentable SqFt: 21,404
+  Usable SqFt: 19,201
+  Load Factor (pct): 11.47
+  Tenant
+  ------
+  Tenant Name: Delta Industries
+  DBA: Delta Inc
+  Industry: Technology
+  Credit Rating: AA
+  Tenant Since: 2022-12-06
+  Guarantor: Beacon Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1083
+  Lease Status: Pending
+  Commencement Date: 2023-06-18
+  Expiration Date: 2026-06-02
+  Term (months): 36
+  Base Rent Annual: $1,027,177
+  Base Rent (PSF): 47.99
+  Annual Escalation (pct): 2.84
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 5.18
+  Real Estate Tax (PSF): 4.96
+  Insurance (PSF): 1.8
+  Management Fee (pct): 4.56
+  Concessions
+  -----------
+  TI Allowance (PSF): 17.53
+  Security Deposit: $85,598
+  Letter of Credit: $153,139
+  Percentage Rent (pct): 2.29
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 120
+  Has Termination Option: Yes
+
+================================================================
+UNIT 85
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 520
+  Floor: 20
+  Space Type: Flex
+  Rentable SqFt: 19,350
+  Usable SqFt: 16,256
+  Load Factor (pct): 19.03
+  Tenant
+  ------
+  Tenant Name: Forge Logistics
+  DBA: Beacon Inc
+  Industry: Finance
+  Credit Rating: A
+  Tenant Since: 2022-03-13
+  Guarantor: Atlas Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1084
+  Lease Status: Pending
+  Commencement Date: 2022-06-30
+  Expiration Date: 2032-05-08
+  Term (months): 120
+  Base Rent Annual: $705,114
+  Base Rent (PSF): 36.44
+  Annual Escalation (pct): 2.86
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 8.87
+  Real Estate Tax (PSF): 2.28
+  Insurance (PSF): 0.78
+  Management Fee (pct): 3.28
+  Concessions
+  -----------
+  TI Allowance (PSF): 49.04
+  Security Deposit: $58,759
+  Letter of Credit: $291,182
+  Percentage Rent (pct): 3.55
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 86
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 525
+  Floor: 9
+  Space Type: Industrial
+  Rentable SqFt: 34,962
+  Usable SqFt: 30,621
+  Load Factor (pct): 14.18
+  Tenant
+  ------
+  Tenant Name: Harbor Logistics
+  DBA: Atlas Co
+  Industry: Finance
+  Credit Rating: B
+  Tenant Since: 2019-11-11
+  Guarantor: Cedar Logistics
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1085
+  Lease Status: Pending
+  Commencement Date: 2021-03-11
+  Expiration Date: 2031-05-18
+  Term (months): 124
+  Base Rent Annual: $1,112,490
+  Base Rent (PSF): 31.82
+  Annual Escalation (pct): 2.15
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 5.95
+  Real Estate Tax (PSF): 2.8
+  Insurance (PSF): 1.95
+  Management Fee (pct): 3.77
+  Concessions
+  -----------
+  TI Allowance (PSF): 13.26
+  Security Deposit: $185,415
+  Letter of Credit: $468,770
+  Percentage Rent (pct): 4.96
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 120
+  Has Termination Option: Yes
+
+================================================================
+UNIT 87
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 530
+  Floor: 4
+  Space Type: Industrial
+  Rentable SqFt: 9,319
+  Usable SqFt: 8,070
+  Load Factor (pct): 15.48
+  Tenant
+  ------
+  Tenant Name: Cedar Industries
+  DBA: Granite Co
+  Industry: Finance
+  Credit Rating: A
+  Tenant Since: 2019-12-30
+  Guarantor: Granite Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1086
+  Lease Status: Pending
+  Commencement Date: 2020-12-31
+  Expiration Date: 2031-03-09
+  Term (months): 124
+  Base Rent Annual: $276,681
+  Base Rent (PSF): 29.69
+  Annual Escalation (pct): 3.04
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 4.09
+  Real Estate Tax (PSF): 4.39
+  Insurance (PSF): 1.41
+  Management Fee (pct): 4.92
+  Concessions
+  -----------
+  TI Allowance (PSF): 55.87
+  Security Deposit: $69,170
+  Letter of Credit: $111,134
+  Percentage Rent (pct): 1.66
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 88
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 535
+  Floor: 7
+  Space Type: Retail
+  Rentable SqFt: 41,874
+  Usable SqFt: 34,940
+  Load Factor (pct): 19.85
+  Tenant
+  ------
+  Tenant Name: Delta Partners
+  DBA: Harbor Co
+  Industry: Technology
+  Credit Rating: A
+  Tenant Since: 2021-08-08
+  Guarantor: Harbor Holdings
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1087
+  Lease Status: Pending
+  Commencement Date: 2022-07-10
+  Expiration Date: 2029-06-03
+  Term (months): 84
+  Base Rent Annual: $1,794,719
+  Base Rent (PSF): 42.86
+  Annual Escalation (pct): 3.55
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 5.89
+  Real Estate Tax (PSF): 5.52
+  Insurance (PSF): 2.03
+  Management Fee (pct): 3.91
+  Concessions
+  -----------
+  TI Allowance (PSF): 81.2
+  Security Deposit: $149,559
+  Letter of Credit: $803,119
+  Percentage Rent (pct): 5.93
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 89
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 540
+  Floor: 30
+  Space Type: Medical
+  Rentable SqFt: 38,477
+  Usable SqFt: 33,057
+  Load Factor (pct): 16.4
+  Tenant
+  ------
+  Tenant Name: Forge Group
+  DBA: Delta LLC
+  Industry: Technology
+  Credit Rating: AAA
+  Tenant Since: 2019-03-06
+  Guarantor: Cedar Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1088
+  Lease Status: MonthToMonth
+  Commencement Date: 2020-10-10
+  Expiration Date: 2030-08-19
+  Term (months): 120
+  Base Rent Annual: $1,068,506
+  Base Rent (PSF): 27.77
+  Annual Escalation (pct): 3.49
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 6.98
+  Real Estate Tax (PSF): 3.46
+  Insurance (PSF): 0.88
+  Management Fee (pct): 3.48
+  Concessions
+  -----------
+  TI Allowance (PSF): 48.68
+  Security Deposit: $89,042
+  Letter of Credit: $502,048
+  Percentage Rent (pct): 3.87
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 90
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 545
+  Floor: 32
+  Space Type: Flex
+  Rentable SqFt: 25,123
+  Usable SqFt: 21,384
+  Load Factor (pct): 17.49
+  Tenant
+  ------
+  Tenant Name: Atlas Logistics
+  DBA: Forge Inc
+  Industry: Retail
+  Credit Rating: A
+  Tenant Since: 2022-05-18
+  Guarantor: Forge Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1089
+  Lease Status: Active
+  Commencement Date: 2023-07-04
+  Expiration Date: 2028-06-07
+  Term (months): 60
+  Base Rent Annual: $995,373
+  Base Rent (PSF): 39.62
+  Annual Escalation (pct): 3.32
+  Free Rent (months): 2
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 8.04
+  Real Estate Tax (PSF): 5.14
+  Insurance (PSF): 1.44
+  Management Fee (pct): 3.01
+  Concessions
+  -----------
+  TI Allowance (PSF): 45.04
+  Security Deposit: $82,947
+  Letter of Credit: $299,687
+  Percentage Rent (pct): 3.92
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 270
+  Has Termination Option: Yes
+
+================================================================
+UNIT 91
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 550
+  Floor: 13
+  Space Type: Office
+  Rentable SqFt: 16,522
+  Usable SqFt: 14,218
+  Load Factor (pct): 16.2
+  Tenant
+  ------
+  Tenant Name: Harbor Systems
+  DBA: Delta Co
+  Industry: Government
+  Credit Rating: NR
+  Tenant Since: 2019-02-23
+  Guarantor: Forge Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1090
+  Lease Status: Vacant
+  Commencement Date: 2019-06-28
+  Expiration Date: 2026-05-22
+  Term (months): 84
+  Base Rent Annual: $526,886
+  Base Rent (PSF): 31.89
+  Annual Escalation (pct): 3.98
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 4.36
+  Real Estate Tax (PSF): 3.23
+  Insurance (PSF): 2.12
+  Management Fee (pct): 3.28
+  Concessions
+  -----------
+  TI Allowance (PSF): 42.68
+  Security Deposit: $87,814
+  Letter of Credit: $65,907
+  Percentage Rent (pct): 6.46
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 92
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 555
+  Floor: 23
+  Space Type: Medical
+  Rentable SqFt: 39,054
+  Usable SqFt: 35,831
+  Load Factor (pct): 9.0
+  Tenant
+  ------
+  Tenant Name: Granite Partners
+  DBA: Evergreen Inc
+  Industry: Government
+  Credit Rating: AA
+  Tenant Since: 2019-04-14
+  Guarantor: Evergreen Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1091
+  Lease Status: Vacant
+  Commencement Date: 2019-05-22
+  Expiration Date: 2022-05-06
+  Term (months): 36
+  Base Rent Annual: $1,889,432
+  Base Rent (PSF): 48.38
+  Annual Escalation (pct): 3.14
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 8.22
+  Real Estate Tax (PSF): 5.68
+  Insurance (PSF): 1.23
+  Management Fee (pct): 2.18
+  Concessions
+  -----------
+  TI Allowance (PSF): 71.33
+  Security Deposit: $157,452
+  Letter of Credit: $358,037
+  Percentage Rent (pct): 1.15
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 93
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 560
+  Floor: 16
+  Space Type: Flex
+  Rentable SqFt: 44,598
+  Usable SqFt: 40,763
+  Load Factor (pct): 9.41
+  Tenant
+  ------
+  Tenant Name: Cedar Holdings
+  DBA: Cedar LLC
+  Industry: Technology
+  Credit Rating: BBB
+  Tenant Since: 2018-10-23
+  Guarantor: Harbor Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1092
+  Lease Status: Vacant
+  Commencement Date: 2021-01-26
+  Expiration Date: 2024-01-11
+  Term (months): 36
+  Base Rent Annual: $2,283,863
+  Base Rent (PSF): 51.21
+  Annual Escalation (pct): 2.45
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 6.9
+  Real Estate Tax (PSF): 5.17
+  Insurance (PSF): 2.13
+  Management Fee (pct): 3.44
+  Concessions
+  -----------
+  TI Allowance (PSF): 71.52
+  Security Deposit: $570,965
+  Letter of Credit: $386,433
+  Percentage Rent (pct): 5.88
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 94
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 565
+  Floor: 32
+  Space Type: Flex
+  Rentable SqFt: 11,795
+  Usable SqFt: 9,672
+  Load Factor (pct): 21.95
+  Tenant
+  ------
+  Tenant Name: Delta Partners
+  DBA: Granite LLC
+  Industry: Finance
+  Credit Rating: BB
+  Tenant Since: 2020-06-26
+  Guarantor: Evergreen Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1093
+  Lease Status: Pending
+  Commencement Date: 2021-07-28
+  Expiration Date: 2028-06-21
+  Term (months): 84
+  Base Rent Annual: $583,262
+  Base Rent (PSF): 49.45
+  Annual Escalation (pct): 3.47
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 4.3
+  Real Estate Tax (PSF): 6.39
+  Insurance (PSF): 2.23
+  Management Fee (pct): 4.18
+  Concessions
+  -----------
+  TI Allowance (PSF): 78.71
+  Security Deposit: $48,605
+  Letter of Credit: $242,351
+  Percentage Rent (pct): 5.53
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 95
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 570
+  Floor: 19
+  Space Type: Office
+  Rentable SqFt: 27,138
+  Usable SqFt: 25,579
+  Load Factor (pct): 6.09
+  Tenant
+  ------
+  Tenant Name: Granite Industries
+  DBA: Delta LLC
+  Industry: Finance
+  Credit Rating: AAA
+  Tenant Since: 2019-01-01
+  Guarantor: Delta Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1094
+  Lease Status: MonthToMonth
+  Commencement Date: 2020-12-12
+  Expiration Date: 2030-10-21
+  Term (months): 120
+  Base Rent Annual: $487,669
+  Base Rent (PSF): 17.97
+  Annual Escalation (pct): 2.88
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 6.29
+  Real Estate Tax (PSF): 2.34
+  Insurance (PSF): 0.77
+  Management Fee (pct): 3.01
+  Concessions
+  -----------
+  TI Allowance (PSF): 15.8
+  Security Deposit: $81,278
+  Letter of Credit: $212,106
+  Percentage Rent (pct): 3.36
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 120
+  Has Termination Option: Yes
+
+================================================================
+UNIT 96
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 575
+  Floor: 16
+  Space Type: Flex
+  Rentable SqFt: 4,503
+  Usable SqFt: 3,946
+  Load Factor (pct): 14.12
+  Tenant
+  ------
+  Tenant Name: Beacon Partners
+  DBA: Harbor Inc
+  Industry: Logistics
+  Credit Rating: AAA
+  Tenant Since: 2017-09-26
+  Guarantor: Beacon Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1095
+  Lease Status: Pending
+  Commencement Date: 2019-01-29
+  Expiration Date: 2025-12-23
+  Term (months): 84
+  Base Rent Annual: $131,442
+  Base Rent (PSF): 29.19
+  Annual Escalation (pct): 3.31
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 7.38
+  Real Estate Tax (PSF): 2.45
+  Insurance (PSF): 2.2
+  Management Fee (pct): 4.42
+  Concessions
+  -----------
+  TI Allowance (PSF): 10.36
+  Security Deposit: $10,953
+  Letter of Credit: $57,380
+  Percentage Rent (pct): 7.9
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 180
+  Has Termination Option: Yes
+
+================================================================
+UNIT 97
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 580
+  Floor: 1
+  Space Type: Office
+  Rentable SqFt: 41,433
+  Usable SqFt: 34,105
+  Load Factor (pct): 21.49
+  Tenant
+  ------
+  Tenant Name: Beacon Logistics
+  DBA: Delta LLC
+  Industry: Finance
+  Credit Rating: AA
+  Tenant Since: 2018-09-24
+  Guarantor: Delta Partners
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1096
+  Lease Status: Pending
+  Commencement Date: 2020-11-30
+  Expiration Date: 2023-11-15
+  Term (months): 36
+  Base Rent Annual: $2,551,444
+  Base Rent (PSF): 61.58
+  Annual Escalation (pct): 3.26
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 8.79
+  Real Estate Tax (PSF): 2.56
+  Insurance (PSF): 1.89
+  Management Fee (pct): 2.76
+  Concessions
+  -----------
+  TI Allowance (PSF): 40.19
+  Security Deposit: $637,861
+  Letter of Credit: $1,247,541
+  Percentage Rent (pct): 2.2
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 98
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 585
+  Floor: 14
+  Space Type: Flex
+  Rentable SqFt: 39,478
+  Usable SqFt: 36,666
+  Load Factor (pct): 7.67
+  Tenant
+  ------
+  Tenant Name: Forge Capital
+  DBA: Granite Inc
+  Industry: Technology
+  Credit Rating: NR
+  Tenant Since: 2020-11-17
+  Guarantor: Delta Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1097
+  Lease Status: Vacant
+  Commencement Date: 2021-06-03
+  Expiration Date: 2031-04-12
+  Term (months): 120
+  Base Rent Annual: $2,255,772
+  Base Rent (PSF): 57.14
+  Annual Escalation (pct): 3.54
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 7.29
+  Real Estate Tax (PSF): 2.4
+  Insurance (PSF): 1.14
+  Management Fee (pct): 4.26
+  Concessions
+  -----------
+  TI Allowance (PSF): 29.68
+  Security Deposit: $187,981
+  Letter of Credit: $287,531
+  Percentage Rent (pct): 5.4
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 180
+  Has Termination Option: Yes
+
+================================================================
+UNIT 99
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 590
+  Floor: 25
+  Space Type: Industrial
+  Rentable SqFt: 29,898
+  Usable SqFt: 28,253
+  Load Factor (pct): 5.82
+  Tenant
+  ------
+  Tenant Name: Evergreen Systems
+  DBA: Atlas Co
+  Industry: Legal
+  Credit Rating: B
+  Tenant Since: 2019-02-05
+  Guarantor: Evergreen Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1098
+  Lease Status: MonthToMonth
+  Commencement Date: 2021-06-19
+  Expiration Date: 2031-08-26
+  Term (months): 124
+  Base Rent Annual: $1,006,067
+  Base Rent (PSF): 33.65
+  Annual Escalation (pct): 2.58
+  Free Rent (months): 2
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 7.7
+  Real Estate Tax (PSF): 3.02
+  Insurance (PSF): 0.77
+  Management Fee (pct): 4.7
+  Concessions
+  -----------
+  TI Allowance (PSF): 68.39
+  Security Deposit: $83,838
+  Letter of Credit: $150,497
+  Percentage Rent (pct): 7.89
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 270
+  Has Termination Option: Yes
+
+================================================================
+UNIT 100
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 595
+  Floor: 26
+  Space Type: Medical
+  Rentable SqFt: 38,748
+  Usable SqFt: 34,350
+  Load Factor (pct): 12.8
+  Tenant
+  ------
+  Tenant Name: Harbor Logistics
+  DBA: Cedar LLC
+  Industry: Finance
+  Credit Rating: AA
+  Tenant Since: 2017-04-19
+  Guarantor: Forge Logistics
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1099
+  Lease Status: Active
+  Commencement Date: 2019-08-18
+  Expiration Date: 2026-07-12
+  Term (months): 84
+  Base Rent Annual: $735,049
+  Base Rent (PSF): 18.97
+  Annual Escalation (pct): 3.9
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 8.51
+  Real Estate Tax (PSF): 2.2
+  Insurance (PSF): 0.94
+  Management Fee (pct): 3.23
+  Concessions
+  -----------
+  TI Allowance (PSF): 29.74
+  Security Deposit: $122,508
+  Letter of Credit: $366,377
+  Percentage Rent (pct): 0.7
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 101
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 600
+  Floor: 4
+  Space Type: Medical
+  Rentable SqFt: 24,514
+  Usable SqFt: 20,846
+  Load Factor (pct): 17.6
+  Tenant
+  ------
+  Tenant Name: Harbor Group
+  DBA: Beacon LLC
+  Industry: Technology
+  Credit Rating: AA
+  Tenant Since: 2020-08-02
+  Guarantor: Atlas Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1100
+  Lease Status: Active
+  Commencement Date: 2022-05-08
+  Expiration Date: 2032-03-16
+  Term (months): 120
+  Base Rent Annual: $375,554
+  Base Rent (PSF): 15.32
+  Annual Escalation (pct): 2.89
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 5.25
+  Real Estate Tax (PSF): 2.24
+  Insurance (PSF): 0.82
+  Management Fee (pct): 2.73
+  Concessions
+  -----------
+  TI Allowance (PSF): 76.38
+  Security Deposit: $93,888
+  Letter of Credit: $168,858
+  Percentage Rent (pct): 0.55
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 102
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 605
+  Floor: 8
+  Space Type: Office
+  Rentable SqFt: 36,257
+  Usable SqFt: 31,243
+  Load Factor (pct): 16.05
+  Tenant
+  ------
+  Tenant Name: Evergreen Holdings
+  DBA: Cedar Inc
+  Industry: Government
+  Credit Rating: AAA
+  Tenant Since: 2022-09-09
+  Guarantor: Delta Holdings
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1101
+  Lease Status: HoldOver
+  Commencement Date: 2022-11-09
+  Expiration Date: 2027-10-14
+  Term (months): 60
+  Base Rent Annual: $1,063,780
+  Base Rent (PSF): 29.34
+  Annual Escalation (pct): 2.24
+  Free Rent (months): 2
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 8.44
+  Real Estate Tax (PSF): 6.41
+  Insurance (PSF): 0.52
+  Management Fee (pct): 2.27
+  Concessions
+  -----------
+  TI Allowance (PSF): 62.9
+  Security Deposit: $88,648
+  Letter of Credit: $357,734
+  Percentage Rent (pct): 3.74
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 120
+  Has Termination Option: Yes
+
+================================================================
+UNIT 103
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 610
+  Floor: 23
+  Space Type: Medical
+  Rentable SqFt: 7,805
+  Usable SqFt: 7,184
+  Load Factor (pct): 8.64
+  Tenant
+  ------
+  Tenant Name: Beacon Capital
+  DBA: Harbor Inc
+  Industry: Government
+  Credit Rating: B
+  Tenant Since: 2019-01-20
+  Guarantor: Forge Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1102
+  Lease Status: Pending
+  Commencement Date: 2020-04-27
+  Expiration Date: 2030-03-06
+  Term (months): 120
+  Base Rent Annual: $182,090
+  Base Rent (PSF): 23.33
+  Annual Escalation (pct): 3.26
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 8.03
+  Real Estate Tax (PSF): 2.68
+  Insurance (PSF): 1.14
+  Management Fee (pct): 4.36
+  Concessions
+  -----------
+  TI Allowance (PSF): 33.39
+  Security Deposit: $15,174
+  Letter of Credit: $78,860
+  Percentage Rent (pct): 7.33
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 104
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 615
+  Floor: 6
+  Space Type: Flex
+  Rentable SqFt: 38,660
+  Usable SqFt: 35,151
+  Load Factor (pct): 9.98
+  Tenant
+  ------
+  Tenant Name: Beacon Systems
+  DBA: Delta Co
+  Industry: Retail
+  Credit Rating: B
+  Tenant Since: 2020-12-18
+  Guarantor: Evergreen Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1103
+  Lease Status: MonthToMonth
+  Commencement Date: 2022-05-11
+  Expiration Date: 2027-04-15
+  Term (months): 60
+  Base Rent Annual: $1,104,129
+  Base Rent (PSF): 28.56
+  Annual Escalation (pct): 2.29
+  Free Rent (months): 4
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 3.26
+  Real Estate Tax (PSF): 2.55
+  Insurance (PSF): 0.56
+  Management Fee (pct): 3.54
+  Concessions
+  -----------
+  TI Allowance (PSF): 58.41
+  Security Deposit: $92,010
+  Letter of Credit: $325,786
+  Percentage Rent (pct): 4.86
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 105
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 620
+  Floor: 26
+  Space Type: Office
+  Rentable SqFt: 38,197
+  Usable SqFt: 34,587
+  Load Factor (pct): 10.44
+  Tenant
+  ------
+  Tenant Name: Harbor Group
+  DBA: Granite LLC
+  Industry: Legal
+  Credit Rating: A
+  Tenant Since: 2020-07-18
+  Guarantor: Cedar Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1104
+  Lease Status: MonthToMonth
+  Commencement Date: 2021-09-17
+  Expiration Date: 2028-08-11
+  Term (months): 84
+  Base Rent Annual: $935,444
+  Base Rent (PSF): 24.49
+  Annual Escalation (pct): 2.22
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 7.65
+  Real Estate Tax (PSF): 3.59
+  Insurance (PSF): 0.66
+  Management Fee (pct): 4.62
+  Concessions
+  -----------
+  TI Allowance (PSF): 35.38
+  Security Deposit: $77,953
+  Letter of Credit: $310,208
+  Percentage Rent (pct): 1.45
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 106
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 625
+  Floor: 5
+  Space Type: Retail
+  Rentable SqFt: 33,496
+  Usable SqFt: 30,014
+  Load Factor (pct): 11.6
+  Tenant
+  ------
+  Tenant Name: Atlas Systems
+  DBA: Harbor LLC
+  Industry: Government
+  Credit Rating: NR
+  Tenant Since: 2023-05-05
+  Guarantor: Evergreen Holdings
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1105
+  Lease Status: HoldOver
+  Commencement Date: 2023-08-26
+  Expiration Date: 2028-07-30
+  Term (months): 60
+  Base Rent Annual: $956,310
+  Base Rent (PSF): 28.55
+  Annual Escalation (pct): 2.84
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 3.04
+  Real Estate Tax (PSF): 4.45
+  Insurance (PSF): 0.93
+  Management Fee (pct): 4.24
+  Concessions
+  -----------
+  TI Allowance (PSF): 82.37
+  Security Deposit: $239,077
+  Letter of Credit: $423,620
+  Percentage Rent (pct): 6.87
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 180
+  Has Termination Option: No
+
+================================================================
+UNIT 107
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 630
+  Floor: 11
+  Space Type: Office
+  Rentable SqFt: 10,993
+  Usable SqFt: 9,802
+  Load Factor (pct): 12.15
+  Tenant
+  ------
+  Tenant Name: Cedar Holdings
+  DBA: Cedar Inc
+  Industry: Finance
+  Credit Rating: BBB
+  Tenant Since: 2019-10-26
+  Guarantor: Evergreen Holdings
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1106
+  Lease Status: Pending
+  Commencement Date: 2020-08-27
+  Expiration Date: 2023-08-12
+  Term (months): 36
+  Base Rent Annual: $425,868
+  Base Rent (PSF): 38.74
+  Annual Escalation (pct): 2.43
+  Free Rent (months): 2
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 4.88
+  Real Estate Tax (PSF): 2.61
+  Insurance (PSF): 1.6
+  Management Fee (pct): 2.79
+  Concessions
+  -----------
+  TI Allowance (PSF): 24.33
+  Security Deposit: $106,467
+  Letter of Credit: $142,787
+  Percentage Rent (pct): 4.4
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 108
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 635
+  Floor: 24
+  Space Type: Office
+  Rentable SqFt: 23,010
+  Usable SqFt: 21,163
+  Load Factor (pct): 8.73
+  Tenant
+  ------
+  Tenant Name: Delta Group
+  DBA: Harbor Co
+  Industry: Logistics
+  Credit Rating: NR
+  Tenant Since: 2021-05-19
+  Guarantor: Atlas Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1107
+  Lease Status: MonthToMonth
+  Commencement Date: 2021-11-06
+  Expiration Date: 2024-10-21
+  Term (months): 36
+  Base Rent Annual: $365,398
+  Base Rent (PSF): 15.88
+  Annual Escalation (pct): 3.27
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 7.97
+  Real Estate Tax (PSF): 5.39
+  Insurance (PSF): 0.91
+  Management Fee (pct): 2.59
+  Concessions
+  -----------
+  TI Allowance (PSF): 69.39
+  Security Deposit: $91,349
+  Letter of Credit: $158,472
+  Percentage Rent (pct): 5.68
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 109
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 640
+  Floor: 20
+  Space Type: Retail
+  Rentable SqFt: 17,159
+  Usable SqFt: 15,677
+  Load Factor (pct): 9.45
+  Tenant
+  ------
+  Tenant Name: Evergreen Group
+  DBA: Beacon Inc
+  Industry: Government
+  Credit Rating: BB
+  Tenant Since: 2018-10-22
+  Guarantor: Delta Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1108
+  Lease Status: MonthToMonth
+  Commencement Date: 2020-01-29
+  Expiration Date: 2025-01-02
+  Term (months): 60
+  Base Rent Annual: $476,505
+  Base Rent (PSF): 27.77
+  Annual Escalation (pct): 2.6
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 3.82
+  Real Estate Tax (PSF): 6.63
+  Insurance (PSF): 1.21
+  Management Fee (pct): 3.33
+  Concessions
+  -----------
+  TI Allowance (PSF): 40.74
+  Security Deposit: $79,417
+  Letter of Credit: $154,503
+  Percentage Rent (pct): 3.4
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 110
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 645
+  Floor: 12
+  Space Type: Office
+  Rentable SqFt: 17,147
+  Usable SqFt: 14,397
+  Load Factor (pct): 19.1
+  Tenant
+  ------
+  Tenant Name: Beacon Industries
+  DBA: Delta Inc
+  Industry: Government
+  Credit Rating: B
+  Tenant Since: 2017-06-14
+  Guarantor: Beacon Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1109
+  Lease Status: MonthToMonth
+  Commencement Date: 2019-03-09
+  Expiration Date: 2024-02-11
+  Term (months): 60
+  Base Rent Annual: $425,074
+  Base Rent (PSF): 24.79
+  Annual Escalation (pct): 3.34
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 3.27
+  Real Estate Tax (PSF): 6.18
+  Insurance (PSF): 1.67
+  Management Fee (pct): 3.58
+  Concessions
+  -----------
+  TI Allowance (PSF): 50.9
+  Security Deposit: $35,422
+  Letter of Credit: $206,584
+  Percentage Rent (pct): 1.94
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 90
+  Has Termination Option: Yes
+
+================================================================
+UNIT 111
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 650
+  Floor: 15
+  Space Type: Retail
+  Rentable SqFt: 38,049
+  Usable SqFt: 32,914
+  Load Factor (pct): 15.6
+  Tenant
+  ------
+  Tenant Name: Forge Logistics
+  DBA: Atlas LLC
+  Industry: Technology
+  Credit Rating: NR
+  Tenant Since: 2019-10-30
+  Guarantor: Evergreen Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1110
+  Lease Status: Pending
+  Commencement Date: 2020-04-23
+  Expiration Date: 2030-03-02
+  Term (months): 120
+  Base Rent Annual: $925,732
+  Base Rent (PSF): 24.33
+  Annual Escalation (pct): 3.57
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 3.09
+  Real Estate Tax (PSF): 5.21
+  Insurance (PSF): 0.96
+  Management Fee (pct): 2.64
+  Concessions
+  -----------
+  TI Allowance (PSF): 20.57
+  Security Deposit: $231,433
+  Letter of Credit: $197,396
+  Percentage Rent (pct): 1.82
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 120
+  Has Termination Option: Yes
+
+================================================================
+UNIT 112
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 655
+  Floor: 2
+  Space Type: Medical
+  Rentable SqFt: 3,929
+  Usable SqFt: 3,272
+  Load Factor (pct): 20.08
+  Tenant
+  ------
+  Tenant Name: Evergreen Logistics
+  DBA: Beacon Inc
+  Industry: Government
+  Credit Rating: BB
+  Tenant Since: 2020-02-10
+  Guarantor: Cedar Group
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1111
+  Lease Status: Vacant
+  Commencement Date: 2020-05-25
+  Expiration Date: 2030-08-01
+  Term (months): 124
+  Base Rent Annual: $197,392
+  Base Rent (PSF): 50.24
+  Annual Escalation (pct): 3.87
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 4.71
+  Real Estate Tax (PSF): 5.28
+  Insurance (PSF): 0.84
+  Management Fee (pct): 2.2
+  Concessions
+  -----------
+  TI Allowance (PSF): 82.8
+  Security Deposit: $49,348
+  Letter of Credit: $29,922
+  Percentage Rent (pct): 7.78
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 120
+  Has Termination Option: Yes
+
+================================================================
+UNIT 113
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 660
+  Floor: 29
+  Space Type: Retail
+  Rentable SqFt: 17,901
+  Usable SqFt: 15,991
+  Load Factor (pct): 11.94
+  Tenant
+  ------
+  Tenant Name: Atlas Partners
+  DBA: Atlas Co
+  Industry: Logistics
+  Credit Rating: B
+  Tenant Since: 2018-03-04
+  Guarantor: Beacon Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1112
+  Lease Status: Vacant
+  Commencement Date: 2020-07-06
+  Expiration Date: 2030-09-12
+  Term (months): 124
+  Base Rent Annual: $353,007
+  Base Rent (PSF): 19.72
+  Annual Escalation (pct): 3.68
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 6.97
+  Real Estate Tax (PSF): 4.22
+  Insurance (PSF): 2.47
+  Management Fee (pct): 2.5
+  Concessions
+  -----------
+  TI Allowance (PSF): 41.05
+  Security Deposit: $88,251
+  Letter of Credit: $92,797
+  Percentage Rent (pct): 7.01
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 114
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 665
+  Floor: 23
+  Space Type: Retail
+  Rentable SqFt: 39,427
+  Usable SqFt: 33,762
+  Load Factor (pct): 16.78
+  Tenant
+  ------
+  Tenant Name: Harbor Systems
+  DBA: Evergreen Co
+  Industry: Legal
+  Credit Rating: B
+  Tenant Since: 2019-12-08
+  Guarantor: Granite Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1113
+  Lease Status: Pending
+  Commencement Date: 2020-10-04
+  Expiration Date: 2027-08-29
+  Term (months): 84
+  Base Rent Annual: $2,181,890
+  Base Rent (PSF): 55.34
+  Annual Escalation (pct): 2.91
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 4.68
+  Real Estate Tax (PSF): 6.76
+  Insurance (PSF): 1.14
+  Management Fee (pct): 4.62
+  Concessions
+  -----------
+  TI Allowance (PSF): 27.32
+  Security Deposit: $545,472
+  Letter of Credit: $792,117
+  Percentage Rent (pct): 3.17
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 270
+  Has Termination Option: Yes
+
+================================================================
+UNIT 115
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 670
+  Floor: 10
+  Space Type: Flex
+  Rentable SqFt: 34,695
+  Usable SqFt: 28,511
+  Load Factor (pct): 21.69
+  Tenant
+  ------
+  Tenant Name: Granite Group
+  DBA: Cedar Co
+  Industry: Logistics
+  Credit Rating: AA
+  Tenant Since: 2022-11-29
+  Guarantor: Granite Systems
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1114
+  Lease Status: Active
+  Commencement Date: 2023-10-18
+  Expiration Date: 2030-09-11
+  Term (months): 84
+  Base Rent Annual: $881,599
+  Base Rent (PSF): 25.41
+  Annual Escalation (pct): 2.64
+  Free Rent (months): 3
+  Expense Recoveries
+  ------------------
+  Expense Structure: Gross
+  CAM (PSF): 8.24
+  Real Estate Tax (PSF): 3.96
+  Insurance (PSF): 2.23
+  Management Fee (pct): 2.67
+  Concessions
+  -----------
+  TI Allowance (PSF): 13.2
+  Security Deposit: $73,466
+  Letter of Credit: $289,491
+  Percentage Rent (pct): 5.19
+  Options
+  -------
+  Renewal Options: 1
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 116
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 675
+  Floor: 21
+  Space Type: Retail
+  Rentable SqFt: 44,240
+  Usable SqFt: 36,664
+  Load Factor (pct): 20.66
+  Tenant
+  ------
+  Tenant Name: Harbor Capital
+  DBA: Delta LLC
+  Industry: Legal
+  Credit Rating: BBB
+  Tenant Since: 2017-05-05
+  Guarantor: Evergreen Logistics
+  Lease Terms
+  -----------
+  Lease ID: LSE-2019-1115
+  Lease Status: HoldOver
+  Commencement Date: 2019-02-09
+  Expiration Date: 2028-12-18
+  Term (months): 120
+  Base Rent Annual: $2,142,100
+  Base Rent (PSF): 48.42
+  Annual Escalation (pct): 3.41
+  Free Rent (months): 1
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 8.19
+  Real Estate Tax (PSF): 5.52
+  Insurance (PSF): 0.89
+  Management Fee (pct): 2.41
+  Concessions
+  -----------
+  TI Allowance (PSF): 33.12
+  Security Deposit: $178,508
+  Letter of Credit: $393,854
+  Percentage Rent (pct): 7.21
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 270
+  Has Termination Option: Yes
+
+================================================================
+UNIT 117
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 680
+  Floor: 12
+  Space Type: Industrial
+  Rentable SqFt: 44,994
+  Usable SqFt: 41,740
+  Load Factor (pct): 7.8
+  Tenant
+  ------
+  Tenant Name: Beacon Industries
+  DBA: Beacon Co
+  Industry: Government
+  Credit Rating: AAA
+  Tenant Since: 2019-10-11
+  Guarantor: Evergreen Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2020-1116
+  Lease Status: MonthToMonth
+  Commencement Date: 2022-01-30
+  Expiration Date: 2025-01-14
+  Term (months): 36
+  Base Rent Annual: $1,438,008
+  Base Rent (PSF): 31.96
+  Annual Escalation (pct): 3.05
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 7.29
+  Real Estate Tax (PSF): 4.93
+  Insurance (PSF): 0.92
+  Management Fee (pct): 2.77
+  Concessions
+  -----------
+  TI Allowance (PSF): 48.6
+  Security Deposit: $359,502
+  Letter of Credit: $212,075
+  Percentage Rent (pct): 1.49
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 270
+  Has Termination Option: No
+
+================================================================
+UNIT 118
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 685
+  Floor: 20
+  Space Type: Medical
+  Rentable SqFt: 12,001
+  Usable SqFt: 10,662
+  Load Factor (pct): 12.56
+  Tenant
+  ------
+  Tenant Name: Beacon Partners
+  DBA: Cedar Inc
+  Industry: Legal
+  Credit Rating: NR
+  Tenant Since: 2018-01-16
+  Guarantor: Forge Logistics
+  Lease Terms
+  -----------
+  Lease ID: LSE-2021-1117
+  Lease Status: MonthToMonth
+  Commencement Date: 2019-06-04
+  Expiration Date: 2026-04-28
+  Term (months): 84
+  Base Rent Annual: $499,601
+  Base Rent (PSF): 41.63
+  Annual Escalation (pct): 3.53
+  Free Rent (months): 5
+  Expense Recoveries
+  ------------------
+  Expense Structure: BaseYear
+  CAM (PSF): 6.96
+  Real Estate Tax (PSF): 2.6
+  Insurance (PSF): 1.01
+  Management Fee (pct): 2.78
+  Concessions
+  -----------
+  TI Allowance (PSF): 23.15
+  Security Deposit: $41,633
+  Letter of Credit: $174,049
+  Percentage Rent (pct): 5.93
+  Options
+  -------
+  Renewal Options: 0
+  Renewal Notice (days): 90
+  Has Termination Option: No
+
+================================================================
+UNIT 119
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 690
+  Floor: 31
+  Space Type: Flex
+  Rentable SqFt: 1,764
+  Usable SqFt: 1,582
+  Load Factor (pct): 11.5
+  Tenant
+  ------
+  Tenant Name: Cedar Industries
+  DBA: Beacon Co
+  Industry: Logistics
+  Credit Rating: BBB
+  Tenant Since: 2018-06-06
+  Guarantor: Atlas Capital
+  Lease Terms
+  -----------
+  Lease ID: LSE-2022-1118
+  Lease Status: Active
+  Commencement Date: 2019-02-16
+  Expiration Date: 2026-01-10
+  Term (months): 84
+  Base Rent Annual: $99,595
+  Base Rent (PSF): 56.46
+  Annual Escalation (pct): 2.98
+  Free Rent (months): 0
+  Expense Recoveries
+  ------------------
+  Expense Structure: ModifiedGross
+  CAM (PSF): 7.91
+  Real Estate Tax (PSF): 3.53
+  Insurance (PSF): 1.08
+  Management Fee (pct): 4.31
+  Concessions
+  -----------
+  TI Allowance (PSF): 63.59
+  Security Deposit: $8,299
+  Letter of Credit: $36,850
+  Percentage Rent (pct): 3.53
+  Options
+  -------
+  Renewal Options: 2
+  Renewal Notice (days): 120
+  Has Termination Option: No
+
+================================================================
+UNIT 120
+================================================================
+  Identity
+  --------
+  Unit Number: Suite 695
+  Floor: 4
+  Space Type: Flex
+  Rentable SqFt: 1,812
+  Usable SqFt: 1,490
+  Load Factor (pct): 21.61
+  Tenant
+  ------
+  Tenant Name: Cedar Group
+  DBA: Evergreen LLC
+  Industry: Healthcare
+  Credit Rating: AAA
+  Tenant Since: 2018-07-18
+  Guarantor: Forge Industries
+  Lease Terms
+  -----------
+  Lease ID: LSE-2023-1119
+  Lease Status: HoldOver
+  Commencement Date: 2019-05-02
+  Expiration Date: 2029-03-10
+  Term (months): 120
+  Base Rent Annual: $62,532
+  Base Rent (PSF): 34.51
+  Annual Escalation (pct): 2.27
+  Free Rent (months): 6
+  Expense Recoveries
+  ------------------
+  Expense Structure: NNN
+  CAM (PSF): 5.96
+  Real Estate Tax (PSF): 6.02
+  Insurance (PSF): 2.01
+  Management Fee (pct): 4.22
+  Concessions
+  -----------
+  TI Allowance (PSF): 31.5
+  Security Deposit: $5,211
+  Letter of Credit: $28,700
+  Percentage Rent (pct): 1.94
+  Options
+  -------
+  Renewal Options: 3
+  Renewal Notice (days): 120
+  Has Termination Option: No
+

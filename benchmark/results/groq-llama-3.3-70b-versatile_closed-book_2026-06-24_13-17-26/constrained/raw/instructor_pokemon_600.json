@@ -1,0 +1,2492 @@
+[
+  {
+    "method": "instructor",
+    "fixture": "pokemon_600",
+    "budget": "constrained",
+    "seed": 0,
+    "fields_total": 600,
+    "fields_extracted": 600,
+    "coverage": 1.0,
+    "k": 1,
+    "k_min": 1,
+    "optimality_gap": 0.0,
+    "call_failed": 0,
+    "elapsed_seconds": 15.35,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "Bulbasaur": {
+        "type": "Grass/Poison",
+        "species": "Seed Pokémon",
+        "HP": 45,
+        "Attack": 49,
+        "Defense": 49,
+        "Speed": 45
+      },
+      "Ivysaur": {
+        "type": "Grass/Poison",
+        "species": "Seed Pokémon",
+        "HP": 60,
+        "Attack": 62,
+        "Defense": 63,
+        "Speed": 60
+      },
+      "Venusaur": {
+        "type": "Grass/Poison",
+        "species": "Seed Pokémon",
+        "HP": 80,
+        "Attack": 82,
+        "Defense": 83,
+        "Speed": 60
+      },
+      "Charmander": {
+        "type": "Fire",
+        "species": "Lizard Pokémon",
+        "HP": 39,
+        "Attack": 52,
+        "Defense": 43,
+        "Speed": 65
+      },
+      "Charmeleon": {
+        "type": "Fire",
+        "species": "Flame Pokémon",
+        "HP": 58,
+        "Attack": 64,
+        "Defense": 58,
+        "Speed": 80
+      },
+      "Charizard": {
+        "type": "Fire/Flying",
+        "species": "Flame Pokémon",
+        "HP": 78,
+        "Attack": 84,
+        "Defense": 78,
+        "Speed": 100
+      },
+      "Squirtle": {
+        "type": "Water",
+        "species": "Tiny Turtle Pokémon",
+        "HP": 44,
+        "Attack": 48,
+        "Defense": 65,
+        "Speed": 43
+      },
+      "Wartortle": {
+        "type": "Water",
+        "species": "Turtle Pokémon",
+        "HP": 59,
+        "Attack": 63,
+        "Defense": 80,
+        "Speed": 58
+      },
+      "Blastoise": {
+        "type": "Water",
+        "species": "Shellfish Pokémon",
+        "HP": 79,
+        "Attack": 83,
+        "Defense": 100,
+        "Speed": 78
+      },
+      "Caterpie": {
+        "type": "Bug",
+        "species": "Worm Pokémon",
+        "HP": 45,
+        "Attack": 30,
+        "Defense": 35,
+        "Speed": 45
+      },
+      "Metapod": {
+        "type": "Bug",
+        "species": "Cocoon Pokémon",
+        "HP": 50,
+        "Attack": 20,
+        "Defense": 55,
+        "Speed": 30
+      },
+      "Butterfree": {
+        "type": "Bug/Flying",
+        "species": "Butterfly Pokémon",
+        "HP": 60,
+        "Attack": 45,
+        "Defense": 50,
+        "Speed": 70
+      },
+      "Weedle": {
+        "type": "Bug/Poison",
+        "species": "Hairy Bug Pokémon",
+        "HP": 40,
+        "Attack": 35,
+        "Defense": 30,
+        "Speed": 50
+      },
+      "Kakuna": {
+        "type": "Bug/Poison",
+        "species": "Cocoon Pokémon",
+        "HP": 45,
+        "Attack": 25,
+        "Defense": 50,
+        "Speed": 35
+      },
+      "Beedrill": {
+        "type": "Bug/Poison",
+        "species": "Bee Pokémon",
+        "HP": 65,
+        "Attack": 90,
+        "Defense": 40,
+        "Speed": 75
+      },
+      "Pidgey": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 40,
+        "Attack": 45,
+        "Defense": 40,
+        "Speed": 56
+      },
+      "Pidgeotto": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 63,
+        "Attack": 60,
+        "Defense": 55,
+        "Speed": 71
+      },
+      "Pidgeot": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 83,
+        "Attack": 80,
+        "Defense": 75,
+        "Speed": 101
+      },
+      "Rattata": {
+        "type": "Normal",
+        "species": "Rodent Pokémon",
+        "HP": 30,
+        "Attack": 56,
+        "Defense": 30,
+        "Speed": 72
+      },
+      "Raticate": {
+        "type": "Normal",
+        "species": "Rodent Pokémon",
+        "HP": 55,
+        "Attack": 81,
+        "Defense": 60,
+        "Speed": 97
+      },
+      "Spearow": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 40,
+        "Attack": 60,
+        "Defense": 30,
+        "Speed": 70
+      },
+      "Fearow": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 65,
+        "Attack": 90,
+        "Defense": 65,
+        "Speed": 100
+      },
+      "Ekans": {
+        "type": "Poison",
+        "species": "Snake Pokémon",
+        "HP": 35,
+        "Attack": 60,
+        "Defense": 44,
+        "Speed": 55
+      },
+      "Arbok": {
+        "type": "Poison",
+        "species": "Cobra Pokémon",
+        "HP": 60,
+        "Attack": 95,
+        "Defense": 69,
+        "Speed": 80
+      },
+      "Pikachu": {
+        "type": "Electric",
+        "species": "Mouse Pokémon",
+        "HP": 35,
+        "Attack": 55,
+        "Defense": 40,
+        "Speed": 90
+      },
+      "Raichu": {
+        "type": "Electric",
+        "species": "Mouse Pokémon",
+        "HP": 60,
+        "Attack": 85,
+        "Defense": 50,
+        "Speed": 110
+      },
+      "Sandshrew": {
+        "type": "Ground",
+        "species": "Mouse Pokémon",
+        "HP": 50,
+        "Attack": 75,
+        "Defense": 85,
+        "Speed": 40
+      },
+      "Sandslash": {
+        "type": "Ground",
+        "species": "Mouse Pokémon",
+        "HP": 75,
+        "Attack": 100,
+        "Defense": 110,
+        "Speed": 65
+      },
+      "Nidoran♀": {
+        "type": "Poison",
+        "species": "Poison Pin Pokémon",
+        "HP": 55,
+        "Attack": 47,
+        "Defense": 40,
+        "Speed": 41
+      },
+      "Nidorina": {
+        "type": "Poison",
+        "species": "Poison Pin Pokémon",
+        "HP": 70,
+        "Attack": 62,
+        "Defense": 55,
+        "Speed": 56
+      },
+      "Nidoqueen": {
+        "type": "Poison/Ground",
+        "species": "Poison Pin Pokémon",
+        "HP": 90,
+        "Attack": 92,
+        "Defense": 87,
+        "Speed": 76
+      },
+      "Nidoran♂": {
+        "type": "Poison",
+        "species": "Poison Pin Pokémon",
+        "HP": 46,
+        "Attack": 57,
+        "Defense": 40,
+        "Speed": 40
+      },
+      "Nidorino": {
+        "type": "Poison",
+        "species": "Poison Pin Pokémon",
+        "HP": 61,
+        "Attack": 72,
+        "Defense": 57,
+        "Speed": 65
+      },
+      "Nidoking": {
+        "type": "Poison/Ground",
+        "species": "Poison Pin Pokémon",
+        "HP": 81,
+        "Attack": 102,
+        "Defense": 77,
+        "Speed": 85
+      },
+      "Clefairy": {
+        "type": "Fairy",
+        "species": "Fairy Pokémon",
+        "HP": 70,
+        "Attack": 60,
+        "Defense": 65,
+        "Speed": 35
+      },
+      "Clefable": {
+        "type": "Fairy",
+        "species": "Fairy Pokémon",
+        "HP": 95,
+        "Attack": 70,
+        "Defense": 90,
+        "Speed": 60
+      },
+      "Vulpix": {
+        "type": "Fire",
+        "species": "Fox Pokémon",
+        "HP": 38,
+        "Attack": 41,
+        "Defense": 40,
+        "Speed": 65
+      },
+      "Ninetales": {
+        "type": "Fire",
+        "species": "Fox Pokémon",
+        "HP": 73,
+        "Attack": 81,
+        "Defense": 100,
+        "Speed": 109
+      },
+      "Jigglypuff": {
+        "type": "Normal/Fairy",
+        "species": "Balloon Pokémon",
+        "HP": 45,
+        "Attack": 48,
+        "Defense": 40,
+        "Speed": 25
+      },
+      "Wigglytuff": {
+        "type": "Normal/Fairy",
+        "species": "Balloon Pokémon",
+        "HP": 140,
+        "Attack": 85,
+        "Defense": 50,
+        "Speed": 45
+      },
+      "Zubat": {
+        "type": "Poison/Flying",
+        "species": "Bat Pokémon",
+        "HP": 45,
+        "Attack": 80,
+        "Defense": 50,
+        "Speed": 55
+      },
+      "Golbat": {
+        "type": "Poison/Flying",
+        "species": "Bat Pokémon",
+        "HP": 75,
+        "Attack": 80,
+        "Defense": 70,
+        "Speed": 90
+      },
+      "Oddish": {
+        "type": "Grass/Poison",
+        "species": "Weed Pokémon",
+        "HP": 45,
+        "Attack": 50,
+        "Defense": 55,
+        "Speed": 30
+      },
+      "Gloom": {
+        "type": "Grass/Poison",
+        "species": "Weed Pokémon",
+        "HP": 60,
+        "Attack": 65,
+        "Defense": 70,
+        "Speed": 40
+      },
+      "Vileplume": {
+        "type": "Grass/Poison",
+        "species": "Flower Pokémon",
+        "HP": 75,
+        "Attack": 105,
+        "Defense": 90,
+        "Speed": 50
+      },
+      "Paras": {
+        "type": "Bug/Grass",
+        "species": "Mushroom Pokémon",
+        "HP": 35,
+        "Attack": 70,
+        "Defense": 55,
+        "Speed": 45
+      },
+      "Parasect": {
+        "type": "Bug/Grass",
+        "species": "Mushroom Pokémon",
+        "HP": 60,
+        "Attack": 95,
+        "Defense": 80,
+        "Speed": 30
+      },
+      "Venonat": {
+        "type": "Bug/Poison",
+        "species": "Insect Pokémon",
+        "HP": 60,
+        "Attack": 55,
+        "Defense": 50,
+        "Speed": 45
+      },
+      "Venomoth": {
+        "type": "Bug/Poison",
+        "species": "Poison Moth Pokémon",
+        "HP": 70,
+        "Attack": 65,
+        "Defense": 60,
+        "Speed": 90
+      },
+      "Diglett": {
+        "type": "Ground",
+        "species": "Mole Pokémon",
+        "HP": 10,
+        "Attack": 55,
+        "Defense": 30,
+        "Speed": 95
+      },
+      "Dugtrio": {
+        "type": "Ground",
+        "species": "Mole Pokémon",
+        "HP": 35,
+        "Attack": 100,
+        "Defense": 50,
+        "Speed": 120
+      },
+      "Meowth": {
+        "type": "Normal",
+        "species": "Scratching Pokémon",
+        "HP": 40,
+        "Attack": 45,
+        "Defense": 30,
+        "Speed": 90
+      },
+      "Persian": {
+        "type": "Normal",
+        "species": "Classy Cat Pokémon",
+        "HP": 65,
+        "Attack": 70,
+        "Defense": 60,
+        "Speed": 115
+      },
+      "Psyduck": {
+        "type": "Water",
+        "species": "Duck Pokémon",
+        "HP": 43,
+        "Attack": 52,
+        "Defense": 48,
+        "Speed": 55
+      },
+      "Golduck": {
+        "type": "Water",
+        "species": "Duck Pokémon",
+        "HP": 80,
+        "Attack": 82,
+        "Defense": 78,
+        "Speed": 97
+      },
+      "Mankey": {
+        "type": "Fighting",
+        "species": "Pig Monkey Pokémon",
+        "HP": 40,
+        "Attack": 80,
+        "Defense": 35,
+        "Speed": 70
+      },
+      "Primeape": {
+        "type": "Fighting",
+        "species": "Pig Monkey Pokémon",
+        "HP": 65,
+        "Attack": 105,
+        "Defense": 60,
+        "Speed": 95
+      },
+      "Growlithe": {
+        "type": "Fire",
+        "species": "Puppy Pokémon",
+        "HP": 55,
+        "Attack": 70,
+        "Defense": 45,
+        "Speed": 60
+      },
+      "Arcanine": {
+        "type": "Fire",
+        "species": "Legendary Pokémon",
+        "HP": 90,
+        "Attack": 110,
+        "Defense": 80,
+        "Speed": 95
+      },
+      "Poliwag": {
+        "type": "Water",
+        "species": "Tadpole Pokémon",
+        "HP": 40,
+        "Attack": 50,
+        "Defense": 40,
+        "Speed": 90
+      },
+      "Poliwhirl": {
+        "type": "Water",
+        "species": "Tadpole Pokémon",
+        "HP": 65,
+        "Attack": 65,
+        "Defense": 65,
+        "Speed": 90
+      },
+      "Poliwrath": {
+        "type": "Water/Fighting",
+        "species": "Tadpole Pokémon",
+        "HP": 90,
+        "Attack": 95,
+        "Defense": 90,
+        "Speed": 70
+      },
+      "Abra": {
+        "type": "Psychic",
+        "species": "Psi Pokémon",
+        "HP": 45,
+        "Attack": 20,
+        "Defense": 15,
+        "Speed": 90
+      },
+      "Kadabra": {
+        "type": "Psychic",
+        "species": "Psi Pokémon",
+        "HP": 40,
+        "Attack": 35,
+        "Defense": 30,
+        "Speed": 105
+      },
+      "Alakazam": {
+        "type": "Psychic",
+        "species": "Psi Pokémon",
+        "HP": 55,
+        "Attack": 50,
+        "Defense": 45,
+        "Speed": 120
+      },
+      "Machop": {
+        "type": "Fighting",
+        "species": "Superpower Pokémon",
+        "HP": 70,
+        "Attack": 80,
+        "Defense": 50,
+        "Speed": 45
+      },
+      "Machoke": {
+        "type": "Fighting",
+        "species": "Superpower Pokémon",
+        "HP": 80,
+        "Attack": 100,
+        "Defense": 70,
+        "Speed": 45
+      },
+      "Machamp": {
+        "type": "Fighting",
+        "species": "Superpower Pokémon",
+        "HP": 90,
+        "Attack": 130,
+        "Defense": 80,
+        "Speed": 55
+      },
+      "Bellsprout": {
+        "type": "Grass/Poison",
+        "species": "Flower Pokémon",
+        "HP": 65,
+        "Attack": 75,
+        "Defense": 35,
+        "Speed": 40
+      },
+      "Weepinbell": {
+        "type": "Grass/Poison",
+        "species": "Flycatcher Pokémon",
+        "HP": 65,
+        "Attack": 90,
+        "Defense": 50,
+        "Speed": 40
+      },
+      "Victreebel": {
+        "type": "Grass/Poison",
+        "species": "Flycatcher Pokémon",
+        "HP": 80,
+        "Attack": 105,
+        "Defense": 65,
+        "Speed": 70
+      },
+      "Tentacool": {
+        "type": "Water/Poison",
+        "species": "Jellyfish Pokémon",
+        "HP": 40,
+        "Attack": 40,
+        "Defense": 35,
+        "Speed": 70
+      },
+      "Tentacruel": {
+        "type": "Water/Poison",
+        "species": "Jellyfish Pokémon",
+        "HP": 80,
+        "Attack": 70,
+        "Defense": 65,
+        "Speed": 100
+      },
+      "Geodude": {
+        "type": "Rock/Ground",
+        "species": "Rock Pokémon",
+        "HP": 40,
+        "Attack": 80,
+        "Defense": 100,
+        "Speed": 20
+      },
+      "Graveler": {
+        "type": "Rock/Ground",
+        "species": "Rock Pokémon",
+        "HP": 55,
+        "Attack": 95,
+        "Defense": 115,
+        "Speed": 35
+      },
+      "Golem": {
+        "type": "Rock/Ground",
+        "species": "Megaton Pokémon",
+        "HP": 80,
+        "Attack": 120,
+        "Defense": 130,
+        "Speed": 45
+      },
+      "Ponyta": {
+        "type": "Fire",
+        "species": "Fire Horse Pokémon",
+        "HP": 50,
+        "Attack": 85,
+        "Defense": 55,
+        "Speed": 90
+      },
+      "Rapidash": {
+        "type": "Fire",
+        "species": "Fire Horse Pokémon",
+        "HP": 65,
+        "Attack": 100,
+        "Defense": 70,
+        "Speed": 105
+      },
+      "Slowpoke": {
+        "type": "Water",
+        "species": "Dopey Pokémon",
+        "HP": 90,
+        "Attack": 65,
+        "Defense": 65,
+        "Speed": 15
+      },
+      "Slowbro": {
+        "type": "Water/Psychic",
+        "species": "Hermit Crab Pokémon",
+        "HP": 95,
+        "Attack": 75,
+        "Defense": 110,
+        "Speed": 30
+      },
+      "Magnemite": {
+        "type": "Electric/Steel",
+        "species": "Magnet Pokémon",
+        "HP": 25,
+        "Attack": 35,
+        "Defense": 70,
+        "Speed": 45
+      },
+      "Magneton": {
+        "type": "Electric/Steel",
+        "species": "Magnet Pokémon",
+        "HP": 50,
+        "Attack": 60,
+        "Defense": 95,
+        "Speed": 70
+      },
+      "Farfetch'd": {
+        "type": "Normal/Flying",
+        "species": "Wild Duck Pokémon",
+        "HP": 52,
+        "Attack": 90,
+        "Defense": 55,
+        "Speed": 60
+      },
+      "Doduo": {
+        "type": "Normal/Flying",
+        "species": "Twin Bird Pokémon",
+        "HP": 35,
+        "Attack": 85,
+        "Defense": 45,
+        "Speed": 76
+      },
+      "Dodrio": {
+        "type": "Normal/Flying",
+        "species": "Twin Bird Pokémon",
+        "HP": 60,
+        "Attack": 110,
+        "Defense": 70,
+        "Speed": 100
+      },
+      "Seel": {
+        "type": "Water",
+        "species": "Sea Lion Pokémon",
+        "HP": 65,
+        "Attack": 45,
+        "Defense": 95,
+        "Speed": 45
+      },
+      "Dewgong": {
+        "type": "Water/Ice",
+        "species": "Sea Lion Pokémon",
+        "HP": 90,
+        "Attack": 70,
+        "Defense": 80,
+        "Speed": 70
+      },
+      "Grimer": {
+        "type": "Poison",
+        "species": "Amorph Pokémon",
+        "HP": 80,
+        "Attack": 80,
+        "Defense": 50,
+        "Speed": 25
+      },
+      "Muk": {
+        "type": "Poison",
+        "species": "Amorph Pokémon",
+        "HP": 105,
+        "Attack": 105,
+        "Defense": 75,
+        "Speed": 50
+      },
+      "Shellder": {
+        "type": "Water",
+        "species": "Bivalve Pokémon",
+        "HP": 30,
+        "Attack": 65,
+        "Defense": 100,
+        "Speed": 40
+      },
+      "Cloyster": {
+        "type": "Water/Ice",
+        "species": "Bivalve Pokémon",
+        "HP": 50,
+        "Attack": 95,
+        "Defense": 180,
+        "Speed": 70
+      },
+      "Gastly": {
+        "type": "Ghost/Poison",
+        "species": "Gas Pokémon",
+        "HP": 30,
+        "Attack": 35,
+        "Defense": 30,
+        "Speed": 80
+      },
+      "Haunter": {
+        "type": "Ghost/Poison",
+        "species": "Gas Pokémon",
+        "HP": 45,
+        "Attack": 50,
+        "Defense": 45,
+        "Speed": 95
+      },
+      "Gengar": {
+        "type": "Ghost/Poison",
+        "species": "Shadow Pokémon",
+        "HP": 60,
+        "Attack": 65,
+        "Defense": 60,
+        "Speed": 110
+      },
+      "Onix": {
+        "type": "Rock/Ground",
+        "species": "Rock Snake Pokémon",
+        "HP": 35,
+        "Attack": 45,
+        "Defense": 160,
+        "Speed": 70
+      },
+      "Drowzee": {
+        "type": "Psychic",
+        "species": "Hypnosis Pokémon",
+        "HP": 60,
+        "Attack": 48,
+        "Defense": 45,
+        "Speed": 42
+      },
+      "Hypno": {
+        "type": "Psychic",
+        "species": "Hypnosis Pokémon",
+        "HP": 85,
+        "Attack": 73,
+        "Defense": 70,
+        "Speed": 67
+      },
+      "Krabby": {
+        "type": "Water",
+        "species": "River Crab Pokémon",
+        "HP": 30,
+        "Attack": 105,
+        "Defense": 90,
+        "Speed": 25
+      },
+      "Kingler": {
+        "type": "Water",
+        "species": "Pincer Pokémon",
+        "HP": 55,
+        "Attack": 130,
+        "Defense": 115,
+        "Speed": 75
+      },
+      "Voltorb": {
+        "type": "Electric",
+        "species": "Ball Pokémon",
+        "HP": 40,
+        "Attack": 30,
+        "Defense": 50,
+        "Speed": 100
+      }
+    },
+    "value_accuracy": 0.8366666666666667,
+    "by_type": {
+      "integer": 0.905,
+      "short_string": 0.7
+    },
+    "outcomes": {
+      "correct": 502,
+      "accuracy": 98,
+      "omission": 0,
+      "hallucination": 0,
+      "structural": 0
+    }
+  },
+  {
+    "method": "instructor",
+    "fixture": "pokemon_600",
+    "budget": "constrained",
+    "seed": 1,
+    "fields_total": 600,
+    "fields_extracted": 600,
+    "coverage": 1.0,
+    "k": 1,
+    "k_min": 1,
+    "optimality_gap": 0.0,
+    "call_failed": 0,
+    "elapsed_seconds": 15.282,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "Bulbasaur": {
+        "type": "Grass/Poison",
+        "species": "Seed Pokémon",
+        "HP": 45,
+        "Attack": 49,
+        "Defense": 49,
+        "Speed": 45
+      },
+      "Ivysaur": {
+        "type": "Grass/Poison",
+        "species": "Seed Pokémon",
+        "HP": 60,
+        "Attack": 62,
+        "Defense": 63,
+        "Speed": 60
+      },
+      "Venusaur": {
+        "type": "Grass/Poison",
+        "species": "Seed Pokémon",
+        "HP": 80,
+        "Attack": 82,
+        "Defense": 83,
+        "Speed": 60
+      },
+      "Charmander": {
+        "type": "Fire",
+        "species": "Lizard Pokémon",
+        "HP": 39,
+        "Attack": 52,
+        "Defense": 43,
+        "Speed": 65
+      },
+      "Charmeleon": {
+        "type": "Fire",
+        "species": "Flame Pokémon",
+        "HP": 58,
+        "Attack": 64,
+        "Defense": 58,
+        "Speed": 80
+      },
+      "Charizard": {
+        "type": "Fire/Flying",
+        "species": "Flame Pokémon",
+        "HP": 78,
+        "Attack": 84,
+        "Defense": 78,
+        "Speed": 100
+      },
+      "Squirtle": {
+        "type": "Water",
+        "species": "Tiny Turtle Pokémon",
+        "HP": 44,
+        "Attack": 48,
+        "Defense": 65,
+        "Speed": 43
+      },
+      "Wartortle": {
+        "type": "Water",
+        "species": "Turtle Pokémon",
+        "HP": 59,
+        "Attack": 63,
+        "Defense": 80,
+        "Speed": 58
+      },
+      "Blastoise": {
+        "type": "Water",
+        "species": "Shellfish Pokémon",
+        "HP": 79,
+        "Attack": 83,
+        "Defense": 100,
+        "Speed": 78
+      },
+      "Caterpie": {
+        "type": "Bug",
+        "species": "Worm Pokémon",
+        "HP": 45,
+        "Attack": 30,
+        "Defense": 35,
+        "Speed": 45
+      },
+      "Metapod": {
+        "type": "Bug",
+        "species": "Cocoon Pokémon",
+        "HP": 50,
+        "Attack": 20,
+        "Defense": 55,
+        "Speed": 30
+      },
+      "Butterfree": {
+        "type": "Bug/Flying",
+        "species": "Butterfly Pokémon",
+        "HP": 60,
+        "Attack": 45,
+        "Defense": 50,
+        "Speed": 70
+      },
+      "Weedle": {
+        "type": "Bug/Poison",
+        "species": "Hairy Bug Pokémon",
+        "HP": 40,
+        "Attack": 35,
+        "Defense": 30,
+        "Speed": 50
+      },
+      "Kakuna": {
+        "type": "Bug/Poison",
+        "species": "Cocoon Pokémon",
+        "HP": 45,
+        "Attack": 25,
+        "Defense": 50,
+        "Speed": 35
+      },
+      "Beedrill": {
+        "type": "Bug/Poison",
+        "species": "Bee Pokémon",
+        "HP": 65,
+        "Attack": 90,
+        "Defense": 40,
+        "Speed": 75
+      },
+      "Pidgey": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 40,
+        "Attack": 45,
+        "Defense": 40,
+        "Speed": 56
+      },
+      "Pidgeotto": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 63,
+        "Attack": 60,
+        "Defense": 55,
+        "Speed": 71
+      },
+      "Pidgeot": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 83,
+        "Attack": 80,
+        "Defense": 75,
+        "Speed": 101
+      },
+      "Rattata": {
+        "type": "Normal",
+        "species": "Rodent Pokémon",
+        "HP": 30,
+        "Attack": 56,
+        "Defense": 30,
+        "Speed": 72
+      },
+      "Raticate": {
+        "type": "Normal",
+        "species": "Rodent Pokémon",
+        "HP": 55,
+        "Attack": 81,
+        "Defense": 60,
+        "Speed": 97
+      },
+      "Spearow": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 40,
+        "Attack": 60,
+        "Defense": 30,
+        "Speed": 70
+      },
+      "Fearow": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 65,
+        "Attack": 90,
+        "Defense": 65,
+        "Speed": 100
+      },
+      "Ekans": {
+        "type": "Poison",
+        "species": "Snake Pokémon",
+        "HP": 35,
+        "Attack": 60,
+        "Defense": 44,
+        "Speed": 55
+      },
+      "Arbok": {
+        "type": "Poison",
+        "species": "Cobra Pokémon",
+        "HP": 60,
+        "Attack": 95,
+        "Defense": 69,
+        "Speed": 80
+      },
+      "Pikachu": {
+        "type": "Electric",
+        "species": "Mouse Pokémon",
+        "HP": 35,
+        "Attack": 55,
+        "Defense": 40,
+        "Speed": 90
+      },
+      "Raichu": {
+        "type": "Electric",
+        "species": "Mouse Pokémon",
+        "HP": 60,
+        "Attack": 85,
+        "Defense": 50,
+        "Speed": 110
+      },
+      "Sandshrew": {
+        "type": "Ground",
+        "species": "Mouse Pokémon",
+        "HP": 50,
+        "Attack": 75,
+        "Defense": 85,
+        "Speed": 40
+      },
+      "Sandslash": {
+        "type": "Ground",
+        "species": "Mouse Pokémon",
+        "HP": 75,
+        "Attack": 100,
+        "Defense": 110,
+        "Speed": 65
+      },
+      "Nidoran♀": {
+        "type": "Poison",
+        "species": "Poison Pin Pokémon",
+        "HP": 55,
+        "Attack": 47,
+        "Defense": 40,
+        "Speed": 41
+      },
+      "Nidorina": {
+        "type": "Poison",
+        "species": "Poison Pin Pokémon",
+        "HP": 70,
+        "Attack": 62,
+        "Defense": 67,
+        "Speed": 56
+      },
+      "Nidoqueen": {
+        "type": "Poison/Ground",
+        "species": "Poison Pin Pokémon",
+        "HP": 90,
+        "Attack": 92,
+        "Defense": 87,
+        "Speed": 76
+      },
+      "Nidoran♂": {
+        "type": "Poison",
+        "species": "Poison Pin Pokémon",
+        "HP": 46,
+        "Attack": 57,
+        "Defense": 40,
+        "Speed": 40
+      },
+      "Nidorino": {
+        "type": "Poison",
+        "species": "Poison Pin Pokémon",
+        "HP": 61,
+        "Attack": 72,
+        "Defense": 57,
+        "Speed": 65
+      },
+      "Nidoking": {
+        "type": "Poison/Ground",
+        "species": "Poison Pin Pokémon",
+        "HP": 81,
+        "Attack": 102,
+        "Defense": 77,
+        "Speed": 85
+      },
+      "Clefairy": {
+        "type": "Fairy",
+        "species": "Fairy Pokémon",
+        "HP": 70,
+        "Attack": 60,
+        "Defense": 65,
+        "Speed": 35
+      },
+      "Clefable": {
+        "type": "Fairy",
+        "species": "Fairy Pokémon",
+        "HP": 95,
+        "Attack": 70,
+        "Defense": 90,
+        "Speed": 60
+      },
+      "Vulpix": {
+        "type": "Fire",
+        "species": "Fox Pokémon",
+        "HP": 38,
+        "Attack": 41,
+        "Defense": 40,
+        "Speed": 65
+      },
+      "Ninetales": {
+        "type": "Fire",
+        "species": "Fox Pokémon",
+        "HP": 73,
+        "Attack": 81,
+        "Defense": 100,
+        "Speed": 109
+      },
+      "Jigglypuff": {
+        "type": "Normal/Fairy",
+        "species": "Balloon Pokémon",
+        "HP": 45,
+        "Attack": 48,
+        "Defense": 40,
+        "Speed": 25
+      },
+      "Wigglytuff": {
+        "type": "Normal/Fairy",
+        "species": "Balloon Pokémon",
+        "HP": 70,
+        "Attack": 85,
+        "Defense": 50,
+        "Speed": 45
+      },
+      "Zubat": {
+        "type": "Poison/Flying",
+        "species": "Bat Pokémon",
+        "HP": 45,
+        "Attack": 80,
+        "Defense": 50,
+        "Speed": 55
+      },
+      "Golbat": {
+        "type": "Poison/Flying",
+        "species": "Bat Pokémon",
+        "HP": 75,
+        "Attack": 80,
+        "Defense": 70,
+        "Speed": 90
+      },
+      "Oddish": {
+        "type": "Grass/Poison",
+        "species": "Weed Pokémon",
+        "HP": 45,
+        "Attack": 50,
+        "Defense": 55,
+        "Speed": 30
+      },
+      "Gloom": {
+        "type": "Grass/Poison",
+        "species": "Weed Pokémon",
+        "HP": 60,
+        "Attack": 65,
+        "Defense": 70,
+        "Speed": 40
+      },
+      "Vileplume": {
+        "type": "Grass/Poison",
+        "species": "Flower Pokémon",
+        "HP": 75,
+        "Attack": 80,
+        "Defense": 85,
+        "Speed": 50
+      },
+      "Paras": {
+        "type": "Bug/Grass",
+        "species": "Mushroom Pokémon",
+        "HP": 35,
+        "Attack": 70,
+        "Defense": 55,
+        "Speed": 45
+      },
+      "Parasect": {
+        "type": "Bug/Grass",
+        "species": "Mushroom Pokémon",
+        "HP": 60,
+        "Attack": 95,
+        "Defense": 80,
+        "Speed": 30
+      },
+      "Venonat": {
+        "type": "Bug/Poison",
+        "species": "Insect Pokémon",
+        "HP": 60,
+        "Attack": 55,
+        "Defense": 50,
+        "Speed": 45
+      },
+      "Venomoth": {
+        "type": "Bug/Poison",
+        "species": "Poison Moth Pokémon",
+        "HP": 70,
+        "Attack": 65,
+        "Defense": 60,
+        "Speed": 90
+      },
+      "Diglett": {
+        "type": "Ground",
+        "species": "Mole Pokémon",
+        "HP": 10,
+        "Attack": 55,
+        "Defense": 25,
+        "Speed": 95
+      },
+      "Dugtrio": {
+        "type": "Ground",
+        "species": "Mole Pokémon",
+        "HP": 35,
+        "Attack": 80,
+        "Defense": 50,
+        "Speed": 120
+      },
+      "Meowth": {
+        "type": "Normal",
+        "species": "Scratching Pokémon",
+        "HP": 40,
+        "Attack": 45,
+        "Defense": 30,
+        "Speed": 90
+      },
+      "Persian": {
+        "type": "Normal",
+        "species": "Classy Cat Pokémon",
+        "HP": 65,
+        "Attack": 70,
+        "Defense": 60,
+        "Speed": 115
+      },
+      "Psyduck": {
+        "type": "Water",
+        "species": "Duck Pokémon",
+        "HP": 50,
+        "Attack": 52,
+        "Defense": 48,
+        "Speed": 55
+      },
+      "Golduck": {
+        "type": "Water",
+        "species": "Duck Pokémon",
+        "HP": 80,
+        "Attack": 82,
+        "Defense": 78,
+        "Speed": 120
+      },
+      "Mankey": {
+        "type": "Fighting",
+        "species": "Pig Monkey Pokémon",
+        "HP": 40,
+        "Attack": 80,
+        "Defense": 35,
+        "Speed": 70
+      },
+      "Primeape": {
+        "type": "Fighting",
+        "species": "Pig Monkey Pokémon",
+        "HP": 65,
+        "Attack": 105,
+        "Defense": 60,
+        "Speed": 95
+      },
+      "Growlithe": {
+        "type": "Fire",
+        "species": "Puppy Pokémon",
+        "HP": 55,
+        "Attack": 70,
+        "Defense": 45,
+        "Speed": 60
+      },
+      "Arcanine": {
+        "type": "Fire",
+        "species": "Legendary Pokémon",
+        "HP": 90,
+        "Attack": 110,
+        "Defense": 80,
+        "Speed": 95
+      },
+      "Poliwag": {
+        "type": "Water",
+        "species": "Tadpole Pokémon",
+        "HP": 40,
+        "Attack": 50,
+        "Defense": 40,
+        "Speed": 90
+      },
+      "Poliwhirl": {
+        "type": "Water",
+        "species": "Tadpole Pokémon",
+        "HP": 65,
+        "Attack": 65,
+        "Defense": 65,
+        "Speed": 90
+      },
+      "Poliwrath": {
+        "type": "Water/Fighting",
+        "species": "Tadpole Pokémon",
+        "HP": 90,
+        "Attack": 95,
+        "Defense": 90,
+        "Speed": 70
+      },
+      "Abra": {
+        "type": "Psychic",
+        "species": "Psi Pokémon",
+        "HP": 45,
+        "Attack": 20,
+        "Defense": 15,
+        "Speed": 90
+      },
+      "Kadabra": {
+        "type": "Psychic",
+        "species": "Psi Pokémon",
+        "HP": 40,
+        "Attack": 35,
+        "Defense": 30,
+        "Speed": 105
+      },
+      "Alakazam": {
+        "type": "Psychic",
+        "species": "Psi Pokémon",
+        "HP": 55,
+        "Attack": 50,
+        "Defense": 45,
+        "Speed": 120
+      },
+      "Machop": {
+        "type": "Fighting",
+        "species": "Superpower Pokémon",
+        "HP": 70,
+        "Attack": 80,
+        "Defense": 50,
+        "Speed": 45
+      },
+      "Machoke": {
+        "type": "Fighting",
+        "species": "Superpower Pokémon",
+        "HP": 80,
+        "Attack": 100,
+        "Defense": 70,
+        "Speed": 45
+      },
+      "Machamp": {
+        "type": "Fighting",
+        "species": "Superpower Pokémon",
+        "HP": 90,
+        "Attack": 130,
+        "Defense": 80,
+        "Speed": 55
+      },
+      "Bellsprout": {
+        "type": "Grass/Poison",
+        "species": "Flower Pokémon",
+        "HP": 65,
+        "Attack": 75,
+        "Defense": 35,
+        "Speed": 40
+      },
+      "Weepinbell": {
+        "type": "Grass/Poison",
+        "species": "Flycatcher Pokémon",
+        "HP": 65,
+        "Attack": 90,
+        "Defense": 50,
+        "Speed": 40
+      },
+      "Victreebel": {
+        "type": "Grass/Poison",
+        "species": "Flycatcher Pokémon",
+        "HP": 80,
+        "Attack": 105,
+        "Defense": 65,
+        "Speed": 70
+      },
+      "Tentacool": {
+        "type": "Water/Poison",
+        "species": "Jellyfish Pokémon",
+        "HP": 40,
+        "Attack": 40,
+        "Defense": 35,
+        "Speed": 70
+      },
+      "Tentacruel": {
+        "type": "Water/Poison",
+        "species": "Jellyfish Pokémon",
+        "HP": 80,
+        "Attack": 70,
+        "Defense": 65,
+        "Speed": 100
+      },
+      "Geodude": {
+        "type": "Rock/Ground",
+        "species": "Rock Pokémon",
+        "HP": 40,
+        "Attack": 80,
+        "Defense": 100,
+        "Speed": 20
+      },
+      "Graveler": {
+        "type": "Rock/Ground",
+        "species": "Rock Pokémon",
+        "HP": 55,
+        "Attack": 95,
+        "Defense": 115,
+        "Speed": 35
+      },
+      "Golem": {
+        "type": "Rock/Ground",
+        "species": "Megaton Pokémon",
+        "HP": 80,
+        "Attack": 120,
+        "Defense": 130,
+        "Speed": 45
+      },
+      "Ponyta": {
+        "type": "Fire",
+        "species": "Fire Horse Pokémon",
+        "HP": 50,
+        "Attack": 85,
+        "Defense": 55,
+        "Speed": 90
+      },
+      "Rapidash": {
+        "type": "Fire",
+        "species": "Fire Horse Pokémon",
+        "HP": 65,
+        "Attack": 100,
+        "Defense": 70,
+        "Speed": 105
+      },
+      "Slowpoke": {
+        "type": "Water",
+        "species": "Dopey Pokémon",
+        "HP": 90,
+        "Attack": 65,
+        "Defense": 65,
+        "Speed": 15
+      },
+      "Slowbro": {
+        "type": "Water/Psychic",
+        "species": "Hermit Crab Pokémon",
+        "HP": 95,
+        "Attack": 75,
+        "Defense": 110,
+        "Speed": 30
+      },
+      "Magnemite": {
+        "type": "Electric/Steel",
+        "species": "Magnet Pokémon",
+        "HP": 25,
+        "Attack": 35,
+        "Defense": 70,
+        "Speed": 45
+      },
+      "Magneton": {
+        "type": "Electric/Steel",
+        "species": "Magnet Pokémon",
+        "HP": 50,
+        "Attack": 60,
+        "Defense": 95,
+        "Speed": 70
+      },
+      "Farfetch'd": {
+        "type": "Normal/Flying",
+        "species": "Wild Duck Pokémon",
+        "HP": 52,
+        "Attack": 65,
+        "Defense": 55,
+        "Speed": 60
+      },
+      "Doduo": {
+        "type": "Normal/Flying",
+        "species": "Twin Bird Pokémon",
+        "HP": 35,
+        "Attack": 85,
+        "Defense": 45,
+        "Speed": 76
+      },
+      "Dodrio": {
+        "type": "Normal/Flying",
+        "species": "Twin Bird Pokémon",
+        "HP": 60,
+        "Attack": 110,
+        "Defense": 70,
+        "Speed": 100
+      },
+      "Seel": {
+        "type": "Water",
+        "species": "Sea Lion Pokémon",
+        "HP": 65,
+        "Attack": 45,
+        "Defense": 95,
+        "Speed": 45
+      },
+      "Dewgong": {
+        "type": "Water/Ice",
+        "species": "Sea Lion Pokémon",
+        "HP": 90,
+        "Attack": 70,
+        "Defense": 80,
+        "Speed": 70
+      },
+      "Grimer": {
+        "type": "Poison",
+        "species": "Amoeba Pokémon",
+        "HP": 80,
+        "Attack": 80,
+        "Defense": 50,
+        "Speed": 25
+      },
+      "Muk": {
+        "type": "Poison",
+        "species": "Amoeba Pokémon",
+        "HP": 105,
+        "Attack": 105,
+        "Defense": 75,
+        "Speed": 50
+      },
+      "Shellder": {
+        "type": "Water",
+        "species": "Bivalve Pokémon",
+        "HP": 30,
+        "Attack": 65,
+        "Defense": 100,
+        "Speed": 40
+      },
+      "Cloyster": {
+        "type": "Water/Ice",
+        "species": "Bivalve Pokémon",
+        "HP": 50,
+        "Attack": 95,
+        "Defense": 180,
+        "Speed": 70
+      },
+      "Gastly": {
+        "type": "Ghost/Poison",
+        "species": "Gas Pokémon",
+        "HP": 30,
+        "Attack": 35,
+        "Defense": 30,
+        "Speed": 80
+      },
+      "Haunter": {
+        "type": "Ghost/Poison",
+        "species": "Gas Pokémon",
+        "HP": 45,
+        "Attack": 50,
+        "Defense": 45,
+        "Speed": 95
+      },
+      "Gengar": {
+        "type": "Ghost/Poison",
+        "species": "Shadow Pokémon",
+        "HP": 60,
+        "Attack": 65,
+        "Defense": 60,
+        "Speed": 110
+      },
+      "Onix": {
+        "type": "Rock/Ground",
+        "species": "Rock Snake Pokémon",
+        "HP": 35,
+        "Attack": 45,
+        "Defense": 160,
+        "Speed": 70
+      },
+      "Drowzee": {
+        "type": "Psychic",
+        "species": "Hypnosis Pokémon",
+        "HP": 60,
+        "Attack": 48,
+        "Defense": 45,
+        "Speed": 42
+      },
+      "Hypno": {
+        "type": "Psychic",
+        "species": "Hypnosis Pokémon",
+        "HP": 85,
+        "Attack": 73,
+        "Defense": 70,
+        "Speed": 67
+      },
+      "Krabby": {
+        "type": "Water",
+        "species": "River Crab Pokémon",
+        "HP": 30,
+        "Attack": 105,
+        "Defense": 90,
+        "Speed": 25
+      },
+      "Kingler": {
+        "type": "Water",
+        "species": "Pincer Pokémon",
+        "HP": 55,
+        "Attack": 130,
+        "Defense": 115,
+        "Speed": 75
+      },
+      "Voltorb": {
+        "type": "Electric",
+        "species": "Ball Pokémon",
+        "HP": 40,
+        "Attack": 30,
+        "Defense": 50,
+        "Speed": 100
+      }
+    },
+    "value_accuracy": 0.84,
+    "by_type": {
+      "integer": 0.91,
+      "short_string": 0.7
+    },
+    "outcomes": {
+      "correct": 504,
+      "accuracy": 96,
+      "omission": 0,
+      "hallucination": 0,
+      "structural": 0
+    }
+  },
+  {
+    "method": "instructor",
+    "fixture": "pokemon_600",
+    "budget": "constrained",
+    "seed": 2,
+    "fields_total": 600,
+    "fields_extracted": 600,
+    "coverage": 1.0,
+    "k": 1,
+    "k_min": 1,
+    "optimality_gap": 0.0,
+    "call_failed": 0,
+    "elapsed_seconds": 13.945,
+    "error": null,
+    "error_category": null,
+    "data": {
+      "Bulbasaur": {
+        "type": "Grass/Poison",
+        "species": "Seed Pokémon",
+        "HP": 45,
+        "Attack": 49,
+        "Defense": 49,
+        "Speed": 45
+      },
+      "Ivysaur": {
+        "type": "Grass/Poison",
+        "species": "Seed Pokémon",
+        "HP": 60,
+        "Attack": 62,
+        "Defense": 63,
+        "Speed": 60
+      },
+      "Venusaur": {
+        "type": "Grass/Poison",
+        "species": "Seed Pokémon",
+        "HP": 80,
+        "Attack": 82,
+        "Defense": 83,
+        "Speed": 60
+      },
+      "Charmander": {
+        "type": "Fire",
+        "species": "Lizard Pokémon",
+        "HP": 39,
+        "Attack": 52,
+        "Defense": 43,
+        "Speed": 65
+      },
+      "Charmeleon": {
+        "type": "Fire",
+        "species": "Flame Pokémon",
+        "HP": 58,
+        "Attack": 64,
+        "Defense": 58,
+        "Speed": 80
+      },
+      "Charizard": {
+        "type": "Fire/Flying",
+        "species": "Flame Pokémon",
+        "HP": 78,
+        "Attack": 84,
+        "Defense": 78,
+        "Speed": 100
+      },
+      "Squirtle": {
+        "type": "Water",
+        "species": "Tiny Turtle Pokémon",
+        "HP": 44,
+        "Attack": 48,
+        "Defense": 65,
+        "Speed": 43
+      },
+      "Wartortle": {
+        "type": "Water",
+        "species": "Turtle Pokémon",
+        "HP": 59,
+        "Attack": 63,
+        "Defense": 80,
+        "Speed": 58
+      },
+      "Blastoise": {
+        "type": "Water",
+        "species": "Shellfish Pokémon",
+        "HP": 79,
+        "Attack": 83,
+        "Defense": 100,
+        "Speed": 78
+      },
+      "Caterpie": {
+        "type": "Bug",
+        "species": "Worm Pokémon",
+        "HP": 45,
+        "Attack": 30,
+        "Defense": 35,
+        "Speed": 45
+      },
+      "Metapod": {
+        "type": "Bug",
+        "species": "Cocoon Pokémon",
+        "HP": 50,
+        "Attack": 20,
+        "Defense": 55,
+        "Speed": 30
+      },
+      "Butterfree": {
+        "type": "Bug/Flying",
+        "species": "Butterfly Pokémon",
+        "HP": 60,
+        "Attack": 45,
+        "Defense": 50,
+        "Speed": 70
+      },
+      "Weedle": {
+        "type": "Bug/Poison",
+        "species": "Hairy Bug Pokémon",
+        "HP": 40,
+        "Attack": 40,
+        "Defense": 30,
+        "Speed": 50
+      },
+      "Kakuna": {
+        "type": "Bug/Poison",
+        "species": "Cocoon Pokémon",
+        "HP": 45,
+        "Attack": 25,
+        "Defense": 50,
+        "Speed": 35
+      },
+      "Beedrill": {
+        "type": "Bug/Poison",
+        "species": "Bee Pokémon",
+        "HP": 65,
+        "Attack": 90,
+        "Defense": 40,
+        "Speed": 75
+      },
+      "Pidgey": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 40,
+        "Attack": 40,
+        "Defense": 30,
+        "Speed": 56
+      },
+      "Pidgeotto": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 63,
+        "Attack": 60,
+        "Defense": 55,
+        "Speed": 71
+      },
+      "Pidgeot": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 83,
+        "Attack": 80,
+        "Defense": 75,
+        "Speed": 101
+      },
+      "Rattata": {
+        "type": "Normal",
+        "species": "Rodent Pokémon",
+        "HP": 30,
+        "Attack": 56,
+        "Defense": 30,
+        "Speed": 72
+      },
+      "Raticate": {
+        "type": "Normal",
+        "species": "Rodent Pokémon",
+        "HP": 55,
+        "Attack": 81,
+        "Defense": 60,
+        "Speed": 97
+      },
+      "Spearow": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 40,
+        "Attack": 60,
+        "Defense": 30,
+        "Speed": 70
+      },
+      "Fearow": {
+        "type": "Normal/Flying",
+        "species": "Bird Pokémon",
+        "HP": 65,
+        "Attack": 90,
+        "Defense": 65,
+        "Speed": 100
+      },
+      "Ekans": {
+        "type": "Poison",
+        "species": "Snake Pokémon",
+        "HP": 35,
+        "Attack": 60,
+        "Defense": 44,
+        "Speed": 55
+      },
+      "Arbok": {
+        "type": "Poison",
+        "species": "Cobra Pokémon",
+        "HP": 60,
+        "Attack": 95,
+        "Defense": 69,
+        "Speed": 80
+      },
+      "Pikachu": {
+        "type": "Electric",
+        "species": "Mouse Pokémon",
+        "HP": 35,
+        "Attack": 55,
+        "Defense": 40,
+        "Speed": 90
+      },
+      "Raichu": {
+        "type": "Electric",
+        "species": "Mouse Pokémon",
+        "HP": 60,
+        "Attack": 85,
+        "Defense": 50,
+        "Speed": 110
+      },
+      "Sandshrew": {
+        "type": "Ground",
+        "species": "Mouse Pokémon",
+        "HP": 50,
+        "Attack": 75,
+        "Defense": 85,
+        "Speed": 40
+      },
+      "Sandslash": {
+        "type": "Ground",
+        "species": "Mouse Pokémon",
+        "HP": 75,
+        "Attack": 100,
+        "Defense": 110,
+        "Speed": 65
+      },
+      "Nidoran♀": {
+        "type": "Poison",
+        "species": "Poison Pin Pokémon",
+        "HP": 55,
+        "Attack": 47,
+        "Defense": 40,
+        "Speed": 41
+      },
+      "Nidorina": {
+        "type": "Poison",
+        "species": "Poison Pin Pokémon",
+        "HP": 70,
+        "Attack": 62,
+        "Defense": 55,
+        "Speed": 56
+      },
+      "Nidoqueen": {
+        "type": "Poison/Ground",
+        "species": "Drill Pokémon",
+        "HP": 90,
+        "Attack": 92,
+        "Defense": 87,
+        "Speed": 76
+      },
+      "Nidoran♂": {
+        "type": "Poison",
+        "species": "Poison Pin Pokémon",
+        "HP": 46,
+        "Attack": 57,
+        "Defense": 40,
+        "Speed": 50
+      },
+      "Nidorino": {
+        "type": "Poison",
+        "species": "Poison Pin Pokémon",
+        "HP": 61,
+        "Attack": 72,
+        "Defense": 57,
+        "Speed": 65
+      },
+      "Nidoking": {
+        "type": "Poison/Ground",
+        "species": "Drill Pokémon",
+        "HP": 81,
+        "Attack": 102,
+        "Defense": 77,
+        "Speed": 85
+      },
+      "Clefairy": {
+        "type": "Fairy",
+        "species": "Fairy Pokémon",
+        "HP": 70,
+        "Attack": 60,
+        "Defense": 65,
+        "Speed": 35
+      },
+      "Clefable": {
+        "type": "Fairy",
+        "species": "Fairy Pokémon",
+        "HP": 95,
+        "Attack": 70,
+        "Defense": 90,
+        "Speed": 60
+      },
+      "Vulpix": {
+        "type": "Fire",
+        "species": "Fox Pokémon",
+        "HP": 38,
+        "Attack": 41,
+        "Defense": 40,
+        "Speed": 65
+      },
+      "Ninetales": {
+        "type": "Fire",
+        "species": "Fox Pokémon",
+        "HP": 73,
+        "Attack": 81,
+        "Defense": 75,
+        "Speed": 100
+      },
+      "Jigglypuff": {
+        "type": "Normal/Fairy",
+        "species": "Balloon Pokémon",
+        "HP": 45,
+        "Attack": 48,
+        "Defense": 40,
+        "Speed": 25
+      },
+      "Wigglytuff": {
+        "type": "Normal/Fairy",
+        "species": "Balloon Pokémon",
+        "HP": 70,
+        "Attack": 85,
+        "Defense": 50,
+        "Speed": 45
+      },
+      "Zubat": {
+        "type": "Poison/Flying",
+        "species": "Bat Pokémon",
+        "HP": 45,
+        "Attack": 80,
+        "Defense": 50,
+        "Speed": 55
+      },
+      "Golbat": {
+        "type": "Poison/Flying",
+        "species": "Bat Pokémon",
+        "HP": 75,
+        "Attack": 80,
+        "Defense": 70,
+        "Speed": 90
+      },
+      "Oddish": {
+        "type": "Grass/Poison",
+        "species": "Weed Pokémon",
+        "HP": 45,
+        "Attack": 50,
+        "Defense": 55,
+        "Speed": 30
+      },
+      "Gloom": {
+        "type": "Grass/Poison",
+        "species": "Weed Pokémon",
+        "HP": 60,
+        "Attack": 65,
+        "Defense": 70,
+        "Speed": 40
+      },
+      "Vileplume": {
+        "type": "Grass/Poison",
+        "species": "Flower Pokémon",
+        "HP": 75,
+        "Attack": 80,
+        "Defense": 85,
+        "Speed": 50
+      },
+      "Paras": {
+        "type": "Bug/Grass",
+        "species": "Mushroom Pokémon",
+        "HP": 35,
+        "Attack": 70,
+        "Defense": 55,
+        "Speed": 45
+      },
+      "Parasect": {
+        "type": "Bug/Grass",
+        "species": "Mushroom Pokémon",
+        "HP": 60,
+        "Attack": 95,
+        "Defense": 80,
+        "Speed": 30
+      },
+      "Venonat": {
+        "type": "Bug/Poison",
+        "species": "Insect Pokémon",
+        "HP": 60,
+        "Attack": 55,
+        "Defense": 50,
+        "Speed": 45
+      },
+      "Venomoth": {
+        "type": "Bug/Poison",
+        "species": "Poison Moth Pokémon",
+        "HP": 70,
+        "Attack": 65,
+        "Defense": 60,
+        "Speed": 90
+      },
+      "Diglett": {
+        "type": "Ground",
+        "species": "Mole Pokémon",
+        "HP": 10,
+        "Attack": 55,
+        "Defense": 30,
+        "Speed": 95
+      },
+      "Dugtrio": {
+        "type": "Ground",
+        "species": "Mole Pokémon",
+        "HP": 35,
+        "Attack": 100,
+        "Defense": 50,
+        "Speed": 120
+      },
+      "Meowth": {
+        "type": "Normal",
+        "species": "Scratching Pokémon",
+        "HP": 40,
+        "Attack": 45,
+        "Defense": 30,
+        "Speed": 90
+      },
+      "Persian": {
+        "type": "Normal",
+        "species": "Classy Cat Pokémon",
+        "HP": 65,
+        "Attack": 70,
+        "Defense": 60,
+        "Speed": 115
+      },
+      "Psyduck": {
+        "type": "Water",
+        "species": "Duck Pokémon",
+        "HP": 50,
+        "Attack": 52,
+        "Defense": 48,
+        "Speed": 55
+      },
+      "Golduck": {
+        "type": "Water",
+        "species": "Duck Pokémon",
+        "HP": 80,
+        "Attack": 82,
+        "Defense": 78,
+        "Speed": 97
+      },
+      "Mankey": {
+        "type": "Fighting",
+        "species": "Pig Monkey Pokémon",
+        "HP": 40,
+        "Attack": 80,
+        "Defense": 35,
+        "Speed": 70
+      },
+      "Primeape": {
+        "type": "Fighting",
+        "species": "Pig Monkey Pokémon",
+        "HP": 65,
+        "Attack": 105,
+        "Defense": 60,
+        "Speed": 95
+      },
+      "Growlithe": {
+        "type": "Fire",
+        "species": "Puppy Pokémon",
+        "HP": 55,
+        "Attack": 70,
+        "Defense": 45,
+        "Speed": 60
+      },
+      "Arcanine": {
+        "type": "Fire",
+        "species": "Legendary Pokémon",
+        "HP": 90,
+        "Attack": 110,
+        "Defense": 80,
+        "Speed": 95
+      },
+      "Poliwag": {
+        "type": "Water",
+        "species": "Tadpole Pokémon",
+        "HP": 40,
+        "Attack": 50,
+        "Defense": 40,
+        "Speed": 90
+      },
+      "Poliwhirl": {
+        "type": "Water",
+        "species": "Tadpole Pokémon",
+        "HP": 65,
+        "Attack": 65,
+        "Defense": 65,
+        "Speed": 90
+      },
+      "Poliwrath": {
+        "type": "Water/Fighting",
+        "species": "Tadpole Pokémon",
+        "HP": 90,
+        "Attack": 95,
+        "Defense": 90,
+        "Speed": 70
+      },
+      "Abra": {
+        "type": "Psychic",
+        "species": "Psi Pokémon",
+        "HP": 45,
+        "Attack": 20,
+        "Defense": 15,
+        "Speed": 90
+      },
+      "Kadabra": {
+        "type": "Psychic",
+        "species": "Psi Pokémon",
+        "HP": 40,
+        "Attack": 35,
+        "Defense": 30,
+        "Speed": 105
+      },
+      "Alakazam": {
+        "type": "Psychic",
+        "species": "Psi Pokémon",
+        "HP": 55,
+        "Attack": 50,
+        "Defense": 45,
+        "Speed": 120
+      },
+      "Machop": {
+        "type": "Fighting",
+        "species": "Superpower Pokémon",
+        "HP": 70,
+        "Attack": 80,
+        "Defense": 50,
+        "Speed": 45
+      },
+      "Machoke": {
+        "type": "Fighting",
+        "species": "Superpower Pokémon",
+        "HP": 80,
+        "Attack": 100,
+        "Defense": 70,
+        "Speed": 45
+      },
+      "Machamp": {
+        "type": "Fighting",
+        "species": "Superpower Pokémon",
+        "HP": 90,
+        "Attack": 130,
+        "Defense": 80,
+        "Speed": 55
+      },
+      "Bellsprout": {
+        "type": "Grass/Poison",
+        "species": "Flower Pokémon",
+        "HP": 65,
+        "Attack": 75,
+        "Defense": 35,
+        "Speed": 40
+      },
+      "Weepinbell": {
+        "type": "Grass/Poison",
+        "species": "Flycatcher Pokémon",
+        "HP": 65,
+        "Attack": 90,
+        "Defense": 50,
+        "Speed": 40
+      },
+      "Victreebel": {
+        "type": "Grass/Poison",
+        "species": "Flycatcher Pokémon",
+        "HP": 80,
+        "Attack": 105,
+        "Defense": 65,
+        "Speed": 70
+      },
+      "Tentacool": {
+        "type": "Water/Poison",
+        "species": "Jellyfish Pokémon",
+        "HP": 40,
+        "Attack": 40,
+        "Defense": 35,
+        "Speed": 70
+      },
+      "Tentacruel": {
+        "type": "Water/Poison",
+        "species": "Jellyfish Pokémon",
+        "HP": 80,
+        "Attack": 70,
+        "Defense": 65,
+        "Speed": 100
+      },
+      "Geodude": {
+        "type": "Rock/Ground",
+        "species": "Rock Pokémon",
+        "HP": 40,
+        "Attack": 80,
+        "Defense": 100,
+        "Speed": 20
+      },
+      "Graveler": {
+        "type": "Rock/Ground",
+        "species": "Rock Pokémon",
+        "HP": 55,
+        "Attack": 95,
+        "Defense": 115,
+        "Speed": 35
+      },
+      "Golem": {
+        "type": "Rock/Ground",
+        "species": "Megaton Pokémon",
+        "HP": 80,
+        "Attack": 120,
+        "Defense": 130,
+        "Speed": 45
+      },
+      "Ponyta": {
+        "type": "Fire",
+        "species": "Fire Horse Pokémon",
+        "HP": 50,
+        "Attack": 85,
+        "Defense": 55,
+        "Speed": 90
+      },
+      "Rapidash": {
+        "type": "Fire",
+        "species": "Fire Horse Pokémon",
+        "HP": 65,
+        "Attack": 100,
+        "Defense": 70,
+        "Speed": 105
+      },
+      "Slowpoke": {
+        "type": "Water",
+        "species": "Dopey Pokémon",
+        "HP": 90,
+        "Attack": 65,
+        "Defense": 65,
+        "Speed": 15
+      },
+      "Slowbro": {
+        "type": "Water/Psychic",
+        "species": "Hermit Crab Pokémon",
+        "HP": 95,
+        "Attack": 75,
+        "Defense": 110,
+        "Speed": 30
+      },
+      "Magnemite": {
+        "type": "Electric/Steel",
+        "species": "Magnet Pokémon",
+        "HP": 25,
+        "Attack": 35,
+        "Defense": 70,
+        "Speed": 45
+      },
+      "Magneton": {
+        "type": "Electric/Steel",
+        "species": "Magnet Pokémon",
+        "HP": 50,
+        "Attack": 60,
+        "Defense": 95,
+        "Speed": 70
+      },
+      "Farfetch'd": {
+        "type": "Normal/Flying",
+        "species": "Wild Duck Pokémon",
+        "HP": 52,
+        "Attack": 90,
+        "Defense": 55,
+        "Speed": 60
+      },
+      "Doduo": {
+        "type": "Normal/Flying",
+        "species": "Twin Bird Pokémon",
+        "HP": 35,
+        "Attack": 85,
+        "Defense": 45,
+        "Speed": 76
+      },
+      "Dodrio": {
+        "type": "Normal/Flying",
+        "species": "Twin Bird Pokémon",
+        "HP": 60,
+        "Attack": 110,
+        "Defense": 70,
+        "Speed": 100
+      },
+      "Seel": {
+        "type": "Water",
+        "species": "Sea Lion Pokémon",
+        "HP": 65,
+        "Attack": 45,
+        "Defense": 95,
+        "Speed": 45
+      },
+      "Dewgong": {
+        "type": "Water/Ice",
+        "species": "Sea Lion Pokémon",
+        "HP": 90,
+        "Attack": 70,
+        "Defense": 80,
+        "Speed": 70
+      },
+      "Grimer": {
+        "type": "Poison",
+        "species": "Amorph Pokémon",
+        "HP": 80,
+        "Attack": 80,
+        "Defense": 50,
+        "Speed": 25
+      },
+      "Muk": {
+        "type": "Poison",
+        "species": "Amorph Pokémon",
+        "HP": 105,
+        "Attack": 105,
+        "Defense": 75,
+        "Speed": 50
+      },
+      "Shellder": {
+        "type": "Water",
+        "species": "Bivalve Pokémon",
+        "HP": 30,
+        "Attack": 65,
+        "Defense": 100,
+        "Speed": 40
+      },
+      "Cloyster": {
+        "type": "Water/Ice",
+        "species": "Bivalve Pokémon",
+        "HP": 50,
+        "Attack": 95,
+        "Defense": 180,
+        "Speed": 70
+      },
+      "Gastly": {
+        "type": "Ghost/Poison",
+        "species": "Gas Pokémon",
+        "HP": 30,
+        "Attack": 35,
+        "Defense": 30,
+        "Speed": 80
+      },
+      "Haunter": {
+        "type": "Ghost/Poison",
+        "species": "Gas Pokémon",
+        "HP": 45,
+        "Attack": 50,
+        "Defense": 45,
+        "Speed": 95
+      },
+      "Gengar": {
+        "type": "Ghost/Poison",
+        "species": "Shadow Pokémon",
+        "HP": 60,
+        "Attack": 65,
+        "Defense": 60,
+        "Speed": 110
+      },
+      "Onix": {
+        "type": "Rock/Ground",
+        "species": "Rock Snake Pokémon",
+        "HP": 35,
+        "Attack": 45,
+        "Defense": 160,
+        "Speed": 70
+      },
+      "Drowzee": {
+        "type": "Psychic",
+        "species": "Hypnosis Pokémon",
+        "HP": 60,
+        "Attack": 48,
+        "Defense": 45,
+        "Speed": 42
+      },
+      "Hypno": {
+        "type": "Psychic",
+        "species": "Hypnosis Pokémon",
+        "HP": 85,
+        "Attack": 73,
+        "Defense": 70,
+        "Speed": 67
+      },
+      "Krabby": {
+        "type": "Water",
+        "species": "River Crab Pokémon",
+        "HP": 30,
+        "Attack": 105,
+        "Defense": 90,
+        "Speed": 25
+      },
+      "Kingler": {
+        "type": "Water",
+        "species": "Pincer Pokémon",
+        "HP": 55,
+        "Attack": 130,
+        "Defense": 115,
+        "Speed": 75
+      },
+      "Voltorb": {
+        "type": "Electric",
+        "species": "Ball Pokémon",
+        "HP": 40,
+        "Attack": 30,
+        "Defense": 50,
+        "Speed": 100
+      }
+    },
+    "value_accuracy": 0.8433333333333334,
+    "by_type": {
+      "integer": 0.91,
+      "short_string": 0.71
+    },
+    "outcomes": {
+      "correct": 506,
+      "accuracy": 94,
+      "omission": 0,
+      "hallucination": 0,
+      "structural": 0
+    }
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "method": "native_json",
+  "fixture": "airports_1002",
+  "n_fields": 1002,
+  "runs": 3,
+  "coverage_mean": 0.9111776447105789,
+  "fields_covered_mean": 913.0,
+  "value_accuracy_mean": 0.7438456420492349,
+  "value_accuracy_std": 0.029221811385226587,
+  "precision_mean": 0.8163691178323701,
+  "reliability_mean": 0.5765136393878909,
+  "json_pass_all": true,
+  "by_type_mean": {
+    "short_string": 0.7438456420492349
+  },
+  "call_failed_mean": 0.0
+}

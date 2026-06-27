@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "SimpleFlat",
+  "properties": {
+    "name": {"type": "string", "description": "Full name"},
+    "age": {"type": "integer", "minimum": 0, "maximum": 150},
+    "email": {"type": "string", "format": "email"},
+    "active": {"type": "boolean"},
+    "score": {"type": "number", "minimum": 0.0, "maximum": 100.0}
+  },
+  "required": ["name", "age"]
+}

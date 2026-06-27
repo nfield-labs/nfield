@@ -1,0 +1,50 @@
+{
+  "type": "object",
+  "properties": {
+    "identity": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string", "description": "Element name"},
+        "symbol": {"type": "string", "description": "Chemical symbol"},
+        "atomic_number": {"type": "integer", "description": "Number of protons"},
+        "relative_atomic_mass": {"type": "string", "description": "Standard atomic weight"}
+      }
+    },
+    "classification": {
+      "type": "object",
+      "properties": {
+        "group": {"type": "integer", "description": "Periodic table group number"},
+        "period": {"type": "integer", "description": "Periodic table period number"},
+        "block": {"type": "string", "description": "Periodic table block (s, p, d, f)"},
+        "element_category": {"type": "string", "description": "Category such as transition metal"},
+        "electron_configuration": {"type": "string", "description": "Ground-state electron configuration"}
+      }
+    },
+    "physical": {
+      "type": "object",
+      "properties": {
+        "melting_point": {"type": "string", "description": "Melting point in degrees Celsius"},
+        "boiling_point": {"type": "string", "description": "Boiling point in degrees Celsius"},
+        "density": {"type": "string", "description": "Density at room temperature"},
+        "state_at_20c": {"type": "string", "description": "Physical state at 20 degrees Celsius"},
+        "atomic_radius": {"type": "string", "description": "Non-bonded atomic radius"}
+      }
+    },
+    "chemical": {
+      "type": "object",
+      "properties": {
+        "oxidation_states": {"type": "string", "description": "Known oxidation states"},
+        "electronegativity": {"type": "string", "description": "Electronegativity on the Pauling scale"}
+      }
+    },
+    "discovery": {
+      "type": "object",
+      "properties": {
+        "discovery_year": {"type": "string", "description": "When the element was discovered"},
+        "discovered_by": {"type": "string", "description": "Who discovered the element"}
+      }
+    },
+    "cas_number": {"type": "string", "description": "CAS registry number"},
+    "common_uses": {"type": "string", "description": "Typical applications of the element"}
+  }
+}

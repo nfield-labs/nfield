@@ -1,0 +1,214 @@
+"""Tests for AsyncNField: context manager, schema caching, call forms."""
+
+from __future__ import annotations
+
+import asyncio
+from dataclasses import dataclass
+
+import pytest
+
+from nfield import AsyncNField, nfield_async
+from nfield.config import ExtractionConfig
+from nfield.engine._async import (
+    _MAX_SCHEMA_DEPTH,
+    _dataclass_to_json_schema,
+)
+from nfield.exceptions import SchemaError
+
+
+# Module-scope dataclasses so get_type_hints can resolve the nested type - this
+# is how real users define schemas (top level), and what the converter targets.
+@dataclass
+class _Addr:
+    city: str
+
+
+@dataclass
+class _Person:
+    home: _Addr
+    work: _Addr
+
+
+# Self-referential dataclass: the converter must reject this with a clean
+# SchemaError instead of recursing into a RecursionError.
+@dataclass
+class _Tree:
+    value: int
+    children: list[_Tree]
+
+
+_DOC = "Name: Alice. Age: 30."
+_SCHEMA = {
+    "type": "object",
+    "properties": {"name": {"type": "string"}, "age": {"type": "integer"}},
+    "required": ["name", "age"],
+}
+_ECHO = "name = Alice\nage = 30"
+
+
+class TestAsyncEngine:
+    async def test_async_context_manager(self, install_provider):
+        install_provider(_ECHO)
+        async with AsyncNField("mock/echo", _SCHEMA) as fs:
+            result = await fs.extract(_DOC)
+        assert result.data["name"] == "Alice"
+
+    async def test_call_alias(self, install_provider):
+        install_provider(_ECHO)
+        engine = AsyncNField("mock/echo", _SCHEMA)
+        result = await engine(_DOC)
+        assert result.data["age"] == 30
+
+    async def test_cached_schema_reused_across_calls(self, install_provider):
+        install_provider(_ECHO)
+        engine = AsyncNField("mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0))
+        first = await engine.extract("doc one")
+        second = await engine.extract("doc two")
+        assert first.metadata.fields_total == 2
+        assert second.metadata.fields_total == 2
+
+    async def test_per_call_schema_overrides_cached(self, install_provider):
+        install_provider("name = Bob")
+        engine = AsyncNField("mock/echo", _SCHEMA)
+        override = {"type": "object", "properties": {"name": {"type": "string"}}}
+        result = await engine.extract(_DOC, schema=override)
+        assert result.metadata.fields_total == 1
+        assert result.data["name"] == "Bob"
+
+    async def test_missing_schema_raises(self, install_provider):
+        install_provider(_ECHO)
+        engine = AsyncNField("mock/echo")
+        with pytest.raises(SchemaError):
+            await engine.extract(_DOC)
+
+    async def test_nfield_async_one_shot(self, install_provider):
+        install_provider(_ECHO)
+        result = await nfield_async(_DOC, _SCHEMA, "mock/echo")
+        assert result.data["name"] == "Alice"
+
+    def test_model_property(self, install_provider):
+        install_provider(_ECHO)
+        engine = AsyncNField("mock/echo", _SCHEMA)
+        assert engine.model == "mock/echo"
+
+    def test_model_specs_reach_provider(self):
+        # No fixture: build a real Groq provider (no API call at construction)
+        # and confirm the engine forwarded the caller-supplied model specs.
+        engine = AsyncNField(
+            "groq/llama-3.1-8b-instant",
+            _SCHEMA,
+            context_window=131_072,
+            max_output_tokens=32_768,
+        )
+        assert engine._provider.context_window == 131_072
+        assert engine._provider.max_output_tokens == 32_768
+
+    async def test_reuse_adds_no_extra_provider_calls(self, install_provider):
+        # Stage 0 reads the provider's chars-per-token estimate (prior, then
+        # calibrated from response usage) with no dedicated probe, so a reused
+        # engine spends exactly one extraction call per document (single-leaf).
+        provider = install_provider(_ECHO)
+        engine = AsyncNField("mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0))
+        await engine.extract("doc one")
+        await engine.extract("doc two")
+        await engine.extract("doc three")
+        assert provider.calls == 3
+
+
+class TestNestedSchemaForms:
+    """Lock the diamond-schema fix at the public engine boundary."""
+
+    async def test_pydantic_reused_submodel_keeps_all_fields(self, install_provider):
+        pydantic = pytest.importorskip("pydantic")
+
+        class Addr(pydantic.BaseModel):
+            city: str
+
+        class Person(pydantic.BaseModel):
+            home: Addr
+            work: Addr
+
+        install_provider("home.city = Paris\nwork.city = Lyon")
+        engine = AsyncNField("mock/echo", Person, config=ExtractionConfig(max_retry_rounds=0))
+        result = await engine.extract("doc")
+        # Both reused-submodel branches must survive (regression: work.* dropped).
+        assert result.metadata.fields_total == 2
+        assert result.data["home"]["city"] == "Paris"
+        assert result.data["work"]["city"] == "Lyon"
+
+    async def test_nested_dataclass_expands(self, install_provider):
+        install_provider("home.city = Paris\nwork.city = Lyon")
+        engine = AsyncNField("mock/echo", _Person, config=ExtractionConfig(max_retry_rounds=0))
+        result = await engine.extract("doc")
+        assert result.metadata.fields_total == 2
+        assert result.data["home"]["city"] == "Paris"
+        assert result.data["work"]["city"] == "Lyon"
+
+
+class TestSchemaDepthGuard:
+    """A self-referential / pathologically deep dataclass fails cleanly."""
+
+    def test_self_referential_dataclass_raises_schema_error(self):
+        # Without the guard this recurses forever → RecursionError.
+        with pytest.raises(SchemaError, match="nests deeper"):
+            _dataclass_to_json_schema(_Tree)
+
+    def test_self_referential_via_engine_construction(self, install_provider):
+        install_provider(_ECHO)
+        with pytest.raises(SchemaError, match="nests deeper"):
+            AsyncNField("mock/echo", _Tree)
+
+    def test_normal_nesting_still_converts(self):
+        # _Person nests one level (_Addr); well under the cap → no error.
+        node = _dataclass_to_json_schema(_Person)
+        assert node["properties"]["home"]["properties"]["city"]["type"] == "string"
+
+    def test_depth_cap_is_a_named_constant(self):
+        assert _MAX_SCHEMA_DEPTH > 0
+
+
+class TestCredentialForwarding:
+    """api_key / base_url thread from the engine down to from_model."""
+
+    def test_engine_forwards_api_key_and_base_url(self, monkeypatch):
+        captured: dict = {}
+
+        def fake_from_model(_model, **kwargs):
+            captured.update(kwargs)
+            return object()  # __init__ only stores the provider
+
+        monkeypatch.setattr("nfield.engine._async.from_model", fake_from_model)
+        AsyncNField("groq/x", _SCHEMA, api_key="gsk_x", base_url="https://p/v1")
+        assert captured["api_key"] == "gsk_x"
+        assert captured["base_url"] == "https://p/v1"
+
+    def test_engine_forwards_config_max_api_retries(self, monkeypatch):
+        from nfield.config import ExtractionConfig
+
+        captured: dict = {}
+
+        def fake_from_model(_model, **kwargs):
+            captured.update(kwargs)
+            return object()
+
+        monkeypatch.setattr("nfield.engine._async.from_model", fake_from_model)
+        AsyncNField("groq/x", _SCHEMA, config=ExtractionConfig(max_api_retries=3))
+        assert captured["max_retries"] == 3
+
+
+class TestConcurrentCalibration:
+    """Concurrent extracts on a shared engine succeed without extra calls."""
+
+    async def test_concurrent_extracts_one_call_each(self, install_provider):
+        provider = install_provider(_ECHO)
+        engine = AsyncNField("mock/echo", _SCHEMA, config=ExtractionConfig(max_retry_rounds=0))
+        # Fire several extracts at once on a fresh engine. Stage 0 reads the
+        # provider's estimate (no dedicated probe), so each document costs exactly
+        # one extraction call.
+        results = await asyncio.gather(
+            engine.extract("doc one"),
+            engine.extract("doc two"),
+            engine.extract("doc three"),
+        )
+        assert provider.calls == 3
+        assert len(results) == 3

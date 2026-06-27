@@ -1,0 +1,21 @@
+Element Profile: Gold
+
+Gold is a chemical element with the symbol Au and atomic number 79. Its standard
+relative atomic mass is 196.967.
+
+In the periodic table, gold sits in group 11 and period 6, and it belongs to the
+d block. It is classified as a transition metal. Its ground-state electron
+configuration is [Xe] 4f14 5d10 6s1.
+
+Physically, gold melts at 1064.18 °C and boils at 2836 °C. Its density at room
+temperature is 19.3 g/cm³, and at 20 °C it is a solid. The non-bonded atomic
+radius of gold is 2.14 Å.
+
+Chemically, gold exhibits oxidation states of 5, 4, 3, 2, 1, -1, with +3 being
+the most common. Its electronegativity on the Pauling scale is 2.4.
+
+Gold has been known since ancient times; it was discovered approximately 3000 BC,
+and its discoverer is Unknown. The CAS registry number for gold is 7440-57-5.
+
+A soft, yellow metal, gold is commonly used in jewelry, coinage, electroplating,
+dental work, industrial catalyst.
