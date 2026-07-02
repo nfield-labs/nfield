@@ -72,16 +72,12 @@ def _make_metadata(**overrides: object) -> Metadata:
 
 class TestComputeTauAdversarial:
     # array items schema via schema_node vs constraints
-    def test_array_items_in_schema_node_not_constraints(self) -> None:
-        """flatten_schema stores items in schema_node, not constraints.
+    def test_scalar_array_flattens_to_one_list_leaf(self) -> None:
+        """flatten_schema emits a scalar array as a single list-leaf carrying its items.
 
-        When a Field comes from flatten_schema's [] path, the array Field
-        has type='string' (or item type), NOT type='array'. However when
-        compute_tau IS called with type='array', items must come from
-        schema_node, not constraints.
-
-        Verify that an array field built via flatten_schema produces a
-        [] child Field with the element type, not a parent type='array' Field.
+        A scalar array is one ``type='array'`` Field whose ``constraints['items']``
+        holds the element schema, so the whole list is extracted on one line instead
+        of a single ``tags[]`` element (which could only ever hold one item).
         """
         schema = {
             "type": "object",
@@ -92,14 +88,12 @@ class TestComputeTauAdversarial:
                 }
             },
         }
-        fields = flatten_schema(schema)
-        paths = {f.path: f for f in fields}
-        # flatten_schema should create 'tags[]' with type='string'
-        assert "tags[]" in paths, f"Expected 'tags[]' path, got: {sorted(paths)}"
-        tags_item = paths["tags[]"]
-        assert tags_item.type == "string", f"Expected item type 'string', got '{tags_item.type}'"
-        # The parent 'tags' should NOT appear as a field (it's descended into)
-        assert "tags" not in paths, "Parent array path should not emit a Field when items exist"
+        paths = {f.path: f for f in flatten_schema(schema)}
+        assert "tags" in paths, f"Expected 'tags' list-leaf, got: {sorted(paths)}"
+        tags = paths["tags"]
+        assert tags.type == "array", f"Expected type 'array', got '{tags.type}'"
+        assert tags.constraints["items"]["type"] == "string"
+        assert "tags[]" not in paths, "Scalar array should not emit a per-element [] Field"
 
     # maxItems not used as count in compute_tau
     def test_array_maxitems_not_used_as_count(self) -> None:
