@@ -17,13 +17,17 @@ Parsing rules
 * Right side is a raw string value, cast to the field's Python type.
 * ``NULL`` (case-insensitive) maps to Python ``None``.
 * ``NEEDS_REVALIDATION`` maps to the :data:`NEEDS_REVALIDATION` sentinel.
-* Arrays use bracket notation: ``[a, b, c]``.
+* Array values are JSON arrays on one line (a multi-line array is accumulated
+  until brackets balance); bare bracket lists ``[a, b, c]`` are also accepted.
 * Unknown paths are silently skipped (LLM may hallucinate paths).
 """
 
 from __future__ import annotations
 
+import json
 from typing import TYPE_CHECKING, Any
+
+import json_repair
 
 from nfield.exceptions import ExtractionError
 from nfield.validation._normalize import coerce_number
@@ -38,6 +42,7 @@ __all__ = [
     "parse_sfep_failures",
     "parse_sfep_line",
     "typecast",
+    "unclean_json_arrays",
 ]
 
 # ---------------------------------------------------------------------------
@@ -47,6 +52,9 @@ __all__ = [
 _SFEP_SEPARATOR: str = " = "
 _SFEP_NULL_SENTINEL: str = "NULL"
 _SFEP_NEEDS_REVALIDATION_SENTINEL: str = "NEEDS_REVALIDATION"
+# Currency symbols and thousands-grouping separators that mark a displayed number.
+_CURRENCY_SIGNS: str = "$" + chr(0x20AC) + chr(0xA3) + chr(0xA5) + chr(0x20B9) + chr(0x20A9)
+_GROUP_SIGNS: str = ",.' " + chr(0x2019) + chr(0xA0) + chr(0x202F)
 
 
 # ---------------------------------------------------------------------------
@@ -123,11 +131,16 @@ def parse_sfep(text: str, fields: list[Field]) -> dict[str, Any]:
     field_map: dict[str, Field] = {f.path: f for f in fields}
     result: dict[str, Any] = {}
 
-    for line in text.splitlines():
-        pair = parse_sfep_line(line)
+    lines = text.splitlines()
+    i = 0
+    while i < len(lines):
+        pair = parse_sfep_line(lines[i])
         if pair is None:
+            i += 1
             continue
         path, raw_value = pair
+        # Capture a multi-line JSON value whole (see _accumulate_value).
+        raw_value, i = _accumulate_value(raw_value, lines, i + 1, field_map)
         field = field_map.get(path)
         if field is None:
             continue
@@ -138,6 +151,52 @@ def parse_sfep(text: str, fields: list[Field]) -> dict[str, Any]:
             continue
 
     return result
+
+
+def _is_balanced(text: str) -> bool:
+    """Return ``True`` when brackets/braces in *text* are balanced (ignoring strings)."""
+    depth = 0
+    in_string = False
+    escaped = False
+    for ch in text:
+        if in_string:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == '"':
+                in_string = False
+            continue
+        if ch == '"':
+            in_string = True
+        elif ch in "[{":
+            depth += 1
+        elif ch in "]}":
+            depth -= 1
+    return depth <= 0
+
+
+def _accumulate_value(
+    raw_value: str, lines: list[str], start: int, field_map: dict[str, Field]
+) -> tuple[str, int]:
+    """Join continuation lines of a multi-line bracketed value; return (value, next_index).
+
+    Only a value that opens with ``[`` or ``{`` and is not yet balanced pulls in
+    following lines. Accumulation stops at balance, at end of input, or at the next
+    line that is itself a known ``field.path = value`` pair (so a later field is not
+    swallowed by a truncated array).
+    """
+    if raw_value[:1] not in "[{" or _is_balanced(raw_value):
+        return raw_value, start
+    buffer = [raw_value]
+    j = start
+    while j < len(lines) and not _is_balanced("\n".join(buffer)):
+        nxt = parse_sfep_line(lines[j])
+        if nxt is not None and nxt[0] in field_map:
+            break
+        buffer.append(lines[j])
+        j += 1
+    return "\n".join(buffer), j
 
 
 def count_unknown_paths(text: str, fields: list[Field]) -> int:
@@ -169,6 +228,46 @@ def count_unknown_paths(text: str, fields: list[Field]) -> int:
         if pair is not None and pair[0] not in known:
             unknown += 1
     return unknown
+
+
+def unclean_json_arrays(text: str, fields: list[Field]) -> set[str]:
+    """List-leaf array paths whose JSON value did not parse cleanly (repair was needed).
+
+    Covers both object arrays and scalar list-leaves - any array carrying an item
+    schema. A cleanly-parsed array is trustworthy; one that only survived repair (or
+    a comma-split fallback) may be partial or shattered, so the caller can re-sample
+    that leaf and keep the better result. Empty/absent values are not unclean.
+    """
+    field_map = {f.path: f for f in fields}
+    unclean: set[str] = set()
+    lines = text.splitlines()
+    i = 0
+    while i < len(lines):
+        pair = parse_sfep_line(lines[i])
+        if pair is None:
+            i += 1
+            continue
+        path, raw = pair
+        raw, i = _accumulate_value(raw, lines, i + 1, field_map)
+        field = field_map.get(path)
+        if (
+            field is None
+            or field.type != "array"
+            or not isinstance(field.constraints.get("items"), dict)
+        ):
+            continue
+        value = raw.strip()
+        if not value or value in {"[]", "null", "none"}:
+            continue
+        start, end = value.find("["), value.rfind("]")
+        if start == -1 or end <= start:
+            unclean.add(path)
+            continue
+        try:
+            json.loads(value[start : end + 1])
+        except json.JSONDecodeError:
+            unclean.add(path)
+    return unclean
 
 
 def parse_sfep_failures(text: str, fields: list[Field]) -> dict[str, str]:
@@ -436,6 +535,158 @@ def _cast_enum(raw: str, field: Field) -> str:
     )
 
 
+def _array_items_are_objects(field: Field) -> bool:
+    """Return ``True`` if an array field's items are objects (a JSON list-leaf).
+
+    The flattener stores the item schema under ``constraints["items"]``. An item
+    that is an object - directly (``type: object`` / ``properties``) or via a
+    ``$ref`` (resolved object) - marks a variable-length array of objects whose
+    value is a JSON array, not a bracketed scalar list.
+    """
+    items = field.constraints.get("items")
+    if not isinstance(items, dict):
+        return False
+    return "$ref" in items or items.get("type") == "object" or "properties" in items
+
+
+def _cast_object_array(raw: str, field: Field) -> list[Any]:
+    """Parse a JSON array of objects, tolerating text around the array.
+
+    Args:
+        raw: The stripped SFEP value, expected to be a JSON array of objects.
+        field: Field descriptor (for the error path/message).
+
+    Returns:
+        A list of dict elements (empty list when the value is empty or ``[]``).
+
+    Raises:
+        ExtractionError: If a non-empty value cannot be parsed as a JSON array.
+    """
+    if not raw or raw in {"[]", "null", "none"}:
+        return []
+    start = raw.find("[")
+    if start == -1:
+        raise ExtractionError(
+            f"Array field expected a JSON array of objects, got {raw[:40]!r}",
+            field=field.path,
+        )
+    end = raw.rfind("]")
+    parsed: Any = None
+    if end > start:
+        try:
+            parsed = json.loads(raw[start : end + 1])
+        except json.JSONDecodeError:
+            parsed = None
+    if not isinstance(parsed, list):
+        # Repair miscounted braces and mid-list truncation; salvage as last resort.
+        repaired = json_repair.loads(raw[start:])
+        parsed = repaired if isinstance(repaired, list) else _salvage_objects(raw[start + 1 :])
+    # Repair can wrap a mis-braced group in a stray list; flatten one level.
+    props = _item_properties(field)
+    rows: list[dict[str, Any]] = []
+    for item in parsed:
+        if isinstance(item, dict):
+            rows.append(item)
+        elif isinstance(item, list):
+            rows.extend(x for x in item if isinstance(x, dict))
+    if not rows and "{" in raw[start:]:
+        # Object rows were emitted but none survived repair: fail so it re-extracts.
+        raise ExtractionError(
+            f"Array field could not recover any object rows from {raw[:40]!r}",
+            field=field.path,
+        )
+    return [_cast_item(row, props) for row in rows]
+
+
+def _salvage_objects(inner: str) -> list[dict[str, Any]]:
+    """Recover the complete top-level ``{...}`` objects from a truncated JSON array body.
+
+    Walks the string tracking brace depth and string context, parsing each balanced
+    object as it closes; stops at the first incomplete one. A model that emitted 8 of
+    12 rows before running out of output tokens keeps its 8 instead of losing all.
+    """
+    objects: list[dict[str, Any]] = []
+    depth = 0
+    obj_start = -1
+    in_string = False
+    escaped = False
+    for i, ch in enumerate(inner):
+        if in_string:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == '"':
+                in_string = False
+            continue
+        if ch == '"':
+            in_string = True
+        elif ch == "{":
+            if depth == 0:
+                obj_start = i
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0 and obj_start >= 0:
+                try:
+                    parsed = json.loads(inner[obj_start : i + 1])
+                except json.JSONDecodeError:
+                    break
+                if isinstance(parsed, dict):
+                    objects.append(parsed)
+                obj_start = -1
+    return objects
+
+
+def _item_properties(field: Field) -> dict[str, Any]:
+    """Return the item object's property schemas for an object array, else empty."""
+    items = field.constraints.get("items")
+    if isinstance(items, dict):
+        props = items.get("properties")
+        if isinstance(props, dict):
+            return props
+    return {}
+
+
+def _cast_item(item: dict[str, Any], props: dict[str, Any]) -> dict[str, Any]:
+    """Coerce each item field to its schema type (numbers out of comma strings)."""
+    return {key: _cast_item_value(value, props.get(key)) for key, value in item.items()}
+
+
+def _cast_item_value(value: Any, prop: Any) -> Any:
+    """Coerce one item value to its property schema type; non-strings pass through."""
+    if not isinstance(value, str):
+        return value
+    prop_type = None
+    if isinstance(prop, dict):
+        prop_type = prop.get("type")
+        if isinstance(prop_type, list):
+            prop_type = next((t for t in prop_type if t != "null"), None)
+    # Typed numbers always coerce; untyped only on a display marker, so codes stay strings.
+    if prop_type in ("number", "integer") or (prop_type is None and _has_number_marker(value)):
+        number = coerce_number(value)
+        if number is not None:
+            if prop_type == "integer" or number.is_integer():
+                return int(number)
+            return number
+    return value
+
+
+def _has_number_marker(value: str) -> bool:
+    """True when *value* shows a displayed-number marker (grouping/currency/%/parens)."""
+    if not any(ch.isdigit() for ch in value):
+        return False
+    if any(ch in _CURRENCY_SIGNS for ch in value) or value.rstrip().endswith("%"):
+        return True
+    if value.startswith("(") and value.endswith(")"):
+        return True
+    # A grouping separator sitting between two digits (19,715 / 1 234 / 1'234).
+    return any(
+        value[i] in _GROUP_SIGNS and value[i - 1].isdigit() and value[i + 1].isdigit()
+        for i in range(1, len(value) - 1)
+    )
+
+
 def _cast_array(raw: str, field: Field) -> list[Any]:
     """Parse bracket-notation array string into a Python list.
 
@@ -458,6 +709,23 @@ def _cast_array(raw: str, field: Field) -> list[Any]:
         ['alpha', 'beta', 'gamma']
     """
     stripped = raw.strip()
+
+    # An object array carries its whole value as one JSON array; parse it as JSON.
+    if _array_items_are_objects(field):
+        return _cast_object_array(stripped, field)
+
+    # JSON-first: quoted items containing commas survive the comma split below.
+    if stripped.startswith("[") and stripped.endswith("]"):
+        try:
+            parsed = json.loads(stripped)
+        except json.JSONDecodeError:
+            parsed = None
+        if isinstance(parsed, list):
+            item_type = _get_array_item_type(field)
+            return [
+                _cast_array_element(el, item_type, field) if isinstance(el, str) else el
+                for el in parsed
+            ]
 
     # Normalise arrays the model emitted without brackets: a bare comma list
     # becomes a list; a single bare value becomes a one-element list.

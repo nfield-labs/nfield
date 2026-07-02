@@ -29,6 +29,36 @@ def make_field(path: str, ftype: str, constraints: dict | None = None) -> Field:
     )
 
 
+class TestMultilineObjectArray:
+    """parse_sfep joins a JSON array/object value the model pretty-printed over lines."""
+
+    def _rows_field(self) -> Field:
+        items = {
+            "type": "object",
+            "properties": {"rank": {"type": "integer"}, "name": {"type": "string"}},
+        }
+        return make_field("rows", "array", {"items": items})
+
+    def test_multiline_array_is_joined_and_parsed(self) -> None:
+        field = self._rows_field()
+        text = 'rows = [\n  {"rank": 1, "name": "Alice"},\n  {"rank": 2, "name": "Bob"}\n]'
+        result = parse_sfep(text, [field])
+        assert result["rows"] == [{"rank": 1, "name": "Alice"}, {"rank": 2, "name": "Bob"}]
+
+    def test_multiline_array_stops_at_next_field(self) -> None:
+        rows = self._rows_field()
+        title = make_field("title", "string")
+        # A truncated (never-closing) array must not swallow the following field line.
+        text = 'rows = [\n  {"rank": 1, "name": "Alice"},\ntitle = Champs'
+        result = parse_sfep(text, [rows, title])
+        assert result.get("title") == "Champs"
+
+    def test_singleline_array_still_parses(self) -> None:
+        field = self._rows_field()
+        result = parse_sfep('rows = [{"rank": 1, "name": "Alice"}]', [field])
+        assert result["rows"] == [{"rank": 1, "name": "Alice"}]
+
+
 class TestCountUnknownPaths:
     """count_unknown_paths - the format-drift signal for out-of-schema paths."""
 
@@ -262,6 +292,89 @@ class TestTypecastArray:
         f = make_field("tags", "array")
         result = typecast("a, b, c", f)
         assert result == ["a", "b", "c"]
+
+
+class TestTypecastObjectArray:
+    def _field(self) -> Field:
+        return make_field(
+            "rows",
+            "array",
+            {"items": {"type": "object", "properties": {"seg": {"type": "string"}}}},
+        )
+
+    def test_parses_json_array_of_objects(self):
+        result = typecast('[{"seg": "ISG", "v": 1}, {"seg": "CSG", "v": 2}]', self._field())
+        assert result == [{"seg": "ISG", "v": 1}, {"seg": "CSG", "v": 2}]
+
+    def test_object_array_via_ref_items(self):
+        f = make_field("rows", "array", {"items": {"$ref": "#/$defs/Entry"}})
+        assert typecast('[{"a": 1}]', f) == [{"a": 1}]
+
+    def test_empty_object_array(self):
+        assert typecast("[]", self._field()) == []
+
+    def test_tolerates_text_around_array(self):
+        assert typecast('here: [{"seg": "X"}] end', self._field()) == [{"seg": "X"}]
+
+    def test_truncated_array_salvages_complete_rows(self):
+        # The model ran out of output mid-list; the complete objects must survive.
+        truncated = '[{"seg": "A"}, {"seg": "B"}, {"seg": "C'
+        result = typecast(truncated, self._field())
+        assert result[:2] == [{"seg": "A"}, {"seg": "B"}]
+
+    def test_truncated_array_with_brace_in_string_value(self):
+        # A "}" inside a string value must not fool the repair's brace counter.
+        truncated = '[{"seg": "a}b"}, {"seg": "next'
+        assert {"seg": "a}b"} in typecast(truncated, self._field())
+
+    def test_misbraced_nested_array_is_repaired(self):
+        # LLMs miscount braces in deeply nested single-line JSON ("}}}]" for "}}]}");
+        # both entries must still be recovered, not lost to a parse failure.
+        misbraced = '[{"seg": "A", "sub": [{"x": 1}]}}}], {"seg": "B", "sub": []}]'
+        result = typecast(misbraced, self._field())
+        assert [row["seg"] for row in result] == ["A", "B"]
+
+    def test_inner_values_typecast_per_item_schema(self):
+        f = make_field(
+            "rows",
+            "array",
+            {
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "value": {"type": "integer"},
+                        "scale": {"type": "number"},
+                        "seg": {"type": "string"},
+                    },
+                }
+            },
+        )
+        result = typecast('[{"value": "25,026", "scale": "1000000", "seg": "ISG"}]', f)
+        assert result == [{"value": 25026, "scale": 1000000, "seg": "ISG"}]
+        assert isinstance(result[0]["value"], int)
+
+    def test_untyped_numeric_item_values_coerced_but_strings_kept(self):
+        # Loosely-typed item schema: numeric-looking values coerce (comma stripped),
+        # while dates / names / codes stay strings.
+        f = make_field(
+            "rows",
+            "array",
+            {
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "value": {"description": "amount"},
+                        "period": {"type": "string"},
+                        "name": {"type": "string"},
+                    },
+                }
+            },
+        )
+        result = typecast('[{"value": "19,715", "period": "FY2025 Q2", "name": "ISG Group"}]', f)
+        assert result == [{"value": 19715, "period": "FY2025 Q2", "name": "ISG Group"}]
+
+    def test_scalar_elements_dropped_not_fatal(self):
+        assert typecast('[{"seg": "X"}, 7]', self._field()) == [{"seg": "X"}]
 
 
 class TestTypecastSentinels:
