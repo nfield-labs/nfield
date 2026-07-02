@@ -192,7 +192,8 @@ def _format_constraints(constraints: dict[str, Any]) -> str:
     parts: list[str] = []
     # Track which keys we render with bespoke phrasing; everything else falls
     # through the generic catch-all so NO constraint is ever silently dropped.
-    handled: set[str] = set()
+    # "items" is rendered separately by _format_array_items (the element shape).
+    handled: set[str] = {"items"}
 
     if "const" in constraints:
         parts.append(f"must equal {constraints['const']}")
@@ -278,6 +279,58 @@ _ITEM_CONSTRAINT_KEYS: frozenset[str] = frozenset(
 _MAX_EXAMPLES_SHOWN: int = 3
 
 
+# Recursion bound for nested item shapes; deeper levels render as bare type labels.
+_MAX_ITEM_DEPTH: int = 4
+
+
+def _item_field_type(sub: Any) -> str:
+    """Return a short type label for one property of an array item's object schema."""
+    if not isinstance(sub, dict):
+        return "string"
+    t = sub.get("type", "string")
+    if isinstance(t, list):
+        non_null = [x for x in t if x != "null"]
+        return str(non_null[0]) if non_null else "null"
+    return str(t)
+
+
+def _shape(node: Any, depth: int) -> str:
+    """Recursive shape of a schema node: objects and arrays expand their inner keys.
+
+    A nested object renders ``object {k: <shape>, ...}`` and a nested list renders
+    ``array of <shape>`` so the model sees the full structure it must emit, not just
+    ``object`` / ``array``. Recursion stops at :data:`_MAX_ITEM_DEPTH`.
+    """
+    if not isinstance(node, dict):
+        return "string"
+    if node.get("type") == "object" or "properties" in node:
+        props = node.get("properties")
+        if isinstance(props, dict) and props and depth < _MAX_ITEM_DEPTH:
+            inner = ", ".join(_describe_item_field(n, sub, depth + 1) for n, sub in props.items())
+            return f"object {{{inner}}}"
+        return "object"
+    if node.get("type") == "array" or "items" in node:
+        items = node.get("items")
+        if isinstance(items, dict) and depth < _MAX_ITEM_DEPTH:
+            return f"array of {_shape(items, depth + 1)}"
+        return "array"
+    return _item_field_type(node)
+
+
+def _describe_item_field(name: str, sub: Any, depth: int = 1) -> str:
+    """Describe one key of an array item's object: name, (recursive) shape, enum, meaning."""
+    text = f"{name}: {_shape(sub, depth)}"
+    if isinstance(sub, dict):
+        enum = sub.get("enum")
+        if isinstance(enum, list) and enum:
+            text += f" one of [{', '.join(str(o) for o in enum)}]"
+        desc = _extract_description(sub)
+        if desc:
+            # Kept in full: per-key conventions tell the model which rows to emit.
+            text += f" ({desc})"
+    return text
+
+
 def _format_array_items(field: Field) -> str:
     """Describe an array field's element schema (type, constraints, meaning).
 
@@ -290,9 +343,15 @@ def _format_array_items(field: Field) -> str:
     """
     if field.type != "array":
         return ""
-    items = field.schema_node.get("items")
+    # Prefer the flattener's resolved item schema so a $ref shows its real shape.
+    items = field.constraints.get("items")
+    if not isinstance(items, dict):
+        items = field.schema_node.get("items")
     if not isinstance(items, dict):
         return ""
+    # Render the full recursive shape so nested entries show their own keys.
+    if items.get("type") == "object" or "properties" in items:
+        return _shape(items, 0)
     elem_type = items.get("type", "string")
     elem_type = elem_type[0] if isinstance(elem_type, list) and elem_type else elem_type
     text = str(elem_type)

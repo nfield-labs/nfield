@@ -56,14 +56,27 @@ written. {sourcing_rule}
 - For integer fields: write ALL digits with no quotes, commas, or units, keeping every \
 trailing zero (e.g. 42; and 2,042,137,000 USD becomes 2042137000, not 2042137)
 - For number fields: write with decimals if needed (e.g. 3.14)
-- For array fields: use [item1, item2, item3] notation
+- For array fields of scalars: output ONE line of valid JSON - an array with every item as \
+a double-quoted string (numbers may be bare), e.g. field.path = ["alpha, beta corp", "gamma"]. \
+Emit EVERY item the document lists, in document order, however many there are - never stop \
+early, never summarise, never skip items.
+- For array fields whose items are objects (shown as "items: object {{...}}"): output the \
+value as ONE line of compact, valid JSON - a single array of objects - using the exact keys \
+and the nested shape shown. Emit ONE object for EVERY distinct entry the document lists \
+(every row, record, period, or line item) and never merge or summarise several entries into \
+one. When a key's shape is itself "object {{...}}" or "array of object {{...}}", fill it with \
+the matching nested JSON object or array, not a flat value. Close every {{ with }} and every \
+[ with ] in the correct order so the line is parseable JSON; use [] only when the document \
+reports no such entries.
 - For enum fields: use one of the exact allowed values listed in the schema
 - Preserve exact string values - do not paraphrase or translate
 - Do not include explanations, only output field = value lines
 
-Example (for two fields named a.x and a.y):
+Example (fields a.x, a.y, and an object array people with items object \
+{{name: string, roles: array of object {{title: string}}}}):
 a.x = 42
 a.y = NULL
+people = [{{"name": "Ann", "roles": [{{"title": "CEO"}}, {{"title": "Chair"}}]}}, {{"name": "Bo", "roles": [{{"title": "CTO"}}]}}]
 
 --- BEGIN EXTRACTION ---"""
 
@@ -90,7 +103,9 @@ OUTPUT FORMAT - follow exactly:
 - For boolean fields: use true or false (lowercase)
 - For integer fields: write ALL digits with no quotes, commas, or units (e.g. 42)
 - For number fields: write with decimals if needed (e.g. 3.14)
-- For array fields: use [item1, item2, item3] notation
+- For array fields of scalars: use [item1, item2, item3] notation
+- For array fields whose items are objects: output a JSON array of objects on that one \
+line, one object per entry, e.g. field.path = [{"a": 1}, {"a": 2}]; use [] if none.
 - For enum fields: use one of the exact allowed values listed in the schema
 - Do not include explanations, only output field = value lines
 
