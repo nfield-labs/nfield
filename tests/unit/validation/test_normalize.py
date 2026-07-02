@@ -28,6 +28,14 @@ class TestNumbers:
             ("-$50", -50.0),
             ("$-50", -50.0),
             ("($1,234.56)", -1234.56),
+            # International grouping: European dot, both-separator (last is decimal),
+            # Swiss apostrophe, space, and Indian 2-2-3.
+            ("1.234.568", 1234568.0),
+            ("1.234,56", 1234.56),
+            ("1,234.56", 1234.56),
+            ("1'234'567", 1234567.0),
+            ("1 234 567", 1234567.0),
+            ("12,34,567.89", 1234567.89),
         ],
     )
     def test_number_formats(self, raw, expected):
