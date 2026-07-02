@@ -22,6 +22,7 @@ from nfield.extraction._sfep import (
     count_unknown_paths,
     parse_sfep,
     parse_sfep_failures,
+    unclean_json_arrays,
 )
 from nfield.validation._normalize import normalize_value
 
@@ -133,9 +134,62 @@ async def _extract_leaf(
 
     state.unknown_lines += count_unknown_paths(raw_text, leaf.fields)
     extracted = parse_sfep(raw_text, leaf.fields)
+    state.record_calls("extract")
+    # An array that needed JSON repair may be partial; re-sample and keep the best.
+    if not state.in_recovery:
+        await _reparse_unclean_arrays(raw_text, leaf, provider, state, extracted)
     _write_extracted_to_blackboard(extracted, state)
     _mark_cast_failures(raw_text, leaf.fields, extracted, state)
-    state.record_calls("extract")
+
+
+# Extra samples for a leaf whose array value needed repair; independent retries are usually clean.
+_MAX_ARRAY_RESAMPLES: int = 2
+
+
+async def _reparse_unclean_arrays(
+    raw_text: str,
+    leaf: CapacityLeaf,
+    provider: LLMProvider,
+    state: PipelineState,
+    extracted: dict[str, Any],
+) -> None:
+    """Re-sample the leaf when an array value needed JSON repair; adopt the first clean one.
+
+    For each list-leaf array whose emission did not parse as valid JSON, take up to
+    :data:`_MAX_ARRAY_RESAMPLES` more samples and adopt the first that parses cleanly
+    (falling back to the fullest otherwise) - turning an intermittent malformed emission
+    into a reliable one at the cost of a few extra calls only when needed.
+    """
+    pending = unclean_json_arrays(raw_text, leaf.fields)
+    if not pending:
+        return
+    for _ in range(_MAX_ARRAY_RESAMPLES):
+        try:
+            raw_n = await _call_provider(leaf, provider, state)
+        except Exception as exc:
+            logger.warning("Array re-sample failed on leaf %d: %s", leaf.leaf_id, exc)
+            return
+        state.record_calls("array_resample")
+        extracted_n = parse_sfep(raw_n, leaf.fields)
+        unclean_n = unclean_json_arrays(raw_n, leaf.fields)
+        still_pending: set[str] = set()
+        for path in pending:
+            new_value = extracted_n.get(path)
+            if not isinstance(new_value, list):
+                still_pending.add(path)
+                continue
+            old_value = extracted.get(path)
+            old_rows = len(old_value) if isinstance(old_value, list) else -1
+            if path not in unclean_n and (new_value or old_rows <= 0):
+                # Adopt the clean sample, unless empty while repair recovered rows.
+                extracted[path] = new_value
+                continue
+            if len(new_value) > old_rows:
+                extracted[path] = new_value  # still unclean; keep the fullest so far
+            still_pending.add(path)
+        pending = still_pending
+        if not pending:
+            return
 
 
 async def _extract_leaf_self_consistent(
