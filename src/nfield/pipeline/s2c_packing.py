@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import math
 from collections import deque
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from nfield.extraction._papt import TemplateType, describe_field
 from nfield.extraction._prompt import builtin_system_message
@@ -67,6 +67,14 @@ _SCHEMA_DESC_FORMAT_TOKENS: int = 4
 # length. The path is echoed in every line (computed dynamically), and this is a
 # small fixed allowance for the " = " separator and newline on top of it.
 _SFEP_LINE_OVERHEAD_TOKENS: int = 8
+# Assumed rows for an array without maxItems/minItems bounds.
+_DEFAULT_ARRAY_ITEMS: int = 12
+_MAX_ARRAY_ITEMS_CAP: int = 64  # bound the budget when maxItems is large/absent
+# Recursion bound for the per-item output estimate; deeper levels cost as flat values.
+_MAX_OUTPUT_ITEM_DEPTH: int = 4
+# Per emitted item-field JSON cost: key + value + ": " + ", ".
+_ARRAY_ITEM_VALUE_CHARS: int = 12
+_ARRAY_ITEM_FIELD_PUNCT_CHARS: int = 6
 # English-average characters per token; used only as a fallback before the
 # model-specific ratio measured at calibration is threaded into this estimate.
 _FALLBACK_CHARS_PER_TOKEN: float = 4.0
@@ -83,11 +91,12 @@ _DIFFICULTY_WEIGHT: float = 1.0
 
 
 def _reliability_load(fields: list[Field]) -> float:
-    """Difficulty-weighted reliability load of a field set: ``Σ (1 + λ·D(f))``.
+    """Difficulty-weighted reliability load of a field set.
 
-    Replaces a raw field count as the leaf-size limit, so a leaf can hold many
-    easy fields or fewer hard ones - the model's reliable capacity depends on both
-    how many fields and how hard they are, not the count alone.
+    A scalar field costs ``1 + λ·D(f)``. An object array costs its expected row
+    count, since the model must enumerate that many rows reliably in one call - so
+    an array-heavy leaf is split into more calls, each small enough to enumerate in
+    full, rather than one call that runs out of attention on later arrays.
 
     Args:
         fields: The fields to weigh.
@@ -95,7 +104,13 @@ def _reliability_load(fields: list[Field]) -> float:
     Returns:
         The summed reliability load (>= ``len(fields)``).
     """
-    return sum(1.0 + _DIFFICULTY_WEIGHT * f.difficulty for f in fields)
+    total = 0.0
+    for f in fields:
+        if _object_array_item_props(f) is not None:
+            total += _expected_array_items(f)
+        else:
+            total += 1.0 + _DIFFICULTY_WEIGHT * f.difficulty
+    return total
 
 
 # ---------------------------------------------------------------------------
@@ -139,7 +154,76 @@ def _field_output_tokens(field: Field, chars_per_token: float) -> int:
         Estimated output token count for this field's SFEP line.
     """
     cpt = chars_per_token or _FALLBACK_CHARS_PER_TOKEN
+    items = field.constraints.get("items") if field.type == "array" else None
+    if isinstance(items, dict):
+        rows = _expected_array_items(field)
+        # Object rows recurse into their nested shape; scalar rows cost one value each.
+        if items.get("type") == "object" or "properties" in items:
+            per_item = _item_output_chars(items, 1)
+        else:
+            per_item = _ARRAY_ITEM_VALUE_CHARS + _ARRAY_ITEM_FIELD_PUNCT_CHARS
+        return rows * math.ceil(per_item / cpt) + _SFEP_LINE_OVERHEAD_TOKENS
     return math.ceil(len(field.path) / cpt) + math.ceil(field.tau) + _SFEP_LINE_OVERHEAD_TOKENS
+
+
+def _item_output_chars(node: dict[str, Any], depth: int) -> int:
+    """Emitted-JSON chars for one value of *node*, recursing into nested shapes.
+
+    A nested object sums its properties; a nested array multiplies its predicted row
+    count by its item cost, so nested volume is charged in full - a flat estimate
+    under-budgets and truncates mid-list. Recursion stops at
+    :data:`_MAX_OUTPUT_ITEM_DEPTH`.
+    """
+    if not isinstance(node, dict):
+        return _ARRAY_ITEM_VALUE_CHARS
+    if (node.get("type") == "object" or "properties" in node) and depth < _MAX_OUTPUT_ITEM_DEPTH:
+        props = node.get("properties")
+        if isinstance(props, dict) and props:
+            return sum(
+                len(name) + _ARRAY_ITEM_FIELD_PUNCT_CHARS + _item_output_chars(sub, depth + 1)
+                for name, sub in props.items()
+            )
+        return _ARRAY_ITEM_VALUE_CHARS
+    if (node.get("type") == "array" or "items" in node) and depth < _MAX_OUTPUT_ITEM_DEPTH:
+        items = node.get("items")
+        if isinstance(items, dict):
+            rows = _rows_from_bounds(node)
+            return rows * (_item_output_chars(items, depth + 1) + _ARRAY_ITEM_FIELD_PUNCT_CHARS)
+        return _ARRAY_ITEM_VALUE_CHARS
+    return _ARRAY_ITEM_VALUE_CHARS
+
+
+def _object_array_item_props(field: Field) -> list[str] | None:
+    """Return the item object's property names for an array-of-objects, else ``None``."""
+    items = _object_array_items(field)
+    return list(items["properties"]) if items is not None else None
+
+
+def _object_array_items(field: Field) -> dict[str, Any] | None:
+    """Return the item object schema (with ``properties``) for an array-of-objects."""
+    if field.type != "array":
+        return None
+    items = field.constraints.get("items")
+    if not isinstance(items, dict):
+        return None
+    props = items.get("properties")
+    return items if isinstance(props, dict) and props else None
+
+
+def _expected_array_items(field: Field) -> int:
+    """Predicted row count for an object array, from schema bounds then a default."""
+    return _rows_from_bounds(field.constraints)
+
+
+def _rows_from_bounds(node: dict[str, Any]) -> int:
+    """Predicted row count for one array level, from maxItems/minItems then a default."""
+    hi = node.get("maxItems")
+    if isinstance(hi, int) and hi > 0:
+        return min(hi, _MAX_ARRAY_ITEMS_CAP)
+    lo = node.get("minItems")
+    if isinstance(lo, int) and lo > _DEFAULT_ARRAY_ITEMS:
+        return min(lo, _MAX_ARRAY_ITEMS_CAP)
+    return _DEFAULT_ARRAY_ITEMS
 
 
 def compute_K_min(  # noqa: N802
@@ -623,10 +707,22 @@ def _leaf_safe_output(
     Returns:
         Per-leaf ``max_tokens`` in ``[_MIN_SAFE_OUTPUT_TOKENS, output_ceiling]``.
     """
+    # An unbounded list may hold any row count; reserve the full ceiling instead.
+    if any(_is_unbounded_list_leaf(f) for f in fields):
+        return max(_MIN_SAFE_OUTPUT_TOKENS, int(output_ceiling))
     need = sum(_field_output_tokens(f, chars_per_token) for f in fields)
     variance = sum(f.var_tau for f in fields)
     sized = math.ceil(need + z_eff * math.sqrt(variance))
     return max(_MIN_SAFE_OUTPUT_TOKENS, min(int(output_ceiling), sized))
+
+
+def _is_unbounded_list_leaf(field: Field) -> bool:
+    """True for an array list-leaf (object or scalar items) with no maxItems bound."""
+    return (
+        field.type == "array"
+        and isinstance(field.constraints.get("items"), dict)
+        and not isinstance(field.constraints.get("maxItems"), int)
+    )
 
 
 def _greedy_ffd(

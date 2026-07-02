@@ -8,6 +8,8 @@ from nfield.pipeline.s1_schema import run_stage_1
 from nfield.pipeline.s2a_structure import run_stage_2a
 from nfield.pipeline.s2b_prepass import run_stage_2b
 from nfield.pipeline.s2c_packing import (
+    _field_output_tokens,
+    _reliability_load,
     compute_execution_order,
     compute_K_min,
     fits,
@@ -40,6 +42,51 @@ SIMPLE_SCHEMA = {
 
 
 _CPT = 4.0  # chars-per-token for these unit tests (short paths → ~1 path token)
+
+
+class TestObjectArrayOutputBudget:
+    def test_object_array_field_costs_many_rows(self):
+        item = {
+            "type": "object",
+            "properties": {"seg": {"type": "string"}, "val": {"type": "number"}},
+        }
+        arr = Field(
+            path="rows", type="array", constraints={"items": item}, parent_path="", schema_node={}
+        ).with_tau(tau=5.0, var_tau=0.5)
+        scalar = _make_field("name", tau=5.0)
+        # An object array is emitted as a whole JSON list, so its output must be
+        # budgeted far above a single scalar line, else packing starves it.
+        assert _field_output_tokens(arr, _CPT) > 5 * _field_output_tokens(scalar, _CPT)
+
+    def test_max_items_lowers_the_row_budget(self):
+        item = {"type": "object", "properties": {"seg": {"type": "string"}}}
+        big = Field("big", "array", {"items": item}, "", {}).with_tau(tau=5.0, var_tau=0.5)
+        capped = Field("capped", "array", {"items": item, "maxItems": 2}, "", {}).with_tau(
+            tau=5.0, var_tau=0.5
+        )
+        # A small maxItems predicts fewer rows, so the field costs less output.
+        assert _field_output_tokens(capped, _CPT) < _field_output_tokens(big, _CPT)
+
+    def test_object_array_reliability_load_scales_with_rows(self):
+        item = {"type": "object", "properties": {"seg": {"type": "string"}}}
+        arr = Field("rows", "array", {"items": item}, "", {}).with_tau(tau=5.0, var_tau=0.5)
+        scalar = _make_field("name", tau=5.0)
+        # An object array must count as many rows, not one, so array-heavy leaves
+        # split into more calls (each small enough to enumerate every row).
+        assert _reliability_load([arr]) > 5 * _reliability_load([scalar])
+
+    def test_scalar_array_budgets_for_multiple_items(self):
+        arr = Field(
+            path="tags",
+            type="array",
+            constraints={"items": {"type": "string"}},
+            parent_path="",
+            schema_node={},
+        ).with_tau(tau=5.0, var_tau=0.5)
+        scalar = _make_field("name", tau=5.0)
+        # A scalar array is a list-leaf emitting every item on one line, so its output
+        # budget covers many items - more than a single scalar value.
+        assert _field_output_tokens(arr, _CPT) > _field_output_tokens(scalar, _CPT)
 
 
 class TestComputeKMin:
