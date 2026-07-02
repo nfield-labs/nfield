@@ -21,7 +21,9 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
 ]
-dependencies = []
+dependencies = [
+    "json-repair>=0.61.0",
+]
 
 # Runtime features a user opts into; published to PyPI as `nfield[<name>]`.
 [project.optional-dependencies]
@@ -65,6 +67,9 @@ bench = [
     "langstruct; python_version >= '3.12'",
     "contextgem",
     "dspy",
+    "pypdfium2",
+    "pymupdf>=1.28",
+    "rapidocr-onnxruntime>=1.4.4",
 ]
 
 [tool.hatch.version]
@@ -77,6 +82,9 @@ include = ["src/nfield/py.typed"]
 [tool.ruff]
 line-length = 99
 target-version = "py310"
+# Vendored, cloned benchmark repos (e.g. ContextualAI/extract-bench) keep their own
+# style; they are run, not maintained here, so they stay out of the lint gate.
+extend-exclude = ["benchmark/external/"]
 
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "B", "UP", "SIM", "RUF", "N", "C4", "TCH", "PT", "PERF"]
@@ -100,7 +108,7 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 # Dataset generation scripts fetch from external services and are run by hand,
 # not type-checked with the library's strictness.
-exclude = ["benchmark/datasets/gen/"]
+exclude = ["benchmark/datasets/gen/", "benchmark/external/"]
 
 [[tool.mypy.overrides]]
 module = ["groq.*", "openai.*"]
@@ -120,7 +128,7 @@ ignore_missing_imports = true
 # The benchmark adapters (bench dependency group) import these; they ship no type stubs
 # and are imported lazily inside the benchmark, never by the library itself.
 [[tool.mypy.overrides]]
-module = ["dspy.*", "langstruct.*", "langextract.*", "contextgem.*"]
+module = ["dspy.*", "langstruct.*", "langextract.*", "contextgem.*", "pypdfium2.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
