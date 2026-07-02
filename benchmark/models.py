@@ -43,6 +43,13 @@ _REGISTRY: dict[str, ModelLimits] = {
     "llama-3.3-70b-versatile": ModelLimits(
         context_window=131_072, max_output_tokens=32_768, reliable_output_tokens=24_000
     ),
+    # Qwen3.6-27B on Groq: full 131k context; reliable single-call output held to
+    # 24k like the Llama row, since Groq aborts a request whose output overruns.
+    # Keyed with the provider's own "qwen/" namespace, since native_limits strips
+    # only the leading "groq/" routing prefix.
+    "qwen/qwen3.6-27b": ModelLimits(
+        context_window=131_072, max_output_tokens=32_768, reliable_output_tokens=24_000
+    ),
 }
 
 

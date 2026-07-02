@@ -206,7 +206,9 @@ def score(
         >>> report.value_accuracy
         1.0
     """
-    flat = _flatten(extracted)
+    # Array rows are matched by best field-overlap, not position, so a correct list
+    # read in a different order is not penalised (VAREX; ExtractBench array_llm).
+    flat = _align_flat_arrays(_flatten(extracted), gold)
     prefixes = _container_prefixes(flat)
     scores: list[FieldScore] = []
     for path, gold_value in gold.items():
@@ -214,7 +216,10 @@ def score(
         field_type = _classify(node, gold_value)
         predicted = flat.get(path)
         shape_conflict = predicted is None and path in prefixes
-        outcome = _judge(gold_value, predicted, field_type, numeric_tolerance, shape_conflict)
+        eval_config = node.get("evaluation_config") if isinstance(node, dict) else None
+        outcome = _judge(
+            gold_value, predicted, field_type, numeric_tolerance, shape_conflict, eval_config
+        )
         scores.append(FieldScore(path, field_type, gold_value, predicted, outcome))
 
     return _aggregate(tuple(scores), call_failed)
@@ -259,6 +264,7 @@ def _judge(
     field_type: FieldType,
     numeric_tolerance: float,
     shape_conflict: bool,
+    eval_config: str | None = None,
 ) -> Outcome:
     # _flatten never stores an empty value, so an absent leaf arrives here as
     # None. shape_conflict distinguishes a true omission from a wrong-shape path
@@ -269,12 +275,37 @@ def _judge(
         return Outcome.STRUCTURAL if shape_conflict else Outcome.OMISSION
     return (
         Outcome.CORRECT
-        if _matches(gold, predicted, field_type, numeric_tolerance)
+        if _matches(gold, predicted, field_type, numeric_tolerance, eval_config)
         else Outcome.ACCURACY
     )
 
 
-def _matches(gold: Any, predicted: Any, field_type: FieldType, numeric_tolerance: float) -> bool:
+# Minimum normalised length for the containment rule, so a trivially short value
+# ("a", "NY") cannot claim semantic equality by being a substring of anything.
+_SEMANTIC_CONTAINMENT_MIN_CHARS: int = 4
+# string_fuzzy tolerates more drift than the long-string default (per the
+# benchmark's own tiering: exact < fuzzy < semantic).
+_FUZZY_MAX_DISTANCE: float = 0.2
+
+
+def _matches(
+    gold: Any,
+    predicted: Any,
+    field_type: FieldType,
+    numeric_tolerance: float,
+    eval_config: str | None = None,
+) -> bool:
+    # ExtractBench schemas annotate per-field judging semantics; the official judge
+    # accepts meaning-equivalence for these tiers, so a strict exact match here
+    # would under-score relative to the benchmark's own rules.
+    if eval_config == "string_semantic" and isinstance(gold, str) and isinstance(predicted, str):
+        g, p = _norm(gold), _norm(predicted)
+        shorter = min(len(g), len(p))
+        if shorter >= _SEMANTIC_CONTAINMENT_MIN_CHARS and (g in p or p in g):
+            return True
+        return _edit_ratio(g, p) <= LONG_STRING_MAX_DISTANCE
+    if eval_config == "string_fuzzy" and isinstance(gold, str) and isinstance(predicted, str):
+        return _edit_ratio(_norm(gold), _norm(predicted)) <= _FUZZY_MAX_DISTANCE
     if field_type is FieldType.BOOLEAN:
         return _as_bool(gold) == _as_bool(predicted)
     if field_type is FieldType.INTEGER:
@@ -290,6 +321,23 @@ def _matches(gold: Any, predicted: Any, field_type: FieldType, numeric_tolerance
 
 def _classify(node: dict[str, Any] | None, gold_value: Any) -> FieldType:
     if node is not None:
+        # A field typed via anyOf/oneOf (commonly [T, null]) carries its real type in
+        # the first non-null option; without unwrapping, a number field would fall
+        # back to exact string matching and flunk "2000000000.0" against "2000000000".
+        for combo in ("anyOf", "oneOf"):
+            options = node.get(combo)
+            if isinstance(options, list):
+                chosen = next(
+                    (
+                        o
+                        for o in options
+                        if isinstance(o, dict) and not (o.get("type") == "null" and len(o) == 1)
+                    ),
+                    None,
+                )
+                if chosen is not None:
+                    node = {**chosen, **{k: v for k, v in node.items() if k != combo}}
+                break
         if "enum" in node:
             return FieldType.ENUM
         schema_type = node.get("type")
@@ -333,6 +381,133 @@ def _resolve(schema: dict[str, Any], path: str) -> dict[str, Any] | None:
         if node is None:
             return None
     return node if isinstance(node, dict) else None
+
+
+_ITEM_RE = re.compile(r"^(.*)\.item_(\d+)(?:\.(.*))?$")
+
+
+def _split_item_key(key: str) -> tuple[str, int, str] | None:
+    """Split ``base.item_<i>.suffix`` into ``(base, i, suffix)``; ``None`` if not an item.
+
+    Only the LAST ``item_`` segment is split, so a one-level array of objects is
+    aligned. ``suffix`` is empty for an array of scalars (``base.item_<i>``).
+    """
+    match = _ITEM_RE.match(key)
+    if not match:
+        return None
+    return match.group(1), int(match.group(2)), match.group(3) or ""
+
+
+def _align_flat_arrays(flat_pred: dict[str, Any], flat_gold: dict[str, Any]) -> dict[str, Any]:
+    """Remap predicted array-item indices to the gold item each best matches.
+
+    Works on flattened dicts: for every array base present in both, predicted items
+    are greedily assigned to gold items by the count of equal (suffix) values, and
+    the predicted keys are rewritten with the matched gold index. Non-array keys and
+    predicted items with no match (extras) are preserved unchanged.
+    """
+    gold_items = _group_items(flat_gold)
+    pred_items = _group_items(flat_pred)
+    if not gold_items or not pred_items:
+        return flat_pred
+
+    out: dict[str, Any] = {k: v for k, v in flat_pred.items() if _split_item_key(k) is None}
+    for base, pred_group in pred_items.items():
+        gold_group = gold_items.get(base)
+        if gold_group is None:
+            # No gold array here - keep predicted items at their own indices.
+            for idx, fields in pred_group.items():
+                _emit_item(out, base, idx, fields)
+            continue
+        mapping = _greedy_assign(pred_group, gold_group)
+        used_gold = set(mapping.values())
+        spare = (i for i in range(10_000) if i not in used_gold and i not in gold_group)
+        for pred_idx, fields in pred_group.items():
+            target = mapping.get(pred_idx)
+            if target is None:
+                # No exact-value match. Keep the item at its own position when that
+                # gold slot is free, so the type-aware judge (numeric tolerance, edit
+                # distance) still compares it - greedy exact matching must not defeat
+                # the fuzzy per-field rules. Park only true extras.
+                if pred_idx in gold_group and pred_idx not in used_gold:
+                    target = pred_idx
+                    used_gold.add(pred_idx)
+                else:
+                    target = next(spare)
+            _emit_item(out, base, target, fields)
+    return out
+
+
+def _group_items(flat: dict[str, Any]) -> dict[str, dict[int, dict[str, Any]]]:
+    """Group a flat dict into ``{array_base: {item_index: {suffix: value}}}``."""
+    groups: dict[str, dict[int, dict[str, Any]]] = {}
+    for key, value in flat.items():
+        split = _split_item_key(key)
+        if split is None:
+            continue
+        base, idx, suffix = split
+        groups.setdefault(base, {}).setdefault(idx, {})[suffix] = value
+    return groups
+
+
+def _emit_item(out: dict[str, Any], base: str, idx: int, fields: dict[str, Any]) -> None:
+    for suffix, value in fields.items():
+        out[f"{base}.item_{idx}.{suffix}" if suffix else f"{base}.item_{idx}"] = value
+
+
+def _greedy_assign(
+    pred_group: dict[int, dict[str, Any]], gold_group: dict[int, dict[str, Any]]
+) -> dict[int, int]:
+    """Greedily map predicted item indices to gold item indices by field overlap."""
+    pairs = [
+        (_overlap(pf, gold_group[gi]), pi, gi)
+        for pi, pf in pred_group.items()
+        for gi in gold_group
+    ]
+    pairs.sort(key=lambda t: t[0], reverse=True)
+    mapping: dict[int, int] = {}
+    taken_gold: set[int] = set()
+    for overlap, pi, gi in pairs:
+        if overlap <= 0 or pi in mapping or gi in taken_gold:
+            continue
+        mapping[pi] = gi
+        taken_gold.add(gi)
+    return mapping
+
+
+# Word-set similarity below this is treated as no match during array alignment -
+# high enough to reject unrelated items, low enough to absorb format drift.
+_ALIGN_MIN_SIMILARITY: float = 0.5
+
+
+def _overlap(pred_fields: dict[str, Any], gold_fields: dict[str, Any]) -> float:
+    """Similarity of one predicted array item to one gold item, over shared suffixes.
+
+    An exact normalised match scores 1 per suffix; otherwise word-set Jaccard
+    similarity counts when above :data:`_ALIGN_MIN_SIMILARITY`. Content-based (not
+    positional), so a list shifted by one dropped element or reformatted throughout
+    still aligns item-to-item, and the type-aware judge then scores each pair.
+    """
+    score = 0.0
+    for suffix, gold_value in gold_fields.items():
+        if suffix not in pred_fields:
+            continue
+        g, p = _norm(gold_value), _norm(pred_fields[suffix])
+        if g == p:
+            score += 1.0
+        else:
+            similarity = _jaccard(g, p)
+            if similarity >= _ALIGN_MIN_SIMILARITY:
+                score += similarity
+    return score
+
+
+def _jaccard(a: str, b: str) -> float:
+    """Word-set Jaccard similarity of two normalised strings."""
+    set_a, set_b = set(a.split()), set(b.split())
+    if not set_a or not set_b:
+        return 0.0
+    return len(set_a & set_b) / len(set_a | set_b)
 
 
 def _flatten(obj: Any, prefix: str = "") -> dict[str, Any]:
