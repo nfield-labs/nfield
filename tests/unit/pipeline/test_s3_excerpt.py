@@ -67,7 +67,9 @@ class TestFieldLevelCoverage:
             field_best_segment={"g.t": 2},  # typed field t's evidence is the low-score s2
         )
         leaf = CapacityLeaf(fields=list(g.fields), groups=[g], leaf_id=1)
-        state = PipelineState(chars_per_token=1.0, C_eff=1000, M_O=0, C_usable=100.0)
+        # C_eff is tight too, so the hard window cannot hold the whole document and
+        # the selective (coverage-first) regime is exercised, not full-coverage.
+        state = PipelineState(chars_per_token=1.0, C_eff=100, M_O=0, C_usable=100.0)
         state.segments = [s0, s1, s2]
         state.leaves = [leaf]
 
