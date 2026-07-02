@@ -13,8 +13,43 @@ from nfield.pipeline.s2c_packing import run_stage_2c
 from nfield.pipeline.s3_excerpt import run_stage_3
 from nfield.pipeline.s4_extract import run_stage_4
 from nfield.pipeline.s5_validate import run_stage_5
-from nfield.pipeline.s6_assemble import run_stage_6
+from nfield.pipeline.s6_assemble import _fold_open_maps, run_stage_6
+from nfield.schema._flatten import flatten_schema
 from nfield.types import ExtractionResult, ExtractionStatus
+
+
+class TestFoldOpenMaps:
+    def _map_fields(self):
+        schema = {
+            "type": "object",
+            "properties": {"cfg": {"type": "object", "additionalProperties": {"type": "number"}}},
+        }
+        return flatten_schema(schema)
+
+    def test_key_value_list_folds_to_dict(self):
+        fields = self._map_fields()
+        filled = {"cfg": [{"key": "timeout", "value": 30}, {"key": "retries", "value": 5}]}
+        assert _fold_open_maps(filled, fields) == {"cfg": {"timeout": 30, "retries": 5}}
+
+    def test_non_map_values_untouched(self):
+        fields = self._map_fields()
+        filled = {"cfg": [{"key": "a", "value": 1}], "other": "x"}
+        assert _fold_open_maps(filled, fields)["other"] == "x"
+
+    def test_no_open_map_fields_is_noop(self):
+        from nfield.schema._types import Field
+
+        fields = [Field("name", "string", {}, "", {})]
+        filled = {"name": "Alice"}
+        assert _fold_open_maps(filled, fields) is filled
+
+    def test_non_string_key_row_is_dropped_not_crash(self):
+        # A garbled emission can carry a non-string (unhashable) key; the row must
+        # be dropped, never raise TypeError during folding.
+        fields = self._map_fields()
+        filled = {"cfg": [{"key": ["oops"], "value": 1}, {"key": "ok", "value": 2}]}
+        assert _fold_open_maps(filled, fields) == {"cfg": {"ok": 2}}
+
 
 SCHEMA = {
     "type": "object",
