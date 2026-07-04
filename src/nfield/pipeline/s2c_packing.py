@@ -43,6 +43,7 @@ __all__ = [
     "compute_execution_order",
     "fits",
     "run_stage_2c",
+    "safe_excerpt_chars",
     "tarjan_scc",
 ]
 
@@ -56,6 +57,11 @@ __all__ = [
 _Z_HEAVY_TAIL_FACTOR: float = 1.5
 # Floor so a call's output budget never collapses to zero.
 _MIN_SAFE_OUTPUT_TOKENS: int = 50
+# A model's tokenizer can emit more tokens than the chars-per-token heuristic
+# predicts: dense or multilingual text splits into more subwords (observed qwen
+# ~2.0 chars/token vs the 4.0 English default). The excerpt is capped so input +
+# output stays within the real window even when the true count is this much higher.
+_TOKEN_UNDERCOUNT_GUARD: float = 2.2
 # Sort key for shared/global fields (no record): packs them after all records.
 _UNGROUPED: int = 1 << 30
 # Min document room per leaf = one chunk (chunker target). Stage 3 trims larger pools.
@@ -267,6 +273,24 @@ def compute_K_min(  # noqa: N802
         1 for f in fields if _field_output_tokens(f, chars_per_token) > 0.5 * safe_output
     )
     return max(1, math.ceil(sum_out / safe_output), large_field_count)
+
+
+def safe_excerpt_chars(
+    c_eff: float,
+    overhead: float,
+    safe_output: float,
+    chars_per_token: float,
+) -> int:
+    """Excerpt character cap that keeps input + output within the real window.
+
+    The excerpt is budgeted in characters via ``chars_per_token``, but the model's
+    tokenizer may emit up to :data:`_TOKEN_UNDERCOUNT_GUARD` times more tokens than
+    that heuristic predicts. Dividing the token headroom by that guard bounds the
+    worst-case real token count, so a call never exceeds ``c_eff`` even when the
+    estimate is optimistic.
+    """
+    headroom_tokens = max(0.0, c_eff - overhead - safe_output)
+    return int(headroom_tokens * chars_per_token / _TOKEN_UNDERCOUNT_GUARD)
 
 
 def fits(

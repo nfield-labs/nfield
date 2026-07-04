@@ -12,6 +12,7 @@ import itertools
 from typing import TYPE_CHECKING
 
 from nfield.pipeline._coverage import coverage_segment_ids
+from nfield.pipeline.s2c_packing import safe_excerpt_chars
 
 if TYPE_CHECKING:
     from nfield.pipeline._state import PipelineState
@@ -78,21 +79,22 @@ def _finalize_excerpt(leaf: CapacityLeaf, state: PipelineState, used_ids: set[in
 
     # Small-doc fast path: no matched segments → use full document (first segment)
     if not seg_score and state.segments:
+        leaf.excerpt_segment_ids = {s.segment_id for s in state.segments}
         return state.segments[0].text
     if not seg_score:
         return ""
 
-    # Excerpt budget: B_excerpt = C_usable - overhead. Output is NOT subtracted -
-    # the model's answer generates into the window's headroom (decoupled budgets,
-    # see s2c_packing.output_ceiling), so the excerpt keeps the full input budget.
+    # Excerpt budget: B_excerpt = C_usable - overhead, then capped so input +
+    # output stays within the real window even when the tokenizer emits more
+    # tokens than the chars-per-token heuristic predicts (safe_excerpt_chars).
     b_excerpt = max(0.0, state.C_usable - leaf.overhead)
     cpt = max(state.chars_per_token, 1.0)
-    budget_chars = int(b_excerpt * cpt)
+    safe_chars = safe_excerpt_chars(state.C_eff, leaf.overhead, leaf.safe_output, cpt)
+    budget_chars = min(int(b_excerpt * cpt), safe_chars)
 
-    # When the whole document fits the hard window, ship all of it.
+    # When the whole document fits within the safe cap, ship all of it.
     doc_chars = sum(len(s.text) for s in state.segments) + _SEPARATOR_LEN * len(state.segments)
-    hard_chars = int(max(0.0, state.C_eff - leaf.overhead - leaf.safe_output) * cpt)
-    if budget_chars < doc_chars <= hard_chars:
+    if budget_chars < doc_chars <= safe_chars:
         budget_chars = doc_chars
 
     # --- Coverage-first selection -------------------------------------
@@ -137,6 +139,7 @@ def _finalize_excerpt(leaf: CapacityLeaf, state: PipelineState, used_ids: set[in
         selected = [best]
 
     used_ids.update(s.segment_id for s in selected)
+    leaf.excerpt_segment_ids = {s.segment_id for s in selected}
     # Reorder by document position for coherent reading order.
     selected.sort(key=lambda s: s.start)
     return _EXCERPT_SEPARATOR.join(s.text for s in selected)
