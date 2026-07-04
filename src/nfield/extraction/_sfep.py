@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import itertools
 import json
+import math
 import re
 from typing import TYPE_CHECKING, Any
 
@@ -58,6 +59,14 @@ _SFEP_NEEDS_REVALIDATION_SENTINEL: str = "NEEDS_REVALIDATION"
 # Currency symbols and thousands-grouping separators that mark a displayed number.
 _CURRENCY_SIGNS: str = "$" + chr(0x20AC) + chr(0xA3) + chr(0xA5) + chr(0x20B9) + chr(0x20A9)
 _GROUP_SIGNS: str = ",.' " + chr(0x2019) + chr(0xA0) + chr(0x202F)
+
+# A trailing comma phrase repeated across most items is per-item boilerplate
+# (a role or type clause), not content. The 3-word floor keeps name suffixes
+# (", Inc.", ", N.A.") and shared years out of reach.
+_SUFFIX_MIN_FRACTION: float = 0.6
+_SUFFIX_MIN_ITEMS: int = 3
+_SUFFIX_MIN_WORDS: int = 3
+_SUFFIX_WORD = re.compile(r"[A-Za-z]+")
 
 
 # ---------------------------------------------------------------------------
@@ -781,13 +790,15 @@ def _cast_array(raw: str, field: Field) -> list[Any]:
         parsed = _parse_scalar_json_array(stripped)
         if parsed is not None:
             item_type = _get_array_item_type(field)
-            return _strip_list_numbering(
-                [
-                    _cast_array_element(el, item_type, field) if isinstance(el, str) else el
-                    # A null item is the model padding "nothing found", not a value.
-                    for el in _flatten_nested_scalars(parsed)
-                    if el is not None
-                ]
+            return _strip_common_item_suffix(
+                _strip_list_numbering(
+                    [
+                        _cast_array_element(el, item_type, field) if isinstance(el, str) else el
+                        # A null item is the model padding "nothing found", not a value.
+                        for el in _flatten_nested_scalars(parsed)
+                        if el is not None
+                    ]
+                )
             )
 
     # Normalise arrays the model emitted without brackets: a bare comma list
@@ -810,7 +821,9 @@ def _cast_array(raw: str, field: Field) -> list[Any]:
     items_raw = _split_array_items(inner)
     elements = [_cast_array_element(item.strip(), item_type, field) for item in items_raw]
     # A null item is the model padding "nothing found", not a value.
-    return _strip_list_numbering([el for el in elements if el is not None])
+    return _strip_common_item_suffix(
+        _strip_list_numbering([el for el in elements if el is not None])
+    )
 
 
 def _flatten_nested_scalars(parsed: list[Any]) -> list[Any]:
@@ -931,6 +944,40 @@ def _strip_list_numbering(items: list[Any]) -> list[Any]:
     return [
         _LIST_MARKER.sub("", item, count=1) if isinstance(item, str) else item for item in items
     ]
+
+
+def _strip_common_item_suffix(items: list[Any]) -> list[Any]:
+    """Strip repeated trailing boilerplate and separator residue from string items.
+
+    A dangling ``,`` or ``;`` on any item is list-separator debris (an entry cut
+    at its line break), never content, and is always removed.
+    """
+    strings = [x for x in items if isinstance(x, str)]
+    suffix = ""
+    if len(strings) >= _SUFFIX_MIN_ITEMS:
+        counts: dict[str, int] = {}
+        for s in strings:
+            for p in range(len(s)):
+                if s.startswith(", ", p):
+                    tail = s[p:]
+                    counts[tail] = counts.get(tail, 0) + 1
+        threshold = max(_SUFFIX_MIN_ITEMS, math.ceil(_SUFFIX_MIN_FRACTION * len(strings)))
+        shared = [
+            tail
+            for tail, n in counts.items()
+            if n >= threshold and len(_SUFFIX_WORD.findall(tail)) >= _SUFFIX_MIN_WORDS
+        ]
+        # The shortest qualifying tail is the boilerplate's own boundary; a longer
+        # shared tail reaches back into content the items genuinely share (", L.P.").
+        suffix = min(shared, key=len) if shared else ""
+    out: list[Any] = []
+    for x in items:
+        if isinstance(x, str):
+            if suffix and x.endswith(suffix) and len(x) > len(suffix):
+                x = x[: -len(suffix)]
+            x = x.rstrip(" ,;")
+        out.append(x)
+    return out
 
 
 # A bracketed leading ordinal opening an entry ("[580] ...").
