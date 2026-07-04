@@ -36,7 +36,8 @@ from pathlib import Path
 from typing import Any
 
 from .pdf_router import MIN_CHARS_PER_PAGE, extract, text_layer
-from .score import _flatten, score
+from .score import _flatten
+from .score_extractbench import score_extractbench
 
 __all__ = ["discover_datasets", "main", "run_dataset"]
 
@@ -84,6 +85,7 @@ def run_dataset(
     reasoning_model: bool,
     doc_filter: str = "",
     limit: int = 0,
+    llm_judge: bool = False,
 ) -> dict[str, Any]:
     """Run nfield on every document of one dataset and write raw/scored/summary.
 
@@ -133,6 +135,7 @@ def run_dataset(
                 scored_dir,
                 model=model,
                 reasoning_model=reasoning_model,
+                llm_judge=llm_judge,
             )
         except Exception as exc:  # a failed document scores zero, never aborts the sweep
             row = {"document": doc_name, "status": f"error: {exc}"[:120]}
@@ -174,6 +177,7 @@ def _run_document(
     *,
     model: str,
     reasoning_model: bool,
+    llm_judge: bool = False,
 ) -> dict[str, Any]:
     """Extract one PDF, score it, and write its raw and scored artifacts."""
     from nfield import nfield
@@ -193,9 +197,8 @@ def _run_document(
         instructions=instructions,
         config=ExtractionConfig(max_retry_rounds=1, reasoning_model=reasoning_model),
     )
-    gold = _flatten(json.loads(gold_path.read_text(encoding="utf-8")))
-    report = score(result.data, gold, schema)
-
+    # Write the raw extraction before scoring so a scorer failure cannot lose a
+    # finished run.
     _write_json(
         raw_dir / f"{doc_name}.json",
         {
@@ -213,6 +216,11 @@ def _run_document(
             },
         },
     )
+    report, gold = score_extractbench(
+        result.data, json.loads(gold_path.read_text(encoding="utf-8")), schema
+    )
+    if llm_judge:
+        report = _rejudge_with_llm(report, gold, schema, model, reasoning_model)
     # Every non-correct field ships with its gold and predicted value, so a scored
     # file is auditable on its own: the judgement is inspectable, not just a number.
     mismatches = [
@@ -248,6 +256,28 @@ def _run_document(
         "K": result.metadata.K,
         "status": result.status.value,
     }
+
+
+def _rejudge_with_llm(
+    report: Any, gold: dict[str, Any], schema: dict[str, Any], model: str, reasoning_model: bool
+) -> Any:
+    """Re-judge deterministic misses under the benchmark's LLM tiers (score_extractbench.llm_rejudge)."""
+    import asyncio
+
+    from nfield.providers.groq._provider import GroqProvider
+
+    from .score_extractbench import llm_rejudge
+
+    judge = GroqProvider(model.split("/", 1)[1], reasoning_model=reasoning_model)
+
+    async def complete(prompt: str) -> str:
+        return await judge.complete([{"role": "user", "content": prompt}], max_tokens=2000)
+
+    try:
+        return asyncio.run(llm_rejudge(report, gold, schema, complete))
+    except Exception as exc:  # the judge may only confirm, never cost a run
+        print(f"  llm judge skipped: {exc}", flush=True)
+        return report
 
 
 def _aggregate(name: str, rows: list[dict[str, Any]]) -> dict[str, Any]:
@@ -323,6 +353,13 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--datasets", default="", help="comma-separated names; empty = all")
     parser.add_argument("--doc", default="", help="substring filter on PDF names")
     parser.add_argument("--limit", type=int, default=0, help="max documents per dataset")
+    parser.add_argument(
+        "--llm-judge",
+        default=False,
+        action=argparse.BooleanOptionalAction,
+        help="re-judge string_semantic / array_llm misses with the model, as the "
+        "official ExtractBench harness does (costs extra API calls)",
+    )
     args = parser.parse_args(argv)
 
     _load_env()
@@ -350,6 +387,7 @@ def main(argv: list[str] | None = None) -> None:
                 reasoning_model=args.reasoning_model,
                 doc_filter=args.doc,
                 limit=args.limit,
+                llm_judge=args.llm_judge,
             )
         )
 
