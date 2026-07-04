@@ -124,3 +124,64 @@ class TestConsolidatedRecovery:
         provider = _RecoverProvider()
         await run_recovery_pass(state, provider, ExtractionConfig())
         assert provider.calls == 0
+
+
+class TestBoundaryExcerpt:
+    def test_head_and_tail_within_budget(self):
+        from nfield.pipeline.s5b_recover import _boundary_excerpt
+
+        fields = [_field("a")]
+        state = _state(fields)
+        texts = [f"segment number {i} with some words" for i in range(20)]
+        state.segments = [
+            Segment(
+                text=t,
+                start=i * 100,
+                end=i * 100 + len(t),
+                segment_type="unstructured",
+                segment_id=i,
+            )
+            for i, t in enumerate(texts)
+        ]
+        excerpt = _boundary_excerpt(state, overhead=50)
+        assert excerpt.startswith("segment number 0")
+        assert excerpt.rstrip().endswith("segment number 19 with some words")
+
+    async def test_boundary_round_recovers_field_missed_by_retrieval(self):
+        # The value lives on the document's first page; every recovery round
+        # fails until the boundary round ships the head text directly.
+        from nfield.pipeline.s5b_recover import _RECOVERY_ROUNDS
+
+        b = _field("b")
+        state = _state([b])
+        state.blackboard.mark_failed("b", "field not found in document")
+
+        class _BoundaryOnly:
+            context_window = 8192
+            max_output_tokens = 8192
+            model_name = "mock/boundary"
+            calls = 0
+
+            async def complete(self, messages, *, max_tokens):
+                self.calls += 1
+                if "PREAMBLE VALUE" in messages[-1]["content"]:
+                    return "b = recovered_value"
+                return "b = NULL"
+
+        head = "PREAMBLE VALUE is stated here at the top of the document"
+        body = "body words " * 50
+        state.segments = [
+            Segment(text=head, start=0, end=len(head), segment_type="unstructured", segment_id=0),
+            Segment(
+                text=body,
+                start=100,
+                end=100 + len(body),
+                segment_type="unstructured",
+                segment_id=1,
+            ),
+        ]
+        state.leaves[0].document_excerpt = body  # retrieval routed to the body
+        provider = _BoundaryOnly()
+        await run_recovery_pass(state, provider, ExtractionConfig())
+        assert state.blackboard.get_filled().get("b") == "recovered_value"
+        assert provider.calls >= _RECOVERY_ROUNDS + 1  # normal rounds + boundary round
