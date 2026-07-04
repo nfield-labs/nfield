@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from nfield.assembly._blackboard import Blackboard
@@ -97,6 +97,9 @@ class PipelineState:
     blackboard: Blackboard | None = None
     K: int = 0
     retry_rounds: int = 0
+    # Total unbounded-array continuation windows spent so far, budgeted per document
+    # so a schema with many empty arrays cannot multiply into an unbounded call count.
+    continuation_windows_used: int = 0
 
     # Grounding score in [0, 1] per filled groundable field, written by Stage 5 when
     # ``ground_values`` is set; read by Stage 6 to report the hallucination rate. A path
@@ -118,6 +121,10 @@ class PipelineState:
     # why the previous attempt failed (invalid value, conflict, absence). Populated by
     # the recovery pass and rendered into the extraction prompt; empty on the first pass.
     field_reasons: dict[str, str] = field(default_factory=dict)
+
+    # Values Stage 5 failed on array-quality grounds, stashed so recovery restores
+    # the original when re-extraction returns nothing better (keep-best, never wipe).
+    quality_failed_values: dict[str, Any] = field(default_factory=dict)
 
     def record_calls(self, origin: str, n: int = 1) -> None:
         """Count *n* API calls under *origin*, updating K and the breakdown.

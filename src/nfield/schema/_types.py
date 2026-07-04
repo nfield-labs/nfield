@@ -265,6 +265,8 @@ class CapacityLeaf:
         overhead: Token overhead from system prompt, schema, and JSON scaffolding.
         safe_output: Available output tokens after overhead is subtracted.
         leaf_id: Stable unique ID used for result assembly.
+        excerpt_segment_ids: Segment ids included in ``document_excerpt``, so
+            extraction knows which document regions this call covered.
 
     Example:
         >>> leaf = CapacityLeaf(leaf_id=1)
@@ -280,3 +282,4 @@ class CapacityLeaf:
     overhead: int = 0
     safe_output: int = 0
     leaf_id: int = 0
+    excerpt_segment_ids: set[int] = field(default_factory=set)
