@@ -482,3 +482,47 @@ class TestParseSfep:
         text = "s = hello\ni = 7\nn = 2.5\nb = false\nnil = NULL"
         result = parse_sfep(text, fields)
         assert result == {"s": "hello", "i": 7, "n": pytest.approx(2.5), "b": False, "nil": None}
+
+
+class TestCommonSuffixStrip:
+    def test_repeated_role_clause_stripped(self):
+        from nfield.extraction._sfep import _strip_common_item_suffix
+
+        items = [
+            "BANK OF AMERICA, N.A., as a Lender",
+            "HSBC BANK USA, NATIONAL ASSOCIATION, as a Lender",
+            "DEUTSCHE BANK AG, NEW YORK BRANCH, as a Lender",
+            "MORGAN STANLEY SENIOR FUNDING, INC., as a Lender",
+        ]
+        out = _strip_common_item_suffix(items)
+        assert out[0] == "BANK OF AMERICA, N.A."
+        assert out[2] == "DEUTSCHE BANK AG, NEW YORK BRANCH"
+
+    def test_repeated_entity_descriptor_stripped(self):
+        from nfield.extraction._sfep import _strip_common_item_suffix
+
+        items = [
+            "ORION FUND II, L.P., a Delaware limited partnership",
+            "ORION FUND II PV, L.P., a Delaware limited partnership",
+            "ORION GCE CO-INVEST, L.P., a Delaware limited partnership",
+            "LABOR IMPACT FUND, L.P.",
+        ]
+        out = _strip_common_item_suffix(items)
+        assert out[0] == "ORION FUND II, L.P."
+        assert out[3] == "LABOR IMPACT FUND, L.P."  # untouched, no shared tail
+
+    def test_short_name_suffix_never_stripped(self):
+        from nfield.extraction._sfep import _strip_common_item_suffix
+
+        items = ["Acme, Inc.", "Globex, Inc.", "Initech, Inc.", "Umbrella, Inc."]
+        assert _strip_common_item_suffix(items) == items  # 1 word, part of the name
+
+    def test_citations_with_distinct_tails_untouched(self):
+        from nfield.extraction._sfep import _strip_common_item_suffix
+
+        items = [
+            "Alpha and Beta. Routing at scale. Journal A, 2021.",
+            "Gamma and Delta. Windowed extraction. Journal B, 2022.",
+            "Epsilon and Zeta. Bounded outputs. Journal C, 2023.",
+        ]
+        assert _strip_common_item_suffix(items) == items
