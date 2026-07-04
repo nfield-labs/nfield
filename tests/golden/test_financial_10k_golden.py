@@ -44,8 +44,9 @@ def planned_state(schema):
 
 class TestFinancial10KGolden:
     def test_field_count_near_1000(self, planned_state):
-        # Real US-GAAP concepts fanned out over 7 fiscal years.
-        assert len(planned_state.fields) == 1074
+        # Real US-GAAP concepts fanned out over 7 fiscal years. A variable-length
+        # scalar array flattens to one list-leaf field, not per-index slots.
+        assert len(planned_state.fields) == 1059
 
     def test_real_concept_paths_present(self, planned_state):
         paths = {f.path for f in planned_state.fields}
