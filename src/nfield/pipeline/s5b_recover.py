@@ -23,7 +23,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from nfield.pipeline.s2c_packing import run_stage_2c
+from nfield.pipeline.s2c_packing import run_stage_2c, safe_excerpt_chars
 from nfield.pipeline.s3_excerpt import run_stage_3
 from nfield.pipeline.s4_extract import run_stage_4
 from nfield.pipeline.s5_validate import run_stage_5
@@ -201,6 +201,16 @@ async def _run_consolidated_recovery(
         if recovered_now:
             cascade_invalidate(bb, state.dep_dag, recovered_now)
 
+    # Keep-best: a quality-failed array whose re-extraction produced nothing gets
+    # its original value back - recovery may replace a value, never erase one.
+    filled_after = bb.get_filled()
+    for path, original in state.quality_failed_values.items():
+        if filled_after.get(path) == []:
+            bb.mark_failed(path, "re-extraction produced nothing")
+        if path not in filled_after or filled_after.get(path) == []:
+            bb.write(path, original)
+    state.quality_failed_values.clear()
+
     return state
 
 
@@ -250,6 +260,10 @@ async def _recover_rounds(
         state.retry_rounds = max(state.retry_rounds, round_offset + round_index + 1)
         recovered = set(bb.get_filled())
         still = [f for f in still if f.path not in recovered]
+        # Refresh each survivor's reason from its LATEST failure: the next round
+        # must correct the newest mistake, not repeat the first round's.
+        for f in still:
+            reasons[f.path] = _failure_reason(bb, f.path)
     return still
 
 
@@ -323,10 +337,12 @@ def _recover_excerpt(fields: list[Field], state: PipelineState, overhead: int) -
     Returns:
         A fresh excerpt, or ``None`` to keep the existing leaf excerpt.
     """
-    # Per-leaf excerpt budget B_excerpt, identical to Stage 3 (s3_excerpt); packing
-    # guarantees overhead < C_usable, and the retrieval helpers clamp and keep at
-    # least one segment, so the fresh excerpt matches the pipeline's own sizing.
-    budget = state.C_usable - overhead
+    # Per-leaf excerpt budget B_excerpt, identical to Stage 3 (s3_excerpt): capped
+    # so input + output stays within the real window even when the tokenizer emits
+    # more tokens than the chars-per-token heuristic predicts.
+    cpt = max(state.chars_per_token, 1.0)
+    safe_tokens = safe_excerpt_chars(state.C_eff, overhead, state.M_O, cpt) / cpt
+    budget = min(state.C_usable - overhead, safe_tokens)
     if state.record_block_segments:
         return record_block_excerpt(
             fields,
