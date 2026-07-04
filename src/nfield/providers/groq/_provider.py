@@ -254,6 +254,8 @@ class GroqProvider(BaseProvider):
                 retry_after=_retry_after_seconds(e),
             ) from e
 
+        usage = getattr(response, "usage", None)
+        self.last_prompt_tokens = getattr(usage, "prompt_tokens", None) if usage else None
         return strip_reasoning(response.choices[0].message.content or "")
 
     # --- Properties ---
