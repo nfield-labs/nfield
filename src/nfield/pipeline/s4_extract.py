@@ -59,40 +59,65 @@ _CONTEXT_ERROR_KEYWORDS: frozenset[str] = frozenset(
 # Constants
 # ---------------------------------------------------------------------------
 
-# Extra samples for a leaf whose array value needed repair; independent retries are usually clean.
+# Extra resamples for a leaf whose array value needed repair.
 _MAX_ARRAY_RESAMPLES: int = 2
-# Each recovery halves the excerpt, so depth d shrinks the input by 2^d; three
-# levels turn any near-limit overflow into a fitting call without unbounded recursion.
+# Each recovery halves the excerpt; three levels resolve any near-limit overflow.
 _MAX_SPLIT_DEPTH: int = 3
-# A tokenizer floor: no real tokenizer averages below ~0.5 chars/token, so a lower
-# reading is a spurious usage report and is ignored during calibration.
+# Tokenizer floor: a reading below this is a spurious usage report, ignored.
 _MIN_CALIBRATED_CPT: float = 0.5
 
 # --- Unbounded-array window sweep ---
-# The whole-document continuation budget scales with the document: an array can span
-# the entire document, so all of a document's arrays SHARE a budget of covering it
-# once for content plus one overlap pass (the window packer repeats one segment per
-# boundary, and arrays split across leaves each need a document pass). Proportional to
-# document size, so it neither starves a huge document nor lets a many-array schema
-# multiply per-leaf into a call explosion.
+# Document-sized shared budget: one content pass plus one overlap pass, so it
+# neither starves a huge document nor lets many arrays multiply the call count.
 _CONTINUATION_DOC_COVER_FACTOR: float = 2.0
-# Window size is bounded by the OUTPUT budget, not just the input budget: a dense
-# list region is copied out verbatim, so the emitted items are roughly the window
-# text itself. The factor leaves room for JSON quoting and the non-item remainder.
+# Window bounded by output budget too: items are copied verbatim, so the emitted
+# text is roughly the window text; the factor leaves room for JSON structure.
 _OUTPUT_WINDOW_FACTOR: float = 0.5
-# Stop the sweep after this many consecutive windows yield almost nothing. The
-# sweep runs in document order, so a run of empty windows is a prose gap between
-# item clusters (a body section between in-text citations and the bibliography);
-# the patience must exceed a typical gap so the tail cluster is still reached.
-# An array holding fewer than _CONTINUATION_SCARCE_ITEMS is indistinguishable from empty.
+# Consecutive near-empty windows tolerated before stopping. Patience must exceed a
+# typical prose gap between item clusters so the tail cluster is still reached.
 _CONTINUATION_STOP_AFTER_EMPTY: int = 6
 _CONTINUATION_STOP_WHILE_EMPTY: int = 8
 _CONTINUATION_SCARCE_ITEMS: int = 3
 _CONTINUATION_MIN_YIELD: int = 3
-# A window's response is its item text verbatim PLUS structural overhead (the key
-# line, quotes, commas, escapes); reserving exactly window_chars/cpt truncates every
-# fully-dense window at its tail. The headroom covers that structural share.
+# Output reservation covers item text plus JSON structure; exact window_chars/cpt
+# truncates every dense window's tail, so add this structural headroom.
 _WINDOW_OUTPUT_HEADROOM: float = 1.25
+# Top-relevance windows re-asked for a single array left empty beside yielding siblings.
+_FOCUSED_REASK_WINDOWS: int = 2
+# At most this many items all restating the field key = the document's mention of
+# the field, not its entries.
+_PLACEHOLDER_MAX_ITEMS: int = 2
+
+# --- Array item grounding and dedupe ---
+# Fraction of items reappearing bracketed in the excerpt to call an array reference labels.
+_LABEL_ARRAY_MIN_FRACTION: float = 0.8
+_LABEL_ENTRY_MAX_CHARS: int = 600
+# Items this long ground reliably by substring; shorter ones are too generic.
+_GROUNDABLE_ITEM_MIN_CHARS: int = 40
+_MAX_UNGROUNDED_FRACTION: float = 0.3
+# In a long-text list, a bare number is a marker, not an entry.
+_LONG_TEXT_ITEM_CHARS: int = 40
+# Fraction of adjacent pairs that must ascend by one for a list to be a numbering run.
+_ORDINAL_RUN_MIN_FRACTION: float = 0.8
+# Trailing items tried as the continuation anchor, and the longest leaves per item.
+_ANCHOR_ITEM_TRIES: int = 8
+_ANCHOR_ITEM_MIN_CHARS: int = 20
+_ANCHOR_LEAVES_PER_ITEM: int = 3
+_WS = re.compile(r"\s+")
+# Punctuation a model normalises while copying; folded on both sides for substring match.
+_GROUND_FOLD = str.maketrans(
+    {
+        0x2010: "-",
+        0x2011: "-",
+        0x2012: "-",
+        0x2013: "-",
+        0x2014: "-",
+        0x2018: "'",
+        0x2019: "'",
+        0x201C: '"',
+        0x201D: '"',
+    }
+)
 
 
 def _min_continuation_chars(leaf: CapacityLeaf, state: PipelineState) -> int:
@@ -278,11 +303,6 @@ async def _reparse_unclean_arrays(
             return
 
 
-# An array whose items mostly reappear bracketed in the excerpt ("[Abdi2003]")
-# returned the document's reference labels instead of the entries they label.
-_LABEL_ARRAY_MIN_FRACTION: float = 0.8
-
-
 async def _expand_label_arrays(
     leaf: CapacityLeaf,
     provider: LLMProvider,
@@ -331,9 +351,6 @@ async def _expand_label_arrays(
         base = extracted.get(path)
         if isinstance(base, list):
             extracted[path] = _dereference_labels(base, leaf.document_excerpt)
-
-
-_LABEL_ENTRY_MAX_CHARS: int = 600
 
 
 def _dereference_labels(items: list[Any], excerpt: str) -> list[Any]:
@@ -398,31 +415,31 @@ def _array_quality_error(items: list[Any], excerpt: str) -> str | None:
     return None
 
 
-# Items shorter than this are too generic to ground by substring; above it, an
-# exact-copied item reliably reappears in the normalised document text.
-_GROUNDABLE_ITEM_MIN_CHARS: int = 40
-_MAX_UNGROUNDED_FRACTION: float = 0.3
-_WS = re.compile(r"\s+")
-# Punctuation a model normalises while copying (curly quotes, dash family); folded
-# on both sides so a verbatim item still matches its source by substring.
-_GROUND_FOLD = str.maketrans(
-    {
-        0x2010: "-",
-        0x2011: "-",
-        0x2012: "-",
-        0x2013: "-",
-        0x2014: "-",
-        0x2018: "'",
-        0x2019: "'",
-        0x201C: '"',
-        0x201D: '"',
-    }
-)
-
-
 def _ground_norm(text: str) -> str:
     """Casefold, fold punctuation variants, and collapse whitespace for substring match."""
     return _WS.sub(" ", text.translate(_GROUND_FOLD)).casefold()
+
+
+def _is_scarce(value: Any) -> bool:
+    """True when *value* holds too few items to distinguish from empty."""
+    return not isinstance(value, list) or len(value) < _CONTINUATION_SCARCE_ITEMS
+
+
+def _restates_path_key(item: str, path: str) -> bool:
+    """True when *item*'s words include every word of the field's own key.
+
+    "THE LENDERS FROM TIME TO TIME PARTY HERETO" names the ``lenders`` field
+    rather than any lender; a real entry does not carry its own field name.
+    A trailing ``s`` folds on both sides so a plural key matches its singular
+    mention ("TRANCHE A LENDER" for ``lenders``).
+    """
+
+    def stem(w: str) -> str:
+        return w[:-1] if w.endswith("s") else w
+
+    key_words = {stem(w) for w in path.rsplit(".", 1)[-1].casefold().split("_")}
+    words = {stem(w) for w in re.findall(r"[a-z]+", item.casefold())}
+    return bool(key_words) and key_words <= words
 
 
 def _looks_like_label_array(items: list[Any], excerpt: str) -> bool:
@@ -472,9 +489,21 @@ async def _extend_arrays_over_windows(
     array_fields = [f for f in leaf.fields if _is_unbounded_list_leaf(f)]
     if not array_fields or not state.segments:
         return
-    empty = any(not extracted.get(f.path) for f in array_fields)
+    # A tiny array made only of the field's own placeholder phrase ("the <key>
+    # party hereto") is not filled; clear it so the sweep rebuilds the real list.
+    for f in array_fields:
+        items = extracted.get(f.path)
+        if (
+            isinstance(items, list)
+            and 0 < len(items) <= _PLACEHOLDER_MAX_ITEMS
+            and all(isinstance(x, str) and _restates_path_key(x, f.path) for x in items)
+        ):
+            extracted[f.path] = []
+    # A scarce array is treated as empty: a few items say nothing about the rest,
+    # so a remainder-only region would skip where the missing entries live.
+    scarce = any(_is_scarce(extracted.get(f.path)) for f in array_fields)
     dimensioned = any(dimension_axes(f) for f in array_fields)
-    if empty or dimensioned:
+    if scarce or dimensioned:
         region = sorted(state.segments, key=lambda s: s.start)
     else:
         region = sorted(
@@ -484,9 +513,8 @@ async def _extend_arrays_over_windows(
     if sum(len(s.text) for s in region) < _min_continuation_chars(leaf, state):
         return
 
-    # Sweep highest-relevance windows first: an array's items cluster where the fields'
-    # own terms are densest (a segment table, a bibliography), so relevance order reaches
-    # them in the first few windows instead of after scanning the whole document.
+    # Sweep highest-relevance windows first: items cluster where the fields' terms
+    # are densest, so relevance order reaches them without scanning the whole document.
     score_by_id: dict[int, float] = {}
     for g in leaf.groups:
         for seg, sc in zip(g.matched_segments, g.segment_scores, strict=False):
@@ -502,6 +530,14 @@ async def _extend_arrays_over_windows(
         extracted,
         visit_order=visit_order,
     )
+
+    # Under output pressure a window fills some arrays and leaves siblings empty; a
+    # field still empty beside a yielding sibling is re-asked alone. All-empty = absent.
+    still_empty = [f for f in array_fields if not extracted.get(f.path)]
+    if still_empty and len(still_empty) < len(array_fields):
+        top = [windows[i][0] for i in visit_order[:_FOCUSED_REASK_WINDOWS]]
+        for f in still_empty:
+            await _sweep_array_windows(top, [f], leaf, provider, state, extracted)
 
 
 async def _continue_truncated_arrays(
@@ -537,10 +573,8 @@ async def _continue_truncated_arrays(
         # the merge dedupe absorbs the items already captured before the cut.
         tail = [s for s in segments if s.start >= anchor_start]
     else:
-        # Nothing salvaged (the cut landed before the first complete item) or the
-        # items are unlocatable: extract the array afresh, window by window over
-        # the whole document - output-sized calls sum to the full list where one
-        # capped call cannot.
+        # Nothing salvaged or items unlocatable: extract afresh window by window
+        # over the whole document, since output-sized calls sum where one cannot.
         tail = segments
     logger.info(
         "output-truncated array on leaf %d: %s - continuing over %d segment(s)%s",
@@ -553,14 +587,6 @@ async def _continue_truncated_arrays(
     await _sweep_array_windows(
         [text for text, _ in windows], array_fields, leaf, provider, state, extracted
     )
-
-
-# How many of an array's trailing items are tried as the continuation anchor;
-# items too short to ground by substring are skipped, and an object item is
-# tried through its few longest string leaves.
-_ANCHOR_ITEM_TRIES: int = 8
-_ANCHOR_ITEM_MIN_CHARS: int = 20
-_ANCHOR_LEAVES_PER_ITEM: int = 3
 
 
 def _last_item_segment(
@@ -646,8 +672,10 @@ def _continuation_reason(field: Field) -> str:
     only the aggregate row was found; this portion may report the value broken out by
     that axis, so the model is asked for one entry per distinct axis value shown here.
     Any other array (a bibliography-style list) is asked to copy each entry's full
-    text verbatim. Schema-shape driven, so neither framing is a hardcoded domain rule -
-    the axis meaning comes from the schema's own enum values, not wording here.
+    text verbatim; the field's own description then bounds what one entry IS, so a
+    name list yields names rather than the blocks around them. Schema-driven, so
+    neither framing is a hardcoded domain rule - the axis meaning comes from the
+    schema's enum values and the entry meaning from the schema's description.
     """
     axes = dimension_axes(field)
     if axes:
@@ -659,13 +687,22 @@ def _continuation_reason(field: Field) -> str:
             "per row, never merged. Output [] only when this portion reports no such "
             "entry"
         )
+    items = field.constraints.get("items")
+    desc = items.get("description") if isinstance(items, dict) else None
+    desc = desc or field.schema_node.get("description")
+    entry_is = f" One entry here means: {desc}." if isinstance(desc, str) and desc else ""
     return (
         "this is another portion of the same document and may hold a slice of "
         "this array's entries; copy the complete text of every entry that "
         "appears here, however many there are, ONE item per entry - never merge "
         "consecutive entries into one item. A reference marker, a bare number, "
-        "or a mention of an entry is NOT an entry. Output [] only when no "
-        "entries appear in this portion"
+        "or a mention of an entry is NOT an entry." + entry_is + " Output each "
+        "item exactly as the document writes it, complete - keep abbreviations, "
+        "punctuation, and any suffix, branch, or parenthetical that is part of "
+        "the entry itself - but end the item where the entry ends: do not append "
+        "clauses that merely describe or classify it, and do not include the "
+        "next entry. One line per item. Output [] only when no entries appear "
+        "in this portion"
     )
 
 
@@ -796,19 +833,19 @@ async def _sweep_array_windows(
         if consecutive_empty >= patience:
             break
 
-    # A window that emitted far fewer RAW items than a probed neighbour sits in a
-    # region as dense as the neighbour's but under-enumerated (long dense spans
-    # lose mid-list entries). Raw counts, not deduped yields, carry the density
-    # signal: an overlapped neighbour can report zero NEW items while still dense.
-    # Re-probing the same span repeats the drop, so the window is re-asked in two
-    # halves - each half is short enough to enumerate completely.
-    for idx in sorted(raw_counts):
-        neighbours = [raw_counts[nb] for nb in (idx - 1, idx + 1) if nb in raw_counts]
-        if not neighbours:
-            continue
-        floor = min(neighbours)
-        if floor < 3 * _CONTINUATION_MIN_YIELD or raw_counts[idx] * 2 >= floor:
-            continue
+    # Cover enumerations and signature pages evade relevance and patience, so the
+    # outermost unvisited windows are always verified; a yielding end walks its neighbour.
+    unvisited = [i for i in range(len(window_texts)) if i not in visited]
+    for idx in dict.fromkeys(unvisited[-1:] + unvisited[:1]):
+        visited.add(idx)
+        if await probe(idx):
+            for nb in (idx - 1, idx + 1):
+                if 0 <= nb < len(window_texts) and nb not in visited:
+                    visited.add(nb)
+                    await probe(nb)
+
+    async def split_reprobe(idx: int) -> None:
+        """Re-ask window *idx* in two halves; each half is short enough to enumerate."""
         text = window_texts[idx]
         cut = text.rfind("\n\n", 0, len(text) // 2)
         if cut <= 0:
@@ -821,16 +858,55 @@ async def _sweep_array_windows(
         if recovered:
             logger.info("low-yield window %d split resample: +%d item(s)", idx, recovered)
 
+    # A window with far fewer RAW items than a probed neighbour is under-enumerated,
+    # not sparse (raw counts see density a deduped yield hides); split-reprobe it.
+    for idx in sorted(raw_counts):
+        neighbours = [raw_counts[nb] for nb in (idx - 1, idx + 1) if nb in raw_counts]
+        if not neighbours:
+            continue
+        floor = min(neighbours)
+        if floor < 3 * _CONTINUATION_MIN_YIELD or raw_counts[idx] * 2 >= floor:
+            continue
+        await split_reprobe(idx)
+
+    # A <2-window sweep has no neighbour to expose under-emission; a still-empty
+    # array gets one split re-probe of the probed window.
+    if len(raw_counts) < 2 and any(not extracted.get(f.path) for f in array_fields):
+        for idx in sorted(raw_counts):
+            await split_reprobe(idx)
+
+    # Windows are visited in relevance order, so the merged list carries visit
+    # order; restore document order - the order the entries are read in.
+    for f in array_fields:
+        items = extracted.get(f.path)
+        if isinstance(items, list) and len(items) > 1:
+            extracted[f.path] = _document_order(items, state)
+
+
+def _document_order(items: list[Any], state: PipelineState) -> list[Any]:
+    """Sort items by the position of their text in the document.
+
+    An item locates by its longest string leaf (punctuation-folded substring);
+    items that cannot be located keep their relative order after the located
+    ones.
+    """
+    doc_norm = _ground_norm(
+        "\n".join(s.text for s in sorted(state.segments, key=lambda s: s.start))
+    )
+    keyed: list[tuple[int, int, Any]] = []
+    for i, item in enumerate(items):
+        leaves = sorted(_string_leaves(item), key=len, reverse=True)
+        at = doc_norm.find(_ground_norm(leaves[0])) if leaves and leaves[0].strip() else -1
+        keyed.append((at if at >= 0 else len(doc_norm) + i, i, item))
+    keyed.sort(key=lambda t: (t[0], t[1]))
+    return [item for _, _, item in keyed]
+
 
 def _item_key(item: Any) -> str:
     """Stable equality key for an array item (dicts compare by sorted JSON)."""
     if isinstance(item, dict):
         return json.dumps(item, sort_keys=True, ensure_ascii=False)
     return str(item)
-
-
-# Fraction of adjacent pairs that must ascend by one for a list to be a numbering run.
-_ORDINAL_RUN_MIN_FRACTION: float = 0.8
 
 
 def _is_ordinal_run(items: list[Any]) -> bool:
@@ -888,10 +964,6 @@ async def _retry_ordinal_runs(
     return parsed
 
 
-# In a list whose entries are long text, a bare number is a marker, not an entry.
-_LONG_TEXT_ITEM_CHARS: int = 40
-
-
 def _merge_window_items(merged: list[Any], more: list[Any]) -> int:
     """Merge a window's items into *merged*; return how many were genuinely new.
 
@@ -899,8 +971,11 @@ def _merge_window_items(merged: list[Any], more: list[Any]) -> int:
     vs the whole reference line), so string items dedupe by normalized containment
     and the LONGEST copy wins. In a long-text list, an item that is only a bare
     number is a marker copied from the document, not an entry, and is skipped.
-    Non-string items keep exact-key dedupe.
+    Non-string items keep exact-key dedupe. String items carry the source's layout
+    line breaks when copied verbatim; internal whitespace runs collapse to one
+    space so a value is text, not layout.
     """
+    more = [_WS.sub(" ", x).strip() if isinstance(x, str) else x for x in more]
     long_text = sum(
         1 for x in merged + more if isinstance(x, str) and len(x) >= _LONG_TEXT_ITEM_CHARS
     )
@@ -1110,11 +1185,8 @@ async def _emergency_split(
     half_excerpt = leaf.document_excerpt[: max(1, len(leaf.document_excerpt) // 2)]
     covered = _excerpt_prefix_ids(leaf, len(half_excerpt), state)
 
-    # Shrink the excerpt while it is larger than the output we reserve for this call:
-    # then halving the input meaningfully cuts total tokens. Once the excerpt is
-    # already smaller than the output budget the overflow is output/field-driven, so
-    # shrinking input cannot help and the field set is split instead. Budget-relative,
-    # so it scales with any window and output size.
+    # Halve the excerpt while it exceeds the reserved output (cutting input helps);
+    # once smaller, the overflow is output/field-driven, so split the field set instead.
     excerpt_tokens = len(leaf.document_excerpt) / max(state.chars_per_token, 1.0)
     if excerpt_tokens > leaf.safe_output and split_depth < _MAX_SPLIT_DEPTH:
         smaller = CapacityLeaf(
@@ -1221,11 +1293,11 @@ def _write_extracted_to_blackboard(
                 state.abstained.add(path)
             state.blackboard.mark_failed(path, "field not found in document (LLM output NULL)")
         else:
-            # An empty re-extraction cannot beat the non-empty original that was
-            # quality-failed into recovery; keep the fuller value (a retry may
-            # replace a value, never erase one).
-            if isinstance(value, list) and not value and state.quality_failed_values.get(path):
-                value = state.quality_failed_values[path]
+            # One recovery call cannot out-collect a windowed sweep, so a shorter
+            # re-extraction is a partial redo; keep the fuller quality-failed original.
+            stashed = state.quality_failed_values.get(path)
+            if isinstance(value, list) and isinstance(stashed, list) and len(value) < len(stashed):
+                value = stashed
             # Canonicalize a formatted value to its schema type before storing, so a
             # number field holds a number (schema-valid output) and validation does not
             # reject it on format alone. Lossless-or-decline; skipped in strict mode.
