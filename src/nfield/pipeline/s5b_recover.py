@@ -165,6 +165,22 @@ async def _run_consolidated_recovery(
         still = await _recover_rounds(
             state, provider, config, bb, still, reasons, rounds=_RECOVERY_ROUNDS
         )
+        # Fields retrieval never finds often live at the document's structural
+        # boundaries (cover page, preamble, end pages), where their terms are
+        # drowned by body-wide repetition; one more round reads those regions
+        # directly by position.
+        if still:
+            still = await _recover_rounds(
+                state,
+                provider,
+                config,
+                bb,
+                still,
+                reasons,
+                rounds=1,
+                round_offset=_RECOVERY_ROUNDS,
+                boundary=True,
+            )
         # Escalation: re-extract whatever the primary still could not produce on a
         # stronger fallback model, once - only the stragglers pay the higher cost, not
         # the whole document.
@@ -180,7 +196,7 @@ async def _run_consolidated_recovery(
                 still,
                 reasons,
                 rounds=_FALLBACK_ROUNDS,
-                round_offset=_RECOVERY_ROUNDS,
+                round_offset=_RECOVERY_ROUNDS + 1,
             )
     finally:
         (
@@ -201,13 +217,21 @@ async def _run_consolidated_recovery(
         if recovered_now:
             cascade_invalidate(bb, state.dep_dag, recovered_now)
 
-    # Keep-best: a quality-failed array whose re-extraction produced nothing gets
-    # its original value back - recovery may replace a value, never erase one.
+    # Keep-best: a quality-failed array is restored when its re-extraction came
+    # back SMALLER - one recovery call cannot out-collect a windowed sweep, so a
+    # shorter list is a partial redo, not a correction. Recovery may replace a
+    # value with a fuller one, never degrade one.
     filled_after = bb.get_filled()
     for path, original in state.quality_failed_values.items():
-        if filled_after.get(path) == []:
-            bb.mark_failed(path, "re-extraction produced nothing")
-        if path not in filled_after or filled_after.get(path) == []:
+        replacement = filled_after.get(path)
+        shrunk = (
+            isinstance(original, list)
+            and isinstance(replacement, list)
+            and len(replacement) < len(original)
+        )
+        if path not in filled_after or replacement == [] or shrunk:
+            if replacement == []:
+                bb.mark_failed(path, "re-extraction produced nothing")
             bb.write(path, original)
     state.quality_failed_values.clear()
 
@@ -224,6 +248,7 @@ async def _recover_rounds(
     *,
     rounds: int,
     round_offset: int = 0,
+    boundary: bool = False,
 ) -> list[Field]:
     """Re-extract the *still*-failing fields for up to *rounds* on *provider*.
 
@@ -242,6 +267,8 @@ async def _recover_rounds(
         rounds: Maximum re-extraction rounds to run.
         round_offset: Added to the round index when updating ``state.retry_rounds`` so
             the fallback round counts beyond the primary rounds. Default 0.
+        boundary: Extract against the document's head-and-tail excerpt instead of
+            a retrieved one (see :func:`_boundary_excerpt`). Default False.
 
     Returns:
         The fields still failing after these rounds.
@@ -255,6 +282,11 @@ async def _recover_rounds(
         run_stage_2c(state, config)
         run_stage_3(state)
         _refresh_excerpts(state)
+        if boundary:
+            for leaf in state.leaves:
+                text = _boundary_excerpt(state, leaf.overhead)
+                if text:
+                    leaf.document_excerpt = text
         await run_stage_4(state, provider)
         await run_stage_5(state, provider, config)
         state.retry_rounds = max(state.retry_rounds, round_offset + round_index + 1)
@@ -320,6 +352,38 @@ def _refresh_excerpts(state: PipelineState) -> None:
         fresh = _recover_excerpt(leaf.fields, state, leaf.overhead)
         if fresh:
             leaf.document_excerpt = fresh
+
+
+def _boundary_excerpt(state: PipelineState, overhead: float) -> str:
+    """The document's head and tail segments, up to the excerpt budget.
+
+    Cover pages and end pages carry the defining facts (parties, dates,
+    signatures) that lexical retrieval drowns because their terms recur
+    body-wide. Position is the signal, so head and tail segments are taken
+    directly, alternating until the budget is spent.
+    """
+    if not state.segments:
+        return ""
+    cpt = max(state.chars_per_token, 1.0)
+    budget = safe_excerpt_chars(state.C_eff, overhead, state.M_O, cpt)
+    segments = sorted(state.segments, key=lambda s: s.start)
+    head: list[str] = []
+    tail: list[str] = []
+    used = 0
+    i, j = 0, len(segments) - 1
+    from_head = True
+    while i <= j:
+        seg = segments[i] if from_head else segments[j]
+        if used + len(seg.text) > budget and (head or tail):
+            break
+        (head if from_head else tail).append(seg.text)
+        used += len(seg.text)
+        if from_head:
+            i += 1
+        else:
+            j -= 1
+        from_head = not from_head
+    return "\n\n".join(head + tail[::-1])
 
 
 def _recover_excerpt(fields: list[Field], state: PipelineState, overhead: int) -> str | None:
