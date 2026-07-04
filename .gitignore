@@ -8,8 +8,9 @@ dist/
 build/
 *.egg-info/
 
-# Virtual environment
+# Virtual environments
 .venv/
+.venv-*/
 
 # Tools
 .pytest_cache/
@@ -40,5 +41,15 @@ benchmark/datasets/closed_book/*.json
 benchmark/datasets/closed_book/*.dat
 
 # Benchmark documents are committed for reproducibility (the War & Peace text is
-# public domain, from Project Gutenberg). Benchmark results ARE committed too —
-# raw outputs are the reproducibility evidence — so benchmark/results/ is tracked.
+# public domain, from Project Gutenberg). Of a run's output only MANIFEST.json and
+# summary.csv are tracked (the scores and provenance); the per-document raw and
+# scored dumps are regenerable and can carry source text, so they stay local.
+benchmark/results/**/raw/
+benchmark/results/**/scored/
+
+# Vendored third-party benchmark datasets (cloned on demand; large, separately licensed)
+benchmark/external/
+
+# Local experiment workbench and its outputs (never published)
+test-scripts/
+test-results/

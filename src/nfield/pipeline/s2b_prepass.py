@@ -217,18 +217,20 @@ def _run_heading_hybrid(state: PipelineState, structure: SectionStructure) -> bo
     state.segments = structure.segments
     state.lexical_index = glean_index.lexical
     for g, (index, _score) in zip(state.groups, alignments, strict=True):
-        # Structure decides inclusion: the aligned section + shared preamble are the
-        # candidates; an unaligned group falls back to the whole document within this
-        # tier (never starved). Retrieval only decides ORDER.
-        candidates = (
-            [*structure.by_section.get(index, []), *structure.preamble_segments]
-            if index >= 0
-            else list(structure.segments)
-        )
+        # Aligned section + preamble rank first, then the globally-scored rest.
         query = _build_group_query(g)
         scored = glean_rescore(glean_index, g.fields, query, top_k=len(structure.segments))
         score_by_id = {seg.segment_id: score for seg, score in scored}
-        ranked = sorted(candidates, key=lambda s: score_by_id.get(s.segment_id, 0.0), reverse=True)
+        section = (
+            [*structure.by_section.get(index, []), *structure.preamble_segments]
+            if index >= 0
+            else []
+        )
+        section_ids = {s.segment_id for s in section}
+        rest = [s for s in structure.segments if s.segment_id not in section_ids]
+        section.sort(key=lambda s: score_by_id.get(s.segment_id, 0.0), reverse=True)
+        rest.sort(key=lambda s: score_by_id.get(s.segment_id, 0.0), reverse=True)
+        ranked = [*section, *rest]
         _apply_ranking(
             g, [(s, score_by_id.get(s.segment_id, 0.0)) for s in ranked], state.chars_per_token
         )

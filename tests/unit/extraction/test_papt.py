@@ -145,3 +145,50 @@ class TestDescribeField:
         assert TemplateType.CONCISE.value == "concise"
         assert TemplateType.STANDARD.value == "standard"
         assert TemplateType.VERBOSE.value == "verbose"
+
+
+class TestDimensionDirective:
+    """Array-of-objects with enum item props get an enumeration directive."""
+
+    def _metric_field(self) -> Field:
+        items = {
+            "type": "object",
+            "properties": {
+                "segment_type": {
+                    "enum": ["company", "business_segment", "geographic_segment"],
+                    "type": "string",
+                },
+                "data_period": {"type": "string"},
+                "value": {"anyOf": [{"type": "null"}, {"type": "number"}]},
+            },
+        }
+        return make_field("revenue", "array", constraints={"items": items})
+
+    def test_enum_item_prop_emits_enumerate_directive(self):
+        line = describe_field(self._metric_field(), TemplateType.STANDARD)
+        assert "enumerate" in line
+        assert "segment_type" in line
+        assert "do not emit only the total" in line
+
+    def test_anyof_item_prop_resolves_to_real_type(self):
+        # value: anyOf[null, number] must render as number, not the string default.
+        line = describe_field(self._metric_field(), TemplateType.STANDARD)
+        assert "value: number" in line
+
+    def test_scalar_array_gets_no_directive(self):
+        f = make_field("tags", "array", constraints={"items": {"type": "string"}})
+        assert "enumerate" not in describe_field(f, TemplateType.STANDARD)
+
+    def test_object_array_without_enum_gets_no_directive(self):
+        items = {"type": "object", "properties": {"name": {"type": "string"}}}
+        f = make_field("people", "array", constraints={"items": items})
+        assert "enumerate" not in describe_field(f, TemplateType.STANDARD)
+
+    def test_single_value_enum_is_not_a_dimension(self):
+        # A one-value enum is a constant attribute, not an axis the list spans.
+        items = {
+            "type": "object",
+            "properties": {"kind": {"enum": ["only"], "type": "string"}},
+        }
+        f = make_field("rows", "array", constraints={"items": items})
+        assert "enumerate" not in describe_field(f, TemplateType.STANDARD)

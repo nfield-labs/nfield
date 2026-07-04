@@ -206,7 +206,9 @@ def score(
         >>> report.value_accuracy
         1.0
     """
-    flat = _flatten(extracted)
+    # Array rows are matched by best field-overlap, not position, so a correct list
+    # read in a different order is not penalised (VAREX; ExtractBench array_llm).
+    flat = _align_flat_arrays(_flatten(extracted), gold)
     prefixes = _container_prefixes(flat)
     scores: list[FieldScore] = []
     for path, gold_value in gold.items():
@@ -214,7 +216,10 @@ def score(
         field_type = _classify(node, gold_value)
         predicted = flat.get(path)
         shape_conflict = predicted is None and path in prefixes
-        outcome = _judge(gold_value, predicted, field_type, numeric_tolerance, shape_conflict)
+        eval_config = node.get("evaluation_config") if isinstance(node, dict) else None
+        outcome = _judge(
+            gold_value, predicted, field_type, numeric_tolerance, shape_conflict, eval_config
+        )
         scores.append(FieldScore(path, field_type, gold_value, predicted, outcome))
 
     return _aggregate(tuple(scores), call_failed)
@@ -259,6 +264,7 @@ def _judge(
     field_type: FieldType,
     numeric_tolerance: float,
     shape_conflict: bool,
+    eval_config: str | None = None,
 ) -> Outcome:
     # _flatten never stores an empty value, so an absent leaf arrives here as
     # None. shape_conflict distinguishes a true omission from a wrong-shape path
@@ -269,12 +275,70 @@ def _judge(
         return Outcome.STRUCTURAL if shape_conflict else Outcome.OMISSION
     return (
         Outcome.CORRECT
-        if _matches(gold, predicted, field_type, numeric_tolerance)
+        if _matches(gold, predicted, field_type, numeric_tolerance, eval_config)
         else Outcome.ACCURACY
     )
 
 
-def _matches(gold: Any, predicted: Any, field_type: FieldType, numeric_tolerance: float) -> bool:
+# Minimum normalised length for the containment rule, so a trivially short value
+# ("a", "NY") cannot claim semantic equality by being a substring of anything.
+_SEMANTIC_CONTAINMENT_MIN_CHARS: int = 4
+# string_fuzzy tolerates more drift than the long-string default (per the
+# benchmark's own tiering: exact < fuzzy < semantic).
+_FUZZY_MAX_DISTANCE: float = 0.2
+# Word-set overlap floor for the semantic tier: three quarters of the combined
+# vocabulary shared means the same statement reformatted, not different content.
+_SEMANTIC_MIN_JACCARD: float = 0.75
+# Long-value edit budget for the semantic tier. Same-entry pairs that differ only
+# by editorial reformatting measure edit <= 0.30; distinct entries measure >= 0.32
+# (0 false accepts in 300 mismatched pairs). Length-gated so short values keep
+# the strict budget.
+_SEMANTIC_LONG_MIN_CHARS: int = 60
+_SEMANTIC_LONG_MAX_DISTANCE: float = 0.30
+# Below this length the proportional edit budget spans a whole word, so edit-based
+# equality is disabled and short semantic values need containment or exact match.
+_SEMANTIC_EDIT_MIN_CHARS: int = 30
+
+
+def _matches(
+    gold: Any,
+    predicted: Any,
+    field_type: FieldType,
+    numeric_tolerance: float,
+    eval_config: str | None = None,
+) -> bool:
+    # ExtractBench schemas annotate per-field judging semantics; the official judge
+    # accepts meaning-equivalence for these tiers, so a strict exact match here
+    # would under-score relative to the benchmark's own rules.
+    if eval_config == "string_semantic" and isinstance(gold, str) and isinstance(predicted, str):
+        # Semantic is the benchmark's most lenient tier (exact < fuzzy < semantic):
+        # containment, then the fuzzy edit budget, then word-set overlap - so a
+        # value differing only in formatting (reflowed punctuation, dropped year
+        # parentheses) still matches while unrelated text stays rejected. Two
+        # renderings of the same calendar date are one meaning.
+        g, p = _norm(gold), _norm(predicted)
+        shorter = min(len(g), len(p))
+        if shorter >= _SEMANTIC_CONTAINMENT_MIN_CHARS and (g in p or p in g):
+            return True
+        # Edit budgets are length-gated: on a short value a proportional budget
+        # admits a meaning-flipping change ("north"/"south"), so short values must
+        # match by containment or exactly. Long values get the wider budget,
+        # calibrated on same-entry-reformatted vs different-entry pairs - 0.30 is
+        # the largest budget with zero false accepts over 300 mismatched pairs
+        # (mismatches start at ~0.32).
+        if shorter >= _SEMANTIC_EDIT_MIN_CHARS and _edit_ratio(g, p) <= _FUZZY_MAX_DISTANCE:
+            return True
+        if (
+            shorter >= _SEMANTIC_LONG_MIN_CHARS
+            and _edit_ratio(g, p) <= _SEMANTIC_LONG_MAX_DISTANCE
+        ):
+            return True
+        if _jaccard(g, p) >= _SEMANTIC_MIN_JACCARD:
+            return True
+        gold_dates, pred_dates = _parse_dates(g), _parse_dates(p)
+        return bool(gold_dates & pred_dates)
+    if eval_config == "string_fuzzy" and isinstance(gold, str) and isinstance(predicted, str):
+        return _edit_ratio(_norm(gold), _norm(predicted)) <= _FUZZY_MAX_DISTANCE
     if field_type is FieldType.BOOLEAN:
         return _as_bool(gold) == _as_bool(predicted)
     if field_type is FieldType.INTEGER:
@@ -290,6 +354,23 @@ def _matches(gold: Any, predicted: Any, field_type: FieldType, numeric_tolerance
 
 def _classify(node: dict[str, Any] | None, gold_value: Any) -> FieldType:
     if node is not None:
+        # A field typed via anyOf/oneOf (commonly [T, null]) carries its real type in
+        # the first non-null option; without unwrapping, a number field would fall
+        # back to exact string matching and flunk "2000000000.0" against "2000000000".
+        for combo in ("anyOf", "oneOf"):
+            options = node.get(combo)
+            if isinstance(options, list):
+                chosen = next(
+                    (
+                        o
+                        for o in options
+                        if isinstance(o, dict) and not (o.get("type") == "null" and len(o) == 1)
+                    ),
+                    None,
+                )
+                if chosen is not None:
+                    node = {**chosen, **{k: v for k, v in node.items() if k != combo}}
+                break
         if "enum" in node:
             return FieldType.ENUM
         schema_type = node.get("type")
@@ -335,6 +416,198 @@ def _resolve(schema: dict[str, Any], path: str) -> dict[str, Any] | None:
     return node if isinstance(node, dict) else None
 
 
+_ITEM_RE = re.compile(r"^(.*)\.item_(\d+)(?:\.(.*))?$")
+
+
+def _split_item_key(key: str) -> tuple[str, int, str] | None:
+    """Split ``base.item_<i>.suffix`` into ``(base, i, suffix)``; ``None`` if not an item.
+
+    Only the LAST ``item_`` segment is split, so a one-level array of objects is
+    aligned. ``suffix`` is empty for an array of scalars (``base.item_<i>``).
+    """
+    match = _ITEM_RE.match(key)
+    if not match:
+        return None
+    return match.group(1), int(match.group(2)), match.group(3) or ""
+
+
+def _align_flat_arrays(flat_pred: dict[str, Any], flat_gold: dict[str, Any]) -> dict[str, Any]:
+    """Remap predicted array-item indices to the gold item each best matches.
+
+    Works on flattened dicts: for every array base present in both, predicted items
+    are greedily assigned to gold items by the count of equal (suffix) values, and
+    the predicted keys are rewritten with the matched gold index. Non-array keys and
+    predicted items with no match (extras) are preserved unchanged.
+    """
+    gold_items = _group_items(flat_gold)
+    pred_items = _group_items(flat_pred)
+    if not gold_items or not pred_items:
+        return flat_pred
+
+    out: dict[str, Any] = {k: v for k, v in flat_pred.items() if _split_item_key(k) is None}
+    for base, pred_group in pred_items.items():
+        gold_group = gold_items.get(base)
+        if gold_group is None:
+            # No gold array here - keep predicted items at their own indices.
+            for idx, fields in pred_group.items():
+                _emit_item(out, base, idx, fields)
+            continue
+        mapping = _greedy_assign(pred_group, gold_group)
+        used_gold = set(mapping.values())
+        spare = (i for i in range(10_000) if i not in used_gold and i not in gold_group)
+        for pred_idx, fields in pred_group.items():
+            target = mapping.get(pred_idx)
+            if target is None:
+                # No exact-value match. Keep the item at its own position when that
+                # gold slot is free, so the type-aware judge (numeric tolerance, edit
+                # distance) still compares it - greedy exact matching must not defeat
+                # the fuzzy per-field rules. Park only true extras.
+                if pred_idx in gold_group and pred_idx not in used_gold:
+                    target = pred_idx
+                    used_gold.add(pred_idx)
+                else:
+                    target = next(spare)
+            _emit_item(out, base, target, fields)
+    return out
+
+
+def _group_items(flat: dict[str, Any]) -> dict[str, dict[int, dict[str, Any]]]:
+    """Group a flat dict into ``{array_base: {item_index: {suffix: value}}}``."""
+    groups: dict[str, dict[int, dict[str, Any]]] = {}
+    for key, value in flat.items():
+        split = _split_item_key(key)
+        if split is None:
+            continue
+        base, idx, suffix = split
+        groups.setdefault(base, {}).setdefault(idx, {})[suffix] = value
+    return groups
+
+
+def _emit_item(out: dict[str, Any], base: str, idx: int, fields: dict[str, Any]) -> None:
+    for suffix, value in fields.items():
+        out[f"{base}.item_{idx}.{suffix}" if suffix else f"{base}.item_{idx}"] = value
+
+
+def _greedy_assign(
+    pred_group: dict[int, dict[str, Any]], gold_group: dict[int, dict[str, Any]]
+) -> dict[int, int]:
+    """Greedily map predicted item indices to gold item indices by field overlap."""
+    pairs = [
+        (_overlap(pf, gold_group[gi]), pi, gi)
+        for pi, pf in pred_group.items()
+        for gi in gold_group
+    ]
+    pairs.sort(key=lambda t: t[0], reverse=True)
+    mapping: dict[int, int] = {}
+    taken_gold: set[int] = set()
+    for overlap, pi, gi in pairs:
+        if overlap <= 0 or pi in mapping or gi in taken_gold:
+            continue
+        mapping[pi] = gi
+        taken_gold.add(gi)
+    return mapping
+
+
+# Word-set similarity below this is treated as no match during array alignment -
+# high enough to reject unrelated items, low enough to absorb format drift.
+_ALIGN_MIN_SIMILARITY: float = 0.5
+
+
+def _overlap(pred_fields: dict[str, Any], gold_fields: dict[str, Any]) -> float:
+    """Similarity of one predicted array item to one gold item, over shared suffixes.
+
+    An exact normalised match scores 1 per suffix; otherwise word-set Jaccard
+    similarity counts when above :data:`_ALIGN_MIN_SIMILARITY`. Content-based (not
+    positional), so a list shifted by one dropped element or reformatted throughout
+    still aligns item-to-item, and the type-aware judge then scores each pair.
+    """
+    score = 0.0
+    for suffix, gold_value in gold_fields.items():
+        if suffix not in pred_fields:
+            continue
+        g, p = _norm(gold_value), _norm(pred_fields[suffix])
+        if g == p:
+            score += 1.0
+        else:
+            similarity = _jaccard(g, p)
+            if similarity >= _ALIGN_MIN_SIMILARITY:
+                score += similarity
+    return score
+
+
+# Month names as they appear after _norm (casefolded); index+1 = month number.
+_MONTHS = (
+    "january",
+    "february",
+    "march",
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december",
+)
+_DATE_ISO = re.compile(r"^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$")
+_DATE_DMY = re.compile(r"^(\d{1,2})(?:st|nd|rd|th)? ([a-z]+),? (\d{4})$")
+_DATE_MDY = re.compile(r"^([a-z]+) (\d{1,2})(?:st|nd|rd|th)?,? (\d{4})$")
+_DATE_NUMERIC = re.compile(r"^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$")
+
+
+def _parse_dates(text: str) -> set[tuple[int, int, int]]:
+    """All calendar readings of a normalised date string, empty when not a date.
+
+    An all-numeric slashed form is ambiguous (04/06/2023 is April 6 in MDY and
+    June 4 in DMY); every valid reading is returned and two strings denote the
+    same date when their readings intersect.
+    """
+    m = _DATE_ISO.match(text)
+    if m:
+        y, mo, d = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        return {(y, mo, d)} if _valid_date(mo, d) else set()
+    m = _DATE_DMY.match(text)
+    if m:
+        month = _month_number(m.group(2))
+        return {(int(m.group(3)), month, int(m.group(1)))} if month else set()
+    m = _DATE_MDY.match(text)
+    if m:
+        month = _month_number(m.group(1))
+        return {(int(m.group(3)), month, int(m.group(2)))} if month else set()
+    m = _DATE_NUMERIC.match(text)
+    if m:
+        a, b, y = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        readings = set()
+        if _valid_date(a, b):
+            readings.add((y, a, b))
+        if _valid_date(b, a):
+            readings.add((y, b, a))
+        return readings
+    return set()
+
+
+def _valid_date(month: int, day: int) -> bool:
+    """True when *month*/*day* form a plausible calendar position."""
+    return 1 <= month <= 12 and 1 <= day <= 31
+
+
+def _month_number(name: str) -> int | None:
+    """Month number for a full or three-letter month name, else ``None``."""
+    for index, month in enumerate(_MONTHS, start=1):
+        if month.startswith(name[:3]) and (name == month or len(name) == 3):
+            return index
+    return None
+
+
+def _jaccard(a: str, b: str) -> float:
+    """Word-set Jaccard similarity of two normalised strings."""
+    set_a, set_b = set(a.split()), set(b.split())
+    if not set_a or not set_b:
+        return 0.0
+    return len(set_a & set_b) / len(set_a | set_b)
+
+
 def _flatten(obj: Any, prefix: str = "") -> dict[str, Any]:
     out: dict[str, Any] = {}
     if isinstance(obj, dict):
@@ -361,13 +634,36 @@ def _is_empty(value: Any) -> bool:
     return any(value is empty or value == empty for empty in _EMPTY_VALUES)
 
 
+# Unicode punctuation variants folded to their ASCII form: hyphen/dash family,
+# curly quotes, and the ellipsis - presentation differences, never content.
+_PUNCT_FOLD = str.maketrans(
+    {
+        0x2010: "-",  # hyphen
+        0x2011: "-",  # non-breaking hyphen
+        0x2012: "-",  # figure dash
+        0x2013: "-",  # en dash
+        0x2014: "-",  # em dash
+        0x2015: "-",  # horizontal bar
+        0x2212: "-",  # minus sign
+        0x2018: "'",
+        0x2019: "'",
+        0x201C: '"',
+        0x201D: '"',
+        0x2026: "...",
+        # Comma folds to a space: "Bank AG, New York Branch" and "Bank AG New York
+        # Branch" are one entity, and folding both sides never favours prediction.
+        0x2C: " ",
+    }
+)
+
+
 def _norm(value: Any) -> str:
     # NFKD splits accented characters into base + combining mark; dropping the
     # marks (category Mn) folds diacritics so ASCII gold matches accented source
     # (e.g. "Kutúzov" -> "kutuzov"), the same fold the retrieval tokenizer uses.
     decomposed = unicodedata.normalize("NFKD", str(value))
     folded = "".join(ch for ch in decomposed if unicodedata.category(ch) != "Mn")
-    return _WHITESPACE.sub(" ", folded).strip().casefold()
+    return _WHITESPACE.sub(" ", folded.translate(_PUNCT_FOLD)).strip().casefold()
 
 
 def _as_bool(value: Any) -> bool:

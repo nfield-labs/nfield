@@ -1,0 +1,17 @@
+{
+  "dataset": "finance_10kq",
+  "schema_file": "finance\\10kq\\10kq-schema.json",
+  "documents": 7,
+  "model": "groq/qwen/qwen3.6-27b",
+  "reasoning_model": true,
+  "budget": "native",
+  "aggregate": {
+    "dataset": "finance_10kq",
+    "documents": 7,
+    "gold_fields": 8830,
+    "coverage": 0.916,
+    "value_accuracy": 0.8143,
+    "K_total": 162
+  },
+  "recorded_at": "2026-07-04T13:16:54+00:00"
+}

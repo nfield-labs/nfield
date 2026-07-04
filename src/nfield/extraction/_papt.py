@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 __all__ = [
     "TemplateType",
     "describe_field",
+    "dimension_axes",
     "select_template",
 ]
 
@@ -153,6 +154,10 @@ def describe_field(
     if item_text:
         parts.append(f" | items: {item_text}")
 
+    dimension_text = _dimension_directive(field)
+    if dimension_text:
+        parts.append(f" | {dimension_text}")
+
     example_text = _format_examples(field.schema_node)
     if example_text:
         parts.append(f" | e.g. {example_text}")
@@ -192,7 +197,8 @@ def _format_constraints(constraints: dict[str, Any]) -> str:
     parts: list[str] = []
     # Track which keys we render with bespoke phrasing; everything else falls
     # through the generic catch-all so NO constraint is ever silently dropped.
-    handled: set[str] = set()
+    # "items" is rendered separately by _format_array_items (the element shape).
+    handled: set[str] = {"items"}
 
     if "const" in constraints:
         parts.append(f"must equal {constraints['const']}")
@@ -278,6 +284,84 @@ _ITEM_CONSTRAINT_KEYS: frozenset[str] = frozenset(
 _MAX_EXAMPLES_SHOWN: int = 3
 
 
+# Recursion bound for nested item shapes; deeper levels render as bare type labels.
+_MAX_ITEM_DEPTH: int = 4
+
+
+def _resolve_combo(node: dict[str, Any]) -> dict[str, Any]:
+    """Collapse an ``anyOf``/``oneOf`` node to its first non-null branch.
+
+    A property typed ``anyOf: [{type: null}, {type: number}]`` carries its real
+    type in the non-null branch; without resolving it, the type label falls back
+    to the string default and the model is told to emit a string for a number.
+    """
+    for combo in ("anyOf", "oneOf"):
+        options = node.get(combo)
+        if isinstance(options, list):
+            chosen = next(
+                (
+                    o
+                    for o in options
+                    if isinstance(o, dict) and not (o.get("type") == "null" and len(o) == 1)
+                ),
+                None,
+            )
+            if isinstance(chosen, dict):
+                return {**chosen, **{k: v for k, v in node.items() if k != combo}}
+    return node
+
+
+def _item_field_type(sub: Any) -> str:
+    """Return a short type label for one property of an array item's object schema."""
+    if not isinstance(sub, dict):
+        return "string"
+    sub = _resolve_combo(sub)
+    t = sub.get("type", "string")
+    if isinstance(t, list):
+        non_null = [x for x in t if x != "null"]
+        return str(non_null[0]) if non_null else "null"
+    return str(t)
+
+
+def _shape(node: Any, depth: int) -> str:
+    """Recursive shape of a schema node: objects and arrays expand their inner keys.
+
+    A nested object renders ``object {k: <shape>, ...}`` and a nested list renders
+    ``array of <shape>`` so the model sees the full structure it must emit, not just
+    ``object`` / ``array``. Recursion stops at :data:`_MAX_ITEM_DEPTH`.
+    """
+    if not isinstance(node, dict):
+        return "string"
+    node = _resolve_combo(node)
+    if node.get("type") == "object" or "properties" in node:
+        props = node.get("properties")
+        if isinstance(props, dict) and props and depth < _MAX_ITEM_DEPTH:
+            inner = ", ".join(_describe_item_field(n, sub, depth + 1) for n, sub in props.items())
+            return f"object {{{inner}}}"
+        return "object"
+    if node.get("type") == "array" or "items" in node:
+        items = node.get("items")
+        if isinstance(items, dict) and depth < _MAX_ITEM_DEPTH:
+            return f"array of {_shape(items, depth + 1)}"
+        return "array"
+    return _item_field_type(node)
+
+
+def _describe_item_field(name: str, sub: Any, depth: int = 1) -> str:
+    """Describe one key of an array item's object: name, (recursive) shape, enum, meaning."""
+    text = f"{name}: {_shape(sub, depth)}"
+    if isinstance(sub, dict):
+        resolved = _resolve_combo(sub)
+        enum = resolved.get("enum")
+        if isinstance(enum, list) and enum:
+            text += f" one of [{', '.join(str(o) for o in enum)}]"
+        desc = _extract_description(sub)
+        if desc:
+            # Kept in full: per-key conventions tell the model which rows to emit.
+            text += f" ({desc})"
+    return text
+
+
 def _format_array_items(field: Field) -> str:
     """Describe an array field's element schema (type, constraints, meaning).
 
@@ -290,9 +374,15 @@ def _format_array_items(field: Field) -> str:
     """
     if field.type != "array":
         return ""
-    items = field.schema_node.get("items")
+    # Prefer the flattener's resolved item schema so a $ref shows its real shape.
+    items = field.constraints.get("items")
+    if not isinstance(items, dict):
+        items = field.schema_node.get("items")
     if not isinstance(items, dict):
         return ""
+    # Render the full recursive shape so nested entries show their own keys.
+    if items.get("type") == "object" or "properties" in items:
+        return _shape(items, 0)
     elem_type = items.get("type", "string")
     elem_type = elem_type[0] if isinstance(elem_type, list) and elem_type else elem_type
     text = str(elem_type)
@@ -304,6 +394,83 @@ def _format_array_items(field: Field) -> str:
     if elem_desc:
         text += f" ({elem_desc})"
     return text
+
+
+# A categorical property with at least this many allowed values is a "dimension":
+# the list is expected to hold one entry per value (e.g. one figure reported for each
+# category of a labelled axis), so a single representative row under-fills it. Below
+# this the enum is a per-entry attribute (a status flag), not an axis the list spans.
+_MIN_DIMENSION_CARDINALITY: int = 2
+
+
+def dimension_axes(field: Field) -> list[tuple[str, list[str]]]:
+    """Categorical dimensions of an array-of-objects: item enum props with >=2 values.
+
+    A ``(name, values)`` pair per item property that is an enum with at least
+    :data:`_MIN_DIMENSION_CARDINALITY` allowed values - the axes the list is meant to
+    span (one entry per category of a labelled axis), as opposed to a per-entry flag.
+    Shared by the prompt directive and the extraction sweep so both agree on which
+    arrays need exhaustive per-category coverage. Schema-shape driven, never a
+    hardcoded field.
+
+    Args:
+        field: The field to inspect.
+
+    Returns:
+        List of ``(property_name, [allowed values])``; empty when the field is not an
+        array-of-objects or has no multi-value enum property.
+    """
+    if field.type != "array":
+        return []
+    items = field.constraints.get("items")
+    if not isinstance(items, dict):
+        items = field.schema_node.get("items")
+    if not isinstance(items, dict):
+        return []
+    props = items.get("properties")
+    if not isinstance(props, dict):
+        return []
+    axes: list[tuple[str, list[str]]] = []
+    for name, sub in props.items():
+        if not isinstance(sub, dict):
+            continue
+        enum = _resolve_combo(sub).get("enum")
+        values = [str(o) for o in enum if o is not None] if isinstance(enum, list) else []
+        if len(values) >= _MIN_DIMENSION_CARDINALITY:
+            axes.append((name, values))
+    return axes
+
+
+def _dimension_directive(field: Field) -> str:
+    """Directive to enumerate an array-of-objects across its categorical dimensions.
+
+    When an item property is an enum with several allowed values, the list is meant
+    to hold one entry per value disclosed (one entry per category of the axis),
+    not a single total. The model otherwise emits only the primary/
+    aggregate row it finds in the main table and drops the per-category rows that
+    live in another part of the document. Naming the dimension and its values at the
+    field level - grounded by "disclosed in the document" so nothing is invented -
+    tells the model to gather every such row.
+
+    Args:
+        field: The field to inspect.
+
+    Returns:
+        A directive clause, or empty string when the item has no dimension property.
+    """
+    axes = dimension_axes(field)
+    if not axes:
+        return ""
+    dims = [f"{name} ([{', '.join(values)}])" for name, values in axes]
+    # Domain meaning comes from the schema's OWN enum values (dims), never from
+    # nouns written here - the instruction stays generic so no domain is favoured.
+    return (
+        f"enumerate EXHAUSTIVELY over {' and '.join(dims)}: emit a separate entry for "
+        "every distinct value of this axis disclosed in the document, at every level it "
+        "is reported - the overall/total AND each individually named value, wherever a "
+        "labelled figure for it appears. Set the axis field accordingly; do not emit only "
+        "the total"
+    )
 
 
 def _format_examples(schema_node: dict[str, Any]) -> str:

@@ -6,7 +6,10 @@ from nfield.exceptions import SchemaError
 
 from ._types import Field
 
-__all__ = ["flatten_schema"]
+__all__ = ["OPEN_MAP_MARKER", "flatten_schema"]
+
+# Marks an open-map list-leaf; assembly folds its [{key, value}] list back to a dict.
+OPEN_MAP_MARKER: str = "x-open-map"
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -77,7 +80,10 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
     - prefixItems - creates indexed paths path[0], path[1], ...
     - allOf - merges all sub-schemas' properties
     - patternProperties - creates wildcard path with .* suffix
-    - items (homogeneous arrays) - creates path[] path
+    - array of scalars - creates path[] leaf
+    - array of objects - creates one array "list-leaf" whose ``constraints["items"]``
+      holds the item schema, so a variable-length object array is extracted as a
+      whole list instead of collapsing to a single templated element
     - additionalProperties (dict schema) - creates wildcard path with .* suffix
 
     Args:
@@ -191,6 +197,7 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
                 stack=stack,
                 fields=fields,
                 seen_paths=seen_paths,
+                root_schema=schema,
             )
 
     return fields
@@ -212,6 +219,7 @@ def _process_node(
     stack: list[tuple[dict[str, Any], str, str, int, frozenset[str], frozenset[str]]],
     fields: list[Field],
     seen_paths: set[str],
+    root_schema: dict[str, Any],
 ) -> None:
     """Process one schema node and push children onto the stack or emit a Field."""
     # ── allOf - merge all sub-schema properties ───────────────────────────
@@ -242,7 +250,16 @@ def _process_node(
             child_path = f"{path}.{prop_name}" if path else prop_name
             stack.append((prop_node, child_path, path, depth + 1, child_required, ref_chain))
 
-        # patternProperties → wildcard field
+        # A pure dynamic-key object extracts as one {key, value} list (open map).
+        value_schema = _open_map_value_schema(node)
+        if value_schema is not None and not properties and path and path not in seen_paths:
+            seen_paths.add(path)
+            fields.append(
+                _open_map_leaf(path, parent_path, value_schema, required_set, root_schema)
+            )
+            return
+
+        # patternProperties → wildcard field (mixed object: keep the wildcard)
         for pat_node in node.get("patternProperties", {}).values():
             wildcard_path = f"{path}{_WILDCARD_SUFFIX}" if path else _WILDCARD_SUFFIX
             if wildcard_path not in seen_paths:
@@ -306,6 +323,26 @@ def _process_node(
 
         items_node = node.get("items")
         if isinstance(items_node, dict):
+            # Object and scalar arrays become one list-leaf; arrays of arrays recurse.
+            if _items_is_object(items_node, root_schema) or _items_is_scalar(
+                items_node, root_schema
+            ):
+                if path and path not in seen_paths:
+                    seen_paths.add(path)
+                    field_name = path.rsplit(".", 1)[-1].rstrip("[]")
+                    resolved_items = _resolve_items_node(items_node, root_schema)
+                    constraints = {**_extract_constraints(node), "items": resolved_items}
+                    fields.append(
+                        Field(
+                            path=path,
+                            type="array",
+                            constraints=constraints,
+                            parent_path=parent_path,
+                            schema_node=node,
+                            required=field_name in required_set,
+                        )
+                    )
+                return
             array_path = f"{path}{_ARRAY_SUFFIX}"
             stack.append((items_node, array_path, path, depth + 1, frozenset(), ref_chain))
             return
@@ -361,6 +398,113 @@ def _make_field(
         schema_node=node,
         required=is_required,
     )
+
+
+def _open_map_value_schema(node: dict[str, Any]) -> dict[str, Any] | None:
+    """Return the value schema of an open map (patternProperties/additionalProperties)."""
+    patterns = node.get("patternProperties")
+    if isinstance(patterns, dict) and patterns:
+        first = next(iter(patterns.values()))
+        return first if isinstance(first, dict) else {}
+    addl = node.get("additionalProperties")
+    if isinstance(addl, dict):
+        return addl
+    return None
+
+
+def _open_map_leaf(
+    path: str,
+    parent_path: str,
+    value_schema: dict[str, Any],
+    required_set: frozenset[str],
+    root_schema: dict[str, Any],
+) -> Field:
+    """Build one array list-leaf of {key, value} for an open map."""
+    item = {
+        "type": "object",
+        "properties": {
+            "key": {"type": "string", "description": "The map key."},
+            "value": _resolve_items_node(value_schema, root_schema),
+        },
+    }
+    constraints: dict[str, Any] = {"items": item, OPEN_MAP_MARKER: True}
+    field_name = path.rsplit(".", 1)[-1]
+    return Field(
+        path=path,
+        type="array",
+        constraints=constraints,
+        parent_path=parent_path,
+        schema_node={"type": "array", "items": item},
+        required=field_name in required_set,
+    )
+
+
+def _items_is_object(items_node: dict[str, Any], root_schema: dict[str, Any]) -> bool:
+    """Return ``True`` if an array's ``items`` schema is (or $refs) an object.
+
+    Resolves a single ``$ref`` so that ``items: {"$ref": "#/$defs/metric_entry"}``
+    is recognised as an object array. A resolution failure is treated as non-object.
+    """
+    node = items_node
+    if "$ref" in node:
+        try:
+            node = _resolve_ref(root_schema, node["$ref"])
+        except SchemaError:
+            return False
+    return node.get("type") == "object" or "properties" in node
+
+
+def _items_is_scalar(items_node: dict[str, Any], root_schema: dict[str, Any]) -> bool:
+    """Return ``True`` if an array's ``items`` schema is a scalar (not object or array).
+
+    A scalar item is a string/integer/number/boolean/enum leaf - anything that is not
+    an object (handled as an object list-leaf) and not itself an array (kept as a
+    per-element push so nested-array shapes still recurse). Resolves a single ``$ref``.
+    """
+    node = items_node
+    if "$ref" in node:
+        try:
+            node = _resolve_ref(root_schema, node["$ref"])
+        except SchemaError:
+            return False
+    if node.get("type") == "object" or "properties" in node:
+        return False
+    return not (node.get("type") == "array" or "items" in node or "prefixItems" in node)
+
+
+def _resolve_items_node(items_node: dict[str, Any], root_schema: dict[str, Any]) -> dict[str, Any]:
+    """Resolve a single ``$ref`` in an array's items so the item shape is concrete.
+
+    Returns the resolved node merged with any sibling keys (e.g. ``description``).
+    A non-ref or unresolvable node is returned unchanged, so the caller always has
+    a usable item schema for the prompt and the JSON-array cast.
+    """
+    node = items_node
+    if "$ref" in node:
+        try:
+            resolved = _resolve_ref(root_schema, node["$ref"])
+        except SchemaError:
+            return node
+        node = {**resolved, **{k: v for k, v in node.items() if k != "$ref"}}
+    # Resolve one level of property $refs so each item field carries its real type.
+    props = node.get("properties")
+    if isinstance(props, dict):
+        node = {
+            **node,
+            "properties": {n: _resolve_prop(sub, root_schema) for n, sub in props.items()},
+        }
+    return node
+
+
+def _resolve_prop(sub: Any, root_schema: dict[str, Any]) -> Any:
+    """Resolve a single-level ``$ref`` in an item property, merging sibling keys."""
+    if not (isinstance(sub, dict) and "$ref" in sub):
+        return sub
+    try:
+        resolved = _resolve_ref(root_schema, sub["$ref"])
+    except SchemaError:
+        return sub
+    return {**resolved, **{k: v for k, v in sub.items() if k != "$ref"}}
 
 
 def _resolve_ref(root_schema: dict[str, Any], ref: str) -> dict[str, Any]:
@@ -475,18 +619,38 @@ def _determine_type(node: dict[str, Any]) -> str:
 def _first_non_null_option(
     options: list[dict[str, Any]],
 ) -> dict[str, Any] | None:
-    """Return the first non-null option from anyOf/oneOf list.
+    """Choose the anyOf/oneOf branch to flatten, preferring the richest shape.
+
+    Null-only options are skipped. Among the rest the richest branch wins - object
+    over array over scalar - because an object (or open map) can represent both the
+    grouped and the flat form of a polymorphic field, while a scalar or array branch
+    cannot represent the grouped form. Equal ranks keep declaration order.
 
     Args:
         options: List of schema option dicts.
 
     Returns:
-        First option that is not purely {"type": "null"}, or None if empty.
+        The chosen option, or ``None`` if every option is null-only or non-dict.
     """
-    for opt in options:
-        if not isinstance(opt, dict):
-            continue
-        if opt.get("type") == "null" and len(opt) == 1:
-            continue
-        return opt
-    return None
+    candidates = [
+        opt
+        for opt in options
+        if isinstance(opt, dict) and not (opt.get("type") == "null" and len(opt) == 1)
+    ]
+    if not candidates:
+        return None
+    # max() is stable, so the first branch of the top rank wins (declaration order).
+    return max(candidates, key=_option_rank)
+
+
+def _option_rank(option: dict[str, Any]) -> int:
+    """Structural richness of an anyOf branch: object (2) > array (1) > scalar (0)."""
+    if (
+        option.get("type") == "object"
+        or "properties" in option
+        or "additionalProperties" in option
+    ):
+        return 2
+    if option.get("type") == "array" or "items" in option or "prefixItems" in option:
+        return 1
+    return 0

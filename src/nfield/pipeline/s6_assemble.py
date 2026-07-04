@@ -7,14 +7,16 @@ builds the final ExtractionResult returned to the caller.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from nfield.assembly._quality import compute_quality_score
 from nfield.assembly._trie import assemble_json
+from nfield.schema._flatten import OPEN_MAP_MARKER
 from nfield.types import ExtractionResult, ExtractionStatus, Metadata
 
 if TYPE_CHECKING:
     from nfield.pipeline._state import PipelineState
+    from nfield.schema._types import Field
 
 __all__ = ["run_stage_6"]
 
@@ -47,7 +49,7 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
     fields_total = len(state.fields)
 
     # --- 1. Collect filled values ---
-    filled = bb.get_filled()
+    filled = _fold_open_maps(bb.get_filled(), state.fields)
 
     # --- 2. Assemble nested JSON ---
     data = assemble_json(filled) if filled else {}
@@ -155,3 +157,21 @@ def _determine_status(
     if missing_fraction > _FAILED_MISSING_FRACTION:
         return ExtractionStatus.FAILED
     return ExtractionStatus.PARTIAL
+
+
+def _fold_open_maps(filled: dict[str, Any], fields: list[Field]) -> dict[str, Any]:
+    """Fold open-map fields' ``[{key, value}, ...]`` lists back into ``{key: value}`` dicts."""
+    open_map_paths = {f.path for f in fields if f.constraints.get(OPEN_MAP_MARKER)}
+    if not open_map_paths:
+        return filled
+    out = dict(filled)
+    for path in open_map_paths:
+        value = out.get(path)
+        if isinstance(value, list):
+            # Rows with non-string keys are dropped rather than crashing on hashing.
+            out[path] = {
+                item["key"]: item.get("value")
+                for item in value
+                if isinstance(item, dict) and isinstance(item.get("key"), str)
+            }
+    return out

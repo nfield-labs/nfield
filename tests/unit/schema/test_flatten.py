@@ -276,7 +276,7 @@ class TestFlattenEdgeCases:
         assert "root.value" in paths
 
     def test_array_items_creates_bracket_suffix(self) -> None:
-        """Array with items creates path[] leaf."""
+        """A scalar array is one list-leaf carrying its item schema (whole list emitted)."""
         schema: dict = {  # type: ignore[type-arg]
             "type": "object",
             "properties": {
@@ -286,9 +286,59 @@ class TestFlattenEdgeCases:
                 }
             },
         }
-        fields = flatten_schema(schema)
-        paths = {f.path for f in fields}
-        assert "tags[]" in paths
+        by_path = {f.path: f for f in flatten_schema(schema)}
+        assert set(by_path) == {"tags"}
+        assert by_path["tags"].type == "array"
+        assert by_path["tags"].constraints["items"]["type"] == "string"
+
+    def test_object_array_expands_to_list_leaf(self) -> None:
+        """An array of objects is one array list-leaf field carrying its item schema."""
+        item_schema = {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "value": {"type": "number"},
+            },
+        }
+        schema: dict = {  # type: ignore[type-arg]
+            "type": "object",
+            "properties": {"rows": {"type": "array", "items": item_schema}},
+        }
+        by_path = {f.path: f for f in flatten_schema(schema)}
+        assert set(by_path) == {"rows"}
+        rows = by_path["rows"]
+        assert rows.type == "array"
+        assert rows.constraints["items"] == item_schema
+        # The per-element template must NOT be emitted for an object array.
+        assert "rows[].name" not in by_path
+
+    def test_object_array_via_ref_expands_to_list_leaf(self) -> None:
+        """A $ref item resolving to an object is also collapsed to one list-leaf."""
+        schema: dict = {  # type: ignore[type-arg]
+            "type": "object",
+            "$defs": {
+                "Entry": {
+                    "type": "object",
+                    "properties": {"period": {"type": "string"}, "amount": {"type": "number"}},
+                }
+            },
+            "properties": {
+                "entries": {"type": "array", "items": {"$ref": "#/$defs/Entry"}},
+            },
+        }
+        by_path = {f.path: f for f in flatten_schema(schema)}
+        assert set(by_path) == {"entries"}
+        assert by_path["entries"].type == "array"
+
+    def test_scalar_array_becomes_list_leaf(self) -> None:
+        """An array of scalars is one list-leaf so the whole list is captured, not one item."""
+        schema: dict = {  # type: ignore[type-arg]
+            "type": "object",
+            "properties": {"tags": {"type": "array", "items": {"type": "string"}}},
+        }
+        paths = {f.path for f in flatten_schema(schema)}
+        assert "tags" in paths
+        assert "tags[]" not in paths
 
     def test_prefix_items_creates_indexed_paths(self) -> None:
         """prefixItems creates path[0], path[1], etc."""
@@ -362,8 +412,8 @@ class TestFlattenEdgeCases:
         assert len(fields) == 1
         assert fields[0].type == "number"
 
-    def test_additional_properties_dict_creates_wildcard(self) -> None:
-        """additionalProperties as dict creates wildcard path."""
+    def test_additional_properties_dict_creates_open_map_leaf(self) -> None:
+        """A pure additionalProperties object becomes one open-map list-leaf."""
         schema: dict = {  # type: ignore[type-arg]
             "type": "object",
             "properties": {
@@ -373,9 +423,13 @@ class TestFlattenEdgeCases:
                 }
             },
         }
-        fields = flatten_schema(schema)
-        paths = {f.path for f in fields}
-        assert "metadata.*" in paths
+        by_path = {f.path: f for f in flatten_schema(schema)}
+        assert set(by_path) == {"metadata"}
+        field = by_path["metadata"]
+        assert field.type == "array"
+        assert field.constraints["x-open-map"] is True
+        item_props = field.constraints["items"]["properties"]
+        assert set(item_props) == {"key", "value"}
 
     def test_additional_properties_bool_not_wildcard(self) -> None:
         """additionalProperties=True (bool) does NOT create wildcard."""

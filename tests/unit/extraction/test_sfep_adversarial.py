@@ -161,11 +161,10 @@ class TestArrayParsingEdgeCases:
         assert "one,two" in result or '"one,two"' in result  # either stripped or not
 
     def test_array_with_null_element(self):
-        """'[NULL, valid]' - NULL element in array."""
+        """'[NULL, valid]' - a NULL item is padding and is dropped."""
         f = make_field("values", "array")
         result = typecast("[NULL, valid]", f)
-        assert isinstance(result, list)
-        assert None in result
+        assert result == ["valid"]
 
     def test_array_with_boolean_elements(self):
         """'[true, false, true]' for boolean array."""

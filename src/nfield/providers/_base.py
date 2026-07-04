@@ -109,6 +109,10 @@ class BaseProvider(ABC):
         self._rate_limit_backoff_max = rate_limit_backoff_max
         self._context_window = context_window
         self._max_output_tokens = max_output_tokens
+        # The model's exact input token count for the most recent call, read from
+        # the API usage report. Lets the pipeline calibrate its chars-per-token
+        # estimate to this model's real tokenizer (None until the first call).
+        self.last_prompt_tokens: int | None = None
 
     # --- Abstract methods (subclasses must implement) ---
 

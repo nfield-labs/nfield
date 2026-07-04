@@ -1,0 +1,17 @@
+{
+  "dataset": "finance_credit_agreement",
+  "schema_file": "finance\\credit_agreement\\credit_agreement-schema.json",
+  "documents": 10,
+  "model": "groq/qwen/qwen3.6-27b",
+  "reasoning_model": true,
+  "budget": "native",
+  "aggregate": {
+    "dataset": "finance_credit_agreement",
+    "documents": 10,
+    "gold_fields": 265,
+    "coverage": 0.9547,
+    "value_accuracy": 0.8943,
+    "K_total": 108
+  },
+  "recorded_at": "2026-07-04T13:25:47+00:00"
+}

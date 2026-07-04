@@ -17,13 +17,20 @@ Parsing rules
 * Right side is a raw string value, cast to the field's Python type.
 * ``NULL`` (case-insensitive) maps to Python ``None``.
 * ``NEEDS_REVALIDATION`` maps to the :data:`NEEDS_REVALIDATION` sentinel.
-* Arrays use bracket notation: ``[a, b, c]``.
+* Array values are JSON arrays on one line (a multi-line array is accumulated
+  until brackets balance); bare bracket lists ``[a, b, c]`` are also accepted.
 * Unknown paths are silently skipped (LLM may hallucinate paths).
 """
 
 from __future__ import annotations
 
+import itertools
+import json
+import math
+import re
 from typing import TYPE_CHECKING, Any
+
+import json_repair
 
 from nfield.exceptions import ExtractionError
 from nfield.validation._normalize import coerce_number
@@ -37,7 +44,9 @@ __all__ = [
     "parse_sfep",
     "parse_sfep_failures",
     "parse_sfep_line",
+    "truncated_json_arrays",
     "typecast",
+    "unclean_json_arrays",
 ]
 
 # ---------------------------------------------------------------------------
@@ -47,6 +56,17 @@ __all__ = [
 _SFEP_SEPARATOR: str = " = "
 _SFEP_NULL_SENTINEL: str = "NULL"
 _SFEP_NEEDS_REVALIDATION_SENTINEL: str = "NEEDS_REVALIDATION"
+# Currency symbols and thousands-grouping separators that mark a displayed number.
+_CURRENCY_SIGNS: str = "$" + chr(0x20AC) + chr(0xA3) + chr(0xA5) + chr(0x20B9) + chr(0x20A9)
+_GROUP_SIGNS: str = ",.' " + chr(0x2019) + chr(0xA0) + chr(0x202F)
+
+# A trailing comma phrase repeated across most items is per-item boilerplate
+# (a role or type clause), not content. The 3-word floor keeps name suffixes
+# (", Inc.", ", N.A.") and shared years out of reach.
+_SUFFIX_MIN_FRACTION: float = 0.6
+_SUFFIX_MIN_ITEMS: int = 3
+_SUFFIX_MIN_WORDS: int = 3
+_SUFFIX_WORD = re.compile(r"[A-Za-z]+")
 
 
 # ---------------------------------------------------------------------------
@@ -123,11 +143,16 @@ def parse_sfep(text: str, fields: list[Field]) -> dict[str, Any]:
     field_map: dict[str, Field] = {f.path: f for f in fields}
     result: dict[str, Any] = {}
 
-    for line in text.splitlines():
-        pair = parse_sfep_line(line)
+    lines = text.splitlines()
+    i = 0
+    while i < len(lines):
+        pair = parse_sfep_line(lines[i])
         if pair is None:
+            i += 1
             continue
         path, raw_value = pair
+        # Capture a multi-line JSON value whole (see _accumulate_value).
+        raw_value, i = _accumulate_value(raw_value, lines, i + 1, field_map)
         field = field_map.get(path)
         if field is None:
             continue
@@ -138,6 +163,52 @@ def parse_sfep(text: str, fields: list[Field]) -> dict[str, Any]:
             continue
 
     return result
+
+
+def _is_balanced(text: str) -> bool:
+    """Return ``True`` when brackets/braces in *text* are balanced (ignoring strings)."""
+    depth = 0
+    in_string = False
+    escaped = False
+    for ch in text:
+        if in_string:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == '"':
+                in_string = False
+            continue
+        if ch == '"':
+            in_string = True
+        elif ch in "[{":
+            depth += 1
+        elif ch in "]}":
+            depth -= 1
+    return depth <= 0
+
+
+def _accumulate_value(
+    raw_value: str, lines: list[str], start: int, field_map: dict[str, Field]
+) -> tuple[str, int]:
+    """Join continuation lines of a multi-line bracketed value; return (value, next_index).
+
+    Only a value that opens with ``[`` or ``{`` and is not yet balanced pulls in
+    following lines. Accumulation stops at balance, at end of input, or at the next
+    line that is itself a known ``field.path = value`` pair (so a later field is not
+    swallowed by a truncated array).
+    """
+    if raw_value[:1] not in "[{" or _is_balanced(raw_value):
+        return raw_value, start
+    buffer = [raw_value]
+    j = start
+    while j < len(lines) and not _is_balanced("\n".join(buffer)):
+        nxt = parse_sfep_line(lines[j])
+        if nxt is not None and nxt[0] in field_map:
+            break
+        buffer.append(lines[j])
+        j += 1
+    return "\n".join(buffer), j
 
 
 def count_unknown_paths(text: str, fields: list[Field]) -> int:
@@ -169,6 +240,77 @@ def count_unknown_paths(text: str, fields: list[Field]) -> int:
         if pair is not None and pair[0] not in known:
             unknown += 1
     return unknown
+
+
+def unclean_json_arrays(text: str, fields: list[Field]) -> set[str]:
+    """List-leaf array paths whose JSON value did not parse cleanly (repair was needed).
+
+    Covers both object arrays and scalar list-leaves - any array carrying an item
+    schema. A cleanly-parsed array is trustworthy; one that only survived repair (or
+    a comma-split fallback) may be partial or shattered, so the caller can re-sample
+    that leaf and keep the better result. Empty/absent values are not unclean.
+    """
+    field_map = {f.path: f for f in fields}
+    unclean: set[str] = set()
+    lines = text.splitlines()
+    i = 0
+    while i < len(lines):
+        pair = parse_sfep_line(lines[i])
+        if pair is None:
+            i += 1
+            continue
+        path, raw = pair
+        raw, i = _accumulate_value(raw, lines, i + 1, field_map)
+        field = field_map.get(path)
+        if (
+            field is None
+            or field.type != "array"
+            or not isinstance(field.constraints.get("items"), dict)
+        ):
+            continue
+        value = raw.strip()
+        if not value or value in {"[]", "null", "none"}:
+            continue
+        start, end = value.find("["), value.rfind("]")
+        if start == -1 or end <= start:
+            unclean.add(path)
+            continue
+        try:
+            json.loads(value[start : end + 1])
+        except json.JSONDecodeError:
+            unclean.add(path)
+    return unclean
+
+
+def truncated_json_arrays(text: str, fields: list[Field]) -> set[str]:
+    """List-leaf array paths whose JSON value opens a bracket that never closes.
+
+    An unclosed array means the output was cut at the token limit mid-list, not
+    malformed: re-sampling repeats the cut at the same place, so the caller
+    routes these to continuation over the rest of the document instead.
+    """
+    field_map = {f.path: f for f in fields}
+    truncated: set[str] = set()
+    lines = text.splitlines()
+    i = 0
+    while i < len(lines):
+        pair = parse_sfep_line(lines[i])
+        if pair is None:
+            i += 1
+            continue
+        path, raw = pair
+        raw, i = _accumulate_value(raw, lines, i + 1, field_map)
+        field = field_map.get(path)
+        if (
+            field is None
+            or field.type != "array"
+            or not isinstance(field.constraints.get("items"), dict)
+        ):
+            continue
+        start = raw.find("[")
+        if start != -1 and not _is_balanced(raw[start:]):
+            truncated.add(path)
+    return truncated
 
 
 def parse_sfep_failures(text: str, fields: list[Field]) -> dict[str, str]:
@@ -436,6 +578,184 @@ def _cast_enum(raw: str, field: Field) -> str:
     )
 
 
+def _array_items_are_objects(field: Field) -> bool:
+    """Return ``True`` if an array field's items are objects (a JSON list-leaf).
+
+    The flattener stores the item schema under ``constraints["items"]``. An item
+    that is an object - directly (``type: object`` / ``properties``) or via a
+    ``$ref`` (resolved object) - marks a variable-length array of objects whose
+    value is a JSON array, not a bracketed scalar list.
+    """
+    items = field.constraints.get("items")
+    if not isinstance(items, dict):
+        return False
+    return "$ref" in items or items.get("type") == "object" or "properties" in items
+
+
+def _cast_object_array(raw: str, field: Field) -> list[Any]:
+    """Parse a JSON array of objects, tolerating text around the array.
+
+    Args:
+        raw: The stripped SFEP value, expected to be a JSON array of objects.
+        field: Field descriptor (for the error path/message).
+
+    Returns:
+        A list of dict elements (empty list when the value is empty or ``[]``).
+
+    Raises:
+        ExtractionError: If a non-empty value cannot be parsed as a JSON array.
+    """
+    if not raw or raw in {"[]", "null", "none"}:
+        return []
+    start = raw.find("[")
+    if start == -1:
+        raise ExtractionError(
+            f"Array field expected a JSON array of objects, got {raw[:40]!r}",
+            field=field.path,
+        )
+    end = raw.rfind("]")
+    parsed: Any = None
+    if end > start:
+        try:
+            parsed = json.loads(raw[start : end + 1])
+        except json.JSONDecodeError:
+            parsed = None
+    if not isinstance(parsed, list):
+        # Repair miscounted braces and mid-list truncation; salvage as last resort.
+        repaired = json_repair.loads(raw[start:])
+        parsed = repaired if isinstance(repaired, list) else _salvage_objects(raw[start + 1 :])
+    # Repair can wrap a mis-braced group in a stray list; flatten one level.
+    props = _item_properties(field)
+    rows: list[dict[str, Any]] = []
+    for item in parsed:
+        if isinstance(item, dict):
+            rows.append(item)
+        elif isinstance(item, list):
+            rows.extend(x for x in item if isinstance(x, dict))
+    if not rows and "{" in raw[start:]:
+        # Object rows were emitted but none survived repair: fail so it re-extracts.
+        raise ExtractionError(
+            f"Array field could not recover any object rows from {raw[:40]!r}",
+            field=field.path,
+        )
+    return [_cast_item(row, props) for row in rows]
+
+
+def _salvage_objects(inner: str) -> list[dict[str, Any]]:
+    """Recover the complete top-level ``{...}`` objects from a truncated JSON array body.
+
+    Walks the string tracking brace depth and string context, parsing each balanced
+    object as it closes; stops at the first incomplete one. A model that emitted 8 of
+    12 rows before running out of output tokens keeps its 8 instead of losing all.
+    """
+    objects: list[dict[str, Any]] = []
+    depth = 0
+    obj_start = -1
+    in_string = False
+    escaped = False
+    for i, ch in enumerate(inner):
+        if in_string:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == '"':
+                in_string = False
+            continue
+        if ch == '"':
+            in_string = True
+        elif ch == "{":
+            if depth == 0:
+                obj_start = i
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0 and obj_start >= 0:
+                try:
+                    parsed = json.loads(inner[obj_start : i + 1])
+                except json.JSONDecodeError:
+                    break
+                if isinstance(parsed, dict):
+                    objects.append(parsed)
+                obj_start = -1
+    return objects
+
+
+def _item_properties(field: Field) -> dict[str, Any]:
+    """Return the item object's property schemas for an object array, else empty."""
+    items = field.constraints.get("items")
+    if isinstance(items, dict):
+        props = items.get("properties")
+        if isinstance(props, dict):
+            return props
+    return {}
+
+
+def _cast_item(item: dict[str, Any], props: dict[str, Any]) -> dict[str, Any]:
+    """Coerce each item field to its schema type (numbers out of comma strings)."""
+    return {key: _cast_item_value(value, props.get(key)) for key, value in item.items()}
+
+
+def _cast_item_value(value: Any, prop: Any) -> Any:
+    """Coerce one item value to its property schema type; non-strings pass through."""
+    if not isinstance(value, str):
+        return value
+    prop_type = None
+    if isinstance(prop, dict):
+        prop_type = prop.get("type")
+        if isinstance(prop_type, list):
+            prop_type = next((t for t in prop_type if t != "null"), None)
+    # Typed numbers always coerce; untyped only on a display marker, so codes stay strings.
+    if prop_type in ("number", "integer") or (prop_type is None and _has_number_marker(value)):
+        number = coerce_number(value)
+        if number is not None:
+            if prop_type == "integer" or number.is_integer():
+                return int(number)
+            return number
+    return value
+
+
+def _has_number_marker(value: str) -> bool:
+    """True when *value* shows a displayed-number marker (grouping/currency/%/parens)."""
+    if not any(ch.isdigit() for ch in value):
+        return False
+    if any(ch in _CURRENCY_SIGNS for ch in value) or value.rstrip().endswith("%"):
+        return True
+    if value.startswith("(") and value.endswith(")"):
+        return True
+    # A grouping separator sitting between two digits (19,715 / 1 234 / 1'234).
+    return any(
+        value[i] in _GROUP_SIGNS and value[i - 1].isdigit() and value[i + 1].isdigit()
+        for i in range(1, len(value) - 1)
+    )
+
+
+def _parse_scalar_json_array(stripped: str) -> list[Any] | None:
+    """Parse a scalar list-leaf's JSON array value, tolerating output truncation.
+
+    A complete array parses directly. A quoted array the model cut off at the
+    output-token limit (no closing ``]``) is repaired and its trailing partial
+    item dropped, so a long list survives as its complete items instead of
+    collapsing into one blob. Returns ``None`` for a bare unquoted list, which
+    the comma-split path handles.
+    """
+    if stripped.endswith("]"):
+        try:
+            parsed = json.loads(stripped)
+        except json.JSONDecodeError:
+            parsed = None
+        if isinstance(parsed, list):
+            return parsed
+    if not stripped.lstrip().startswith(('["', "['")):
+        return None
+    repaired = json_repair.loads(stripped)
+    if not isinstance(repaired, list) or not repaired:
+        return None
+    if not _is_balanced(stripped):
+        repaired = repaired[:-1]  # last item was cut mid-string
+    return repaired
+
+
 def _cast_array(raw: str, field: Field) -> list[Any]:
     """Parse bracket-notation array string into a Python list.
 
@@ -459,6 +779,28 @@ def _cast_array(raw: str, field: Field) -> list[Any]:
     """
     stripped = raw.strip()
 
+    # An object array carries its whole value as one JSON array; parse it as JSON.
+    if _array_items_are_objects(field):
+        return _cast_object_array(stripped, field)
+
+    # JSON-first: quoted items containing commas survive the comma split below;
+    # a quoted array the model cut off at the output limit is repaired rather than
+    # collapsed into one item by the fallback.
+    if stripped.startswith("["):
+        parsed = _parse_scalar_json_array(stripped)
+        if parsed is not None:
+            item_type = _get_array_item_type(field)
+            return _strip_common_item_suffix(
+                _strip_list_numbering(
+                    [
+                        _cast_array_element(el, item_type, field) if isinstance(el, str) else el
+                        # A null item is the model padding "nothing found", not a value.
+                        for el in _flatten_nested_scalars(parsed)
+                        if el is not None
+                    ]
+                )
+            )
+
     # Normalise arrays the model emitted without brackets: a bare comma list
     # becomes a list; a single bare value becomes a one-element list.
     if not (stripped.startswith("[") and stripped.endswith("]")):
@@ -469,7 +811,7 @@ def _cast_array(raw: str, field: Field) -> list[Any]:
             # Single bare value (LLM omitted brackets) - wrap as single-element array
             item_type = _get_array_item_type(field)
             element = _cast_array_element(stripped, item_type, field)
-            return [element]
+            return [] if element is None else [element]
 
     inner = stripped[1:-1].strip()
     if not inner:
@@ -477,7 +819,229 @@ def _cast_array(raw: str, field: Field) -> list[Any]:
 
     item_type = _get_array_item_type(field)
     items_raw = _split_array_items(inner)
-    return [_cast_array_element(item.strip(), item_type, field) for item in items_raw]
+    elements = [_cast_array_element(item.strip(), item_type, field) for item in items_raw]
+    # A null item is the model padding "nothing found", not a value.
+    return _strip_common_item_suffix(
+        _strip_list_numbering([el for el in elements if el is not None])
+    )
+
+
+def _flatten_nested_scalars(parsed: list[Any]) -> list[Any]:
+    """Flatten one level of model double-nesting in a scalar array value.
+
+    A nested list element is inlined, and a string element that is itself a JSON
+    array of strings (the model quoting its own array) is unwrapped - both are
+    packaging mistakes around the real items, not items.
+    """
+    out: list[Any] = []
+    for el in parsed:
+        if isinstance(el, list):
+            out.extend(el)
+            continue
+        if isinstance(el, str) and el.lstrip().startswith('["'):
+            try:
+                inner: Any = json.loads(el)
+            except json.JSONDecodeError:
+                inner = json_repair.loads(el)  # tolerate a truncated quoted array
+            if isinstance(inner, list) and all(isinstance(x, str) for x in inner):
+                out.extend(inner)
+                continue
+        out.append(el)
+    return out
+
+
+# Ordinal list markers a document renders before each entry: "[1] ", "1. ", "1) ", "(1) ".
+_LIST_MARKER = re.compile(r"^\s*(?:\[(\d{1,4})\]|\((\d{1,4})\)|(\d{1,4})[.)])\s+")
+# Fraction of items that must carry position-matching markers before stripping.
+_LIST_MARKER_MIN_FRACTION: float = 0.8
+# A bracketed ordinal embedded mid-string marks the start of the NEXT entry when a
+# model glues consecutive numbered entries into one item.
+_EMBEDDED_MARKER = re.compile(r"\s+(?=\[\d{1,4}\]\s)")
+
+
+def _drop_bare_ordinal_runs(items: list[Any]) -> list[Any]:
+    """Drop items that are bare integers forming consecutive runs among text items.
+
+    A list whose ordinals sit on their own lines yields items like ``"805"``,
+    ``"806"`` interleaved with the real entries. Dropped only when the bare
+    integers are a minority, at least three of them exist, and most continue the
+    previous one by +1 (in array order) - a legitimate string array of numbers
+    fails the minority or consecutiveness guard and is untouched.
+    """
+    numeric = [
+        (i, int(item.strip()))
+        for i, item in enumerate(items)
+        if isinstance(item, str) and item.strip().isdigit() and len(item.strip()) <= 5
+    ]
+    # Ordinals interleaved with entries are up to half the items; a run is only
+    # kept as data when bare numbers dominate the array outright.
+    if len(numeric) < 3 or len(numeric) > 0.6 * len(items):
+        return items
+    consecutive = sum(1 for (_, prev), (_, cur) in itertools.pairwise(numeric) if cur == prev + 1)
+    if consecutive / (len(numeric) - 1) < _LIST_MARKER_MIN_FRACTION:
+        return items
+    drop = {i for i, _ in numeric}
+    return [item for i, item in enumerate(items) if i not in drop]
+
+
+def _split_merged_numbered_items(items: list[Any]) -> list[Any]:
+    """Split items that glue consecutive bracket-numbered entries together.
+
+    Applied only when the embedded ordinal continues the item's own leading
+    ordinal (``"[7] aaa [8] bbb"`` splits; a lone ``[12]`` inside prose does not),
+    so unnumbered content is never touched.
+    """
+    out: list[Any] = []
+    for item in items:
+        lead = _LIST_MARKER.match(item) if isinstance(item, str) else None
+        if lead is None:
+            out.append(item)
+            continue
+        parts = _EMBEDDED_MARKER.split(item)
+        if len(parts) == 1:
+            out.append(item)
+            continue
+        ordinals = [
+            int(next(g for g in m.groups() if g)) if (m := _LIST_MARKER.match(p)) else None
+            for p in parts
+        ]
+        consecutive = all(
+            o is not None and (i == 0 or o == (ordinals[i - 1] or 0) + 1)
+            for i, o in enumerate(ordinals)
+        )
+        out.extend(parts if consecutive else [item])
+    return out
+
+
+def _strip_list_numbering(items: list[Any]) -> list[Any]:
+    """Strip sequential ordinal markers from string items forming a consecutive run.
+
+    A bibliography or numbered list renders each entry with its ordinal ("[7] ...",
+    "7. ..."); the marker is presentation, not content. Stripped only when most
+    items carry markers that ascend by one from the first item's ordinal (any
+    start, so a list slice keeps working), so a value that merely starts with a
+    number ("3M Company") is never touched.
+    """
+    items = _drop_marker_items(items)
+    if len(items) < 2:
+        return items
+    items = _drop_bare_ordinal_runs(items)
+    items = _split_merged_numbered_items(items)
+    ordinals: list[int | None] = [
+        int(next(g for g in m.groups() if g))
+        if isinstance(item, str) and (m := _LIST_MARKER.match(item))
+        else None
+        for item in items
+    ]
+    anchor = next((i for i, o in enumerate(ordinals) if o is not None), None)
+    anchor_ordinal = ordinals[anchor] if anchor is not None else None
+    if anchor is None or anchor_ordinal is None:
+        return _strip_list_labels(items)
+    base = anchor_ordinal - anchor  # expected ordinal at index 0
+    matched = sum(1 for i, o in enumerate(ordinals) if o is not None and o == base + i)
+    if matched / len(items) < _LIST_MARKER_MIN_FRACTION:
+        return _strip_bracket_ordinals(_strip_list_labels(items))
+    return [
+        _LIST_MARKER.sub("", item, count=1) if isinstance(item, str) else item for item in items
+    ]
+
+
+def _strip_common_item_suffix(items: list[Any]) -> list[Any]:
+    """Strip repeated trailing boilerplate and separator residue from string items.
+
+    A dangling ``,`` or ``;`` on any item is list-separator debris (an entry cut
+    at its line break), never content, and is always removed.
+    """
+    strings = [x for x in items if isinstance(x, str)]
+    suffix = ""
+    if len(strings) >= _SUFFIX_MIN_ITEMS:
+        counts: dict[str, int] = {}
+        for s in strings:
+            for p in range(len(s)):
+                if s.startswith(", ", p):
+                    tail = s[p:]
+                    counts[tail] = counts.get(tail, 0) + 1
+        threshold = max(_SUFFIX_MIN_ITEMS, math.ceil(_SUFFIX_MIN_FRACTION * len(strings)))
+        shared = [
+            tail
+            for tail, n in counts.items()
+            if n >= threshold and len(_SUFFIX_WORD.findall(tail)) >= _SUFFIX_MIN_WORDS
+        ]
+        # The shortest qualifying tail is the boilerplate's own boundary; a longer
+        # shared tail reaches back into content the items genuinely share (", L.P.").
+        suffix = min(shared, key=len) if shared else ""
+    out: list[Any] = []
+    for x in items:
+        if isinstance(x, str):
+            if suffix and x.endswith(suffix) and len(x) > len(suffix):
+                x = x[: -len(suffix)]
+            x = x.rstrip(" ,;")
+        out.append(x)
+    return out
+
+
+# A bracketed leading ordinal opening an entry ("[580] ...").
+_BRACKET_ORDINAL = re.compile(r"^\s*\[(\d{1,5})\]\s+")
+
+
+def _strip_bracket_ordinals(items: list[Any]) -> list[Any]:
+    """Strip a leading bracketed ordinal ("[580] ...") when most items carry one.
+
+    A reference list opens each entry with its number; a window-continued list is
+    reordered and deduplicated so those numbers do not form a consecutive run, but
+    they are still presentation. The numbers are required to be mostly DISTINCT so
+    a genuinely repeated bracketed token (a year "[2023]" on every entry) is left
+    as content.
+    """
+    nums = [
+        int(m.group(1)) if isinstance(item, str) and (m := _BRACKET_ORDINAL.match(item)) else None
+        for item in items
+    ]
+    present = [n for n in nums if n is not None]
+    if len(present) < 2 or len(present) / len(items) < _LIST_MARKER_MIN_FRACTION:
+        return items
+    if len(set(present)) <= len(present) / 2:  # a repeated token is content, not an ordinal
+        return items
+    return [
+        _BRACKET_ORDINAL.sub("", item, count=1) if isinstance(item, str) else item
+        for item in items
+    ]
+
+
+# An item that is nothing but a bracketed digit group or range ("[3, 4]", "[6-9]",
+# dash family included) is an in-text citation marker copied from the document, not
+# an entry; a parsed string item never carries its own surrounding brackets otherwise.
+_MARKER_ITEM = re.compile(r"\[\s*\d+\s*(?:[,;\-–—]\s*\d+\s*)*\]")  # noqa: RUF001
+
+
+def _drop_marker_items(items: list[Any]) -> list[Any]:
+    """Drop items that are only bracketed digit groups (in-text citation markers)."""
+    return [
+        item
+        for item in items
+        if not (isinstance(item, str) and _MARKER_ITEM.fullmatch(item.strip()))
+    ]
+
+
+# A keyed-list label: one bracketed identifier token opening the entry ("[Abdi2003] ...").
+_KEY_LABEL = re.compile(r"^\s*\[([A-Za-z][\w.:-]{0,29})\]\s+")
+
+
+def _strip_list_labels(items: list[Any]) -> list[Any]:
+    """Strip per-entry bracketed key labels when they are distinct across items.
+
+    A keyed list opens each entry with its own identifier (``[Abdi2003] ...``);
+    distinctness separates such keys from content-bearing repeated tags (a log
+    level, a category), which are left untouched.
+    """
+    labels = [
+        m.group(1) if isinstance(item, str) and (m := _KEY_LABEL.match(item)) else None
+        for item in items
+    ]
+    present = [lab for lab in labels if lab is not None]
+    if len(present) / len(items) < _LIST_MARKER_MIN_FRACTION or len(set(present)) != len(present):
+        return items
+    return [_KEY_LABEL.sub("", item, count=1) if isinstance(item, str) else item for item in items]
 
 
 def _get_array_item_type(field: Field) -> str:

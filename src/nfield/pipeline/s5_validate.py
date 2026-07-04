@@ -48,8 +48,9 @@ async def run_stage_5(
     """
     assert state.blackboard is not None, "Blackboard must be initialised"
 
+    doc_text = "\n".join(s.text for s in state.segments)
     for leaf in state.leaves:
-        _validate_leaf(leaf, state)
+        _validate_leaf(leaf, state, doc_text)
 
     if state.ground_values:
         _ground_all(state)
@@ -62,7 +63,7 @@ async def run_stage_5(
 # ---------------------------------------------------------------------------
 
 
-def _validate_leaf(leaf: CapacityLeaf, state: PipelineState) -> None:
+def _validate_leaf(leaf: CapacityLeaf, state: PipelineState, doc_text: str) -> None:
     """Validate a leaf's fields without any API call.
 
     Filled values are type- and constraint-checked; an invalid one is marked
@@ -74,21 +75,59 @@ def _validate_leaf(leaf: CapacityLeaf, state: PipelineState) -> None:
     Args:
         leaf: The leaf whose fields to validate.
         state: Pipeline state holding the blackboard.
+        doc_text: The whole document text, for grounding array-quality checks.
     """
     from nfield.assembly._blackboard import FieldState
 
     bb = state.blackboard
     if bb is None:
         return
+    from nfield.pipeline.s4_extract import _array_quality_error
+
     filled = bb.get_filled()
     for f in leaf.fields:
         field_state = bb.get_state(f.path)
         if field_state == FieldState.FILLED:
-            valid, err = validate_field(filled.get(f.path), f)
+            value = filled.get(f.path)
+            valid, err = validate_field(value, f)
             if not valid:
                 bb.mark_failed(f.path, err or "validation failed")
+                continue
+            # A string that merely restates the field's own name ("Borrower" for
+            # parties.borrower) is the document's placeholder term, not a value.
+            if isinstance(value, str) and _restates_field_name(value, f.path):
+                bb.mark_failed(
+                    f.path,
+                    f"the value {value!r} restates the field name, not the "
+                    "document's actual value; extract the concrete value",
+                )
+                continue
+            # An array can be type-valid yet hold document furniture (labels, list
+            # ordinals) or reworded text; fail it with the reason so the recovery
+            # pass re-extracts. Checked against the WHOLE document, not the leaf
+            # excerpt - window-continued items live outside the excerpt. The value
+            # is stashed so recovery can restore it if re-extraction yields worse.
+            if isinstance(value, list) and isinstance(f.constraints.get("items"), dict):
+                quality_err = _array_quality_error(value, doc_text or leaf.document_excerpt)
+                if quality_err is not None:
+                    state.quality_failed_values[f.path] = value
+                    bb.mark_failed(f.path, quality_err)
         elif field_state == FieldState.PENDING:
             bb.mark_failed(f.path, "field not extracted")
+
+
+def _restates_field_name(value: str, path: str) -> bool:
+    """True when *value* is just the field's own key rendered as words.
+
+    ``"Borrower"`` for ``parties.borrower`` or ``"Use of Proceeds"`` for
+    ``terms.use_of_proceeds`` answer the question with its own words; articles
+    are ignored so ``"The Borrower"`` matches too. A value containing anything
+    beyond the key (a real name contains more) never matches. Article stripping
+    is English-only, a heuristic sharpener rather than the core key match.
+    """
+    key = path.rsplit(".", 1)[-1].replace("_", " ").casefold()
+    words = [w for w in value.replace("_", " ").casefold().split() if w not in ("the", "a", "an")]
+    return " ".join(words) == key
 
 
 def _ground_all(state: PipelineState) -> None:

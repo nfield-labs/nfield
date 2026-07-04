@@ -1,0 +1,11 @@
+document,gold_fields,coverage,value_accuracy,K,status,seconds
+adbe_credit_agreement_2000_08_09,25,0.96,0.72,12,success,49.2
+amzn_credit_agreement_2014_09_05,18,1.0,0.8333,11,success,41.2
+ba_credit_agreement_2003_11_21,47,0.8723,0.9787,4,partial,50.7
+bkrf_credit-agreement_2020-05-04,18,1.0,0.9444,18,partial,89.9
+csco_credit_agreement_2007_08_17,29,1.0,1.0,13,success,43.0
+dis_credit-agreement_2022-03-24,16,1.0,0.8125,10,success,39.7
+expel_credit-agreement_2023-04-06,13,0.9231,0.7692,14,partial,67.0
+ibm_credit_agreement_2019_07_18,48,0.9583,0.8958,9,success,33.9
+mmm_credit_agreement_2019_11_15,23,1.0,1.0,1,success,7.4
+trmb_credit-agreement_2022-03-24,28,0.9286,0.8214,16,partial,80.9
