@@ -293,6 +293,23 @@ class TestTypecastArray:
         result = typecast("a, b, c", f)
         assert result == ["a", "b", "c"]
 
+    def test_truncated_quoted_array_salvages_items(self):
+        # The model ran out of output mid-list, leaving no closing bracket. Without
+        # repair the whole blob collapses into one item; the complete quoted items
+        # must survive and the trailing partial item is dropped.
+        f = make_field("tags", "array", {"items": {"type": "string"}})
+        truncated = '["first item", "second item", "third ite'
+        result = typecast(truncated, f)
+        assert result == ["first item", "second item"]
+
+    def test_truncated_single_quoted_array_salvages_items(self):
+        # Same output cut, but the model quoted items with single quotes; without
+        # repair the whole blob collapses into ONE stringified-list item.
+        f = make_field("tags", "array", {"items": {"type": "string"}})
+        truncated = "['first item, with comma', 'second item', 'third ite"
+        result = typecast(truncated, f)
+        assert result == ["first item, with comma", "second item"]
+
 
 class TestTypecastObjectArray:
     def _field(self) -> Field:
