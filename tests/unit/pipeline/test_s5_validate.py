@@ -130,3 +130,19 @@ class TestRunStage5:
         state = await run_stage_4(state, provider)
         returned = await run_stage_5(state, provider, ExtractionConfig())
         assert returned is state
+
+
+class TestFieldNameRestatement:
+    def test_restatement_detected(self):
+        from nfield.pipeline.s5_validate import _restates_field_name
+
+        assert _restates_field_name("Borrower", "parties.borrower")
+        assert _restates_field_name("The Borrower", "parties.borrower")
+        assert _restates_field_name("Use of Proceeds", "terms.use_of_proceeds")
+
+    def test_real_values_pass(self):
+        from nfield.pipeline.s5_validate import _restates_field_name
+
+        assert not _restates_field_name("BKRF OCB, LLC", "parties.borrower")
+        assert not _restates_field_name("New York", "terms.governing_law")
+        assert not _restates_field_name("Texas", "terms.governing_law")
