@@ -59,7 +59,10 @@ trailing zero (e.g. 42; and 2,042,137,000 USD becomes 2042137000, not 2042137)
 - For array fields of scalars: output ONE line of valid JSON - an array with every item as \
 a double-quoted string (numbers may be bare), e.g. field.path = ["alpha, beta corp", "gamma"]. \
 Emit EVERY item the document lists, in document order, however many there are - never stop \
-early, never summarise, never skip items.
+early, never skip items. Each item must be that entry's COMPLETE text as written in the \
+document, from the entry's start to where the next entry begins - keep every name, initial, \
+and date; never shorten, summarise, or reword an item, and never output only an entry's \
+label, key, or number in place of its text.
 - For array fields whose items are objects (shown as "items: object {{...}}"): output the \
 value as ONE line of compact, valid JSON - a single array of objects - using the exact keys \
 and the nested shape shown. Emit ONE object for EVERY distinct entry the document lists \
