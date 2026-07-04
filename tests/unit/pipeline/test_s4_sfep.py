@@ -182,3 +182,45 @@ class TestEmergencySplit:
         # Only the single full-leaf call was made - no split retries
         assert provider.call_count == 1
         assert len(state.blackboard.get_failed()) >= 1
+
+
+class TestCharsPerTokenCalibration:
+    """Stage 4 tightens chars_per_token from the model's real usage report."""
+
+    def test_denser_reading_shrinks_estimate(self):
+        from nfield.pipeline._state import PipelineState
+        from nfield.pipeline.s4_extract import _calibrate_chars_per_token
+
+        state = PipelineState(chars_per_token=4.0, C_eff=131000, M_O=24000, C_usable=65500.0)
+        messages = [{"role": "user", "content": "x" * 2000}]
+
+        class _P:
+            last_prompt_tokens = 1000  # 2000 chars / 1000 tokens = 2.0 cpt
+
+        _calibrate_chars_per_token(state, messages, _P())
+        assert state.chars_per_token == 2.0
+
+    def test_sparser_reading_never_loosens(self):
+        from nfield.pipeline._state import PipelineState
+        from nfield.pipeline.s4_extract import _calibrate_chars_per_token
+
+        state = PipelineState(chars_per_token=2.0, C_eff=131000, M_O=24000, C_usable=65500.0)
+        messages = [{"role": "user", "content": "x" * 4000}]
+
+        class _P:
+            last_prompt_tokens = 1000  # 4.0 cpt - looser; must be ignored
+
+        _calibrate_chars_per_token(state, messages, _P())
+        assert state.chars_per_token == 2.0
+
+    def test_missing_usage_is_noop(self):
+        from nfield.pipeline._state import PipelineState
+        from nfield.pipeline.s4_extract import _calibrate_chars_per_token
+
+        state = PipelineState(chars_per_token=4.0, C_eff=131000, M_O=24000, C_usable=65500.0)
+
+        class _P:
+            last_prompt_tokens = None
+
+        _calibrate_chars_per_token(state, [{"role": "user", "content": "abc"}], _P())
+        assert state.chars_per_token == 4.0
