@@ -650,6 +650,9 @@ _PUNCT_FOLD = str.maketrans(
         0x201C: '"',
         0x201D: '"',
         0x2026: "...",
+        # Comma folds to a space: "Bank AG, New York Branch" and "Bank AG New York
+        # Branch" are one entity, and folding both sides never favours prediction.
+        0x2C: " ",
     }
 )
 
