@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 __all__ = [
     "TemplateType",
     "describe_field",
+    "dimension_axes",
     "select_template",
 ]
 
@@ -153,6 +154,10 @@ def describe_field(
     if item_text:
         parts.append(f" | items: {item_text}")
 
+    dimension_text = _dimension_directive(field)
+    if dimension_text:
+        parts.append(f" | {dimension_text}")
+
     example_text = _format_examples(field.schema_node)
     if example_text:
         parts.append(f" | e.g. {example_text}")
@@ -283,10 +288,34 @@ _MAX_EXAMPLES_SHOWN: int = 3
 _MAX_ITEM_DEPTH: int = 4
 
 
+def _resolve_combo(node: dict[str, Any]) -> dict[str, Any]:
+    """Collapse an ``anyOf``/``oneOf`` node to its first non-null branch.
+
+    A property typed ``anyOf: [{type: null}, {type: number}]`` carries its real
+    type in the non-null branch; without resolving it, the type label falls back
+    to the string default and the model is told to emit a string for a number.
+    """
+    for combo in ("anyOf", "oneOf"):
+        options = node.get(combo)
+        if isinstance(options, list):
+            chosen = next(
+                (
+                    o
+                    for o in options
+                    if isinstance(o, dict) and not (o.get("type") == "null" and len(o) == 1)
+                ),
+                None,
+            )
+            if isinstance(chosen, dict):
+                return {**chosen, **{k: v for k, v in node.items() if k != combo}}
+    return node
+
+
 def _item_field_type(sub: Any) -> str:
     """Return a short type label for one property of an array item's object schema."""
     if not isinstance(sub, dict):
         return "string"
+    sub = _resolve_combo(sub)
     t = sub.get("type", "string")
     if isinstance(t, list):
         non_null = [x for x in t if x != "null"]
@@ -303,6 +332,7 @@ def _shape(node: Any, depth: int) -> str:
     """
     if not isinstance(node, dict):
         return "string"
+    node = _resolve_combo(node)
     if node.get("type") == "object" or "properties" in node:
         props = node.get("properties")
         if isinstance(props, dict) and props and depth < _MAX_ITEM_DEPTH:
@@ -321,7 +351,8 @@ def _describe_item_field(name: str, sub: Any, depth: int = 1) -> str:
     """Describe one key of an array item's object: name, (recursive) shape, enum, meaning."""
     text = f"{name}: {_shape(sub, depth)}"
     if isinstance(sub, dict):
-        enum = sub.get("enum")
+        resolved = _resolve_combo(sub)
+        enum = resolved.get("enum")
         if isinstance(enum, list) and enum:
             text += f" one of [{', '.join(str(o) for o in enum)}]"
         desc = _extract_description(sub)
@@ -363,6 +394,83 @@ def _format_array_items(field: Field) -> str:
     if elem_desc:
         text += f" ({elem_desc})"
     return text
+
+
+# A categorical property with at least this many allowed values is a "dimension":
+# the list is expected to hold one entry per value (e.g. one figure reported for each
+# category of a labelled axis), so a single representative row under-fills it. Below
+# this the enum is a per-entry attribute (a status flag), not an axis the list spans.
+_MIN_DIMENSION_CARDINALITY: int = 2
+
+
+def dimension_axes(field: Field) -> list[tuple[str, list[str]]]:
+    """Categorical dimensions of an array-of-objects: item enum props with >=2 values.
+
+    A ``(name, values)`` pair per item property that is an enum with at least
+    :data:`_MIN_DIMENSION_CARDINALITY` allowed values - the axes the list is meant to
+    span (one entry per category of a labelled axis), as opposed to a per-entry flag.
+    Shared by the prompt directive and the extraction sweep so both agree on which
+    arrays need exhaustive per-category coverage. Schema-shape driven, never a
+    hardcoded field.
+
+    Args:
+        field: The field to inspect.
+
+    Returns:
+        List of ``(property_name, [allowed values])``; empty when the field is not an
+        array-of-objects or has no multi-value enum property.
+    """
+    if field.type != "array":
+        return []
+    items = field.constraints.get("items")
+    if not isinstance(items, dict):
+        items = field.schema_node.get("items")
+    if not isinstance(items, dict):
+        return []
+    props = items.get("properties")
+    if not isinstance(props, dict):
+        return []
+    axes: list[tuple[str, list[str]]] = []
+    for name, sub in props.items():
+        if not isinstance(sub, dict):
+            continue
+        enum = _resolve_combo(sub).get("enum")
+        values = [str(o) for o in enum if o is not None] if isinstance(enum, list) else []
+        if len(values) >= _MIN_DIMENSION_CARDINALITY:
+            axes.append((name, values))
+    return axes
+
+
+def _dimension_directive(field: Field) -> str:
+    """Directive to enumerate an array-of-objects across its categorical dimensions.
+
+    When an item property is an enum with several allowed values, the list is meant
+    to hold one entry per value disclosed (one entry per category of the axis),
+    not a single total. The model otherwise emits only the primary/
+    aggregate row it finds in the main table and drops the per-category rows that
+    live in another part of the document. Naming the dimension and its values at the
+    field level - grounded by "disclosed in the document" so nothing is invented -
+    tells the model to gather every such row.
+
+    Args:
+        field: The field to inspect.
+
+    Returns:
+        A directive clause, or empty string when the item has no dimension property.
+    """
+    axes = dimension_axes(field)
+    if not axes:
+        return ""
+    dims = [f"{name} ([{', '.join(values)}])" for name, values in axes]
+    # Domain meaning comes from the schema's OWN enum values (dims), never from
+    # nouns written here - the instruction stays generic so no domain is favoured.
+    return (
+        f"enumerate EXHAUSTIVELY over {' and '.join(dims)}: emit a separate entry for "
+        "every distinct value of this axis disclosed in the document, at every level it "
+        "is reported - the overall/total AND each individually named value, wherever a "
+        "labelled figure for it appears. Set the axis field accordingly; do not emit only "
+        "the total"
+    )
 
 
 def _format_examples(schema_node: dict[str, Any]) -> str:
