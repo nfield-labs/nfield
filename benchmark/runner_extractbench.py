@@ -1,204 +1,379 @@
-"""ExtractBench runner - nfield on the ContextualAI/extract-bench PDF-to-JSON tasks.
+"""ExtractBench sweep - nfield over every dataset in the cloned extract-bench repo.
 
-Separate from :mod:`benchmark.runner` (orchestration-layer baselines on the
-in-house fixtures): this reads the cloned ExtractBench dataset under
-``benchmark/external/extract-bench/``, turns each task's PDF into text through
-:mod:`benchmark.pdf_router` (text layer, OCR fallback for scans), flattens its
-human gold JSON, and runs nfield under the shared budget.
-Results land in the standard layout:
-``results/<model>_extractbench_<stamp>/<budget>/{raw,scored}`` + MANIFEST + summary.csv.
+Self-contained: discovers every ``domain/schema`` group under
+``benchmark/external/extract-bench/dataset``, turns each task PDF into text through
+:mod:`benchmark.pdf_router` (text layer, two-engine OCR for scans), runs nfield, and
+scores against the human gold with :mod:`benchmark.score`. Results use their own
+layout, one folder per dataset::
 
-ExtractBench reports every frontier model at 0% on the 369-field ``10kq`` schema
-(arXiv:2602.12247); nfield decomposes the schema so no single call approaches the
-output-token wall. Only nfield runs here for now; competitor factories can be added
-to :data:`ADAPTERS` once each passes a live smoke test on the shared model.
+    results/<provider>-extractbench-<model>-<stamp>/
+      native/
+        MANIFEST.json            run-level provenance
+        summary.csv              aggregate row per dataset
+        <dataset>/
+          MANIFEST.json          dataset-level provenance
+          summary.csv            row per document
+          raw/<doc>.json         extracted data + run metadata
+          scored/<doc>.json      coverage, value accuracy, outcome counts
 
-    uv run python -m benchmark.runner_extractbench --domain finance --schema credit_agreement --doc expel
+Rate handling: nfield retries 429s honouring Retry-After and caps in-flight calls;
+the sweep adds a short pause between documents and records a failed document as a
+zero-score row instead of aborting.
+
+    uv run python -m benchmark.runner_extractbench
+    uv run python -m benchmark.runner_extractbench --datasets sport_swimming --limit 1
 """
 
 from __future__ import annotations
 
 import argparse
+import csv
+import datetime as dt
+import json
+import subprocess
+import time
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import Any
 
-from . import report
-from .adapters.nfield_adapter import NfieldAdapter
-from .budget import BUDGET_MODES, resolve_budget
-from .datasets import LoadedDataset
-from .runner import _load_env, _now_stamp, result_dir, run_sweep
-from .score import _flatten
+from .pdf_router import MIN_CHARS_PER_PAGE, extract, text_layer
+from .score import _flatten, score
 
-if TYPE_CHECKING:
-    from collections.abc import Callable
+__all__ = ["discover_datasets", "main", "run_dataset"]
 
-    from .adapters import Adapter
-
-__all__ = ["ADAPTERS", "iter_tasks", "load_task", "main"]
-
-_MODEL = "groq/llama-3.3-70b-versatile"
-_SEEDS = 1
-_DATASET = Path(__file__).resolve().parent / "external" / "extract-bench" / "dataset"
+_MODEL = "groq/qwen/qwen3.6-27b"
+_CONTEXT_WINDOW = 131_000
+_MAX_OUTPUT_TOKENS = 24_000
+_BUDGET = "native"
+_DATASET_ROOT = Path(__file__).resolve().parent / "external" / "extract-bench" / "dataset"
+_RESULTS_ROOT = Path(__file__).resolve().parent / "results"
 _SCHEMA_SUFFIX = "-schema.json"
 _GOLD_SUFFIX = ".gold.json"
+# Pause between documents so per-minute token windows recover between large calls.
+_PAUSE_SECONDS = 3.0
 
-# nfield only for now; each competitor factory is added once its adapter passes a
-# live smoke test on the shared model (same pattern as benchmark.runner3).
-ADAPTERS: dict[str, Callable[[], Adapter]] = {"nfield": NfieldAdapter}
-
-# Domain-agnostic faithfulness guidance, given identically to every method (the
-# fairness rule). ExtractBench is a zero-shot extraction task; this is general
-# instruction a real caller would write, never a gold answer.
-_FAITHFULNESS = (
-    "Extract each field's value exactly as written in the source document - keep all "
-    "amounts, units, dates, codes, parties, and identifiers; never summarize or infer. "
-    "Leave a field null if the document does not state it."
+# Domain-agnostic faithfulness guidance given to every document identically.
+_INSTRUCTIONS = (
+    "Extract each field's value exactly as written in the document; keep names, "
+    "numbers, dates, units, and identifiers. For arrays, include every item the "
+    "document lists. Leave a field null if the document does not state it."
+)
+# Appended when the router used OCR: the text is one or two noisy renditions.
+_OCR_INSTRUCTIONS = (
+    " The document text comes from OCR of a scanned image and may contain character "
+    "recognition errors; two independent OCR renditions may be given - cross-check "
+    "them. When a value is clearly garbled, output the obvious intended form."
 )
 
 
-def iter_tasks(
-    domain: str,
-    schema: str,
-    *,
-    doc: str = "",
-    limit: int = 0,
-) -> list[tuple[str, Path, Path, Path]]:
-    """Discover ExtractBench tasks for one ``domain/schema`` group.
-
-    Args:
-        domain: Top-level dataset domain (``finance``, ``academic``, ``hiring``,
-            ``sport``).
-        schema: Schema folder within the domain (e.g. ``credit_agreement``, ``10kq``).
-        doc: Case-insensitive substring filter on the PDF stem; empty matches all.
-        limit: Maximum number of tasks to return; ``0`` means no limit.
-
-    Returns:
-        One ``(task_name, schema_path, pdf_path, gold_path)`` tuple per PDF that has
-        a sibling gold file, sorted by PDF name.
-
-    Raises:
-        FileNotFoundError: If the schema folder or its schema file is absent.
-    """
-    base = _DATASET / domain / schema
-    schema_path = base / f"{schema}{_SCHEMA_SUFFIX}"
-    if not schema_path.exists():
-        raise FileNotFoundError(f"no schema at {schema_path}; is extract-bench cloned?")
-    needle = doc.lower()
-    tasks: list[tuple[str, Path, Path, Path]] = []
-    for pdf in sorted((base / "pdf+gold").glob("*.pdf")):
-        if needle and needle not in pdf.name.lower():
-            continue
-        gold = pdf.with_suffix("").with_suffix(_GOLD_SUFFIX)
-        if not gold.exists():
-            continue
-        tasks.append((f"{schema}_{pdf.stem}", schema_path, pdf, gold))
-    return tasks[:limit] if limit else tasks
+def discover_datasets() -> dict[str, Path]:
+    """Map dataset name (``domain_schema``) to its schema folder, sorted by name."""
+    found: dict[str, Path] = {}
+    for schema_file in sorted(_DATASET_ROOT.rglob(f"*{_SCHEMA_SUFFIX}")):
+        base = schema_file.parent
+        name = f"{base.parent.name}_{base.name}"
+        found[name] = base
+    return found
 
 
-def load_task(
+def run_dataset(
     name: str,
-    schema_path: Path,
-    pdf_path: Path,
-    gold_path: Path,
+    base: Path,
+    out_dir: Path,
     *,
-    instructions: str,
-) -> LoadedDataset:
-    """Read one task into a :class:`LoadedDataset` (schema + pypdfium2 text + flat gold).
+    model: str,
+    reasoning_model: bool,
+    doc_filter: str = "",
+    limit: int = 0,
+) -> dict[str, Any]:
+    """Run nfield on every document of one dataset and write raw/scored/summary.
 
     Args:
-        name: Registry-style task name used in result paths.
-        schema_path: The task's JSON Schema file.
-        pdf_path: The source PDF; born-digital, read via its embedded text layer.
-        gold_path: The human gold JSON (nested), flattened to a dot-notation key.
-        instructions: Domain guidance given identically to every method.
+        name: Dataset name used in paths (e.g. ``finance_10kq``).
+        base: Dataset folder holding ``<schema>-schema.json`` and ``pdf+gold/``.
+        out_dir: The run's ``native/`` folder; dataset output goes under it.
+        model: Provider-prefixed model id.
+        reasoning_model: Suppress model reasoning tokens (thinking off).
+        doc_filter: Case-insensitive substring filter on PDF names; empty runs all.
+        limit: Max documents; ``0`` runs all.
 
     Returns:
-        The loaded task ready for :func:`benchmark.runner.run_sweep`.
+        The aggregate summary row for this dataset.
     """
-    import json
-
+    schema_path = base / f"{base.name}{_SCHEMA_SUFFIX}"
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
-    gold = _flatten(json.loads(gold_path.read_text(encoding="utf-8")))
-    return LoadedDataset(
-        name=name,
-        schema=schema,
-        document=_pdf_text(pdf_path),
-        gold=gold,
-        instructions=instructions,
+    # A few dataset schemas wrap the JSON Schema in a descriptor object.
+    if "schema_definition" in schema:
+        schema = schema["schema_definition"]
+
+    ds_dir = out_dir / name
+    raw_dir, scored_dir = ds_dir / "raw", ds_dir / "scored"
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    scored_dir.mkdir(parents=True, exist_ok=True)
+
+    rows: list[dict[str, Any]] = []
+    pdfs = sorted((base / "pdf+gold").glob("*.pdf"))
+    if doc_filter:
+        pdfs = [p for p in pdfs if doc_filter.lower() in p.name.lower()]
+    if limit:
+        pdfs = pdfs[:limit]
+
+    for pdf in pdfs:
+        gold_path = pdf.with_suffix("").with_suffix(_GOLD_SUFFIX)
+        if not gold_path.exists():
+            continue
+        doc_name = pdf.stem
+        started = time.monotonic()
+        try:
+            row = _run_document(
+                doc_name,
+                pdf,
+                gold_path,
+                schema,
+                raw_dir,
+                scored_dir,
+                model=model,
+                reasoning_model=reasoning_model,
+            )
+        except Exception as exc:  # a failed document scores zero, never aborts the sweep
+            row = {"document": doc_name, "status": f"error: {exc}"[:120]}
+            gold = _flatten(json.loads(gold_path.read_text(encoding="utf-8")))
+            row.update({"gold_fields": len(gold), "coverage": 0.0, "value_accuracy": 0.0, "K": 0})
+        row["seconds"] = round(time.monotonic() - started, 1)
+        rows.append(row)
+        print(
+            f"  {name}/{row['document']}: cov {row['coverage']:.3f}  "
+            f"va {row['value_accuracy']:.3f}  K {row['K']}  {row['seconds']}s  {row['status']}"
+        )
+        time.sleep(_PAUSE_SECONDS)
+
+    _write_csv(ds_dir / "summary.csv", rows)
+    aggregate = _aggregate(name, rows)
+    _write_json(
+        ds_dir / "MANIFEST.json",
+        {
+            "dataset": name,
+            "schema_file": str(schema_path.relative_to(_DATASET_ROOT)),
+            "documents": len(rows),
+            "model": model,
+            "reasoning_model": reasoning_model,
+            "budget": _BUDGET,
+            "aggregate": aggregate,
+            "recorded_at": _now_iso(),
+        },
     )
+    return aggregate
 
 
-def _pdf_text(pdf_path: Path) -> str:
-    """Extract PDF text via the router: pypdfium2 text layer, OCR fallback if scanned.
+def _run_document(
+    doc_name: str,
+    pdf: Path,
+    gold_path: Path,
+    schema: dict[str, Any],
+    raw_dir: Path,
+    scored_dir: Path,
+    *,
+    model: str,
+    reasoning_model: bool,
+) -> dict[str, Any]:
+    """Extract one PDF, score it, and write its raw and scored artifacts."""
+    from nfield import nfield
+    from nfield.config import ExtractionConfig
 
-    Born-digital PDFs are read exactly by pypdfium2 (BSD/Apache, no OCR); scanned PDFs
-    with no text layer fall back to OCR. See :mod:`benchmark.pdf_router`.
-    """
-    from benchmark.pdf_router import extract
+    layer_text, pages = text_layer(pdf)
+    scanned = not pages or len(layer_text.strip()) / pages < MIN_CHARS_PER_PAGE
+    document = extract(pdf)
+    instructions = _INSTRUCTIONS + (_OCR_INSTRUCTIONS if scanned else "")
 
-    return extract(pdf_path)
+    result = nfield(
+        document,
+        schema,
+        model,
+        context_window=_CONTEXT_WINDOW,
+        max_output_tokens=_MAX_OUTPUT_TOKENS,
+        instructions=instructions,
+        config=ExtractionConfig(max_retry_rounds=1, reasoning_model=reasoning_model),
+    )
+    gold = _flatten(json.loads(gold_path.read_text(encoding="utf-8")))
+    report = score(result.data, gold, schema)
+
+    _write_json(
+        raw_dir / f"{doc_name}.json",
+        {
+            "document": doc_name,
+            "route": "ocr" if scanned else "text-layer",
+            "doc_chars": len(document),
+            "data": result.data,
+            "metadata": {
+                "K": result.metadata.K,
+                "calls_by_origin": result.metadata.calls_by_origin,
+                "fields_extracted": result.metadata.fields_extracted,
+                "fields_total": result.metadata.fields_total,
+                "fields_missing": result.metadata.fields_missing,
+                "status": result.status.value,
+            },
+        },
+    )
+    # Every non-correct field ships with its gold and predicted value, so a scored
+    # file is auditable on its own: the judgement is inspectable, not just a number.
+    mismatches = [
+        {
+            "path": fs.path,
+            "outcome": fs.outcome.value,
+            "gold": fs.gold,
+            "predicted": fs.predicted,
+        }
+        for fs in report.fields
+        if fs.outcome.value != "correct"
+    ]
+    _write_json(
+        scored_dir / f"{doc_name}.json",
+        {
+            "document": doc_name,
+            "gold_fields": report.n_fields,
+            "coverage": round(report.coverage, 4),
+            "value_accuracy": round(report.value_accuracy, 4),
+            "outcomes": {o.value: n for o, n in report.outcomes.items()},
+            "by_type": {
+                ft.value: {"correct": st.correct, "total": st.total}
+                for ft, st in report.by_type.items()
+            },
+            "mismatches": mismatches,
+        },
+    )
+    return {
+        "document": doc_name,
+        "gold_fields": report.n_fields,
+        "coverage": round(report.coverage, 4),
+        "value_accuracy": round(report.value_accuracy, 4),
+        "K": result.metadata.K,
+        "status": result.status.value,
+    }
+
+
+def _aggregate(name: str, rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Field-weighted aggregate over a dataset's document rows."""
+    total_fields = sum(r["gold_fields"] for r in rows)
+    if not rows or not total_fields:
+        return {"dataset": name, "documents": len(rows), "coverage": 0.0, "value_accuracy": 0.0}
+    weighted = lambda key: sum(r[key] * r["gold_fields"] for r in rows) / total_fields  # noqa: E731
+    return {
+        "dataset": name,
+        "documents": len(rows),
+        "gold_fields": total_fields,
+        "coverage": round(weighted("coverage"), 4),
+        "value_accuracy": round(weighted("value_accuracy"), 4),
+        "K_total": sum(r["K"] for r in rows),
+    }
+
+
+def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
+    if not rows:
+        return
+    with path.open("w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _write_json(path: Path, payload: dict[str, Any]) -> None:
+    path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def _now_iso() -> str:
+    return dt.datetime.now(tz=dt.timezone.utc).isoformat(timespec="seconds")
+
+
+def _git_commit() -> str:
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=Path(__file__).resolve().parent,
+        )
+        return out.stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
+
+
+def _load_env() -> None:
+    import os
+
+    env = Path(__file__).resolve().parent.parent / ".env"
+    if not env.exists():
+        return
+    for line in env.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            key, value = line.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip())
 
 
 def main(argv: list[str] | None = None) -> None:
     """Entry point for ``python -m benchmark.runner_extractbench`` (costs API calls)."""
-    _load_env()
     parser = argparse.ArgumentParser(prog="benchmark.runner_extractbench", description=__doc__)
     parser.add_argument("--model", default=_MODEL)
-    parser.add_argument("--domain", default="finance")
-    parser.add_argument("--schema", default="credit_agreement")
-    parser.add_argument("--doc", default="", help="case-insensitive PDF-name filter; empty = all")
-    parser.add_argument("--limit", type=int, default=0, help="cap number of docs; 0 = all")
-    parser.add_argument("--method", default="nfield", choices=sorted(ADAPTERS))
-    parser.add_argument("--seeds", type=int, default=_SEEDS)
-    parser.add_argument("--budget", default=BUDGET_MODES[0], choices=BUDGET_MODES)
     parser.add_argument(
         "--reasoning-model",
-        action="store_true",
-        help="treat the model as a reasoning model (suppress + strip thinking); set for qwen3*",
+        default=True,
+        action=argparse.BooleanOptionalAction,
+        help="suppress reasoning tokens (default on for the qwen default model)",
     )
-    parser.add_argument("--date", default=None, help="override the result-dir stamp")
+    parser.add_argument("--datasets", default="", help="comma-separated names; empty = all")
+    parser.add_argument("--doc", default="", help="substring filter on PDF names")
+    parser.add_argument("--limit", type=int, default=0, help="max documents per dataset")
     args = parser.parse_args(argv)
 
-    tasks = iter_tasks(args.domain, args.schema, doc=args.doc, limit=args.limit)
-    if not tasks:
-        raise SystemExit(
-            f"no tasks for {args.domain}/{args.schema}"
-            + (f" matching {args.doc!r}" if args.doc else "")
+    _load_env()
+    provider = args.model.split("/", 1)[0]
+    model_tag = args.model.split("/", 1)[1].replace("/", "-")
+    stamp = dt.datetime.now(tz=dt.timezone.utc).strftime("%Y-%m-%d_%H-%M-%S")
+    out_dir = _RESULTS_ROOT / f"{provider}-extractbench-{model_tag}-{stamp}" / _BUDGET
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    datasets = discover_datasets()
+    if args.datasets:
+        wanted = {d.strip() for d in args.datasets.split(",") if d.strip()}
+        datasets = {k: v for k, v in datasets.items() if k in wanted}
+    print(f"model {args.model}  datasets {list(datasets)}  -> {out_dir}")
+
+    aggregates: list[dict[str, Any]] = []
+    for name, base in datasets.items():
+        print(f"== {name} ==")
+        aggregates.append(
+            run_dataset(
+                name,
+                base,
+                out_dir,
+                model=args.model,
+                reasoning_model=args.reasoning_model,
+                doc_filter=args.doc,
+                limit=args.limit,
+            )
         )
 
-    # nfield carries the reasoning-model flag; other adapters take no args.
-    adapter = (
-        NfieldAdapter(reasoning_model=args.reasoning_model)
-        if args.method == "nfield"
-        else ADAPTERS[args.method]()
+    _write_csv(out_dir / "summary.csv", aggregates)
+    _write_json(
+        out_dir / "MANIFEST.json",
+        {
+            "benchmark": "extract-bench",
+            "model": args.model,
+            "reasoning_model": args.reasoning_model,
+            "budget": _BUDGET,
+            "context_window": _CONTEXT_WINDOW,
+            "max_output_tokens": _MAX_OUTPUT_TOKENS,
+            "datasets": aggregates,
+            "git_commit": _git_commit(),
+            "recorded_at": _now_iso(),
+        },
     )
-    limits = resolve_budget(args.budget, args.model)
-    stamp = args.date or f"extractbench_{_now_stamp()}"
-    run_root = result_dir(args.model, stamp)
-
-    for name, schema_path, pdf_path, gold_path in tasks:
-        dataset = load_task(name, schema_path, pdf_path, gold_path, instructions=_FAITHFULNESS)
+    print(f"\nresults -> {out_dir}")
+    for agg in aggregates:
         print(
-            f"  [{args.budget}] {args.method} x {name} "
-            f"({len(dataset.document):,} chars, {len(dataset.gold or {})} gold) ...",
-            flush=True,
+            f"  {agg['dataset']:26s} docs {agg['documents']:2d}  "
+            f"cov {agg['coverage']:.3f}  va {agg['value_accuracy']:.3f}"
         )
-        run_sweep(
-            adapter,
-            dataset,
-            model=args.model,
-            seeds=args.seeds,
-            out_dir=run_root / args.budget,
-            context_window=limits.context_window,
-            max_output_tokens=limits.max_output_tokens,
-            budget=args.budget,
-            manifest_dir=run_root,
-        )
-
-    rows = report.collect_rows(run_root)
-    report.write_summary_csv(rows, run_root / "summary.csv")
-    print("\n" + report.format_table(rows))
-    print(f"\nresults -> {run_root}")
 
 
 if __name__ == "__main__":

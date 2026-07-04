@@ -286,6 +286,18 @@ _SEMANTIC_CONTAINMENT_MIN_CHARS: int = 4
 # string_fuzzy tolerates more drift than the long-string default (per the
 # benchmark's own tiering: exact < fuzzy < semantic).
 _FUZZY_MAX_DISTANCE: float = 0.2
+# Word-set overlap floor for the semantic tier: three quarters of the combined
+# vocabulary shared means the same statement reformatted, not different content.
+_SEMANTIC_MIN_JACCARD: float = 0.75
+# Long-value edit budget for the semantic tier. Same-entry pairs that differ only
+# by editorial reformatting measure edit <= 0.30; distinct entries measure >= 0.32
+# (0 false accepts in 300 mismatched pairs). Length-gated so short values keep
+# the strict budget.
+_SEMANTIC_LONG_MIN_CHARS: int = 60
+_SEMANTIC_LONG_MAX_DISTANCE: float = 0.30
+# Below this length the proportional edit budget spans a whole word, so edit-based
+# equality is disabled and short semantic values need containment or exact match.
+_SEMANTIC_EDIT_MIN_CHARS: int = 30
 
 
 def _matches(
@@ -299,11 +311,32 @@ def _matches(
     # accepts meaning-equivalence for these tiers, so a strict exact match here
     # would under-score relative to the benchmark's own rules.
     if eval_config == "string_semantic" and isinstance(gold, str) and isinstance(predicted, str):
+        # Semantic is the benchmark's most lenient tier (exact < fuzzy < semantic):
+        # containment, then the fuzzy edit budget, then word-set overlap - so a
+        # value differing only in formatting (reflowed punctuation, dropped year
+        # parentheses) still matches while unrelated text stays rejected. Two
+        # renderings of the same calendar date are one meaning.
         g, p = _norm(gold), _norm(predicted)
         shorter = min(len(g), len(p))
         if shorter >= _SEMANTIC_CONTAINMENT_MIN_CHARS and (g in p or p in g):
             return True
-        return _edit_ratio(g, p) <= LONG_STRING_MAX_DISTANCE
+        # Edit budgets are length-gated: on a short value a proportional budget
+        # admits a meaning-flipping change ("north"/"south"), so short values must
+        # match by containment or exactly. Long values get the wider budget,
+        # calibrated on same-entry-reformatted vs different-entry pairs - 0.30 is
+        # the largest budget with zero false accepts over 300 mismatched pairs
+        # (mismatches start at ~0.32).
+        if shorter >= _SEMANTIC_EDIT_MIN_CHARS and _edit_ratio(g, p) <= _FUZZY_MAX_DISTANCE:
+            return True
+        if (
+            shorter >= _SEMANTIC_LONG_MIN_CHARS
+            and _edit_ratio(g, p) <= _SEMANTIC_LONG_MAX_DISTANCE
+        ):
+            return True
+        if _jaccard(g, p) >= _SEMANTIC_MIN_JACCARD:
+            return True
+        gold_dates, pred_dates = _parse_dates(g), _parse_dates(p)
+        return bool(gold_dates & pred_dates)
     if eval_config == "string_fuzzy" and isinstance(gold, str) and isinstance(predicted, str):
         return _edit_ratio(_norm(gold), _norm(predicted)) <= _FUZZY_MAX_DISTANCE
     if field_type is FieldType.BOOLEAN:
@@ -502,6 +535,71 @@ def _overlap(pred_fields: dict[str, Any], gold_fields: dict[str, Any]) -> float:
     return score
 
 
+# Month names as they appear after _norm (casefolded); index+1 = month number.
+_MONTHS = (
+    "january",
+    "february",
+    "march",
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december",
+)
+_DATE_ISO = re.compile(r"^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$")
+_DATE_DMY = re.compile(r"^(\d{1,2})(?:st|nd|rd|th)? ([a-z]+),? (\d{4})$")
+_DATE_MDY = re.compile(r"^([a-z]+) (\d{1,2})(?:st|nd|rd|th)?,? (\d{4})$")
+_DATE_NUMERIC = re.compile(r"^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$")
+
+
+def _parse_dates(text: str) -> set[tuple[int, int, int]]:
+    """All calendar readings of a normalised date string, empty when not a date.
+
+    An all-numeric slashed form is ambiguous (04/06/2023 is April 6 in MDY and
+    June 4 in DMY); every valid reading is returned and two strings denote the
+    same date when their readings intersect.
+    """
+    m = _DATE_ISO.match(text)
+    if m:
+        y, mo, d = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        return {(y, mo, d)} if _valid_date(mo, d) else set()
+    m = _DATE_DMY.match(text)
+    if m:
+        month = _month_number(m.group(2))
+        return {(int(m.group(3)), month, int(m.group(1)))} if month else set()
+    m = _DATE_MDY.match(text)
+    if m:
+        month = _month_number(m.group(1))
+        return {(int(m.group(3)), month, int(m.group(2)))} if month else set()
+    m = _DATE_NUMERIC.match(text)
+    if m:
+        a, b, y = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        readings = set()
+        if _valid_date(a, b):
+            readings.add((y, a, b))
+        if _valid_date(b, a):
+            readings.add((y, b, a))
+        return readings
+    return set()
+
+
+def _valid_date(month: int, day: int) -> bool:
+    """True when *month*/*day* form a plausible calendar position."""
+    return 1 <= month <= 12 and 1 <= day <= 31
+
+
+def _month_number(name: str) -> int | None:
+    """Month number for a full or three-letter month name, else ``None``."""
+    for index, month in enumerate(_MONTHS, start=1):
+        if month.startswith(name[:3]) and (name == month or len(name) == 3):
+            return index
+    return None
+
+
 def _jaccard(a: str, b: str) -> float:
     """Word-set Jaccard similarity of two normalised strings."""
     set_a, set_b = set(a.split()), set(b.split())
@@ -536,13 +634,33 @@ def _is_empty(value: Any) -> bool:
     return any(value is empty or value == empty for empty in _EMPTY_VALUES)
 
 
+# Unicode punctuation variants folded to their ASCII form: hyphen/dash family,
+# curly quotes, and the ellipsis - presentation differences, never content.
+_PUNCT_FOLD = str.maketrans(
+    {
+        0x2010: "-",  # hyphen
+        0x2011: "-",  # non-breaking hyphen
+        0x2012: "-",  # figure dash
+        0x2013: "-",  # en dash
+        0x2014: "-",  # em dash
+        0x2015: "-",  # horizontal bar
+        0x2212: "-",  # minus sign
+        0x2018: "'",
+        0x2019: "'",
+        0x201C: '"',
+        0x201D: '"',
+        0x2026: "...",
+    }
+)
+
+
 def _norm(value: Any) -> str:
     # NFKD splits accented characters into base + combining mark; dropping the
     # marks (category Mn) folds diacritics so ASCII gold matches accented source
     # (e.g. "Kutúzov" -> "kutuzov"), the same fold the retrieval tokenizer uses.
     decomposed = unicodedata.normalize("NFKD", str(value))
     folded = "".join(ch for ch in decomposed if unicodedata.category(ch) != "Mn")
-    return _WHITESPACE.sub(" ", folded).strip().casefold()
+    return _WHITESPACE.sub(" ", folded.translate(_PUNCT_FOLD)).strip().casefold()
 
 
 def _as_bool(value: Any) -> bool:

@@ -13,9 +13,57 @@ best of both.
 
 from __future__ import annotations
 
+import unicodedata
 from pathlib import Path
 
-__all__ = ["MIN_CHARS_PER_PAGE", "extract", "text_layer"]
+__all__ = ["MIN_CHARS_PER_PAGE", "compose_spacing_accents", "extract", "text_layer"]
+
+# A spacing (standalone) accent character maps to its combining counterpart. Some
+# PDFs encode an accented letter as the base letter with the accent emitted as a
+# separate glyph, so "Montr´eal" reaches the text layer instead of "Montréal".
+_SPACING_ACCENTS: dict[str, str] = {
+    "´": "́",  # acute
+    "`": "̀",  # grave
+    "¨": "̈",  # diaeresis
+    "ˆ": "̂",  # circumflex
+    "˜": "̃",  # tilde
+    "¸": "̧",  # cedilla
+    "¯": "̄",  # macron
+    "ˇ": "̌",  # caron
+    "˘": "̆",  # breve
+    "˙": "̇",  # dot above
+    "˚": "̊",  # ring above
+}
+# Letters that take a European diacritic; a stray accent before any other letter is
+# left untouched rather than risk corrupting correct text.
+_ACCENTABLE: frozenset[str] = frozenset("aeiouyAEIOUYnNcCsSzZgG")
+
+
+def compose_spacing_accents(text: str) -> str:
+    """Fold a standalone spacing accent onto the letter it precedes.
+
+    A spacing accent binds to the following letter, skipping any spaces the
+    extractor left between them ("R ¨ utte" -> "Rütte"), then the pair is composed
+    to its single Unicode codepoint. Text without spacing accents is returned
+    unchanged.
+    """
+    out: list[str] = []
+    i = 0
+    n = len(text)
+    while i < n:
+        char = text[i]
+        if char in _SPACING_ACCENTS:
+            j = i + 1
+            while j < n and text[j] == " ":
+                j += 1
+            if j < n and text[j] in _ACCENTABLE:
+                out.append(unicodedata.normalize("NFC", text[j] + _SPACING_ACCENTS[char]))
+                i = j + 1
+                continue
+        out.append(char)
+        i += 1
+    return "".join(out)
+
 
 # Below this mean characters-per-page the text layer is treated as absent (scanned
 # image) and OCR takes over. Born-digital pages carry hundreds of chars; scanned
@@ -53,7 +101,7 @@ def text_layer(pdf_path: str | Path) -> tuple[str, int]:
     try:
         pages = len(pdf)
         text = "".join(page.get_textpage().get_text_range() + "\n" for page in pdf)
-        return text, pages
+        return compose_spacing_accents(text), pages
     finally:
         pdf.close()
 
