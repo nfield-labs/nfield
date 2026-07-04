@@ -279,6 +279,34 @@ class TestEmptyRecoveryKeepsOriginal:
         _write_extracted_to_blackboard({"refs": []}, state)
         assert state.blackboard.get_filled()["refs"] == []
 
+    def test_smaller_reextraction_restores_quality_stash(self):
+        # One recovery call cannot out-collect a windowed sweep: a shorter redo
+        # is partial, and the fuller stashed original must win.
+        from nfield.assembly._blackboard import Blackboard
+        from nfield.pipeline.s4_extract import _write_extracted_to_blackboard
+
+        state = _state()
+        state.fields = [REFS]
+        state.field_by_path = {"refs": REFS}
+        state.blackboard = Blackboard(["refs"])
+        state.blackboard.mark_pending("refs")
+        state.quality_failed_values["refs"] = [ENTRY_1, ENTRY_2, ENTRY_3, ENTRY_4]
+        _write_extracted_to_blackboard({"refs": [ENTRY_1]}, state)
+        assert state.blackboard.get_filled()["refs"] == [ENTRY_1, ENTRY_2, ENTRY_3, ENTRY_4]
+
+    def test_fuller_reextraction_replaces_quality_stash(self):
+        from nfield.assembly._blackboard import Blackboard
+        from nfield.pipeline.s4_extract import _write_extracted_to_blackboard
+
+        state = _state()
+        state.fields = [REFS]
+        state.field_by_path = {"refs": REFS}
+        state.blackboard = Blackboard(["refs"])
+        state.blackboard.mark_pending("refs")
+        state.quality_failed_values["refs"] = [ENTRY_1]
+        _write_extracted_to_blackboard({"refs": [ENTRY_2, ENTRY_3]}, state)
+        assert state.blackboard.get_filled()["refs"] == [ENTRY_2, ENTRY_3]
+
 
 class ScriptedProvider:
     """Returns one scripted response per call, then repeats the last."""
@@ -327,8 +355,9 @@ class TestScarcePatience:
         windows = [f"w{i}" for i in range(20)]
         provider = ScriptedProvider(["refs = []"])
         await _sweep_array_windows(windows, [REFS], leaf, provider, state, extracted)
-        # A stocked array stops after the patience run of empty windows, not the whole doc.
-        assert provider.calls == _CONTINUATION_STOP_AFTER_EMPTY
+        # A stocked array stops after the patience run of empty windows plus the
+        # two boundary probes a dry sweep spends - never the whole document.
+        assert provider.calls == _CONTINUATION_STOP_AFTER_EMPTY + 2
 
 
 class TestOrdinalRun:
@@ -419,6 +448,199 @@ class TestSandwichResample:
         assert sum(1 for x in extracted["refs"] if x.startswith("beta-full")) == 10
 
 
+class TestSingleWindowResample:
+    @pytest.mark.asyncio
+    async def test_empty_array_after_one_window_split_reprobed(self):
+        # A one-window sweep has no neighbour to expose an under-emitting draw;
+        # an array still empty afterwards is re-asked in two halves.
+        from nfield.pipeline.s4_extract import _sweep_array_windows
+
+        state = _state()
+        state.segments = [_big_segment()]
+        leaf = _leaf()
+        extracted: dict = {"refs": []}
+
+        def batch(tag: str, n: int) -> str:
+            items = ", ".join(
+                f'"{tag} entry number {i} with plenty of text to count"' for i in range(n)
+            )
+            return f"refs = [{items}]"
+
+        provider = ScriptedProvider(["refs = []", batch("front", 5), batch("back", 5)])
+        await _sweep_array_windows(["part-a\n\npart-b"], [REFS], leaf, provider, state, extracted)
+        assert provider.calls == 3  # the window + two half re-probes
+        assert len(extracted["refs"]) == 10
+
+    @pytest.mark.asyncio
+    async def test_stocked_array_after_one_window_not_reprobed(self):
+        from nfield.pipeline.s4_extract import _sweep_array_windows
+
+        state = _state()
+        state.segments = [_big_segment()]
+        leaf = _leaf()
+        extracted: dict = {"refs": [ENTRY_1]}
+        provider = ScriptedProvider([f'refs = ["{ENTRY_2}"]'])
+        await _sweep_array_windows(["part-a\n\npart-b"], [REFS], leaf, provider, state, extracted)
+        assert provider.calls == 1  # items aboard, no re-probe
+
+
+class TestDocumentOrder:
+    def test_items_sorted_by_document_position(self):
+        from nfield.pipeline.s4_extract import _document_order
+
+        state = _state()
+        text = f"Intro.\n[1] {ENTRY_1}\n[2] {ENTRY_2}\n[3] {ENTRY_3}\n[4] {ENTRY_4}"
+        state.segments = [
+            Segment(text=text, start=0, end=len(text), segment_type="unstructured", segment_id=0)
+        ]
+        shuffled = [ENTRY_3, ENTRY_1, ENTRY_4, ENTRY_2]
+        assert _document_order(shuffled, state) == [ENTRY_1, ENTRY_2, ENTRY_3, ENTRY_4]
+
+    def test_unlocatable_items_keep_relative_order_at_end(self):
+        from nfield.pipeline.s4_extract import _document_order
+
+        state = _state()
+        text = f"[1] {ENTRY_1}\n[2] {ENTRY_2}"
+        state.segments = [
+            Segment(text=text, start=0, end=len(text), segment_type="unstructured", segment_id=0)
+        ]
+        out = _document_order([ENTRY_2, "ghost entry beta", ENTRY_1, "ghost entry alpha"], state)
+        assert out == [ENTRY_1, ENTRY_2, "ghost entry beta", "ghost entry alpha"]
+
+    @pytest.mark.asyncio
+    async def test_sweep_output_is_document_ordered(self):
+        # High-relevance visit order must not leak into the merged list.
+        from nfield.pipeline.s4_extract import _sweep_array_windows
+
+        state = _state()
+        big = "reference body text " * 3_000 + f"\n[1] {ENTRY_1}\n[2] {ENTRY_2}"
+        state.segments = [
+            Segment(text=big, start=0, end=len(big), segment_type="unstructured", segment_id=0)
+        ]
+        leaf = _leaf()
+        extracted: dict = {"refs": []}
+        provider = ScriptedProvider(
+            [f'refs = ["{ENTRY_2}"]', f'refs = ["{ENTRY_1}"]', "refs = []"]
+        )
+        await _sweep_array_windows(["w-late", "w-early"], [REFS], leaf, provider, state, extracted)
+        assert extracted["refs"] == [ENTRY_1, ENTRY_2]  # document order, not visit order
+
+
+class TestPlaceholderItems:
+    def test_item_restating_field_key_detected(self):
+        from nfield.pipeline.s4_extract import _restates_path_key
+
+        assert _restates_path_key("THE LENDERS FROM TIME TO TIME PARTY HERETO", "parties.lenders")
+        assert _restates_path_key("TRANCHE A LENDER (as defined herein)", "parties.lenders")
+        assert not _restates_path_key("ORION ENERGY CREDIT FUND II, L.P.", "parties.lenders")
+        assert not _restates_path_key(ENTRY_1, "refs")
+
+    @pytest.mark.asyncio
+    async def test_placeholder_only_array_treated_empty_and_reswept(self):
+        # One placeholder item must not suppress the whole-document sweep.
+        from nfield.pipeline.s4_extract import _extend_arrays_over_windows
+
+        state = _state()
+        state.segments = [_big_segment()]
+        leaf = _leaf()
+        leaf.fields = [Field("refs", "array", {"items": {"type": "string"}}, "", {})]
+        leaf.excerpt_segment_ids = {0}
+        extracted: dict = {"refs": ["the refs listed hereto"]}
+        provider = ScriptedProvider([f'refs = ["{ENTRY_1}", "{ENTRY_2}", "{ENTRY_3}"]'])
+        await _extend_arrays_over_windows(leaf, provider, state, extracted)
+        assert "the refs listed hereto" not in extracted["refs"]
+        assert ENTRY_1 in extracted["refs"]
+
+
+class TestScarceRegion:
+    @pytest.mark.asyncio
+    async def test_scarce_array_sweeps_whole_document(self):
+        # Two items of a many-entry list say nothing about the rest; the sweep
+        # must cover the whole document, not just the uncovered remainder.
+        from nfield.pipeline.s4_extract import _extend_arrays_over_windows
+
+        state = _state()
+        state.segments = [_big_segment()]
+        leaf = _leaf()
+        # Excerpt already covers everything: a remainder-only region would be empty.
+        leaf.excerpt_segment_ids = {0}
+        extracted: dict = {"refs": [ENTRY_1, ENTRY_2]}
+        provider = ScriptedProvider([f'refs = ["{ENTRY_3}", "{ENTRY_4}"]'])
+        await _extend_arrays_over_windows(leaf, provider, state, extracted)
+        assert provider.calls >= 1  # swept despite full excerpt coverage
+        assert ENTRY_3 in extracted["refs"]
+
+
+class TestBoundaryProbe:
+    @pytest.mark.asyncio
+    async def test_empty_array_probes_last_window_after_patience(self):
+        # Items that live only on end pages (signature blocks) are missed by
+        # relevance order; the outermost unvisited windows are probed before
+        # the sweep gives up on a fully-empty array.
+        from nfield.pipeline.s4_extract import _CONTINUATION_STOP_WHILE_EMPTY, _sweep_array_windows
+
+        state = _state()
+        state.segments = [_big_segment()]
+        leaf = _leaf()
+        extracted: dict = {"refs": []}
+        windows = [f"body {i}" for i in range(12)] + ["signature pages"]
+
+        class _EndOnly(ScriptedProvider):
+            async def complete(self, messages, *, max_tokens):
+                self.calls += 1
+                if "signature pages" in messages[-1]["content"]:
+                    return f'refs = ["{ENTRY_1}", "{ENTRY_2}", "{ENTRY_3}", "{ENTRY_4}"]'
+                return "refs = []"
+
+        # Relevance order keeps the last window out of the patience run.
+        order = list(range(12))
+        provider = _EndOnly([])
+        await _sweep_array_windows(
+            windows, [REFS], leaf, provider, state, extracted, visit_order=order
+        )
+        # patience + last window + its neighbour + the first unvisited window
+        assert provider.calls == _CONTINUATION_STOP_WHILE_EMPTY + 3
+        assert extracted["refs"] == [ENTRY_1, ENTRY_2, ENTRY_3, ENTRY_4]
+
+    @pytest.mark.asyncio
+    async def test_stocked_array_with_dry_sweep_still_probes_ends(self):
+        # An array holding items is no proof of completeness: when the sweep
+        # itself yields nothing new, the ends must still be verified.
+        from nfield.pipeline.s4_extract import _sweep_array_windows
+
+        state = _state()
+        state.segments = [_big_segment()]
+        leaf = _leaf()
+        extracted: dict = {"refs": [ENTRY_1, ENTRY_2, ENTRY_3]}
+        windows = [f"body {i}" for i in range(10)] + ["signature pages"]
+
+        class _EndOnly(ScriptedProvider):
+            async def complete(self, messages, *, max_tokens):
+                self.calls += 1
+                if "signature pages" in messages[-1]["content"]:
+                    return f'refs = ["{ENTRY_4}"]'
+                return "refs = []"
+
+        provider = _EndOnly([])
+        await _sweep_array_windows(
+            windows, [REFS], leaf, provider, state, extracted, visit_order=list(range(10))
+        )
+        assert ENTRY_4 in extracted["refs"]  # end window reached despite stocked array
+
+    @pytest.mark.asyncio
+    async def test_no_boundary_probe_when_items_found(self):
+        from nfield.pipeline.s4_extract import _sweep_array_windows
+
+        state = _state()
+        state.segments = [_big_segment()]
+        leaf = _leaf()
+        extracted: dict = {"refs": []}
+        provider = ScriptedProvider([f'refs = ["{ENTRY_1}", "{ENTRY_2}", "{ENTRY_3}"]'])
+        await _sweep_array_windows(["w0", "w1"], [REFS], leaf, provider, state, extracted)
+        # First window yields; the sweep never needs the boundary pass.
+        assert extracted["refs"] == [ENTRY_1, ENTRY_2, ENTRY_3]
+
+
 class TestNeighborPromotion:
     @pytest.mark.asyncio
     async def test_productive_window_promotes_document_neighbours(self):
@@ -494,6 +716,60 @@ class TestDimensionArrayWholeDocSweep:
         await _extend_arrays_over_windows(leaf, provider, state, extracted)
         assert provider.calls >= 1  # swept despite full excerpt coverage
         assert len(extracted["revenue"]) >= 2  # picked up a new per-segment row
+
+
+class TestFocusedReask:
+    @pytest.mark.asyncio
+    async def test_array_empty_beside_yielding_sibling_reasked_alone(self):
+        # A window answers all arrays at once; a field left empty while a sibling
+        # yielded is re-asked alone so the selection pressure is gone.
+        from nfield.pipeline.s4_extract import _extend_arrays_over_windows
+
+        other = Field("margins", "array", {"items": {"type": "string"}}, "", {})
+        state = _state()
+        state.segments = [_big_segment()]
+        leaf = _leaf()
+        leaf.fields = [REFS, other]
+        leaf.excerpt_segment_ids = {0}
+        extracted: dict = {"refs": [], "margins": []}
+
+        class _Selective(ScriptedProvider):
+            async def complete(self, messages, *, max_tokens):
+                self.calls += 1
+                prompt = messages[-1]["content"]
+                if "margins" in prompt and "refs" not in prompt:
+                    return f'margins = ["{ENTRY_4}"]'  # focused ask succeeds
+                return f'refs = ["{ENTRY_1}", "{ENTRY_2}", "{ENTRY_3}"]\nmargins = []'
+
+        provider = _Selective([])
+        await _extend_arrays_over_windows(leaf, provider, state, extracted)
+        assert extracted["margins"] == [ENTRY_4]
+        assert ENTRY_1 in extracted["refs"]
+
+    @pytest.mark.asyncio
+    async def test_all_arrays_empty_not_reasked(self):
+        # When every array stayed empty the document lacks them; no focused call.
+        from nfield.pipeline.s4_extract import _extend_arrays_over_windows
+
+        other = Field("margins", "array", {"items": {"type": "string"}}, "", {})
+        state = _state()
+        state.segments = [_big_segment()]
+        leaf = _leaf()
+        leaf.fields = [REFS, other]
+        leaf.excerpt_segment_ids = {0}
+        extracted: dict = {"refs": [], "margins": []}
+        seen: list[str] = []
+
+        class _Recorder(ScriptedProvider):
+            async def complete(self, messages, *, max_tokens):
+                seen.append(messages[-1]["content"])
+                return await super().complete(messages, max_tokens=max_tokens)
+
+        provider = _Recorder(["refs = []\nmargins = []"])
+        await _extend_arrays_over_windows(leaf, provider, state, extracted)
+        assert seen, "the sweep must run"
+        # Every call asked for both fields together - no single-field re-ask ran.
+        assert all("refs" in p and "margins" in p for p in seen)
 
 
 class TestDimensionSweepRelevanceOrder:
