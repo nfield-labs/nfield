@@ -1,0 +1,8 @@
+document,gold_fields,coverage,value_accuracy,K,status,seconds
+Resume-Academic01,317,0.8297,0.7792,6,success,22.1
+Resume-Academic02,185,0.7946,0.7622,4,success,6.9
+Resume-Finance,49,0.9796,0.7755,2,success,19.7
+Resume-IT,67,0.8209,0.7463,4,success,21.7
+Resume-Legal,44,0.8409,0.6136,2,success,20.9
+Resume-Marketing,91,0.8571,0.6813,6,success,46.0
+Resume-Med,66,0.9242,0.6818,4,success,26.1

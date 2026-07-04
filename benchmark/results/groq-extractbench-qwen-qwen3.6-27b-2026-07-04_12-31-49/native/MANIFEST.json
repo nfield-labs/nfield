@@ -1,0 +1,52 @@
+{
+  "benchmark": "extract-bench",
+  "model": "groq/qwen/qwen3.6-27b",
+  "reasoning_model": true,
+  "budget": "native",
+  "context_window": 131000,
+  "max_output_tokens": 24000,
+  "datasets": [
+    {
+      "dataset": "academic_research",
+      "documents": 6,
+      "gold_fields": 1945,
+      "coverage": 0.9728,
+      "value_accuracy": 0.9434,
+      "K_total": 48
+    },
+    {
+      "dataset": "finance_10kq",
+      "documents": 7,
+      "gold_fields": 8830,
+      "coverage": 0.916,
+      "value_accuracy": 0.8143,
+      "K_total": 162
+    },
+    {
+      "dataset": "finance_credit_agreement",
+      "documents": 10,
+      "gold_fields": 265,
+      "coverage": 0.9547,
+      "value_accuracy": 0.8943,
+      "K_total": 108
+    },
+    {
+      "dataset": "hiring_resume",
+      "documents": 7,
+      "gold_fields": 819,
+      "coverage": 0.8413,
+      "value_accuracy": 0.7448,
+      "K_total": 28
+    },
+    {
+      "dataset": "sport_swimming",
+      "documents": 5,
+      "gold_fields": 505,
+      "coverage": 0.9881,
+      "value_accuracy": 0.9822,
+      "K_total": 15
+    }
+  ],
+  "git_commit": "0821d59",
+  "recorded_at": "2026-07-04T13:29:25+00:00"
+}
