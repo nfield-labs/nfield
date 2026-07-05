@@ -380,8 +380,9 @@ def _format_array_items(field: Field) -> str:
         items = field.schema_node.get("items")
     if not isinstance(items, dict):
         return ""
-    # Render the full recursive shape so nested entries show their own keys.
-    if items.get("type") == "object" or "properties" in items:
+    # Render the full recursive shape so nested entries (objects, nested arrays) show
+    # their own structure rather than a bare "object" / "array".
+    if items.get("type") in ("object", "array") or "properties" in items or "items" in items:
         return _shape(items, 0)
     elem_type = items.get("type", "string")
     elem_type = elem_type[0] if isinstance(elem_type, list) and elem_type else elem_type

@@ -192,3 +192,25 @@ class TestDimensionDirective:
         }
         f = make_field("rows", "array", constraints={"items": items})
         assert "enumerate" not in describe_field(f, TemplateType.STANDARD)
+
+
+class TestNestedArrayShape:
+    """A nested-array field shows its inner shape, not a bare 'array'."""
+
+    def test_array_of_scalar_array_shape(self) -> None:
+        f = Field(
+            "m",
+            "array",
+            {"items": {"type": "array", "items": {"type": "number"}}},
+            "",
+            {"items": {"type": "array", "items": {"type": "number"}}},
+        )
+        assert "items: array of number" in describe_field(f, TemplateType.STANDARD)
+
+    def test_array_of_object_array_shape(self) -> None:
+        inner = {
+            "type": "array",
+            "items": {"type": "object", "properties": {"v": {"type": "string"}}},
+        }
+        f = Field("g", "array", {"items": inner}, "", {"items": inner})
+        assert "array of object {v: string}" in describe_field(f, TemplateType.STANDARD)
