@@ -11,7 +11,14 @@ from typing import TYPE_CHECKING, Any
 
 from nfield.assembly._quality import compute_quality_score
 from nfield.assembly._trie import assemble_json
-from nfield.schema._flatten import OPEN_MAP_MARKER
+from nfield.schema._flatten import (
+    OPEN_MAP_MARKER,
+    OPEN_MAP_MERGE_MARKER,
+    UNION_ARRAY_SUFFIX,
+    UNION_BASE_MARKER,
+    UNION_KIND_MARKER,
+    WILDCARD_SUFFIX,
+)
 from nfield.types import ExtractionResult, ExtractionStatus, Metadata
 
 if TYPE_CHECKING:
@@ -23,6 +30,8 @@ __all__ = ["run_stage_6"]
 # A run is FAILED when more than half its fields are missing, PARTIAL when only
 # some are, and SUCCESS when all are present.
 _FAILED_MISSING_FRACTION: float = 0.50
+# A wildcard field (path + WILDCARD_SUFFIX) assembles under this single dict key.
+_WILDCARD_KEY: str = WILDCARD_SUFFIX.lstrip(".")
 
 
 def run_stage_6(state: PipelineState) -> ExtractionResult:
@@ -46,13 +55,17 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
     assert state.blackboard is not None, "Blackboard must be initialised"
 
     bb = state.blackboard
-    fields_total = len(state.fields)
+    # A union's shadow array field is an internal alternative branch, resolved away
+    # before output; it is not one of the schema's fields, so it is not counted.
+    fields_total = sum(1 for f in state.fields if not f.path.endswith(UNION_ARRAY_SUFFIX))
 
     # --- 1. Collect filled values ---
-    filled = _fold_open_maps(bb.get_filled(), state.fields)
+    filled = _resolve_structural_unions(bb.get_filled(), state.fields)
+    filled = _fold_open_maps(filled, state.fields)
 
     # --- 2. Assemble nested JSON ---
     data = assemble_json(filled) if filled else {}
+    data = _merge_wildcard_maps(data, state.fields)
 
     # --- 3. Quality metrics ---
     report = compute_quality_score(bb, state.fields, state.K, state.K_min)
@@ -167,11 +180,79 @@ def _fold_open_maps(filled: dict[str, Any], fields: list[Field]) -> dict[str, An
     out = dict(filled)
     for path in open_map_paths:
         value = out.get(path)
-        if isinstance(value, list):
+        # Only fold {key, value} rows; a structural union may have replaced this path
+        # with a plain array (the flat branch won), which must pass through untouched.
+        if isinstance(value, list) and all(
+            isinstance(item, dict) and "key" in item for item in value
+        ):
             # Rows with non-string keys are dropped rather than crashing on hashing.
             out[path] = {
                 item["key"]: item.get("value")
                 for item in value
-                if isinstance(item, dict) and isinstance(item.get("key"), str)
+                if isinstance(item.get("key"), str)
             }
     return out
+
+
+def _resolve_structural_unions(filled: dict[str, Any], fields: list[Field]) -> dict[str, Any]:
+    """Collapse an ``array | object`` anyOf to the branch the document populated.
+
+    Both branches were flattened: the object branch (its open-map leaf or fixed-property
+    fields), and the array branch at ``base + UNION_ARRAY_SUFFIX``. The object branch wins
+    when any of its paths is populated, since it is the richer shape; otherwise the array
+    branch moves onto the base. The losing branch's paths are dropped so the base is never
+    both a list and a parent, and the shadow array path never reaches the output.
+    """
+    object_paths: dict[str, list[str]] = {}
+    for f in fields:
+        base = f.constraints.get(UNION_BASE_MARKER)
+        if base and f.constraints.get(UNION_KIND_MARKER) == "object":
+            object_paths.setdefault(base, []).append(f.path)
+    if not object_paths:
+        return filled
+    out = dict(filled)
+    for base, obj_paths in object_paths.items():
+        array_items = out.pop(f"{base}{UNION_ARRAY_SUFFIX}", None)
+        object_filled = any(_is_present(out.get(p)) for p in obj_paths)
+        array_filled = isinstance(array_items, list) and len(array_items) > 0
+        if not object_filled and array_filled:
+            for path in obj_paths:
+                out.pop(path, None)
+            out[base] = array_items
+    return out
+
+
+def _is_present(value: Any) -> bool:
+    """True when a value counts as populated - non-empty for containers/strings."""
+    if isinstance(value, (list, dict, str)):
+        return len(value) > 0
+    return value is not None
+
+
+def _merge_wildcard_maps(data: dict[str, Any], fields: list[Field]) -> dict[str, Any]:
+    """Merge an additionalProperties open map's dynamic keys into its parent object.
+
+    The open map is folded to a dict that assembles under a ``*`` key beside the
+    object's fixed keys; lift its entries up into the parent and drop the ``*``.
+    """
+    for f in fields:
+        if not f.constraints.get(OPEN_MAP_MERGE_MARKER):
+            continue
+        parent_path = f.path[: -len(WILDCARD_SUFFIX)] if f.path.endswith(WILDCARD_SUFFIX) else ""
+        node = _navigate(data, parent_path)
+        if isinstance(node, dict) and isinstance(node.get(_WILDCARD_KEY), dict):
+            for key, value in node.pop(_WILDCARD_KEY).items():
+                node.setdefault(key, value)
+    return data
+
+
+def _navigate(data: dict[str, Any], dot_path: str) -> Any:
+    """Return the nested dict value at *dot_path* (object keys only), or ``None``."""
+    if not dot_path:
+        return data
+    node: Any = data
+    for segment in dot_path.split("."):
+        if not isinstance(node, dict) or segment not in node:
+            return None
+        node = node[segment]
+    return node

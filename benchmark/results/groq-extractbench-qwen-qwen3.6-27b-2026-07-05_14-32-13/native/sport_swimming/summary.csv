@@ -1,0 +1,6 @@
+document,gold_fields,coverage,value_accuracy,K,status,seconds
+ma_2023_sw_M-table1,116,1.0,1.0,1,success,3.8
+ma_2023_sw_M-table2,67,0.9851,0.9851,3,partial,3.8
+ma_2023_sw_M-table3,67,0.9851,0.9851,3,partial,3.3
+ma_2023_sw_M-table4,109,0.9908,0.9817,3,partial,5.0
+ma_2023_sw_M-table5,146,0.9932,0.9863,3,partial,6.2

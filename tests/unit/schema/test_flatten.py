@@ -587,3 +587,211 @@ class TestNodeBudget:
         # we admit. A flat schema of F fields has N ≈ F, so C must clear a generous
         # field-count floor (1e6) while staying ≪ the exponential blow-up b^D.
         assert _flatten_mod.MAX_TOTAL_NODES >= 1_000_000
+
+
+class TestStructuralUnion:
+    """anyOf with both an array and an object branch is emitted as both."""
+
+    def _skills_schema(self):
+        return {
+            "type": "object",
+            "properties": {
+                "skills": {
+                    "anyOf": [
+                        {"type": "array", "items": {"type": "string"}},
+                        {
+                            "type": "object",
+                            "additionalProperties": {"type": "array", "items": {"type": "string"}},
+                        },
+                        {"type": "null"},
+                    ]
+                }
+            },
+        }
+
+    def test_structural_union_emits_both_branches(self) -> None:
+        fields = {f.path: f for f in flatten_schema(self._skills_schema())}
+        assert "skills" in fields  # object (open-map) branch at base path
+        assert "skills__uarr" in fields  # array branch at shadow path
+        assert fields["skills"].constraints.get("x-union-kind") == "object"
+        assert fields["skills__uarr"].constraints.get("x-union-kind") == "array"
+        assert fields["skills"].constraints.get("x-union-base") == "skills"
+        assert fields["skills__uarr"].constraints.get("x-union-base") == "skills"
+
+    def test_scalar_union_unchanged(self) -> None:
+        # string|int union is not structural: one field, no shadow, no union tags.
+        schema = {
+            "type": "object",
+            "properties": {"d": {"anyOf": [{"type": "string"}, {"type": "integer"}]}},
+        }
+        fields = {f.path: f for f in flatten_schema(schema)}
+        assert set(fields) == {"d"}
+        assert "x-union-base" not in fields["d"].constraints
+
+
+class TestArrayOfArray:
+    """An array-of-array is one list-leaf carrying the nested item schema."""
+
+    def test_array_of_array_is_single_list_leaf(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "m": {"type": "array", "items": {"type": "array", "items": {"type": "number"}}}
+            },
+        }
+        fields = flatten_schema(schema)
+        assert [f.path for f in fields] == ["m"]
+        assert fields[0].type == "array"
+        assert fields[0].constraints["items"]["type"] == "array"
+
+    def test_array_of_array_assembles_without_extra_level(self) -> None:
+        from nfield.assembly._trie import assemble_json
+
+        assert assemble_json({"m": [[1, 2], [3, 4]]}) == {"m": [[1, 2], [3, 4]]}
+
+
+class TestObjectUnion:
+    """anyOf with several object branches extracts the union of their fields."""
+
+    def test_object_branches_merge_to_superset(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "contact": {
+                    "anyOf": [
+                        {"type": "object", "properties": {"email": {"type": "string"}}},
+                        {"type": "object", "properties": {"address": {"type": "string"}}},
+                        {"type": "null"},
+                    ]
+                }
+            },
+        }
+        paths = sorted(f.path for f in flatten_schema(schema))
+        assert paths == ["contact.address", "contact.email"]
+
+    def test_first_branch_wins_property_collision(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "v": {
+                    "anyOf": [
+                        {"type": "object", "properties": {"x": {"type": "string"}}},
+                        {"type": "object", "properties": {"x": {"type": "integer"}}},
+                    ]
+                }
+            },
+        }
+        fields = {f.path: f for f in flatten_schema(schema)}
+        assert fields["v.x"].type == "string"
+
+    def test_single_object_branch_unchanged(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "c": {
+                    "anyOf": [
+                        {"type": "object", "properties": {"x": {"type": "string"}}},
+                        {"type": "null"},
+                    ]
+                }
+            },
+        }
+        assert [f.path for f in flatten_schema(schema)] == ["c.x"]
+
+
+class TestNullUnion:
+    """An anyOf whose branches are all null still yields a null field."""
+
+    def test_all_null_union_emits_null_field(self) -> None:
+        schema = {"type": "object", "properties": {"f": {"anyOf": [{"type": "null"}]}}}
+        fields = flatten_schema(schema)
+        assert [(f.path, f.type) for f in fields] == [("f", "null")]
+
+    def test_normal_nullable_union_unchanged(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {"f": {"anyOf": [{"type": "string"}, {"type": "null"}]}},
+        }
+        fields = flatten_schema(schema)
+        assert [(f.path, f.type) for f in fields] == [("f", "string")]
+
+
+class TestArrayItemUnion:
+    """An array whose items are a union resolves to the richest element shape."""
+
+    def test_string_or_object_items_become_object_array(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "xs": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {"type": "string"},
+                            {"type": "object", "properties": {"k": {"type": "string"}}},
+                        ]
+                    },
+                }
+            },
+        }
+        fields = {f.path: f for f in flatten_schema(schema)}
+        assert "xs" in fields
+        assert fields["xs"].constraints["items"].get("type") == "object"
+
+
+class TestOpenMapWithFixedProps:
+    """additionalProperties beside fixed properties is a merge open map."""
+
+    def test_emits_fixed_and_merge_open_map(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "f": {
+                    "type": "object",
+                    "properties": {"a": {"type": "string"}},
+                    "additionalProperties": {"type": "number"},
+                }
+            },
+        }
+        fields = {f.path: f for f in flatten_schema(schema)}
+        assert "f.a" in fields
+        assert fields["f.*"].constraints.get("x-open-map") is True
+        assert fields["f.*"].constraints.get("x-open-map-merge") is True
+
+    def test_pure_open_map_not_marked_merge(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {"cfg": {"type": "object", "additionalProperties": {"type": "number"}}},
+        }
+        fields = {f.path: f for f in flatten_schema(schema)}
+        assert fields["cfg"].constraints.get("x-open-map") is True
+        assert "x-open-map-merge" not in fields["cfg"].constraints
+
+
+class TestFixedPropObjectUnion:
+    """An array | object union whose object branch has fixed properties tags children."""
+
+    def _fields(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "f": {
+                    "anyOf": [
+                        {"type": "array", "items": {"type": "string"}},
+                        {
+                            "type": "object",
+                            "properties": {"a": {"type": "string"}, "b": {"type": "string"}},
+                        },
+                        {"type": "null"},
+                    ]
+                }
+            },
+        }
+        return {x.path: x for x in flatten_schema(schema)}
+
+    def test_object_children_carry_union_base_and_kind(self) -> None:
+        fields = self._fields()
+        assert fields["f.a"].constraints.get("x-union-base") == "f"
+        assert fields["f.a"].constraints.get("x-union-kind") == "object"
+        assert fields["f.b"].constraints.get("x-union-kind") == "object"
+        assert fields["f__uarr"].constraints.get("x-union-kind") == "array"

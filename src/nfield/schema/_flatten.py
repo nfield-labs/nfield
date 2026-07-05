@@ -10,13 +10,21 @@ __all__ = ["OPEN_MAP_MARKER", "flatten_schema"]
 
 # Marks an open-map list-leaf; assembly folds its [{key, value}] list back to a dict.
 OPEN_MAP_MARKER: str = "x-open-map"
+# Marks an open map that shares its object with fixed properties (additionalProperties
+# beside named keys); assembly folds it and merges its keys into the parent object.
+OPEN_MAP_MERGE_MARKER: str = "x-open-map-merge"
+# An array|object anyOf emits both branches, the array under this shadow suffix. These
+# tag a branch with its base path and kind so assembly keeps the one the document filled.
+UNION_BASE_MARKER: str = "x-union-base"
+UNION_KIND_MARKER: str = "x-union-kind"
+UNION_ARRAY_SUFFIX: str = "__uarr"
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 _LEAF_TYPES: frozenset[str] = frozenset({"string", "integer", "number", "boolean", "null"})
 _ARRAY_SUFFIX: str = "[]"
-_WILDCARD_SUFFIX: str = ".*"
+WILDCARD_SUFFIX: str = ".*"
 MAX_SCHEMA_DEPTH: int = 32
 # Ceiling on total node expansions T during the iterative DFS flatten.
 #
@@ -59,6 +67,8 @@ _CONSTRAINT_KEYS: frozenset[str] = frozenset(
         "multipleOf",
         "minProperties",
         "maxProperties",
+        UNION_BASE_MARKER,
+        UNION_KIND_MARKER,
     }
 )
 
@@ -174,15 +184,65 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
         for combo_key in ("anyOf", "oneOf"):
             if combo_key in node:
                 options: list[dict[str, Any]] = node[combo_key]
+                siblings = {k: v for k, v in node.items() if k not in (combo_key, "$ref")}
+                plan = _union_plan(options)
+                if plan is not None:
+                    array_branch, object_branch = plan
+                    if array_branch is not None:
+                        # Array-vs-object union: emit both, the array under a shadow path;
+                        # assembly keeps whichever branch the document populated.
+                        stack.append(
+                            (
+                                _stamp_union({**object_branch, **siblings}, path, "object"),
+                                path,
+                                parent_path,
+                                depth,
+                                required_set,
+                                ref_chain,
+                            )
+                        )
+                        stack.append(
+                            (
+                                _stamp_union({**array_branch, **siblings}, path, "array"),
+                                f"{path}{UNION_ARRAY_SUFFIX}",
+                                parent_path,
+                                depth,
+                                frozenset(),
+                                ref_chain,
+                            )
+                        )
+                    else:
+                        # Several object branches: extract the union of their fields so
+                        # whichever shape the document uses is covered.
+                        stack.append(
+                            (
+                                {**object_branch, **siblings},
+                                path,
+                                parent_path,
+                                depth,
+                                required_set,
+                                ref_chain,
+                            )
+                        )
+                    break
                 chosen = _first_non_null_option(options)
                 if chosen is not None:
-                    # Merge sibling keys into chosen option
-                    merged_chosen = {
-                        **chosen,
-                        **{k: v for k, v in node.items() if k not in (combo_key, "$ref")},
-                    }
+                    merged_chosen = {**chosen, **siblings}
                     stack.append(
                         (merged_chosen, path, parent_path, depth, required_set, ref_chain)
+                    )
+                elif path:
+                    # Every branch is null: emit a null leaf so the field still appears
+                    # in the output rather than vanishing.
+                    stack.append(
+                        (
+                            {**siblings, "type": "null"},
+                            path,
+                            parent_path,
+                            depth,
+                            required_set,
+                            ref_chain,
+                        )
                     )
                 break
         else:
@@ -255,13 +315,15 @@ def _process_node(
         if value_schema is not None and not properties and path and path not in seen_paths:
             seen_paths.add(path)
             fields.append(
-                _open_map_leaf(path, parent_path, value_schema, required_set, root_schema)
+                _open_map_leaf(
+                    path, parent_path, value_schema, required_set, root_schema, source=node
+                )
             )
             return
 
         # patternProperties → wildcard field (mixed object: keep the wildcard)
         for pat_node in node.get("patternProperties", {}).values():
-            wildcard_path = f"{path}{_WILDCARD_SUFFIX}" if path else _WILDCARD_SUFFIX
+            wildcard_path = f"{path}{WILDCARD_SUFFIX}" if path else WILDCARD_SUFFIX
             if wildcard_path not in seen_paths:
                 seen_paths.add(wildcard_path)
                 fields.append(
@@ -273,20 +335,16 @@ def _process_node(
                     )
                 )
 
-        # additionalProperties (dict schema, not bool)
+        # additionalProperties (dict, not bool): an open map sharing the object; its
+        # dynamic keys extract as {key, value} rows and merge into the parent at assembly.
         addl = node.get("additionalProperties")
         if isinstance(addl, dict):
-            wildcard_path = f"{path}{_WILDCARD_SUFFIX}" if path else _WILDCARD_SUFFIX
+            wildcard_path = f"{path}{WILDCARD_SUFFIX}" if path else WILDCARD_SUFFIX
             if wildcard_path not in seen_paths:
                 seen_paths.add(wildcard_path)
-                fields.append(
-                    _make_field(
-                        node=addl,
-                        path=wildcard_path,
-                        parent_path=path,
-                        required_set=required_set,
-                    )
-                )
+                leaf = _open_map_leaf(wildcard_path, path, addl, required_set, root_schema)
+                leaf.constraints[OPEN_MAP_MERGE_MARKER] = True
+                fields.append(leaf)
 
         # If no properties at all and no children pushed, emit object leaf
         if (
@@ -323,9 +381,22 @@ def _process_node(
 
         items_node = node.get("items")
         if isinstance(items_node, dict):
-            # Object and scalar arrays become one list-leaf; arrays of arrays recurse.
-            if _items_is_object(items_node, root_schema) or _items_is_scalar(
-                items_node, root_schema
+            if "anyOf" in items_node or "oneOf" in items_node:
+                # Per-element union: resolve to the richest element shape so object
+                # elements are extracted as objects, not flattened to scalars.
+                combo = items_node.get("anyOf") or items_node.get("oneOf")
+                resolved = _first_non_null_option(combo) if isinstance(combo, list) else None
+                if resolved is not None:
+                    items_node = {
+                        **resolved,
+                        **{k: v for k, v in items_node.items() if k not in ("anyOf", "oneOf")},
+                    }
+            # Object, scalar, and nested-array items become one list-leaf holding the item
+            # schema; recursing into path[] would add an extra array level at assembly.
+            if (
+                _items_is_object(items_node, root_schema)
+                or _items_is_scalar(items_node, root_schema)
+                or _items_is_array(items_node, root_schema)
             ):
                 if path and path not in seen_paths:
                     seen_paths.add(path)
@@ -418,6 +489,7 @@ def _open_map_leaf(
     value_schema: dict[str, Any],
     required_set: frozenset[str],
     root_schema: dict[str, Any],
+    source: dict[str, Any] | None = None,
 ) -> Field:
     """Build one array list-leaf of {key, value} for an open map."""
     item = {
@@ -428,6 +500,9 @@ def _open_map_leaf(
         },
     }
     constraints: dict[str, Any] = {"items": item, OPEN_MAP_MARKER: True}
+    for marker in (UNION_BASE_MARKER, UNION_KIND_MARKER):
+        if source is not None and marker in source:
+            constraints[marker] = source[marker]
     field_name = path.rsplit(".", 1)[-1]
     return Field(
         path=path,
@@ -458,8 +533,8 @@ def _items_is_scalar(items_node: dict[str, Any], root_schema: dict[str, Any]) ->
     """Return ``True`` if an array's ``items`` schema is a scalar (not object or array).
 
     A scalar item is a string/integer/number/boolean/enum leaf - anything that is not
-    an object (handled as an object list-leaf) and not itself an array (kept as a
-    per-element push so nested-array shapes still recurse). Resolves a single ``$ref``.
+    an object (handled as an object list-leaf) and not itself an array (handled as a
+    nested-array list-leaf). Resolves a single ``$ref``.
     """
     node = items_node
     if "$ref" in node:
@@ -470,6 +545,21 @@ def _items_is_scalar(items_node: dict[str, Any], root_schema: dict[str, Any]) ->
     if node.get("type") == "object" or "properties" in node:
         return False
     return not (node.get("type") == "array" or "items" in node or "prefixItems" in node)
+
+
+def _items_is_array(items_node: dict[str, Any], root_schema: dict[str, Any]) -> bool:
+    """Return ``True`` if an array's ``items`` schema is itself an array or tuple.
+
+    An array-of-array becomes one list-leaf whose item schema is the inner array, so
+    the whole nested list is extracted at this path. Resolves a single ``$ref``.
+    """
+    node = items_node
+    if "$ref" in node:
+        try:
+            node = _resolve_ref(root_schema, node["$ref"])
+        except SchemaError:
+            return False
+    return node.get("type") == "array" or "items" in node or "prefixItems" in node
 
 
 def _resolve_items_node(items_node: dict[str, Any], root_schema: dict[str, Any]) -> dict[str, Any]:
@@ -641,6 +731,77 @@ def _first_non_null_option(
         return None
     # max() is stable, so the first branch of the top rank wins (declaration order).
     return max(candidates, key=_option_rank)
+
+
+def _union_plan(
+    options: list[dict[str, Any]],
+) -> tuple[dict[str, Any] | None, dict[str, Any]] | None:
+    """Plan how to flatten a document-dependent anyOf, or ``None`` for the default.
+
+    Returns ``(array_branch, object_branch)`` when the branch shape depends on the
+    document and a single richest-branch choice would drop fields:
+
+    * array branch present -> structural union; the caller emits both, the array under
+      a shadow path, and assembly keeps the one the document filled.
+    * no array but several object branches -> ``array_branch`` is ``None`` and
+      ``object_branch`` is their merged superset, so every possible field is extracted.
+
+    A scalar union (string vs int) or a single object branch is not document-dependent
+    and returns ``None`` so the caller keeps the existing single-branch choice.
+    """
+    candidates = [
+        opt
+        for opt in options
+        if isinstance(opt, dict) and not (opt.get("type") == "null" and len(opt) == 1)
+    ]
+    array_branch = next((opt for opt in candidates if _option_rank(opt) == 1), None)
+    object_branches = [opt for opt in candidates if _option_rank(opt) == 2]
+    if not object_branches:
+        return None
+    merged_object = (
+        _merge_object_branches(object_branches) if len(object_branches) > 1 else object_branches[0]
+    )
+    if array_branch is not None:
+        return array_branch, merged_object
+    if len(object_branches) > 1:
+        return None, merged_object
+    return None
+
+
+def _merge_object_branches(objects: list[dict[str, Any]]) -> dict[str, Any]:
+    """Union the properties of several object branches into one object schema.
+
+    The first branch wins a property-name collision (declaration order). An open map
+    (``additionalProperties``) on any branch is carried through. Nothing is marked
+    required - a union guarantees no single field.
+    """
+    properties: dict[str, Any] = {}
+    additional: dict[str, Any] | None = None
+    for obj in objects:
+        for name, sub in (obj.get("properties") or {}).items():
+            properties.setdefault(name, sub)
+        if additional is None and isinstance(obj.get("additionalProperties"), dict):
+            additional = obj["additionalProperties"]
+    merged: dict[str, Any] = {"type": "object", "properties": properties}
+    if additional is not None:
+        merged["additionalProperties"] = additional
+    return merged
+
+
+def _stamp_union(node: dict[str, Any], base: str, kind: str) -> dict[str, Any]:
+    """Tag a union branch and all its descendants with the base path and branch kind.
+
+    Recurses through ``properties`` so a fixed-property object branch tags every child
+    field, letting assembly identify the whole branch, not just its top node.
+    """
+    stamped = {**node, UNION_BASE_MARKER: base, UNION_KIND_MARKER: kind}
+    props = node.get("properties")
+    if isinstance(props, dict):
+        stamped["properties"] = {
+            name: _stamp_union(sub, base, kind) if isinstance(sub, dict) else sub
+            for name, sub in props.items()
+        }
+    return stamped
 
 
 def _option_rank(option: dict[str, Any]) -> int:

@@ -142,3 +142,130 @@ class TestRunStage6:
     async def test_per_field_confidence_present(self):
         result = await _run_pipeline(FULL_RESPONSE)
         assert isinstance(result.metadata.per_field_confidence, dict)
+
+
+class TestResolveStructuralUnions:
+    """The array|object union collapses to whichever branch the document filled."""
+
+    def _skills_fields(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "skills": {
+                    "anyOf": [
+                        {"type": "array", "items": {"type": "string"}},
+                        {
+                            "type": "object",
+                            "additionalProperties": {"type": "array", "items": {"type": "string"}},
+                        },
+                        {"type": "null"},
+                    ]
+                }
+            },
+        }
+        return flatten_schema(schema)
+
+    def test_object_branch_wins_when_grouped(self):
+        from nfield.pipeline.s6_assemble import _resolve_structural_unions
+
+        fields = self._skills_fields()
+        filled = {"skills": [{"key": "Backend", "value": ["Python"]}], "skills__uarr": []}
+        out = _resolve_structural_unions(filled, fields)
+        assert "skills__uarr" not in out
+        assert out["skills"] == [{"key": "Backend", "value": ["Python"]}]
+
+    def test_array_branch_wins_when_flat(self):
+        from nfield.pipeline.s6_assemble import _resolve_structural_unions
+
+        fields = self._skills_fields()
+        filled = {"skills": [], "skills__uarr": ["Python", "SQL"]}
+        out = _resolve_structural_unions(filled, fields)
+        assert "skills__uarr" not in out
+        assert out["skills"] == ["Python", "SQL"]
+
+    def test_array_winner_survives_open_map_fold(self):
+        # After the flat branch wins, the base carries a plain list; fold must not
+        # mangle it into an empty dict.
+        from nfield.pipeline.s6_assemble import _resolve_structural_unions
+
+        fields = self._skills_fields()
+        filled = _resolve_structural_unions({"skills": [], "skills__uarr": ["Python"]}, fields)
+        folded = _fold_open_maps(filled, fields)
+        assert folded["skills"] == ["Python"]
+
+    def test_shadow_dropped_when_both_empty(self):
+        from nfield.pipeline.s6_assemble import _resolve_structural_unions
+
+        fields = self._skills_fields()
+        out = _resolve_structural_unions({"skills": [], "skills__uarr": []}, fields)
+        assert "skills__uarr" not in out
+
+
+class TestMergeWildcardMaps:
+    """additionalProperties keys are lifted into the parent object."""
+
+    def _fields(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "f": {
+                    "type": "object",
+                    "properties": {"a": {"type": "string"}},
+                    "additionalProperties": {"type": "number"},
+                }
+            },
+        }
+        return flatten_schema(schema)
+
+    def test_dynamic_keys_merge_into_parent(self):
+        from nfield.pipeline.s6_assemble import _merge_wildcard_maps
+
+        data = {"f": {"a": "hi", "*": {"x": 1, "y": 2}}}
+        assert _merge_wildcard_maps(data, self._fields()) == {"f": {"a": "hi", "x": 1, "y": 2}}
+
+    def test_no_wildcard_is_noop(self):
+        from nfield.pipeline.s6_assemble import _merge_wildcard_maps
+
+        data = {"f": {"a": "hi"}}
+        assert _merge_wildcard_maps(data, self._fields()) == {"f": {"a": "hi"}}
+
+
+class TestFixedPropObjectUnionResolve:
+    """array | object union with a fixed-property object branch resolves cleanly."""
+
+    def _fields(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "f": {
+                    "anyOf": [
+                        {"type": "array", "items": {"type": "string"}},
+                        {
+                            "type": "object",
+                            "properties": {"a": {"type": "string"}, "b": {"type": "string"}},
+                        },
+                        {"type": "null"},
+                    ]
+                }
+            },
+        }
+        return flatten_schema(schema)
+
+    def _run(self, filled):
+        from nfield.pipeline.s6_assemble import _resolve_structural_unions
+
+        return _resolve_structural_unions(dict(filled), self._fields())
+
+    def test_array_wins_drops_child_paths(self):
+        out = self._run({"f__uarr": ["x", "y"]})
+        assert out == {"f": ["x", "y"]}
+
+    def test_object_wins_keeps_children_drops_shadow(self):
+        out = self._run({"f.a": "hi", "f.b": "yo"})
+        assert out == {"f.a": "hi", "f.b": "yo"}
+
+    def test_both_filled_prefers_object_no_conflict(self):
+        out = self._run({"f__uarr": ["x"], "f.a": "hi"})
+        assert out == {"f.a": "hi"}
+        assert "f__uarr" not in out
+        assert "f" not in out

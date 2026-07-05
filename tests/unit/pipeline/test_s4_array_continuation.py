@@ -10,6 +10,7 @@ from nfield.pipeline.s4_extract import (
     _continue_truncated_arrays,
     _ground_norm,
     _last_item_segment,
+    _merge_window_items,
     _reparse_unclean_arrays,
 )
 from nfield.schema._types import CapacityLeaf, Field, Segment
@@ -874,3 +875,25 @@ class TestReparseSkipsTruncated:
         provider = ContinuationProvider("refs = []")
         await _reparse_unclean_arrays(raw, leaf, provider, state, extracted, skip={"refs"})
         assert provider.calls == 0
+
+
+class TestMergeObjectDedup:
+    """Near-duplicate object rows collapse; distinct rows are kept."""
+
+    def test_row_missing_a_field_is_merged_and_fuller_kept(self):
+        merged = [{"title": "Deep Learning", "year": 2020}]
+        added = _merge_window_items(merged, [{"title": "Deep Learning", "year": 2020, "doi": "x"}])
+        assert added == 0
+        assert merged == [{"title": "Deep Learning", "year": 2020, "doi": "x"}]
+
+    def test_distinct_rows_sharing_a_field_are_kept(self):
+        merged = [{"title": "Deep Learning", "venue": "NeurIPS"}]
+        added = _merge_window_items(
+            merged, [{"title": "Reinforcement Learning", "venue": "NeurIPS"}]
+        )
+        assert added == 1
+        assert len(merged) == 2
+
+    def test_exact_duplicate_not_added(self):
+        merged = [{"a": "x"}]
+        assert _merge_window_items(merged, [{"a": "x"}]) == 0
