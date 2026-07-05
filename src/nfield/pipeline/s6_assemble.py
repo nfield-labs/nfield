@@ -50,7 +50,9 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
     assert state.blackboard is not None, "Blackboard must be initialised"
 
     bb = state.blackboard
-    fields_total = len(state.fields)
+    # A union's shadow array field is an internal alternative branch, resolved away
+    # before output; it is not one of the schema's fields, so it is not counted.
+    fields_total = sum(1 for f in state.fields if not f.path.endswith(UNION_ARRAY_SUFFIX))
 
     # --- 1. Collect filled values ---
     filled = _resolve_structural_unions(bb.get_filled(), state.fields)
