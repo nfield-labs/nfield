@@ -766,3 +766,32 @@ class TestOpenMapWithFixedProps:
         fields = {f.path: f for f in flatten_schema(schema)}
         assert fields["cfg"].constraints.get("x-open-map") is True
         assert "x-open-map-merge" not in fields["cfg"].constraints
+
+
+class TestFixedPropObjectUnion:
+    """An array | object union whose object branch has fixed properties tags children."""
+
+    def _fields(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "f": {
+                    "anyOf": [
+                        {"type": "array", "items": {"type": "string"}},
+                        {
+                            "type": "object",
+                            "properties": {"a": {"type": "string"}, "b": {"type": "string"}},
+                        },
+                        {"type": "null"},
+                    ]
+                }
+            },
+        }
+        return {x.path: x for x in flatten_schema(schema)}
+
+    def test_object_children_carry_union_base_and_kind(self) -> None:
+        fields = self._fields()
+        assert fields["f.a"].constraints.get("x-union-base") == "f"
+        assert fields["f.a"].constraints.get("x-union-kind") == "object"
+        assert fields["f.b"].constraints.get("x-union-kind") == "object"
+        assert fields["f__uarr"].constraints.get("x-union-kind") == "array"

@@ -789,8 +789,19 @@ def _merge_object_branches(objects: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def _stamp_union(node: dict[str, Any], base: str, kind: str) -> dict[str, Any]:
-    """Tag a union branch node with its base path and kind for assembly-time resolution."""
-    return {**node, UNION_BASE_MARKER: base, UNION_KIND_MARKER: kind}
+    """Tag a union branch and all its descendants with the base path and branch kind.
+
+    Recurses through ``properties`` so a fixed-property object branch tags every child
+    field, letting assembly identify the whole branch, not just its top node.
+    """
+    stamped = {**node, UNION_BASE_MARKER: base, UNION_KIND_MARKER: kind}
+    props = node.get("properties")
+    if isinstance(props, dict):
+        stamped["properties"] = {
+            name: _stamp_union(sub, base, kind) if isinstance(sub, dict) else sub
+            for name, sub in props.items()
+        }
+    return stamped
 
 
 def _option_rank(option: dict[str, Any]) -> int:

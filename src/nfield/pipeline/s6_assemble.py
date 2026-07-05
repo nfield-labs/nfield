@@ -16,6 +16,7 @@ from nfield.schema._flatten import (
     OPEN_MAP_MERGE_MARKER,
     UNION_ARRAY_SUFFIX,
     UNION_BASE_MARKER,
+    UNION_KIND_MARKER,
 )
 from nfield.types import ExtractionResult, ExtractionStatus, Metadata
 
@@ -193,26 +194,36 @@ def _fold_open_maps(filled: dict[str, Any], fields: list[Field]) -> dict[str, An
 def _resolve_structural_unions(filled: dict[str, Any], fields: list[Field]) -> dict[str, Any]:
     """Collapse an ``array | object`` anyOf to the branch the document populated.
 
-    Both branches were flattened: the object branch at the base path, the array branch
-    at ``base + UNION_ARRAY_SUFFIX``. Whichever came back with rows wins - the object
-    branch is preferred when both did, since it is the richer shape. The shadow array
-    path is always removed so it never reaches the output.
+    Both branches were flattened: the object branch (its open-map leaf or fixed-property
+    fields), and the array branch at ``base + UNION_ARRAY_SUFFIX``. The object branch wins
+    when any of its paths is populated, since it is the richer shape; otherwise the array
+    branch moves onto the base. The losing branch's paths are dropped so the base is never
+    both a list and a parent, and the shadow array path never reaches the output.
     """
-    bases = {
-        f.constraints[UNION_BASE_MARKER] for f in fields if f.constraints.get(UNION_BASE_MARKER)
-    }
-    if not bases:
+    object_paths: dict[str, list[str]] = {}
+    for f in fields:
+        base = f.constraints.get(UNION_BASE_MARKER)
+        if base and f.constraints.get(UNION_KIND_MARKER) == "object":
+            object_paths.setdefault(base, []).append(f.path)
+    if not object_paths:
         return filled
     out = dict(filled)
-    for base in bases:
-        shadow = f"{base}{UNION_ARRAY_SUFFIX}"
-        object_rows = out.get(base)
-        array_items = out.pop(shadow, None)
-        object_filled = isinstance(object_rows, list) and len(object_rows) > 0
+    for base, obj_paths in object_paths.items():
+        array_items = out.pop(f"{base}{UNION_ARRAY_SUFFIX}", None)
+        object_filled = any(_is_present(out.get(p)) for p in obj_paths)
         array_filled = isinstance(array_items, list) and len(array_items) > 0
         if not object_filled and array_filled:
+            for path in obj_paths:
+                out.pop(path, None)
             out[base] = array_items
     return out
+
+
+def _is_present(value: Any) -> bool:
+    """True when a value counts as populated - non-empty for containers/strings."""
+    if isinstance(value, (list, dict, str)):
+        return len(value) > 0
+    return value is not None
 
 
 def _merge_wildcard_maps(data: dict[str, Any], fields: list[Field]) -> dict[str, Any]:

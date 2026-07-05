@@ -228,3 +228,44 @@ class TestMergeWildcardMaps:
 
         data = {"f": {"a": "hi"}}
         assert _merge_wildcard_maps(data, self._fields()) == {"f": {"a": "hi"}}
+
+
+class TestFixedPropObjectUnionResolve:
+    """array | object union with a fixed-property object branch resolves cleanly."""
+
+    def _fields(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "f": {
+                    "anyOf": [
+                        {"type": "array", "items": {"type": "string"}},
+                        {
+                            "type": "object",
+                            "properties": {"a": {"type": "string"}, "b": {"type": "string"}},
+                        },
+                        {"type": "null"},
+                    ]
+                }
+            },
+        }
+        return flatten_schema(schema)
+
+    def _run(self, filled):
+        from nfield.pipeline.s6_assemble import _resolve_structural_unions
+
+        return _resolve_structural_unions(dict(filled), self._fields())
+
+    def test_array_wins_drops_child_paths(self):
+        out = self._run({"f__uarr": ["x", "y"]})
+        assert out == {"f": ["x", "y"]}
+
+    def test_object_wins_keeps_children_drops_shadow(self):
+        out = self._run({"f.a": "hi", "f.b": "yo"})
+        assert out == {"f.a": "hi", "f.b": "yo"}
+
+    def test_both_filled_prefers_object_no_conflict(self):
+        out = self._run({"f__uarr": ["x"], "f.a": "hi"})
+        assert out == {"f.a": "hi"}
+        assert "f__uarr" not in out
+        assert "f" not in out
