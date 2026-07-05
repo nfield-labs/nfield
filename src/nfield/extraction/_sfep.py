@@ -592,6 +592,19 @@ def _array_items_are_objects(field: Field) -> bool:
     return "$ref" in items or items.get("type") == "object" or "properties" in items
 
 
+def _array_items_are_arrays(field: Field) -> bool:
+    """Return ``True`` if an array field's items are themselves arrays (a nested array).
+
+    A nested array (``[[...], ...]``) carries its whole value as one JSON structure and
+    must keep its nesting - the scalar path would flatten it and the object path would
+    drop its non-dict rows.
+    """
+    items = field.constraints.get("items")
+    if not isinstance(items, dict):
+        return False
+    return items.get("type") == "array" or "items" in items or "prefixItems" in items
+
+
 def _cast_object_array(raw: str, field: Field) -> list[Any]:
     """Parse a JSON array of objects, tolerating text around the array.
 
@@ -639,6 +652,30 @@ def _cast_object_array(raw: str, field: Field) -> list[Any]:
             field=field.path,
         )
     return [_cast_item(row, props) for row in rows]
+
+
+def _cast_nested_array(raw: str, field: Field) -> list[Any]:
+    """Parse a nested array value as JSON, preserving its inner-list structure.
+
+    Tolerates text around the array and a value the model cut at the output limit
+    (repaired). Returns ``[]`` when nothing parseable remains.
+    """
+    if not raw or raw in {"[]", "null", "none"}:
+        return []
+    start = raw.find("[")
+    if start == -1:
+        return []
+    end = raw.rfind("]")
+    parsed: Any = None
+    if end > start:
+        try:
+            parsed = json.loads(raw[start : end + 1])
+        except json.JSONDecodeError:
+            parsed = None
+    if not isinstance(parsed, list):
+        repaired = json_repair.loads(raw[start:])
+        parsed = repaired if isinstance(repaired, list) else []
+    return list(parsed)
 
 
 def _salvage_objects(inner: str) -> list[dict[str, Any]]:
@@ -782,6 +819,10 @@ def _cast_array(raw: str, field: Field) -> list[Any]:
     # An object array carries its whole value as one JSON array; parse it as JSON.
     if _array_items_are_objects(field):
         return _cast_object_array(stripped, field)
+
+    # A nested array keeps its structure: parse as JSON without flattening.
+    if _array_items_are_arrays(field):
+        return _cast_nested_array(stripped, field)
 
     # JSON-first: quoted items containing commas survive the comma split below;
     # a quoted array the model cut off at the output limit is repaired rather than

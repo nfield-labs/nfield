@@ -526,3 +526,27 @@ class TestCommonSuffixStrip:
             "Epsilon and Zeta. Bounded outputs. Journal C, 2023.",
         ]
         assert _strip_common_item_suffix(items) == items
+
+
+class TestNestedArrayParse:
+    """Array-of-array values keep their nesting through the parser."""
+
+    def _field(self, item_schema):
+        return Field("m", "array", {"items": item_schema}, "", {"items": item_schema})
+
+    def test_array_of_scalar_array_preserves_nesting(self):
+        f = self._field({"type": "array", "items": {"type": "number"}})
+        assert parse_sfep("m = [[1, 2], [3, 4]]", [f]) == {"m": [[1, 2], [3, 4]]}
+
+    def test_array_of_object_array_preserves_nesting(self):
+        f = self._field(
+            {"type": "array", "items": {"type": "object", "properties": {"v": {"type": "string"}}}}
+        )
+        assert parse_sfep('m = [[{"v": "a"}], [{"v": "b"}]]', [f]) == {
+            "m": [[{"v": "a"}], [{"v": "b"}]]
+        }
+
+    def test_flat_scalar_array_unchanged(self):
+        f = self._field({"type": "string"})
+        # A plain array of strings is not nested and must not gain a level.
+        assert parse_sfep("m = [a, b, c]", [f]) == {"m": ["a", "b", "c"]}
