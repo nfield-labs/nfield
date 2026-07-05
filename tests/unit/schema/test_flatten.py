@@ -648,3 +648,52 @@ class TestArrayOfArray:
         from nfield.assembly._trie import assemble_json
 
         assert assemble_json({"m": [[1, 2], [3, 4]]}) == {"m": [[1, 2], [3, 4]]}
+
+
+class TestObjectUnion:
+    """anyOf with several object branches extracts the union of their fields."""
+
+    def test_object_branches_merge_to_superset(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "contact": {
+                    "anyOf": [
+                        {"type": "object", "properties": {"email": {"type": "string"}}},
+                        {"type": "object", "properties": {"address": {"type": "string"}}},
+                        {"type": "null"},
+                    ]
+                }
+            },
+        }
+        paths = sorted(f.path for f in flatten_schema(schema))
+        assert paths == ["contact.address", "contact.email"]
+
+    def test_first_branch_wins_property_collision(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "v": {
+                    "anyOf": [
+                        {"type": "object", "properties": {"x": {"type": "string"}}},
+                        {"type": "object", "properties": {"x": {"type": "integer"}}},
+                    ]
+                }
+            },
+        }
+        fields = {f.path: f for f in flatten_schema(schema)}
+        assert fields["v.x"].type == "string"
+
+    def test_single_object_branch_unchanged(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "c": {
+                    "anyOf": [
+                        {"type": "object", "properties": {"x": {"type": "string"}}},
+                        {"type": "null"},
+                    ]
+                }
+            },
+        }
+        assert [f.path for f in flatten_schema(schema)] == ["c.x"]

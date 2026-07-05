@@ -183,31 +183,45 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
             if combo_key in node:
                 options: list[dict[str, Any]] = node[combo_key]
                 siblings = {k: v for k, v in node.items() if k not in (combo_key, "$ref")}
-                union = _structural_union_branches(options)
-                if union is not None:
-                    # Array-vs-object union: emit both, the array under a shadow path;
-                    # assembly keeps whichever branch the document populated.
-                    array_branch, object_branch = union
-                    stack.append(
-                        (
-                            _stamp_union({**object_branch, **siblings}, path, "object"),
-                            path,
-                            parent_path,
-                            depth,
-                            required_set,
-                            ref_chain,
+                plan = _union_plan(options)
+                if plan is not None:
+                    array_branch, object_branch = plan
+                    if array_branch is not None:
+                        # Array-vs-object union: emit both, the array under a shadow path;
+                        # assembly keeps whichever branch the document populated.
+                        stack.append(
+                            (
+                                _stamp_union({**object_branch, **siblings}, path, "object"),
+                                path,
+                                parent_path,
+                                depth,
+                                required_set,
+                                ref_chain,
+                            )
                         )
-                    )
-                    stack.append(
-                        (
-                            _stamp_union({**array_branch, **siblings}, path, "array"),
-                            f"{path}{UNION_ARRAY_SUFFIX}",
-                            parent_path,
-                            depth,
-                            frozenset(),
-                            ref_chain,
+                        stack.append(
+                            (
+                                _stamp_union({**array_branch, **siblings}, path, "array"),
+                                f"{path}{UNION_ARRAY_SUFFIX}",
+                                parent_path,
+                                depth,
+                                frozenset(),
+                                ref_chain,
+                            )
                         )
-                    )
+                    else:
+                        # Several object branches: extract the union of their fields so
+                        # whichever shape the document uses is covered.
+                        stack.append(
+                            (
+                                {**object_branch, **siblings},
+                                path,
+                                parent_path,
+                                depth,
+                                required_set,
+                                ref_chain,
+                            )
+                        )
                     break
                 chosen = _first_non_null_option(options)
                 if chosen is not None:
@@ -700,15 +714,21 @@ def _first_non_null_option(
     return max(candidates, key=_option_rank)
 
 
-def _structural_union_branches(
+def _union_plan(
     options: list[dict[str, Any]],
-) -> tuple[dict[str, Any], dict[str, Any]] | None:
-    """The (array, object) branches of a structural anyOf, or ``None``.
+) -> tuple[dict[str, Any] | None, dict[str, Any]] | None:
+    """Plan how to flatten a document-dependent anyOf, or ``None`` for the default.
 
-    A structural union carries both an array branch and an object branch (e.g. a field
-    that is a flat list in some documents and grouped under headings in others). Only
-    then is the branch document-dependent; a scalar union (string vs int) is not and
-    keeps the single richest-branch choice.
+    Returns ``(array_branch, object_branch)`` when the branch shape depends on the
+    document and a single richest-branch choice would drop fields:
+
+    * array branch present -> structural union; the caller emits both, the array under
+      a shadow path, and assembly keeps the one the document filled.
+    * no array but several object branches -> ``array_branch`` is ``None`` and
+      ``object_branch`` is their merged superset, so every possible field is extracted.
+
+    A scalar union (string vs int) or a single object branch is not document-dependent
+    and returns ``None`` so the caller keeps the existing single-branch choice.
     """
     candidates = [
         opt
@@ -716,10 +736,37 @@ def _structural_union_branches(
         if isinstance(opt, dict) and not (opt.get("type") == "null" and len(opt) == 1)
     ]
     array_branch = next((opt for opt in candidates if _option_rank(opt) == 1), None)
-    object_branch = next((opt for opt in candidates if _option_rank(opt) == 2), None)
-    if array_branch is not None and object_branch is not None:
-        return array_branch, object_branch
+    object_branches = [opt for opt in candidates if _option_rank(opt) == 2]
+    if not object_branches:
+        return None
+    merged_object = (
+        _merge_object_branches(object_branches) if len(object_branches) > 1 else object_branches[0]
+    )
+    if array_branch is not None:
+        return array_branch, merged_object
+    if len(object_branches) > 1:
+        return None, merged_object
     return None
+
+
+def _merge_object_branches(objects: list[dict[str, Any]]) -> dict[str, Any]:
+    """Union the properties of several object branches into one object schema.
+
+    The first branch wins a property-name collision (declaration order). An open map
+    (``additionalProperties``) on any branch is carried through. Nothing is marked
+    required - a union guarantees no single field.
+    """
+    properties: dict[str, Any] = {}
+    additional: dict[str, Any] | None = None
+    for obj in objects:
+        for name, sub in (obj.get("properties") or {}).items():
+            properties.setdefault(name, sub)
+        if additional is None and isinstance(obj.get("additionalProperties"), dict):
+            additional = obj["additionalProperties"]
+    merged: dict[str, Any] = {"type": "object", "properties": properties}
+    if additional is not None:
+        merged["additionalProperties"] = additional
+    return merged
 
 
 def _stamp_union(node: dict[str, Any], base: str, kind: str) -> dict[str, Any]:
