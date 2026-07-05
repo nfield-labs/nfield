@@ -737,3 +737,32 @@ class TestArrayItemUnion:
         fields = {f.path: f for f in flatten_schema(schema)}
         assert "xs" in fields
         assert fields["xs"].constraints["items"].get("type") == "object"
+
+
+class TestOpenMapWithFixedProps:
+    """additionalProperties beside fixed properties is a merge open map."""
+
+    def test_emits_fixed_and_merge_open_map(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "f": {
+                    "type": "object",
+                    "properties": {"a": {"type": "string"}},
+                    "additionalProperties": {"type": "number"},
+                }
+            },
+        }
+        fields = {f.path: f for f in flatten_schema(schema)}
+        assert "f.a" in fields
+        assert fields["f.*"].constraints.get("x-open-map") is True
+        assert fields["f.*"].constraints.get("x-open-map-merge") is True
+
+    def test_pure_open_map_not_marked_merge(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {"cfg": {"type": "object", "additionalProperties": {"type": "number"}}},
+        }
+        fields = {f.path: f for f in flatten_schema(schema)}
+        assert fields["cfg"].constraints.get("x-open-map") is True
+        assert "x-open-map-merge" not in fields["cfg"].constraints

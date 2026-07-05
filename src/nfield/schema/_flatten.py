@@ -10,6 +10,9 @@ __all__ = ["OPEN_MAP_MARKER", "flatten_schema"]
 
 # Marks an open-map list-leaf; assembly folds its [{key, value}] list back to a dict.
 OPEN_MAP_MARKER: str = "x-open-map"
+# Marks an open map that shares its object with fixed properties (additionalProperties
+# beside named keys); assembly folds it and merges its keys into the parent object.
+OPEN_MAP_MERGE_MARKER: str = "x-open-map-merge"
 # A structural anyOf (an array branch AND an object branch) is resolved per document,
 # not statically: both branches are emitted, the array one under this shadow suffix, and
 # assembly keeps whichever the document populated. These carry the base path and branch kind.
@@ -333,20 +336,17 @@ def _process_node(
                     )
                 )
 
-        # additionalProperties (dict schema, not bool)
+        # additionalProperties (dict schema, not bool). Beside fixed properties this is
+        # an open map sharing the object: extract its dynamic keys as {key, value} rows
+        # and merge them into the parent object at assembly.
         addl = node.get("additionalProperties")
         if isinstance(addl, dict):
             wildcard_path = f"{path}{_WILDCARD_SUFFIX}" if path else _WILDCARD_SUFFIX
             if wildcard_path not in seen_paths:
                 seen_paths.add(wildcard_path)
-                fields.append(
-                    _make_field(
-                        node=addl,
-                        path=wildcard_path,
-                        parent_path=path,
-                        required_set=required_set,
-                    )
-                )
+                leaf = _open_map_leaf(wildcard_path, path, addl, required_set, root_schema)
+                leaf.constraints[OPEN_MAP_MERGE_MARKER] = True
+                fields.append(leaf)
 
         # If no properties at all and no children pushed, emit object leaf
         if (

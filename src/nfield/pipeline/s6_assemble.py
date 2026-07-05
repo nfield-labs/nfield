@@ -13,6 +13,7 @@ from nfield.assembly._quality import compute_quality_score
 from nfield.assembly._trie import assemble_json
 from nfield.schema._flatten import (
     OPEN_MAP_MARKER,
+    OPEN_MAP_MERGE_MARKER,
     UNION_ARRAY_SUFFIX,
     UNION_BASE_MARKER,
 )
@@ -60,6 +61,7 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
 
     # --- 2. Assemble nested JSON ---
     data = assemble_json(filled) if filled else {}
+    data = _merge_wildcard_maps(data, state.fields)
 
     # --- 3. Quality metrics ---
     report = compute_quality_score(bb, state.fields, state.K, state.K_min)
@@ -211,3 +213,32 @@ def _resolve_structural_unions(filled: dict[str, Any], fields: list[Field]) -> d
         if not object_filled and array_filled:
             out[base] = array_items
     return out
+
+
+def _merge_wildcard_maps(data: dict[str, Any], fields: list[Field]) -> dict[str, Any]:
+    """Merge an additionalProperties open map's dynamic keys into its parent object.
+
+    The open map is folded to a dict that assembles under a ``*`` key beside the
+    object's fixed keys; lift its entries up into the parent and drop the ``*``.
+    """
+    for f in fields:
+        if not f.constraints.get(OPEN_MAP_MERGE_MARKER):
+            continue
+        parent_path = f.path[:-2] if f.path.endswith(".*") else ""
+        node = _navigate(data, parent_path)
+        if isinstance(node, dict) and isinstance(node.get("*"), dict):
+            for key, value in node.pop("*").items():
+                node.setdefault(key, value)
+    return data
+
+
+def _navigate(data: dict[str, Any], dot_path: str) -> Any:
+    """Return the nested dict value at *dot_path* (object keys only), or ``None``."""
+    if not dot_path:
+        return data
+    node: Any = data
+    for segment in dot_path.split("."):
+        if not isinstance(node, dict) or segment not in node:
+            return None
+        node = node[segment]
+    return node

@@ -199,3 +199,32 @@ class TestResolveStructuralUnions:
         fields = self._skills_fields()
         out = _resolve_structural_unions({"skills": [], "skills__uarr": []}, fields)
         assert "skills__uarr" not in out
+
+
+class TestMergeWildcardMaps:
+    """additionalProperties keys are lifted into the parent object."""
+
+    def _fields(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "f": {
+                    "type": "object",
+                    "properties": {"a": {"type": "string"}},
+                    "additionalProperties": {"type": "number"},
+                }
+            },
+        }
+        return flatten_schema(schema)
+
+    def test_dynamic_keys_merge_into_parent(self):
+        from nfield.pipeline.s6_assemble import _merge_wildcard_maps
+
+        data = {"f": {"a": "hi", "*": {"x": 1, "y": 2}}}
+        assert _merge_wildcard_maps(data, self._fields()) == {"f": {"a": "hi", "x": 1, "y": 2}}
+
+    def test_no_wildcard_is_noop(self):
+        from nfield.pipeline.s6_assemble import _merge_wildcard_maps
+
+        data = {"f": {"a": "hi"}}
+        assert _merge_wildcard_maps(data, self._fields()) == {"f": {"a": "hi"}}
