@@ -17,6 +17,7 @@ from nfield.schema._flatten import (
     UNION_ARRAY_SUFFIX,
     UNION_BASE_MARKER,
     UNION_KIND_MARKER,
+    WILDCARD_SUFFIX,
 )
 from nfield.types import ExtractionResult, ExtractionStatus, Metadata
 
@@ -29,6 +30,8 @@ __all__ = ["run_stage_6"]
 # A run is FAILED when more than half its fields are missing, PARTIAL when only
 # some are, and SUCCESS when all are present.
 _FAILED_MISSING_FRACTION: float = 0.50
+# A wildcard field (path + WILDCARD_SUFFIX) assembles under this single dict key.
+_WILDCARD_KEY: str = WILDCARD_SUFFIX.lstrip(".")
 
 
 def run_stage_6(state: PipelineState) -> ExtractionResult:
@@ -235,10 +238,10 @@ def _merge_wildcard_maps(data: dict[str, Any], fields: list[Field]) -> dict[str,
     for f in fields:
         if not f.constraints.get(OPEN_MAP_MERGE_MARKER):
             continue
-        parent_path = f.path[:-2] if f.path.endswith(".*") else ""
+        parent_path = f.path[: -len(WILDCARD_SUFFIX)] if f.path.endswith(WILDCARD_SUFFIX) else ""
         node = _navigate(data, parent_path)
-        if isinstance(node, dict) and isinstance(node.get("*"), dict):
-            for key, value in node.pop("*").items():
+        if isinstance(node, dict) and isinstance(node.get(_WILDCARD_KEY), dict):
+            for key, value in node.pop(_WILDCARD_KEY).items():
                 node.setdefault(key, value)
     return data
 

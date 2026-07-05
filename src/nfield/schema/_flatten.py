@@ -24,7 +24,7 @@ UNION_ARRAY_SUFFIX: str = "__uarr"
 # ---------------------------------------------------------------------------
 _LEAF_TYPES: frozenset[str] = frozenset({"string", "integer", "number", "boolean", "null"})
 _ARRAY_SUFFIX: str = "[]"
-_WILDCARD_SUFFIX: str = ".*"
+WILDCARD_SUFFIX: str = ".*"
 MAX_SCHEMA_DEPTH: int = 32
 # Ceiling on total node expansions T during the iterative DFS flatten.
 #
@@ -323,7 +323,7 @@ def _process_node(
 
         # patternProperties → wildcard field (mixed object: keep the wildcard)
         for pat_node in node.get("patternProperties", {}).values():
-            wildcard_path = f"{path}{_WILDCARD_SUFFIX}" if path else _WILDCARD_SUFFIX
+            wildcard_path = f"{path}{WILDCARD_SUFFIX}" if path else WILDCARD_SUFFIX
             if wildcard_path not in seen_paths:
                 seen_paths.add(wildcard_path)
                 fields.append(
@@ -339,7 +339,7 @@ def _process_node(
         # dynamic keys extract as {key, value} rows and merge into the parent at assembly.
         addl = node.get("additionalProperties")
         if isinstance(addl, dict):
-            wildcard_path = f"{path}{_WILDCARD_SUFFIX}" if path else _WILDCARD_SUFFIX
+            wildcard_path = f"{path}{WILDCARD_SUFFIX}" if path else WILDCARD_SUFFIX
             if wildcard_path not in seen_paths:
                 seen_paths.add(wildcard_path)
                 leaf = _open_map_leaf(wildcard_path, path, addl, required_set, root_schema)
