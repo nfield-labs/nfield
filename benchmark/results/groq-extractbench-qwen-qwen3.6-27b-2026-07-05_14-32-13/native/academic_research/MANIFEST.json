@@ -1,0 +1,17 @@
+{
+  "dataset": "academic_research",
+  "schema_file": "academic\\research\\research-schema.json",
+  "documents": 6,
+  "model": "groq/qwen/qwen3.6-27b",
+  "reasoning_model": true,
+  "budget": "native",
+  "aggregate": {
+    "dataset": "academic_research",
+    "documents": 6,
+    "gold_fields": 1945,
+    "coverage": 0.9872,
+    "value_accuracy": 0.982,
+    "K_total": 56
+  },
+  "recorded_at": "2026-07-05T14:54:43+00:00"
+}
