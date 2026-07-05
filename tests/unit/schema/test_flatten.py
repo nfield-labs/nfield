@@ -587,3 +587,43 @@ class TestNodeBudget:
         # we admit. A flat schema of F fields has N ≈ F, so C must clear a generous
         # field-count floor (1e6) while staying ≪ the exponential blow-up b^D.
         assert _flatten_mod.MAX_TOTAL_NODES >= 1_000_000
+
+
+class TestStructuralUnion:
+    """anyOf with both an array and an object branch is emitted as both."""
+
+    def _skills_schema(self):
+        return {
+            "type": "object",
+            "properties": {
+                "skills": {
+                    "anyOf": [
+                        {"type": "array", "items": {"type": "string"}},
+                        {
+                            "type": "object",
+                            "additionalProperties": {"type": "array", "items": {"type": "string"}},
+                        },
+                        {"type": "null"},
+                    ]
+                }
+            },
+        }
+
+    def test_structural_union_emits_both_branches(self) -> None:
+        fields = {f.path: f for f in flatten_schema(self._skills_schema())}
+        assert "skills" in fields  # object (open-map) branch at base path
+        assert "skills__uarr" in fields  # array branch at shadow path
+        assert fields["skills"].constraints.get("x-union-kind") == "object"
+        assert fields["skills__uarr"].constraints.get("x-union-kind") == "array"
+        assert fields["skills"].constraints.get("x-union-base") == "skills"
+        assert fields["skills__uarr"].constraints.get("x-union-base") == "skills"
+
+    def test_scalar_union_unchanged(self) -> None:
+        # string|int union is not structural: one field, no shadow, no union tags.
+        schema = {
+            "type": "object",
+            "properties": {"d": {"anyOf": [{"type": "string"}, {"type": "integer"}]}},
+        }
+        fields = {f.path: f for f in flatten_schema(schema)}
+        assert set(fields) == {"d"}
+        assert "x-union-base" not in fields["d"].constraints

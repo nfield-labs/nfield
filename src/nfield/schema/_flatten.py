@@ -10,6 +10,12 @@ __all__ = ["OPEN_MAP_MARKER", "flatten_schema"]
 
 # Marks an open-map list-leaf; assembly folds its [{key, value}] list back to a dict.
 OPEN_MAP_MARKER: str = "x-open-map"
+# A structural anyOf (an array branch AND an object branch) is resolved per document,
+# not statically: both branches are emitted, the array one under this shadow suffix, and
+# assembly keeps whichever the document populated. These carry the base path and branch kind.
+UNION_BASE_MARKER: str = "x-union-base"
+UNION_KIND_MARKER: str = "x-union-kind"
+UNION_ARRAY_SUFFIX: str = "__uarr"
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -59,6 +65,8 @@ _CONSTRAINT_KEYS: frozenset[str] = frozenset(
         "multipleOf",
         "minProperties",
         "maxProperties",
+        UNION_BASE_MARKER,
+        UNION_KIND_MARKER,
     }
 )
 
@@ -174,13 +182,36 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
         for combo_key in ("anyOf", "oneOf"):
             if combo_key in node:
                 options: list[dict[str, Any]] = node[combo_key]
+                siblings = {k: v for k, v in node.items() if k not in (combo_key, "$ref")}
+                union = _structural_union_branches(options)
+                if union is not None:
+                    # Array-vs-object union: emit both, the array under a shadow path;
+                    # assembly keeps whichever branch the document populated.
+                    array_branch, object_branch = union
+                    stack.append(
+                        (
+                            _stamp_union({**object_branch, **siblings}, path, "object"),
+                            path,
+                            parent_path,
+                            depth,
+                            required_set,
+                            ref_chain,
+                        )
+                    )
+                    stack.append(
+                        (
+                            _stamp_union({**array_branch, **siblings}, path, "array"),
+                            f"{path}{UNION_ARRAY_SUFFIX}",
+                            parent_path,
+                            depth,
+                            frozenset(),
+                            ref_chain,
+                        )
+                    )
+                    break
                 chosen = _first_non_null_option(options)
                 if chosen is not None:
-                    # Merge sibling keys into chosen option
-                    merged_chosen = {
-                        **chosen,
-                        **{k: v for k, v in node.items() if k not in (combo_key, "$ref")},
-                    }
+                    merged_chosen = {**chosen, **siblings}
                     stack.append(
                         (merged_chosen, path, parent_path, depth, required_set, ref_chain)
                     )
@@ -255,7 +286,9 @@ def _process_node(
         if value_schema is not None and not properties and path and path not in seen_paths:
             seen_paths.add(path)
             fields.append(
-                _open_map_leaf(path, parent_path, value_schema, required_set, root_schema)
+                _open_map_leaf(
+                    path, parent_path, value_schema, required_set, root_schema, source=node
+                )
             )
             return
 
@@ -418,6 +451,7 @@ def _open_map_leaf(
     value_schema: dict[str, Any],
     required_set: frozenset[str],
     root_schema: dict[str, Any],
+    source: dict[str, Any] | None = None,
 ) -> Field:
     """Build one array list-leaf of {key, value} for an open map."""
     item = {
@@ -428,6 +462,9 @@ def _open_map_leaf(
         },
     }
     constraints: dict[str, Any] = {"items": item, OPEN_MAP_MARKER: True}
+    for marker in (UNION_BASE_MARKER, UNION_KIND_MARKER):
+        if source is not None and marker in source:
+            constraints[marker] = source[marker]
     field_name = path.rsplit(".", 1)[-1]
     return Field(
         path=path,
@@ -641,6 +678,33 @@ def _first_non_null_option(
         return None
     # max() is stable, so the first branch of the top rank wins (declaration order).
     return max(candidates, key=_option_rank)
+
+
+def _structural_union_branches(
+    options: list[dict[str, Any]],
+) -> tuple[dict[str, Any], dict[str, Any]] | None:
+    """The (array, object) branches of a structural anyOf, or ``None``.
+
+    A structural union carries both an array branch and an object branch (e.g. a field
+    that is a flat list in some documents and grouped under headings in others). Only
+    then is the branch document-dependent; a scalar union (string vs int) is not and
+    keeps the single richest-branch choice.
+    """
+    candidates = [
+        opt
+        for opt in options
+        if isinstance(opt, dict) and not (opt.get("type") == "null" and len(opt) == 1)
+    ]
+    array_branch = next((opt for opt in candidates if _option_rank(opt) == 1), None)
+    object_branch = next((opt for opt in candidates if _option_rank(opt) == 2), None)
+    if array_branch is not None and object_branch is not None:
+        return array_branch, object_branch
+    return None
+
+
+def _stamp_union(node: dict[str, Any], base: str, kind: str) -> dict[str, Any]:
+    """Tag a union branch node with its base path and kind for assembly-time resolution."""
+    return {**node, UNION_BASE_MARKER: base, UNION_KIND_MARKER: kind}
 
 
 def _option_rank(option: dict[str, Any]) -> int:
