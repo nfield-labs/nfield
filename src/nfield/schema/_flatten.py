@@ -356,9 +356,14 @@ def _process_node(
 
         items_node = node.get("items")
         if isinstance(items_node, dict):
-            # Object and scalar arrays become one list-leaf; arrays of arrays recurse.
-            if _items_is_object(items_node, root_schema) or _items_is_scalar(
-                items_node, root_schema
+            # Object, scalar, and nested-array items all become one list-leaf carrying
+            # the item schema: the whole (possibly nested) list is extracted at this
+            # path. Recursing into path[] instead would wrap the value in an extra array
+            # level at assembly (matrix -> [[...]] became [[[...]]]).
+            if (
+                _items_is_object(items_node, root_schema)
+                or _items_is_scalar(items_node, root_schema)
+                or _items_is_array(items_node, root_schema)
             ):
                 if path and path not in seen_paths:
                     seen_paths.add(path)
@@ -495,8 +500,8 @@ def _items_is_scalar(items_node: dict[str, Any], root_schema: dict[str, Any]) ->
     """Return ``True`` if an array's ``items`` schema is a scalar (not object or array).
 
     A scalar item is a string/integer/number/boolean/enum leaf - anything that is not
-    an object (handled as an object list-leaf) and not itself an array (kept as a
-    per-element push so nested-array shapes still recurse). Resolves a single ``$ref``.
+    an object (handled as an object list-leaf) and not itself an array (handled as a
+    nested-array list-leaf). Resolves a single ``$ref``.
     """
     node = items_node
     if "$ref" in node:
@@ -507,6 +512,21 @@ def _items_is_scalar(items_node: dict[str, Any], root_schema: dict[str, Any]) ->
     if node.get("type") == "object" or "properties" in node:
         return False
     return not (node.get("type") == "array" or "items" in node or "prefixItems" in node)
+
+
+def _items_is_array(items_node: dict[str, Any], root_schema: dict[str, Any]) -> bool:
+    """Return ``True`` if an array's ``items`` schema is itself an array or tuple.
+
+    An array-of-array becomes one list-leaf whose item schema is the inner array, so
+    the whole nested list is extracted at this path. Resolves a single ``$ref``.
+    """
+    node = items_node
+    if "$ref" in node:
+        try:
+            node = _resolve_ref(root_schema, node["$ref"])
+        except SchemaError:
+            return False
+    return node.get("type") == "array" or "items" in node or "prefixItems" in node
 
 
 def _resolve_items_node(items_node: dict[str, Any], root_schema: dict[str, Any]) -> dict[str, Any]:

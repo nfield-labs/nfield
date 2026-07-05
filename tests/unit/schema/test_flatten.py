@@ -627,3 +627,24 @@ class TestStructuralUnion:
         fields = {f.path: f for f in flatten_schema(schema)}
         assert set(fields) == {"d"}
         assert "x-union-base" not in fields["d"].constraints
+
+
+class TestArrayOfArray:
+    """An array-of-array is one list-leaf carrying the nested item schema."""
+
+    def test_array_of_array_is_single_list_leaf(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "m": {"type": "array", "items": {"type": "array", "items": {"type": "number"}}}
+            },
+        }
+        fields = flatten_schema(schema)
+        assert [f.path for f in fields] == ["m"]
+        assert fields[0].type == "array"
+        assert fields[0].constraints["items"]["type"] == "array"
+
+    def test_array_of_array_assembles_without_extra_level(self) -> None:
+        from nfield.assembly._trie import assemble_json
+
+        assert assemble_json({"m": [[1, 2], [3, 4]]}) == {"m": [[1, 2], [3, 4]]}
