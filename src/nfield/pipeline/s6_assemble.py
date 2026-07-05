@@ -167,11 +167,15 @@ def _fold_open_maps(filled: dict[str, Any], fields: list[Field]) -> dict[str, An
     out = dict(filled)
     for path in open_map_paths:
         value = out.get(path)
-        if isinstance(value, list):
+        # Only fold {key, value} rows; a structural union may have replaced this path
+        # with a plain array (the flat branch won), which must pass through untouched.
+        if isinstance(value, list) and all(
+            isinstance(item, dict) and "key" in item for item in value
+        ):
             # Rows with non-string keys are dropped rather than crashing on hashing.
             out[path] = {
                 item["key"]: item.get("value")
                 for item in value
-                if isinstance(item, dict) and isinstance(item.get("key"), str)
+                if isinstance(item.get("key"), str)
             }
     return out
