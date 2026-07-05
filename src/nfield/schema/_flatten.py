@@ -229,6 +229,19 @@ def flatten_schema(schema: dict[str, Any]) -> list[Field]:
                     stack.append(
                         (merged_chosen, path, parent_path, depth, required_set, ref_chain)
                     )
+                elif path:
+                    # Every branch is null: emit a null leaf so the field still appears
+                    # in the output rather than vanishing.
+                    stack.append(
+                        (
+                            {**siblings, "type": "null"},
+                            path,
+                            parent_path,
+                            depth,
+                            required_set,
+                            ref_chain,
+                        )
+                    )
                 break
         else:
             # Only process this node normally if no anyOf/oneOf handled it
@@ -370,6 +383,16 @@ def _process_node(
 
         items_node = node.get("items")
         if isinstance(items_node, dict):
+            if "anyOf" in items_node or "oneOf" in items_node:
+                # Per-element union: resolve to the richest element shape so object
+                # elements are extracted as objects, not flattened to scalars.
+                combo = items_node.get("anyOf") or items_node.get("oneOf")
+                resolved = _first_non_null_option(combo) if isinstance(combo, list) else None
+                if resolved is not None:
+                    items_node = {
+                        **resolved,
+                        **{k: v for k, v in items_node.items() if k not in ("anyOf", "oneOf")},
+                    }
             # Object, scalar, and nested-array items all become one list-leaf carrying
             # the item schema: the whole (possibly nested) list is extracted at this
             # path. Recursing into path[] instead would wrap the value in an extra array

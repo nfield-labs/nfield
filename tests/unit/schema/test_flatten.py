@@ -697,3 +697,43 @@ class TestObjectUnion:
             },
         }
         assert [f.path for f in flatten_schema(schema)] == ["c.x"]
+
+
+class TestNullUnion:
+    """An anyOf whose branches are all null still yields a null field."""
+
+    def test_all_null_union_emits_null_field(self) -> None:
+        schema = {"type": "object", "properties": {"f": {"anyOf": [{"type": "null"}]}}}
+        fields = flatten_schema(schema)
+        assert [(f.path, f.type) for f in fields] == [("f", "null")]
+
+    def test_normal_nullable_union_unchanged(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {"f": {"anyOf": [{"type": "string"}, {"type": "null"}]}},
+        }
+        fields = flatten_schema(schema)
+        assert [(f.path, f.type) for f in fields] == [("f", "string")]
+
+
+class TestArrayItemUnion:
+    """An array whose items are a union resolves to the richest element shape."""
+
+    def test_string_or_object_items_become_object_array(self) -> None:
+        schema = {
+            "type": "object",
+            "properties": {
+                "xs": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {"type": "string"},
+                            {"type": "object", "properties": {"k": {"type": "string"}}},
+                        ]
+                    },
+                }
+            },
+        }
+        fields = {f.path: f for f in flatten_schema(schema)}
+        assert "xs" in fields
+        assert fields["xs"].constraints["items"].get("type") == "object"
