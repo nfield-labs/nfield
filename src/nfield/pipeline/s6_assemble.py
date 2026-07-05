@@ -11,7 +11,11 @@ from typing import TYPE_CHECKING, Any
 
 from nfield.assembly._quality import compute_quality_score
 from nfield.assembly._trie import assemble_json
-from nfield.schema._flatten import OPEN_MAP_MARKER
+from nfield.schema._flatten import (
+    OPEN_MAP_MARKER,
+    UNION_ARRAY_SUFFIX,
+    UNION_BASE_MARKER,
+)
 from nfield.types import ExtractionResult, ExtractionStatus, Metadata
 
 if TYPE_CHECKING:
@@ -49,7 +53,8 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
     fields_total = len(state.fields)
 
     # --- 1. Collect filled values ---
-    filled = _fold_open_maps(bb.get_filled(), state.fields)
+    filled = _resolve_structural_unions(bb.get_filled(), state.fields)
+    filled = _fold_open_maps(filled, state.fields)
 
     # --- 2. Assemble nested JSON ---
     data = assemble_json(filled) if filled else {}
@@ -178,4 +183,29 @@ def _fold_open_maps(filled: dict[str, Any], fields: list[Field]) -> dict[str, An
                 for item in value
                 if isinstance(item.get("key"), str)
             }
+    return out
+
+
+def _resolve_structural_unions(filled: dict[str, Any], fields: list[Field]) -> dict[str, Any]:
+    """Collapse an ``array | object`` anyOf to the branch the document populated.
+
+    Both branches were flattened: the object branch at the base path, the array branch
+    at ``base + UNION_ARRAY_SUFFIX``. Whichever came back with rows wins - the object
+    branch is preferred when both did, since it is the richer shape. The shadow array
+    path is always removed so it never reaches the output.
+    """
+    bases = {
+        f.constraints[UNION_BASE_MARKER] for f in fields if f.constraints.get(UNION_BASE_MARKER)
+    }
+    if not bases:
+        return filled
+    out = dict(filled)
+    for base in bases:
+        shadow = f"{base}{UNION_ARRAY_SUFFIX}"
+        object_rows = out.get(base)
+        array_items = out.pop(shadow, None)
+        object_filled = isinstance(object_rows, list) and len(object_rows) > 0
+        array_filled = isinstance(array_items, list) and len(array_items) > 0
+        if not object_filled and array_filled:
+            out[base] = array_items
     return out
