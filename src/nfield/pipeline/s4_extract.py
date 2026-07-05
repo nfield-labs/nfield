@@ -969,11 +969,12 @@ def _merge_window_items(merged: list[Any], more: list[Any]) -> int:
 
     Overlapping windows re-emit the same entry in fuller or shorter form (a title
     vs the whole reference line), so string items dedupe by normalized containment
-    and the LONGEST copy wins. In a long-text list, an item that is only a bare
-    number is a marker copied from the document, not an entry, and is skipped.
-    Non-string items keep exact-key dedupe. String items carry the source's layout
-    line breaks when copied verbatim; internal whitespace runs collapse to one
-    space so a value is text, not layout.
+    and the LONGEST copy wins. An object row re-emitted with a field missing or added
+    dedupes the same way: when one row's set of text values is a subset of another's
+    they are the same entry, and the fuller row is kept. In a long-text list, an item
+    that is only a bare number is a marker copied from the document, not an entry, and
+    is skipped. String items carry the source's layout line breaks when copied
+    verbatim; internal whitespace runs collapse to one space so a value is text.
     """
     more = [_WS.sub(" ", x).strip() if isinstance(x, str) else x for x in more]
     long_text = sum(
@@ -981,7 +982,10 @@ def _merge_window_items(merged: list[Any], more: list[Any]) -> int:
     )
     drop_bare = long_text >= max(3, (len(merged) + len(more)) // 2)
     keys = {_item_key(x) for x in merged}
-    norms = [_ground_norm(x) if isinstance(x, str) else None for x in merged]
+    norms: list[str | None] = [_ground_norm(x) if isinstance(x, str) else None for x in merged]
+    leaves: list[frozenset[str] | None] = [
+        _object_leaves(x) if isinstance(x, dict) else None for x in merged
+    ]
     added = 0
     for item in more:
         key = _item_key(item)
@@ -992,6 +996,7 @@ def _merge_window_items(merged: list[Any], more: list[Any]) -> int:
         )
         if drop_bare and bare_number:
             continue
+        item_leaves: frozenset[str] | None = None
         if isinstance(item, str):
             norm = _ground_norm(item)
             dup = False
@@ -1009,11 +1014,35 @@ def _merge_window_items(merged: list[Any], more: list[Any]) -> int:
             if dup:
                 keys.add(key)
                 continue
-            norms.append(norm)
+        elif isinstance(item, dict):
+            item_leaves = _object_leaves(item)
+            if item_leaves:
+                dup = False
+                for i, existing_leaves in enumerate(leaves):
+                    if not existing_leaves:
+                        continue
+                    if item_leaves <= existing_leaves:
+                        dup = True  # same entry; the stored copy is as full or fuller
+                        break
+                    if existing_leaves < item_leaves:
+                        merged[i] = item  # keep the fuller copy of the same entry
+                        leaves[i] = item_leaves
+                        dup = True
+                        break
+                if dup:
+                    keys.add(key)
+                    continue
         keys.add(key)
         merged.append(item)
+        norms.append(_ground_norm(item) if isinstance(item, str) else None)
+        leaves.append(item_leaves)
         added += 1
     return added
+
+
+def _object_leaves(obj: Any) -> frozenset[str]:
+    """Normalized non-empty string values of an object, for near-duplicate detection."""
+    return frozenset(n for s in _string_leaves(obj) if (n := _ground_norm(s)))
 
 
 def _is_unbounded_list_leaf(f: Field) -> bool:
