@@ -13,9 +13,8 @@ OPEN_MAP_MARKER: str = "x-open-map"
 # Marks an open map that shares its object with fixed properties (additionalProperties
 # beside named keys); assembly folds it and merges its keys into the parent object.
 OPEN_MAP_MERGE_MARKER: str = "x-open-map-merge"
-# A structural anyOf (an array branch AND an object branch) is resolved per document,
-# not statically: both branches are emitted, the array one under this shadow suffix, and
-# assembly keeps whichever the document populated. These carry the base path and branch kind.
+# An array|object anyOf emits both branches, the array under this shadow suffix. These
+# tag a branch with its base path and kind so assembly keeps the one the document filled.
 UNION_BASE_MARKER: str = "x-union-base"
 UNION_KIND_MARKER: str = "x-union-kind"
 UNION_ARRAY_SUFFIX: str = "__uarr"
@@ -336,9 +335,8 @@ def _process_node(
                     )
                 )
 
-        # additionalProperties (dict schema, not bool). Beside fixed properties this is
-        # an open map sharing the object: extract its dynamic keys as {key, value} rows
-        # and merge them into the parent object at assembly.
+        # additionalProperties (dict, not bool): an open map sharing the object; its
+        # dynamic keys extract as {key, value} rows and merge into the parent at assembly.
         addl = node.get("additionalProperties")
         if isinstance(addl, dict):
             wildcard_path = f"{path}{_WILDCARD_SUFFIX}" if path else _WILDCARD_SUFFIX
@@ -393,10 +391,8 @@ def _process_node(
                         **resolved,
                         **{k: v for k, v in items_node.items() if k not in ("anyOf", "oneOf")},
                     }
-            # Object, scalar, and nested-array items all become one list-leaf carrying
-            # the item schema: the whole (possibly nested) list is extracted at this
-            # path. Recursing into path[] instead would wrap the value in an extra array
-            # level at assembly (matrix -> [[...]] became [[[...]]]).
+            # Object, scalar, and nested-array items become one list-leaf holding the item
+            # schema; recursing into path[] would add an extra array level at assembly.
             if (
                 _items_is_object(items_node, root_schema)
                 or _items_is_scalar(items_node, root_schema)
