@@ -562,12 +562,15 @@ async def _extend_arrays_over_windows(
     window_texts = [text for text, _ in windows]
     starved_fields: list[Field] = []
     starved_reasons: dict[str, str] = {}
+    wanted_axis_values: dict[str, list[tuple[str, set[str]]]] = {}
     target_union: list[int] = []
     for f, axis, missing, proof in _axis_starved_fields(array_fields, extracted):
         targets = _windows_holding_rows(window_texts, proof)
         if not targets:
             continue
-        starved_fields.append(f)
+        if f.path not in wanted_axis_values:
+            starved_fields.append(f)
+        wanted_axis_values.setdefault(f.path, []).append((axis, missing))
         starved_reasons[f.path] = (
             _continuation_reason(f)
             + f". Related fields show this document reports {axis} values "
@@ -582,6 +585,12 @@ async def _extend_arrays_over_windows(
             sorted(f.path for f in starved_fields),
             len(target_union),
         )
+        # The pass asks ONLY for the missing axis values; a returned row covering an
+        # already-held value is the same row re-worded (label order drifts between
+        # calls), and merging it would give two variants of one entry.
+        row_filters = {
+            path: _axis_membership_filter(wanted) for path, wanted in wanted_axis_values.items()
+        }
         await _sweep_array_windows(
             [window_texts[i] for i in target_union],
             starved_fields,
@@ -592,7 +601,19 @@ async def _extend_arrays_over_windows(
             preamble=preamble,
             reasons=starved_reasons,
             cap_bonus=len(target_union),
+            row_filters=row_filters,
         )
+
+
+def _axis_membership_filter(wanted: list[tuple[str, set[str]]]) -> Any:
+    """Predicate keeping only object rows whose axis value is one asked for."""
+
+    def keep(row: Any) -> bool:
+        return isinstance(row, dict) and any(
+            str(row.get(axis)) in missing for axis, missing in wanted
+        )
+
+    return keep
 
 
 def _axis_starved_fields(
@@ -900,6 +921,7 @@ async def _sweep_array_windows(
     preamble: str = "",
     reasons: dict[str, str] | None = None,
     cap_bonus: int = 0,
+    row_filters: dict[str, Any] | None = None,
 ) -> None:
     """Ask each window only for the array fields and merge new items with dedupe.
 
@@ -961,6 +983,11 @@ async def _sweep_array_windows(
             more = parsed.get(f.path)
             if not isinstance(more, list) or not more or _is_ordinal_run(more):
                 continue
+            keep = (row_filters or {}).get(f.path)
+            if keep is not None:
+                more = [row for row in more if keep(row)]
+                if not more:
+                    continue
             raw_count += len(more)
             base = extracted.get(f.path)
             merged = list(base) if isinstance(base, list) else []

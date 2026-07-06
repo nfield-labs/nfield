@@ -1169,3 +1169,55 @@ class TestRescueCapBonus:
         extracted: dict[str, object] = {"refs": []}
         await _sweep_array_windows(["window"], [REFS], leaf, provider, state, extracted)
         assert provider.calls == 0
+
+
+class TestDeconflictRowFilter:
+    """Rescue rows are kept only for the axis values the rescue asked for."""
+
+    @pytest.mark.asyncio
+    async def test_reworded_existing_rows_dropped_missing_axis_rows_kept(self):
+        from nfield.pipeline.s4_extract import _extend_arrays_over_windows
+
+        revenue, cost = _dim_field("revenue"), _dim_field("cost")
+        body = "breakdown table: north region revenue 9090 north region cost 2555"
+        state = _state()
+        state.segments = [
+            Segment(text=body, start=0, end=len(body), segment_type="unstructured", segment_id=0)
+        ]
+        leaf = CapacityLeaf(
+            fields=[revenue, cost],
+            groups=[],
+            document_excerpt=body,
+            overhead=10.0,
+            safe_output=1024,
+            leaf_id=0,
+        )
+        extracted = {
+            "revenue": [{"level": "total", "label": "all", "amount": 100}],
+            "cost": [
+                {"level": "total", "label": "all", "amount": 40},
+                {"level": "regional", "label": "north region", "amount": 2555},
+            ],
+        }
+
+        class RewordingProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("")
+
+            async def complete(self, messages, *, max_tokens):
+                self.calls += 1
+                text = "\n".join(m.get("content", "") for m in messages)
+                if "revenue (array)" in text and "cost (array)" not in text:
+                    # One real regional row plus the total row re-worded.
+                    return (
+                        'revenue = [{"level": "regional", "label": "north region", '
+                        '"amount": 9090}, {"level": "total", "label": "ALL SEGMENTS", '
+                        '"amount": 100}]'
+                    )
+                return "revenue = []\ncost = []"
+
+        await _extend_arrays_over_windows(leaf, RewordingProvider(), state, extracted)
+        labels = [r["label"] for r in extracted["revenue"]]
+        assert "north region" in labels
+        assert "ALL SEGMENTS" not in labels
+        assert [r["level"] for r in extracted["revenue"]].count("total") == 1
