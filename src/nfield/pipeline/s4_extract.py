@@ -532,7 +532,12 @@ async def _extend_arrays_over_windows(
         for seg, sc in zip(g.matched_segments, g.segment_scores, strict=False):
             score_by_id[seg.segment_id] = max(score_by_id.get(seg.segment_id, 0.0), sc)
     window_chars = _window_chars(leaf, state)
-    preamble = _document_preamble(state, _preamble_cap(leaf, state, window_chars))
+    # The head supplies row-LABELLING facts (period, units, scope), which only
+    # dimensioned rows carry; an entry list is copied verbatim and gains nothing,
+    # while the extra head text measurably depresses its enumeration yield.
+    preamble = ""
+    if dimensioned:
+        preamble = _document_preamble(state, _preamble_cap(leaf, state, window_chars))
     windows = _pack_windows(region, window_chars, score_by_id)
     visit_order = sorted(range(len(windows)), key=lambda i: windows[i][1], reverse=True)
     await _sweep_array_windows(
@@ -747,7 +752,9 @@ async def _continue_truncated_arrays(
         " from last salvaged item" if anchor_start is not None else " (full document)",
     )
     window_chars = _window_chars(leaf, state)
-    preamble = _document_preamble(state, _preamble_cap(leaf, state, window_chars))
+    preamble = ""
+    if any(dimension_axes(f) for f in array_fields):
+        preamble = _document_preamble(state, _preamble_cap(leaf, state, window_chars))
     windows = _pack_windows(tail, window_chars, {})
     await _sweep_array_windows(
         [text for text, _ in windows],

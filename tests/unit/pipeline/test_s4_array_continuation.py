@@ -1279,3 +1279,105 @@ class TestKinSiteProbe:
             "Alpha Partners Limited, Beta Holdings Incorporated, Gamma Capital Group",
         ]
         assert _windows_holding_rows(windows, rows, min_rows=2) == [1, 0]
+
+
+class TestPreambleOnlyForDimensionArrays:
+    """The head context reaches dimension-array sweeps only; entry lists sweep bare."""
+
+    @pytest.mark.asyncio
+    async def test_scalar_array_sweep_carries_no_preamble(self):
+        from nfield.pipeline.s4_extract import _extend_arrays_over_windows
+
+        state = _state()
+        state.segments = [
+            Segment(
+                text="OPENING IDENTITY BLOCK for the record",
+                start=0,
+                end=37,
+                segment_type="unstructured",
+                segment_id=0,
+            ),
+            Segment(
+                text=f"[1] {ENTRY_1}\n[2] {ENTRY_2}\n" + "entry filler line\n" * 160,
+                start=100,
+                end=3200,
+                segment_type="unstructured",
+                segment_id=1,
+            ),
+            Segment(
+                text="closing prose paragraph\n" * 130,
+                start=3300,
+                end=6400,
+                segment_type="unstructured",
+                segment_id=2,
+            ),
+        ]
+        leaf = _leaf()
+
+        class CapturingProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("refs = []")
+                self.prompts: list[str] = []
+
+            async def complete(self, messages, *, max_tokens):
+                self.prompts.append("\n".join(m.get("content", "") for m in messages))
+                return await super().complete(messages, max_tokens=max_tokens)
+
+        provider = CapturingProvider()
+        extracted: dict[str, object] = {"refs": []}
+        await _extend_arrays_over_windows(leaf, provider, state, extracted)
+        assert provider.prompts
+        assert all("context only" not in p for p in provider.prompts)
+
+    @pytest.mark.asyncio
+    async def test_dimension_array_sweep_carries_preamble(self):
+        from nfield.pipeline.s4_extract import _extend_arrays_over_windows
+
+        field = _dim_field("sales")
+        state = _state()
+        state.segments = [
+            Segment(
+                text="OPENING IDENTITY BLOCK for the record",
+                start=0,
+                end=37,
+                segment_type="unstructured",
+                segment_id=0,
+            ),
+            Segment(
+                text="north 120 south 80 " * 160,
+                start=100,
+                end=3200,
+                segment_type="unstructured",
+                segment_id=1,
+            ),
+            Segment(
+                text="east 40 west 30 " * 190,
+                start=3300,
+                end=6400,
+                segment_type="unstructured",
+                segment_id=2,
+            ),
+        ]
+        leaf = CapacityLeaf(
+            fields=[field],
+            groups=[],
+            document_excerpt="",
+            overhead=10.0,
+            safe_output=1024,
+            leaf_id=0,
+        )
+
+        class CapturingProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("sales = []")
+                self.prompts: list[str] = []
+
+            async def complete(self, messages, *, max_tokens):
+                self.prompts.append("\n".join(m.get("content", "") for m in messages))
+                return await super().complete(messages, max_tokens=max_tokens)
+
+        provider = CapturingProvider()
+        extracted: dict[str, object] = {"sales": []}
+        await _extend_arrays_over_windows(leaf, provider, state, extracted)
+        assert provider.prompts
+        assert any("OPENING IDENTITY BLOCK" in p and "context only" in p for p in provider.prompts)
