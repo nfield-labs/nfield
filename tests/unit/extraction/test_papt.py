@@ -214,3 +214,55 @@ class TestNestedArrayShape:
         }
         f = Field("g", "array", {"items": inner}, "", {"items": inner})
         assert "array of object {v: string}" in describe_field(f, TemplateType.STANDARD)
+
+
+class TestSharedItemShapes:
+    """Item shapes repeated across sibling arrays are named once and referenced."""
+
+    @staticmethod
+    def _metric_field(name: str) -> Field:
+        items = {
+            "type": "object",
+            "properties": {
+                "period": {"type": "string", "enum": ["q1", "q2", "h1"]},
+                "amount": {"type": "number"},
+            },
+        }
+        return Field(name, "array", {"items": items}, "", {"items": items})
+
+    def test_repeated_shape_named_once_and_referenced(self) -> None:
+        from nfield.extraction._papt import shared_item_shapes
+
+        fields = [self._metric_field("a"), self._metric_field("b")]
+        block, labels = shared_item_shapes(fields)
+        assert "entry shape S1" in block
+        assert block.count("period: string") == 1
+        line = describe_field(fields[0], TemplateType.STANDARD, shape_labels=labels)
+        assert "items: entry shape S1" in line
+        assert "period: string" not in line
+
+    def test_dimension_directive_moves_to_shared_block(self) -> None:
+        from nfield.extraction._papt import shared_item_shapes
+
+        fields = [self._metric_field("a"), self._metric_field("b")]
+        block, labels = shared_item_shapes(fields)
+        assert "enumerate EXHAUSTIVELY" in block
+        line = describe_field(fields[0], TemplateType.STANDARD, shape_labels=labels)
+        assert "enumerate EXHAUSTIVELY" not in line
+
+    def test_unique_shape_stays_inline(self) -> None:
+        from nfield.extraction._papt import shared_item_shapes
+
+        other_items = {"type": "object", "properties": {"x": {"type": "string"}}}
+        unique = Field("u", "array", {"items": other_items}, "", {"items": other_items})
+        fields = [self._metric_field("a"), unique]
+        block, labels = shared_item_shapes(fields)
+        assert block == "" and labels == {}
+        assert "x: string" in describe_field(unique, TemplateType.STANDARD, shape_labels=labels)
+
+    def test_scalar_arrays_and_non_arrays_ignored(self) -> None:
+        from nfield.extraction._papt import shared_item_shapes
+
+        tags = Field("t", "array", {"items": {"type": "string"}}, "", {})
+        name = Field("n", "string", {}, "", {})
+        assert shared_item_shapes([tags, name]) == ("", {})
