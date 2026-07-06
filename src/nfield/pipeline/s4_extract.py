@@ -84,6 +84,11 @@ _CONTINUATION_MIN_YIELD: int = 3
 _WINDOW_OUTPUT_HEADROOM: float = 1.25
 # Top-relevance windows re-asked for a single array left empty beside yielding siblings.
 _FOCUSED_REASK_WINDOWS: int = 2
+# A document states its global identity once, at the top (what it is, what period or
+# scope it covers); a bare mid-document window forces the model to re-infer those
+# facts per row. Each window lends at most this fraction to that head context, so
+# content keeps the rest.
+_PREAMBLE_WINDOW_FRACTION: float = 0.15
 # At most this many items all restating the field key = the document's mention of
 # the field, not its entries.
 _PLACEHOLDER_MAX_ITEMS: int = 2
@@ -519,7 +524,9 @@ async def _extend_arrays_over_windows(
     for g in leaf.groups:
         for seg, sc in zip(g.matched_segments, g.segment_scores, strict=False):
             score_by_id[seg.segment_id] = max(score_by_id.get(seg.segment_id, 0.0), sc)
-    windows = _pack_windows(region, _window_chars(leaf, state), score_by_id)
+    window_chars = _window_chars(leaf, state)
+    preamble = _document_preamble(state, _preamble_cap(leaf, state, window_chars))
+    windows = _pack_windows(region, window_chars, score_by_id)
     visit_order = sorted(range(len(windows)), key=lambda i: windows[i][1], reverse=True)
     await _sweep_array_windows(
         [text for text, _ in windows],
@@ -529,6 +536,7 @@ async def _extend_arrays_over_windows(
         state,
         extracted,
         visit_order=visit_order,
+        preamble=preamble,
     )
 
     # Under output pressure a window fills some arrays and leaves siblings empty; a
@@ -537,7 +545,9 @@ async def _extend_arrays_over_windows(
     if still_empty and len(still_empty) < len(array_fields):
         top = [windows[i][0] for i in visit_order[:_FOCUSED_REASK_WINDOWS]]
         for f in still_empty:
-            await _sweep_array_windows(top, [f], leaf, provider, state, extracted)
+            await _sweep_array_windows(
+                top, [f], leaf, provider, state, extracted, preamble=preamble
+            )
 
 
 async def _continue_truncated_arrays(
@@ -583,9 +593,17 @@ async def _continue_truncated_arrays(
         len(tail),
         " from last salvaged item" if anchor_start is not None else " (full document)",
     )
-    windows = _pack_windows(tail, _window_chars(leaf, state), {})
+    window_chars = _window_chars(leaf, state)
+    preamble = _document_preamble(state, _preamble_cap(leaf, state, window_chars))
+    windows = _pack_windows(tail, window_chars, {})
     await _sweep_array_windows(
-        [text for text, _ in windows], array_fields, leaf, provider, state, extracted
+        [text for text, _ in windows],
+        array_fields,
+        leaf,
+        provider,
+        state,
+        extracted,
+        preamble=preamble,
     )
 
 
@@ -638,6 +656,50 @@ def _window_chars(leaf: CapacityLeaf, state: PipelineState) -> int:
     output_chars = int(leaf.safe_output * cpt * _OUTPUT_WINDOW_FACTOR)
     # Fall back to the input bound if the output bound rounds to zero.
     return max(1, min(input_chars, output_chars) or input_chars)
+
+
+def _preamble_cap(leaf: CapacityLeaf, state: PipelineState, window_chars: int) -> int:
+    """Characters the document-head preamble may add on top of a window.
+
+    The window is output-bound (items are copied verbatim), so input capacity
+    usually has slack beyond the window text; the preamble rides in that slack and
+    never displaces content. Capped at the window fraction so a huge input budget
+    still cannot bury the window under head text.
+    """
+    cpt = max(state.chars_per_token, 1.0)
+    input_chars = int(max(0.0, state.C_usable - leaf.overhead) * cpt)
+    safe_chars = safe_excerpt_chars(state.C_eff, leaf.overhead, leaf.safe_output, cpt)
+    slack = max(0, min(input_chars, safe_chars) - window_chars)
+    return min(int(window_chars * _PREAMBLE_WINDOW_FRACTION), slack)
+
+
+def _document_preamble(state: PipelineState, cap: int) -> str:
+    """Document-head context prepended to continuation windows.
+
+    Values deep in a document are labelled by facts its opening states once (title
+    block, covered period, declared units or scope); a window cut below them loses
+    those facts. Leading whole segments are taken until the cap; a first segment
+    larger than the cap is cut at it, since identity lines sit at its top.
+
+    Args:
+        state: Pipeline state carrying the document segments.
+        cap: Maximum preamble characters (see :func:`_preamble_cap`).
+
+    Returns:
+        The head text, or ``""`` when there are no segments or no budget.
+    """
+    if cap <= 0 or not state.segments:
+        return ""
+    parts: list[str] = []
+    size = 0
+    for seg in sorted(state.segments, key=lambda s: s.start):
+        if not parts and len(seg.text) > cap:
+            return seg.text[:cap]
+        if size + len(seg.text) > cap:
+            break
+        parts.append(seg.text)
+        size += len(seg.text)
+    return "\n\n".join(parts)
 
 
 def _pack_windows(
@@ -714,6 +776,7 @@ async def _sweep_array_windows(
     state: PipelineState,
     extracted: dict[str, Any],
     visit_order: list[int] | None = None,
+    preamble: str = "",
 ) -> None:
     """Ask each window only for the array fields and merge new items with dedupe.
 
@@ -723,6 +786,9 @@ async def _sweep_array_windows(
     the whole cluster is walked before the ordering moves elsewhere. Stops after
     :data:`_CONTINUATION_STOP_AFTER_EMPTY` consecutive windows yield almost
     nothing, never exceeding the document-sized per-document window budget.
+
+    *preamble* (the document head) is prepended to every window except one that
+    already starts with it, so each call keeps the document's global identity.
     """
     reasons = {f.path: _continuation_reason(f) for f in array_fields}
     from nfield.schema._types import CapacityLeaf
@@ -743,10 +809,13 @@ async def _sweep_array_windows(
             leaf.safe_output,
             max(1, math.ceil(len(window_text) * _WINDOW_OUTPUT_HEADROOM / cpt)),
         )
+        excerpt = window_text
+        if preamble and not window_text.startswith(preamble):
+            excerpt = f"{preamble}\n\n{window_text}"
         window_leaf = CapacityLeaf(
             fields=array_fields,
             groups=[],
-            document_excerpt=window_text,
+            document_excerpt=excerpt,
             overhead=leaf.overhead,
             safe_output=window_output,
             leaf_id=leaf.leaf_id,

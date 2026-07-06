@@ -897,3 +897,95 @@ class TestMergeObjectDedup:
     def test_exact_duplicate_not_added(self):
         merged = [{"a": "x"}]
         assert _merge_window_items(merged, [{"a": "x"}]) == 0
+
+
+class TestDocumentPreamble:
+    """Continuation windows carry the document-head context."""
+
+    def test_head_segments_within_cap(self):
+        from nfield.pipeline.s4_extract import _document_preamble
+
+        state = _state()
+        segs = state.segments
+        cap = len(segs[0].text) + len(segs[1].text) + 10
+        preamble = _document_preamble(state, cap)
+        assert preamble == f"{segs[0].text}\n\n{segs[1].text}"
+
+    def test_oversized_first_segment_cut_at_cap(self):
+        from nfield.pipeline.s4_extract import _document_preamble
+
+        state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)
+        state.segments = [_big_segment()]
+        preamble = _document_preamble(state, 150)
+        assert preamble == _big_segment().text[:150]
+
+    def test_cap_rides_in_input_slack_never_content(self):
+        from nfield.pipeline.s4_extract import _preamble_cap, _window_chars
+
+        state = _state()
+        leaf = _leaf()
+        window_chars = _window_chars(leaf, state)
+        cap = _preamble_cap(leaf, state, window_chars)
+        # Output-bound window leaves input slack; the cap uses it, bounded by fraction.
+        assert 0 < cap <= int(window_chars * 0.15)
+        # An input-bound window has no slack: the preamble must vanish, not displace.
+        tight = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=100.0)
+        tight.segments = _segments()
+        assert _preamble_cap(_leaf(), tight, _window_chars(_leaf(), tight)) == 0
+
+    def test_no_segments_or_budget_yields_empty(self):
+        from nfield.pipeline.s4_extract import _document_preamble
+
+        empty = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)
+        empty.segments = []
+        assert _document_preamble(empty, 10_000) == ""
+        assert _document_preamble(_state(), 0) == ""
+
+    @pytest.mark.asyncio
+    async def test_sweep_prepends_preamble_to_windows(self):
+        from nfield.pipeline.s4_extract import _sweep_array_windows
+
+        state = _state()
+        leaf = _leaf()
+
+        class CapturingProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("refs = []")
+                self.prompts: list[str] = []
+
+            async def complete(self, messages, *, max_tokens):
+                self.prompts.append("\n".join(m.get("content", "") for m in messages))
+                return await super().complete(messages, max_tokens=max_tokens)
+
+        provider = CapturingProvider()
+        extracted: dict[str, object] = {"refs": []}
+        head = "ACME CORP QUARTERLY REPORT for the period ended March 31"
+        await _sweep_array_windows(
+            ["mid-document window text"], [REFS], leaf, provider, state, extracted, preamble=head
+        )
+        assert provider.prompts and head in provider.prompts[0]
+
+    @pytest.mark.asyncio
+    async def test_window_already_starting_with_head_not_doubled(self):
+        from nfield.pipeline.s4_extract import _sweep_array_windows
+
+        state = _state()
+        leaf = _leaf()
+
+        class CapturingProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("refs = []")
+                self.prompts: list[str] = []
+
+            async def complete(self, messages, *, max_tokens):
+                self.prompts.append("\n".join(m.get("content", "") for m in messages))
+                return await super().complete(messages, max_tokens=max_tokens)
+
+        provider = CapturingProvider()
+        extracted: dict[str, object] = {"refs": []}
+        head = "ACME CORP QUARTERLY REPORT"
+        window = f"{head}\n\nfirst window body"
+        await _sweep_array_windows(
+            [window], [REFS], leaf, provider, state, extracted, preamble=head
+        )
+        assert provider.prompts[0].count(head) == 1
