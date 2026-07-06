@@ -555,34 +555,43 @@ async def _extend_arrays_over_windows(
 
     # A dimension array lacking an axis value a sibling's rows prove the document
     # reports (same axis, same allowed values) was starved by shared output, not
-    # absence; it is re-asked alone over the windows holding those sibling rows.
+    # absence. All starved arrays are re-asked in ONE pass - together they face far
+    # less output competition than the full sweep that starved them, and one call
+    # per window replaces one call per field per window. No fallback: when the proof
+    # rows locate nowhere, there is no target worth a call.
     window_texts = [text for text, _ in windows]
+    starved_fields: list[Field] = []
+    starved_reasons: dict[str, str] = {}
+    target_union: list[int] = []
     for f, axis, missing, proof in _axis_starved_fields(array_fields, extracted):
         targets = _windows_holding_rows(window_texts, proof)
         if not targets:
-            targets = visit_order[:_FOCUSED_REASK_WINDOWS]
-        reason = (
+            continue
+        starved_fields.append(f)
+        starved_reasons[f.path] = (
             _continuation_reason(f)
             + f". Related fields show this document reports {axis} values "
             + f"[{', '.join(sorted(missing))}]; this field's own value may be reported "
             + "for those as well - emit an entry for each such figure shown here"
         )
+        target_union.extend(i for i in targets if i not in target_union)
+    if starved_fields:
+        target_union = target_union[: _FOCUSED_REASK_WINDOWS * 2]
         logger.info(
-            "axis-starved array %s: missing %s=%s, re-asking over %d window(s)",
-            f.path,
-            axis,
-            sorted(missing),
-            len(targets[: _FOCUSED_REASK_WINDOWS * 2]),
+            "axis-starved arrays %s: re-asking together over %d window(s)",
+            sorted(f.path for f in starved_fields),
+            len(target_union),
         )
         await _sweep_array_windows(
-            [window_texts[i] for i in targets[: _FOCUSED_REASK_WINDOWS * 2]],
-            [f],
+            [window_texts[i] for i in target_union],
+            starved_fields,
             leaf,
             provider,
             state,
             extracted,
             preamble=preamble,
-            reasons={f.path: reason},
+            reasons=starved_reasons,
+            cap_bonus=len(target_union),
         )
 
 
@@ -890,6 +899,7 @@ async def _sweep_array_windows(
     visit_order: list[int] | None = None,
     preamble: str = "",
     reasons: dict[str, str] | None = None,
+    cap_bonus: int = 0,
 ) -> None:
     """Ask each window only for the array fields and merge new items with dedupe.
 
@@ -907,8 +917,12 @@ async def _sweep_array_windows(
     from nfield.schema._types import CapacityLeaf
 
     # Document-sized shared budget: a schema with many empty arrays would otherwise
-    # sweep once per leaf and multiply the call count without bound.
+    # sweep once per leaf and multiply the call count without bound. A rescue pass
+    # (deterministic trigger, few windows) is granted its own headroom over whatever
+    # is already spent, so earlier passes exhausting the budget cannot silence it.
     per_doc_cap = _max_continuation_windows_per_doc(leaf, state)
+    if cap_bonus:
+        per_doc_cap = max(per_doc_cap, state.continuation_windows_used + cap_bonus)
 
     async def probe_text(window_text: str, idx: int) -> tuple[int, int] | None:
         """One window call; merge new items; return (raw count, new-item yield)."""

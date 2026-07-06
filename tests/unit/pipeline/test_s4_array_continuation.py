@@ -1091,7 +1091,7 @@ class TestAxisDeconflictReask:
         from nfield.pipeline.s4_extract import _extend_arrays_over_windows
 
         revenue, cost = _dim_field("revenue"), _dim_field("cost")
-        body = "breakdown table: north region revenue 90 north region cost 25"
+        body = "breakdown table: north region revenue 9090 north region cost 2555"
         state = _state()
         state.segments = [
             Segment(text=body, start=0, end=len(body), segment_type="unstructured", segment_id=0)
@@ -1108,7 +1108,7 @@ class TestAxisDeconflictReask:
             "revenue": [{"level": "total", "label": "all", "amount": 100}],
             "cost": [
                 {"level": "total", "label": "all", "amount": 40},
-                {"level": "regional", "label": "north region", "amount": 25},
+                {"level": "regional", "label": "north region", "amount": 2555},
             ],
         }
 
@@ -1132,3 +1132,40 @@ class TestAxisDeconflictReask:
         assert provider.solo_revenue_calls >= 1
         levels = {r["level"] for r in extracted["revenue"]}
         assert levels == {"total", "regional"}
+
+
+class TestRescueCapBonus:
+    """A rescue pass runs even after the general sweep exhausted the window budget."""
+
+    @pytest.mark.asyncio
+    async def test_rescue_runs_at_exhausted_cap(self):
+        from nfield.pipeline.s4_extract import (
+            _max_continuation_windows_per_doc,
+            _sweep_array_windows,
+        )
+
+        state = _state()
+        leaf = _leaf()
+        state.continuation_windows_used = _max_continuation_windows_per_doc(leaf, state)
+        provider = ContinuationProvider(f'refs = ["{ENTRY_1}"]')
+        extracted: dict[str, object] = {"refs": []}
+        await _sweep_array_windows(
+            ["window"], [REFS], leaf, provider, state, extracted, cap_bonus=1
+        )
+        assert provider.calls == 1
+        assert extracted["refs"] == [ENTRY_1]
+
+    @pytest.mark.asyncio
+    async def test_no_bonus_stays_capped(self):
+        from nfield.pipeline.s4_extract import (
+            _max_continuation_windows_per_doc,
+            _sweep_array_windows,
+        )
+
+        state = _state()
+        leaf = _leaf()
+        state.continuation_windows_used = _max_continuation_windows_per_doc(leaf, state)
+        provider = ContinuationProvider(f'refs = ["{ENTRY_1}"]')
+        extracted: dict[str, object] = {"refs": []}
+        await _sweep_array_windows(["window"], [REFS], leaf, provider, state, extracted)
+        assert provider.calls == 0
