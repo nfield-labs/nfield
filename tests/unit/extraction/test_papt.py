@@ -241,14 +241,14 @@ class TestSharedItemShapes:
         assert "items: entry shape S1" in line
         assert "period: string" not in line
 
-    def test_dimension_directive_moves_to_shared_block(self) -> None:
+    def test_dimension_directive_stays_on_field_line(self) -> None:
         from nfield.extraction._papt import shared_item_shapes
 
         fields = [self._metric_field("a"), self._metric_field("b")]
         block, labels = shared_item_shapes(fields)
-        assert "enumerate EXHAUSTIVELY" in block
+        assert "enumerate EXHAUSTIVELY" not in block
         line = describe_field(fields[0], TemplateType.STANDARD, shape_labels=labels)
-        assert "enumerate EXHAUSTIVELY" not in line
+        assert "enumerate EXHAUSTIVELY" in line
 
     def test_unique_shape_stays_inline(self) -> None:
         from nfield.extraction._papt import shared_item_shapes
