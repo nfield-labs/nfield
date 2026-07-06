@@ -336,9 +336,17 @@ def _matches(
         if _jaccard(g, p) >= _SEMANTIC_MIN_JACCARD:
             return True
         gold_dates, pred_dates = _parse_dates(g), _parse_dates(p)
-        return bool(gold_dates & pred_dates)
+        return _dates_match(gold_dates, pred_dates)
     if eval_config == "string_fuzzy" and isinstance(gold, str) and isinstance(predicted, str):
         return _edit_ratio(_norm(gold), _norm(predicted)) <= _FUZZY_MAX_DISTANCE
+    # Two renderings of one calendar date are equal under ANY string tier: a
+    # timezone-shifted timestamp and a spelt-out month name exact-match as dates,
+    # not as text. Applies only when both sides parse as dates, so ordinary
+    # strings never reach it.
+    if isinstance(gold, str) and isinstance(predicted, str):
+        gold_dates, pred_dates = _parse_dates(_norm(gold)), _parse_dates(_norm(predicted))
+        if gold_dates and pred_dates:
+            return _dates_match(gold_dates, pred_dates)
     if field_type is FieldType.BOOLEAN:
         return _as_bool(gold) == _as_bool(predicted)
     if field_type is FieldType.INTEGER:
@@ -550,10 +558,25 @@ _MONTHS = (
     "november",
     "december",
 )
-_DATE_ISO = re.compile(r"^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$")
+_DATE_ISO = re.compile(
+    r"^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})"
+    r"(?:[t ](\d{1,2}):\d{2}(?::\d{2}(?:\.\d+)?)?(?:z|[+-]\d{2}:?\d{2})?)?$"
+)
+_DATE_MONTH_YEAR = re.compile(r"^([a-z]{3,9}),?\s+(\d{4})$")
 _DATE_DMY = re.compile(r"^(\d{1,2})(?:st|nd|rd|th)? ([a-z]+),? (\d{4})$")
 _DATE_MDY = re.compile(r"^([a-z]+) (\d{1,2})(?:st|nd|rd|th)?,? (\d{4})$")
 _DATE_NUMERIC = re.compile(r"^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$")
+
+
+def _dates_match(
+    gold_dates: set[tuple[int, int, int]], pred_dates: set[tuple[int, int, int]]
+) -> bool:
+    """True when any two readings denote the same day; day 0 means the whole month."""
+    for gy, gm, gd in gold_dates:
+        for py, pm, pd in pred_dates:
+            if (gy, gm) == (py, pm) and (gd == pd or gd == 0 or pd == 0):
+                return True
+    return False
 
 
 def _parse_dates(text: str) -> set[tuple[int, int, int]]:
@@ -561,12 +584,31 @@ def _parse_dates(text: str) -> set[tuple[int, int, int]]:
 
     An all-numeric slashed form is ambiguous (04/06/2023 is April 6 in MDY and
     June 4 in DMY); every valid reading is returned and two strings denote the
-    same date when their readings intersect.
+    same date when their readings intersect. An ISO timestamp with an afternoon
+    or evening UTC time is a positive-offset timezone's midnight stored shifted,
+    so the next day is a reading too. A bare month-year reads as day 0, matching
+    any day of that month.
     """
     m = _DATE_ISO.match(text)
     if m:
         y, mo, d = int(m.group(1)), int(m.group(2)), int(m.group(3))
-        return {(y, mo, d)} if _valid_date(mo, d) else set()
+        if not _valid_date(mo, d):
+            return set()
+        readings = {(y, mo, d)}
+        hour = m.group(4)
+        if hour is not None and int(hour) >= 12:
+            import datetime as _dt
+
+            try:
+                nxt = _dt.date(y, mo, d) + _dt.timedelta(days=1)
+                readings.add((nxt.year, nxt.month, nxt.day))
+            except ValueError:
+                pass
+        return readings
+    m = _DATE_MONTH_YEAR.match(text)
+    if m:
+        month = _month_number(m.group(1))
+        return {(int(m.group(2)), month, 0)} if month else set()
     m = _DATE_DMY.match(text)
     if m:
         month = _month_number(m.group(2))
