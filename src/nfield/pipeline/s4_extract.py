@@ -958,9 +958,16 @@ async def _sweep_array_windows(
             leaf.safe_output,
             max(1, math.ceil(len(window_text) * _WINDOW_OUTPUT_HEADROOM / cpt)),
         )
+        # The head is context for interpreting rows (labels, periods, units), never a
+        # source of entries: a document opening often SUMMARISES its lists ("...and
+        # the other parties hereto"), and unlabelled it displaces real enumeration.
         excerpt = window_text
         if preamble and not window_text.startswith(preamble):
-            excerpt = f"{preamble}\n\n{window_text}"
+            excerpt = (
+                "[Document opening - context only for labels, periods, units; do not "
+                f"extract entries from it:]\n{preamble}\n"
+                f"[Portion to extract from:]\n{window_text}"
+            )
         window_leaf = CapacityLeaf(
             fields=array_fields,
             groups=[],
