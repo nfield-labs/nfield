@@ -989,3 +989,146 @@ class TestDocumentPreamble:
             [window], [REFS], leaf, provider, state, extracted, preamble=head
         )
         assert provider.prompts[0].count(head) == 1
+
+
+def _dim_field(name: str) -> Field:
+    items = {
+        "type": "object",
+        "properties": {
+            "level": {"type": "string", "enum": ["total", "regional", "divisional"]},
+            "label": {"type": "string"},
+            "amount": {"type": "number"},
+        },
+    }
+    return Field(name, "array", {"items": items}, "", {"items": items})
+
+
+class TestAxisStarvation:
+    """A dimension array missing an axis value a sibling proved present is starved."""
+
+    def test_starved_field_detected_with_proof_rows(self):
+        from nfield.pipeline.s4_extract import _axis_starved_fields
+
+        revenue, cost = _dim_field("revenue"), _dim_field("cost")
+        extracted = {
+            "revenue": [{"level": "total", "label": "all", "amount": 100}],
+            "cost": [
+                {"level": "total", "label": "all", "amount": 40},
+                {"level": "regional", "label": "north", "amount": 25},
+                {"level": "regional", "label": "south", "amount": 15},
+            ],
+        }
+        starved = _axis_starved_fields([revenue, cost], extracted)
+        assert len(starved) == 1
+        f, axis, missing, proof = starved[0]
+        assert f.path == "revenue"
+        assert axis == "level"
+        assert missing == {"regional"}
+        assert len(proof) == 2
+
+    def test_empty_array_not_reported(self):
+        from nfield.pipeline.s4_extract import _axis_starved_fields
+
+        revenue, cost = _dim_field("revenue"), _dim_field("cost")
+        extracted = {
+            "revenue": [],
+            "cost": [{"level": "regional", "label": "north", "amount": 25}],
+        }
+        assert _axis_starved_fields([revenue, cost], extracted) == []
+
+    def test_equal_coverage_not_reported(self):
+        from nfield.pipeline.s4_extract import _axis_starved_fields
+
+        revenue, cost = _dim_field("revenue"), _dim_field("cost")
+        row = {"level": "total", "label": "all", "amount": 1}
+        extracted = {"revenue": [row], "cost": [dict(row)]}
+        assert _axis_starved_fields([revenue, cost], extracted) == []
+
+    def test_different_axis_definitions_not_compared(self):
+        from nfield.pipeline.s4_extract import _axis_starved_fields
+
+        revenue = _dim_field("revenue")
+        other_items = {
+            "type": "object",
+            "properties": {
+                "level": {"type": "string", "enum": ["high", "low"]},
+                "amount": {"type": "number"},
+            },
+        }
+        other = Field("other", "array", {"items": other_items}, "", {"items": other_items})
+        extracted = {
+            "revenue": [{"level": "total", "label": "all", "amount": 1}],
+            "other": [{"level": "high", "amount": 2}],
+        }
+        assert _axis_starved_fields([revenue, other], extracted) == []
+
+
+class TestWindowsHoldingRows:
+    """A sibling row places in the window whose text carries its leaves."""
+
+    def test_window_with_two_row_leaves_matches(self):
+        from nfield.pipeline.s4_extract import _windows_holding_rows
+
+        rows = [{"level": "regional", "label": "north region", "amount": 2666}]
+        windows = [
+            "unrelated prose about the business overall",
+            "breakdown table: north region 2666 south region 1500",
+        ]
+        assert _windows_holding_rows(windows, rows) == [1]
+
+    def test_no_match_returns_empty(self):
+        from nfield.pipeline.s4_extract import _windows_holding_rows
+
+        rows = [{"level": "regional", "label": "north region", "amount": 2666}]
+        assert _windows_holding_rows(["nothing relevant here"], rows) == []
+
+
+class TestAxisDeconflictReask:
+    """The starved array is re-asked alone and its missing rows merged."""
+
+    @pytest.mark.asyncio
+    async def test_starved_array_filled_from_sibling_window(self):
+        from nfield.pipeline.s4_extract import _extend_arrays_over_windows
+
+        revenue, cost = _dim_field("revenue"), _dim_field("cost")
+        body = "breakdown table: north region revenue 90 north region cost 25"
+        state = _state()
+        state.segments = [
+            Segment(text=body, start=0, end=len(body), segment_type="unstructured", segment_id=0)
+        ]
+        leaf = CapacityLeaf(
+            fields=[revenue, cost],
+            groups=[],
+            document_excerpt=body,
+            overhead=10.0,
+            safe_output=1024,
+            leaf_id=0,
+        )
+        extracted = {
+            "revenue": [{"level": "total", "label": "all", "amount": 100}],
+            "cost": [
+                {"level": "total", "label": "all", "amount": 40},
+                {"level": "regional", "label": "north region", "amount": 25},
+            ],
+        }
+
+        class DeconflictProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("")
+                self.solo_revenue_calls = 0
+
+            async def complete(self, messages, *, max_tokens):
+                self.calls += 1
+                text = "\n".join(m.get("content", "") for m in messages)
+                if "revenue (array)" in text and "cost (array)" not in text:
+                    self.solo_revenue_calls += 1
+                    return (
+                        'revenue = [{"level": "regional", "label": "north region", "amount": 90}]'
+                    )
+                return "revenue = []\ncost = []"
+
+        provider = DeconflictProvider()
+        await _extend_arrays_over_windows(leaf, provider, state, extracted)
+        assert provider.solo_revenue_calls >= 1
+        levels = {r["level"] for r in extracted["revenue"]}
+        assert levels == {"total", "regional"}

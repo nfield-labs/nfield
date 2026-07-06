@@ -84,6 +84,10 @@ _CONTINUATION_MIN_YIELD: int = 3
 _WINDOW_OUTPUT_HEADROOM: float = 1.25
 # Top-relevance windows re-asked for a single array left empty beside yielding siblings.
 _FOCUSED_REASK_WINDOWS: int = 2
+# Placing a sibling's row in a window: leaves shorter than this are too generic to
+# match, and a window must hold this many of one row's leaves to count as its source.
+_DECONFLICT_LEAF_MIN_CHARS: int = 4
+_DECONFLICT_MIN_LEAF_MATCHES: int = 2
 # A document states its global identity once, at the top (what it is, what period or
 # scope it covers); a bare mid-document window forces the model to re-infer those
 # facts per row. Each window lends at most this fraction to that head context, so
@@ -549,6 +553,114 @@ async def _extend_arrays_over_windows(
                 top, [f], leaf, provider, state, extracted, preamble=preamble
             )
 
+    # A dimension array lacking an axis value a sibling's rows prove the document
+    # reports (same axis, same allowed values) was starved by shared output, not
+    # absence; it is re-asked alone over the windows holding those sibling rows.
+    window_texts = [text for text, _ in windows]
+    for f, axis, missing, proof in _axis_starved_fields(array_fields, extracted):
+        targets = _windows_holding_rows(window_texts, proof)
+        if not targets:
+            targets = visit_order[:_FOCUSED_REASK_WINDOWS]
+        reason = (
+            _continuation_reason(f)
+            + f". Related fields show this document reports {axis} values "
+            + f"[{', '.join(sorted(missing))}]; this field's own value may be reported "
+            + "for those as well - emit an entry for each such figure shown here"
+        )
+        logger.info(
+            "axis-starved array %s: missing %s=%s, re-asking over %d window(s)",
+            f.path,
+            axis,
+            sorted(missing),
+            len(targets[: _FOCUSED_REASK_WINDOWS * 2]),
+        )
+        await _sweep_array_windows(
+            [window_texts[i] for i in targets[: _FOCUSED_REASK_WINDOWS * 2]],
+            [f],
+            leaf,
+            provider,
+            state,
+            extracted,
+            preamble=preamble,
+            reasons={f.path: reason},
+        )
+
+
+def _axis_starved_fields(
+    array_fields: list[Field], extracted: dict[str, Any]
+) -> list[tuple[Field, str, set[str], list[Any]]]:
+    """Dimension arrays missing an axis value a sibling's rows prove is reported.
+
+    Two arrays sharing an axis definition (same property name, same allowed values)
+    describe the same labelled breakdown; when one holds rows for an axis value the
+    other lacks entirely, the document demonstrably reports that breakdown, so the
+    lack is under-emission rather than absence. Empty arrays are excluded - they are
+    the focused re-ask's case, and an axis read from zero rows proves nothing.
+
+    Returns:
+        ``(field, axis name, missing values, sibling proof rows)`` per starved array.
+    """
+    out: list[tuple[Field, str, set[str], list[Any]]] = []
+    for f in array_fields:
+        mine_items = extracted.get(f.path)
+        if not isinstance(mine_items, list) or not mine_items:
+            continue
+        for axis, allowed in dimension_axes(f):
+            allowed_key = (axis, tuple(allowed))
+            mine = _axis_values(mine_items, axis)
+            missing: set[str] = set()
+            proof: list[Any] = []
+            for g in array_fields:
+                if g is f or (axis, tuple(dict(dimension_axes(g)).get(axis, ()))) != allowed_key:
+                    continue
+                sib_items = extracted.get(g.path)
+                if not isinstance(sib_items, list):
+                    continue
+                for item in sib_items:
+                    if not isinstance(item, dict):
+                        continue
+                    value = str(item.get(axis))
+                    if value in allowed and value not in mine:
+                        missing.add(value)
+                        proof.append(item)
+            if missing:
+                out.append((f, axis, missing, proof))
+    return out
+
+
+def _axis_values(items: list[Any], axis: str) -> set[str]:
+    """Distinct values an array's object items carry for one axis property."""
+    return {
+        str(item[axis])
+        for item in items
+        if isinstance(item, dict) and item.get(axis) not in (None, "")
+    }
+
+
+def _windows_holding_rows(window_texts: list[str], rows: list[Any]) -> list[int]:
+    """Indices of windows whose text contains one of the rows.
+
+    A row places in a window when at least :data:`_DECONFLICT_MIN_LEAF_MATCHES` of
+    its leaves (each at least :data:`_DECONFLICT_LEAF_MIN_CHARS` chars, folded the
+    same way grounding folds) appear in the window text.
+    """
+    leaf_sets = [
+        [
+            _ground_norm(s)
+            for s in _string_leaves(row)
+            if len(s.strip()) >= _DECONFLICT_LEAF_MIN_CHARS
+        ]
+        for row in rows
+    ]
+    indices: list[int] = []
+    for i, text in enumerate(window_texts):
+        norm = _ground_norm(text)
+        for leaves in leaf_sets:
+            if sum(1 for lf in leaves if lf and lf in norm) >= _DECONFLICT_MIN_LEAF_MATCHES:
+                indices.append(i)
+                break
+    return indices
+
 
 async def _continue_truncated_arrays(
     leaf: CapacityLeaf,
@@ -777,6 +889,7 @@ async def _sweep_array_windows(
     extracted: dict[str, Any],
     visit_order: list[int] | None = None,
     preamble: str = "",
+    reasons: dict[str, str] | None = None,
 ) -> None:
     """Ask each window only for the array fields and merge new items with dedupe.
 
@@ -790,7 +903,7 @@ async def _sweep_array_windows(
     *preamble* (the document head) is prepended to every window except one that
     already starts with it, so each call keeps the document's global identity.
     """
-    reasons = {f.path: _continuation_reason(f) for f in array_fields}
+    reasons = reasons or {f.path: _continuation_reason(f) for f in array_fields}
     from nfield.schema._types import CapacityLeaf
 
     # Document-sized shared budget: a schema with many empty arrays would otherwise
