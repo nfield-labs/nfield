@@ -10,8 +10,10 @@ Usage::
 
     uv run python -m benchmark.rejudge_extractbench <results>/native [--model ...]
 
-Writes ``scored_judged/<doc>.json`` beside each dataset's ``scored/`` and a
-``summary_judged.csv`` per dataset plus one at the root.
+Updates each dataset's ``scored/<doc>.json`` in place - ``value_accuracy_judged``
+lands beside ``value_accuracy``, and the judged mismatch list replaces the
+deterministic one (judge-cleared fields drop out). ``summary.csv`` rows gain a
+``value_accuracy_judged`` column the same way.
 """
 
 from __future__ import annotations
@@ -23,7 +25,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .runner_extractbench import _GOLD_SUFFIX, _SCHEMA_SUFFIX, discover_datasets
+from .runner_extractbench import _GOLD_SUFFIX, _SCHEMA_SUFFIX, _load_env, discover_datasets
 from .score_extractbench import llm_rejudge, score_extractbench
 
 DEFAULT_JUDGE_MODEL = "groq/qwen/qwen3.6-27b"
@@ -85,35 +87,53 @@ def rejudge_results(
                 for fs in judged.fields
                 if fs.outcome.value != "correct"
             ]
-            _write_json(
-                dataset_dir / "scored_judged" / f"{doc}.json",
-                {
-                    "document": doc,
-                    "gold_fields": judged.n_fields,
-                    "coverage": round(judged.coverage, 4),
-                    "value_accuracy": round(judged.value_accuracy, 4),
-                    "deterministic_value_accuracy": round(report.value_accuracy, 4),
-                    "outcomes": {o.value: n for o, n in judged.outcomes.items()},
-                    "mismatches": mismatches,
-                },
-            )
+            scored_path = dataset_dir / "scored" / f"{doc}.json"
+            scored = json.loads(scored_path.read_text(encoding="utf-8"))
+            # The judged score lands right beside the deterministic one, and the
+            # mismatch list shrinks to what the judge upheld.
+            updated: dict[str, Any] = {}
+            for key, value in scored.items():
+                updated[key] = value
+                if key == "value_accuracy":
+                    updated["value_accuracy"] = round(report.value_accuracy, 4)
+                    updated["value_accuracy_judged"] = round(judged.value_accuracy, 4)
+            updated["outcomes"] = {o.value: n for o, n in judged.outcomes.items()}
+            updated["mismatches"] = mismatches
+            _write_json(scored_path, updated)
             row = {
                 "dataset": name,
                 "document": doc,
                 "gold_fields": judged.n_fields,
                 "coverage": round(judged.coverage, 4),
-                "value_accuracy": round(judged.value_accuracy, 4),
-                "deterministic": round(report.value_accuracy, 4),
+                "value_accuracy": round(report.value_accuracy, 4),
+                "value_accuracy_judged": round(judged.value_accuracy, 4),
             }
             rows.append(row)
             print(
-                f"  {name}/{doc}: deterministic {row['deterministic']}"
-                f" -> judged {row['value_accuracy']}",
+                f"  {name}/{doc}: deterministic {row['value_accuracy']}"
+                f" -> judged {row['value_accuracy_judged']}",
                 flush=True,
             )
-        _write_rows(dataset_dir / "summary_judged.csv", rows)
+        _merge_summary(dataset_dir / "summary.csv", "document", rows)
         all_rows.extend(rows)
-    _write_rows(results_dir / "summary_judged.csv", _dataset_aggregates(all_rows))
+    _merge_summary(results_dir / "summary.csv", "dataset", _dataset_aggregates(all_rows))
+
+
+def _merge_summary(path: Path, key: str, rows: list[dict[str, Any]]) -> None:
+    """Refresh the floor and add the judged column in an existing summary, in place."""
+    if not path.exists() or not rows:
+        return
+    by_key = {str(r[key]): r for r in rows}
+    with path.open(newline="", encoding="utf-8") as fh:
+        existing = list(csv.DictReader(fh))
+    for row in existing:
+        update = by_key.get(row.get(key, ""))
+        if update is None:
+            row.setdefault("value_accuracy_judged", "")
+            continue
+        row["value_accuracy"] = update["value_accuracy"]
+        row["value_accuracy_judged"] = update["value_accuracy_judged"]
+    _write_rows(path, existing)
 
 
 def _dataset_aggregates(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -133,8 +153,8 @@ def _dataset_aggregates(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "value_accuracy": round(
                     sum(r["value_accuracy"] * r["gold_fields"] for r in sub) / total, 4
                 ),
-                "deterministic": round(
-                    sum(r["deterministic"] * r["gold_fields"] for r in sub) / total, 4
+                "value_accuracy_judged": round(
+                    sum(r["value_accuracy_judged"] * r["gold_fields"] for r in sub) / total, 4
                 ),
             }
         )
@@ -161,6 +181,7 @@ def main(argv: list[str] | None = None) -> None:
     )
     parser.add_argument("--datasets", default="", help="comma-separated names; empty = all")
     args = parser.parse_args(argv)
+    _load_env()
     only = {n.strip() for n in args.datasets.split(",") if n.strip()} or None
     rejudge_results(args.results_dir, args.model, args.reasoning_model, only)
 
