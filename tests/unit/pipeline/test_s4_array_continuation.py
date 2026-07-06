@@ -1221,3 +1221,61 @@ class TestDeconflictRowFilter:
         assert "north region" in labels
         assert "ALL SEGMENTS" not in labels
         assert [r["level"] for r in extracted["revenue"]].count("total") == 1
+
+
+class TestKinSiteProbe:
+    """An unvisited window where several known items recur is probed outright."""
+
+    @pytest.mark.asyncio
+    async def test_signature_style_window_probed_after_patience(self):
+        from nfield.pipeline.s4_extract import (
+            _CONTINUATION_STOP_AFTER_EMPTY,
+            _sweep_array_windows,
+        )
+
+        known_1 = "First Global Finance Corporation, N.A."
+        known_2 = "Second Continental Trust Company PLC"
+        tail_entry = "Distant Harbour Lending Partners LLC"
+        # Enough empty prose windows to exhaust patience, then the signature window.
+        windows = ["prose only " * 30] * (_CONTINUATION_STOP_AFTER_EMPTY + 2)
+        windows.append(f"IN WITNESS WHEREOF\n{known_1}\n{known_2}\n{tail_entry}")
+        windows.append("exhibit boilerplate " * 30)
+
+        class SignatureProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("")
+
+            async def complete(self, messages, *, max_tokens):
+                self.calls += 1
+                text = "\n".join(m.get("content", "") for m in messages)
+                if "WITNESS" in text:
+                    return f'refs = ["{known_1}", "{known_2}", "{tail_entry}"]'
+                return "refs = []"
+
+        state = _state()
+        state.segments = [_big_segment()]
+        leaf = _leaf()
+        provider = SignatureProvider()
+        extracted: dict[str, object] = {"refs": [known_1, known_2]}
+        await _sweep_array_windows(windows, [REFS], leaf, provider, state, extracted)
+        assert tail_entry in extracted["refs"]
+
+    def test_single_recurring_name_is_not_a_site(self):
+        from nfield.pipeline.s4_extract import _windows_holding_rows
+
+        rows = ["First Global Finance Corporation, N.A.", "Second Continental Trust Company"]
+        windows = [
+            "prose mentioning First Global Finance Corporation, N.A. as agent hereunder",
+            "First Global Finance Corporation, N.A.\nSecond Continental Trust Company",
+        ]
+        assert _windows_holding_rows(windows, rows, min_rows=2) == [1]
+
+    def test_densest_window_ranks_first(self):
+        from nfield.pipeline.s4_extract import _windows_holding_rows
+
+        rows = ["Alpha Partners Limited", "Beta Holdings Incorporated", "Gamma Capital Group"]
+        windows = [
+            "Alpha Partners Limited and Beta Holdings Incorporated",
+            "Alpha Partners Limited, Beta Holdings Incorporated, Gamma Capital Group",
+        ]
+        assert _windows_holding_rows(windows, rows, min_rows=2) == [1, 0]

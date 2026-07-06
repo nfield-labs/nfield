@@ -88,6 +88,9 @@ _FOCUSED_REASK_WINDOWS: int = 2
 # match, and a window must hold this many of one row's leaves to count as its source.
 _DECONFLICT_LEAF_MIN_CHARS: int = 4
 _DECONFLICT_MIN_LEAF_MATCHES: int = 2
+# An unvisited window is an enumeration site only when several known items recur in
+# it together; one recurring name is ordinary prose (an agent is named everywhere).
+_KIN_SITE_MIN_ROWS: int = 2
 # A document states its global identity once, at the top (what it is, what period or
 # scope it covers); a bare mid-document window forces the model to re-infer those
 # facts per row. Each window lends at most this fraction to that head context, so
@@ -667,12 +670,15 @@ def _axis_values(items: list[Any], axis: str) -> set[str]:
     }
 
 
-def _windows_holding_rows(window_texts: list[str], rows: list[Any]) -> list[int]:
-    """Indices of windows whose text contains one of the rows.
+def _windows_holding_rows(
+    window_texts: list[str], rows: list[Any], min_rows: int = 1
+) -> list[int]:
+    """Indices of windows holding at least *min_rows* of the rows, densest first.
 
     A row places in a window when at least :data:`_DECONFLICT_MIN_LEAF_MATCHES` of
     its leaves (each at least :data:`_DECONFLICT_LEAF_MIN_CHARS` chars, folded the
-    same way grounding folds) appear in the window text.
+    same way grounding folds) appear in the window text; a scalar row has one leaf,
+    so its full text placing suffices.
     """
     leaf_sets = [
         [
@@ -682,14 +688,19 @@ def _windows_holding_rows(window_texts: list[str], rows: list[Any]) -> list[int]
         ]
         for row in rows
     ]
-    indices: list[int] = []
+    counts: dict[int, int] = {}
     for i, text in enumerate(window_texts):
         norm = _ground_norm(text)
+        matched = 0
         for leaves in leaf_sets:
-            if sum(1 for lf in leaves if lf and lf in norm) >= _DECONFLICT_MIN_LEAF_MATCHES:
-                indices.append(i)
-                break
-    return indices
+            if not leaves:
+                continue
+            required = min(_DECONFLICT_MIN_LEAF_MATCHES, len(leaves))
+            if sum(1 for lf in leaves if lf and lf in norm) >= required:
+                matched += 1
+        if matched >= min_rows:
+            counts[i] = matched
+    return sorted(counts, key=lambda i: (-counts[i], i))
 
 
 async def _continue_truncated_arrays(
@@ -1073,6 +1084,31 @@ async def _sweep_array_windows(
                 if 0 <= nb < len(window_texts) and nb not in visited:
                     visited.add(nb)
                     await probe(nb)
+
+    # Entities recur where their kin enumerate: a signature block or schedule deep in
+    # the document lists again the names the opening already gave. An unvisited window
+    # holding SEVERAL already-found items is such a site; patience alone reaches it
+    # only by luck, so those windows are probed outright.
+    known: list[Any] = []
+    for f in array_fields:
+        items = extracted.get(f.path)
+        if isinstance(items, list):
+            known.extend(items)
+    unvisited = [i for i in range(len(window_texts)) if i not in visited]
+    if known and unvisited:
+        hits = _windows_holding_rows(
+            [window_texts[i] for i in unvisited], known, min_rows=_KIN_SITE_MIN_ROWS
+        )
+        for pos in hits[: _FOCUSED_REASK_WINDOWS * 2]:
+            idx = unvisited[pos]
+            if idx in visited:
+                continue
+            visited.add(idx)
+            if await probe(idx):
+                for nb in (idx - 1, idx + 1):
+                    if 0 <= nb < len(window_texts) and nb not in visited:
+                        visited.add(nb)
+                        await probe(nb)
 
     async def split_reprobe(idx: int) -> None:
         """Re-ask window *idx* in two halves; each half is short enough to enumerate."""
