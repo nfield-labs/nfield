@@ -1,0 +1,6 @@
+dataset,documents,gold_fields,coverage,value_accuracy,K_total,value_accuracy_judged
+academic_research,6,1945,0.9681,0.9547,54,0.9588
+finance_10kq,7,8830,0.9116,0.8114,204,0.8539
+finance_credit_agreement,10,265,0.9434,0.8226,109,0.8641
+hiring_resume,7,819,0.8791,0.8156,29,0.873
+sport_swimming,5,505,0.9901,0.9862,16,0.9881

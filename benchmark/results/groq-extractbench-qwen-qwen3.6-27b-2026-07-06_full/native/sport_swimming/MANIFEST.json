@@ -1,0 +1,17 @@
+{
+  "dataset": "sport_swimming",
+  "schema_file": "sport\\swimming\\swimming-schema.json",
+  "documents": 5,
+  "model": "groq/qwen/qwen3.6-27b",
+  "reasoning_model": true,
+  "budget": "native",
+  "aggregate": {
+    "dataset": "sport_swimming",
+    "documents": 5,
+    "gold_fields": 505,
+    "coverage": 0.9901,
+    "value_accuracy": 0.9862,
+    "K_total": 16
+  },
+  "recorded_at": "2026-07-06T11:35:21+00:00"
+}
