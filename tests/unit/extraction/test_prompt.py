@@ -204,3 +204,26 @@ class TestKnowledgeFallback:
         )
         assert "well-established knowledge" not in strict[0]["content"]
         assert "well-established knowledge" in loose[0]["content"]
+
+
+class TestSharedShapePrompt:
+    """The user message defines a repeated item shape once above the field list."""
+
+    def test_shared_block_precedes_fields_and_lines_reference_it(self) -> None:
+        items = {
+            "type": "object",
+            "properties": {
+                "period": {"type": "string", "enum": ["q1", "q2"]},
+                "amount": {"type": "number"},
+            },
+        }
+        fields = [
+            Field("rev", "array", {"items": items}, "", {"items": items}),
+            Field("cost", "array", {"items": items}, "", {"items": items}),
+        ]
+        msgs = build_extraction_prompt(fields, "some document", TemplateType.STANDARD)
+        user = msgs[1]["content"]
+        assert user.count("period: string") == 1
+        assert "entry shape S1" in user
+        assert user.index("Shared entry shapes") < user.index("rev (array)")
+        assert "rev (array) | items: entry shape S1" in user

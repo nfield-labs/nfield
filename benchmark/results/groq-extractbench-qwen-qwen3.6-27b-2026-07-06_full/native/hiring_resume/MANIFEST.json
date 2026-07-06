@@ -1,0 +1,17 @@
+{
+  "dataset": "hiring_resume",
+  "schema_file": "hiring\\resume\\resume-schema.json",
+  "documents": 7,
+  "model": "groq/qwen/qwen3.6-27b",
+  "reasoning_model": true,
+  "budget": "native",
+  "aggregate": {
+    "dataset": "hiring_resume",
+    "documents": 7,
+    "gold_fields": 819,
+    "coverage": 0.8791,
+    "value_accuracy": 0.7705,
+    "K_total": 29
+  },
+  "recorded_at": "2026-07-06T11:39:18+00:00"
+}

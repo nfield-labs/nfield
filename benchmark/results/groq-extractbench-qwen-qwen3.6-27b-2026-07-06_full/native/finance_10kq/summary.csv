@@ -1,0 +1,8 @@
+document,gold_fields,coverage,value_accuracy,K,status,seconds,value_accuracy_judged
+adp_10q_fy2025q2,1140,0.9289,0.8439,25,success,197.7,0.8737
+csco_10q_fy2025q2,1407,0.8344,0.7605,38,success,245.7,0.8209
+dell_10q_fy2025q2,1127,0.9654,0.866,30,success,408.0,0.921
+mck_10q_fy2025q2,1240,0.9339,0.8379,31,success,340.8,0.8661
+nke_10q_fy2025q2,1328,0.9255,0.8148,26,success,244.9,0.8848
+tho_10q_fy2025q2,1231,0.9277,0.7425,27,success,273.8,0.7847
+wdc_10q_fy2025q2,1357,0.8836,0.8268,27,success,260.3,0.8371

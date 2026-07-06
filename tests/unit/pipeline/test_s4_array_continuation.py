@@ -897,3 +897,487 @@ class TestMergeObjectDedup:
     def test_exact_duplicate_not_added(self):
         merged = [{"a": "x"}]
         assert _merge_window_items(merged, [{"a": "x"}]) == 0
+
+
+class TestDocumentPreamble:
+    """Continuation windows carry the document-head context."""
+
+    def test_head_segments_within_cap(self):
+        from nfield.pipeline.s4_extract import _document_preamble
+
+        state = _state()
+        segs = state.segments
+        cap = len(segs[0].text) + len(segs[1].text) + 10
+        preamble = _document_preamble(state, cap)
+        assert preamble == f"{segs[0].text}\n\n{segs[1].text}"
+
+    def test_oversized_first_segment_cut_at_cap(self):
+        from nfield.pipeline.s4_extract import _document_preamble
+
+        state = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)
+        state.segments = [_big_segment()]
+        preamble = _document_preamble(state, 150)
+        assert preamble == _big_segment().text[:150]
+
+    def test_cap_rides_in_input_slack_never_content(self):
+        from nfield.pipeline.s4_extract import _preamble_cap, _window_chars
+
+        state = _state()
+        leaf = _leaf()
+        window_chars = _window_chars(leaf, state)
+        cap = _preamble_cap(leaf, state, window_chars)
+        # Output-bound window leaves input slack; the cap uses it, bounded by fraction.
+        assert 0 < cap <= int(window_chars * 0.15)
+        # An input-bound window has no slack: the preamble must vanish, not displace.
+        tight = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=100.0)
+        tight.segments = _segments()
+        assert _preamble_cap(_leaf(), tight, _window_chars(_leaf(), tight)) == 0
+
+    def test_no_segments_or_budget_yields_empty(self):
+        from nfield.pipeline.s4_extract import _document_preamble
+
+        empty = PipelineState(chars_per_token=4.0, C_eff=8192, M_O=1024, C_usable=4096.0)
+        empty.segments = []
+        assert _document_preamble(empty, 10_000) == ""
+        assert _document_preamble(_state(), 0) == ""
+
+    @pytest.mark.asyncio
+    async def test_sweep_prepends_preamble_to_windows(self):
+        from nfield.pipeline.s4_extract import _sweep_array_windows
+
+        state = _state()
+        leaf = _leaf()
+
+        class CapturingProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("refs = []")
+                self.prompts: list[str] = []
+
+            async def complete(self, messages, *, max_tokens):
+                self.prompts.append("\n".join(m.get("content", "") for m in messages))
+                return await super().complete(messages, max_tokens=max_tokens)
+
+        provider = CapturingProvider()
+        extracted: dict[str, object] = {"refs": []}
+        head = "ACME CORP QUARTERLY REPORT for the period ended March 31"
+        await _sweep_array_windows(
+            ["mid-document window text"], [REFS], leaf, provider, state, extracted, preamble=head
+        )
+        assert provider.prompts and head in provider.prompts[0]
+
+    @pytest.mark.asyncio
+    async def test_window_already_starting_with_head_not_doubled(self):
+        from nfield.pipeline.s4_extract import _sweep_array_windows
+
+        state = _state()
+        leaf = _leaf()
+
+        class CapturingProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("refs = []")
+                self.prompts: list[str] = []
+
+            async def complete(self, messages, *, max_tokens):
+                self.prompts.append("\n".join(m.get("content", "") for m in messages))
+                return await super().complete(messages, max_tokens=max_tokens)
+
+        provider = CapturingProvider()
+        extracted: dict[str, object] = {"refs": []}
+        head = "ACME CORP QUARTERLY REPORT"
+        window = f"{head}\n\nfirst window body"
+        await _sweep_array_windows(
+            [window], [REFS], leaf, provider, state, extracted, preamble=head
+        )
+        assert provider.prompts[0].count(head) == 1
+
+
+def _dim_field(name: str) -> Field:
+    items = {
+        "type": "object",
+        "properties": {
+            "level": {"type": "string", "enum": ["total", "regional", "divisional"]},
+            "label": {"type": "string"},
+            "amount": {"type": "number"},
+        },
+    }
+    return Field(name, "array", {"items": items}, "", {"items": items})
+
+
+class TestAxisStarvation:
+    """A dimension array missing an axis value a sibling proved present is starved."""
+
+    def test_starved_field_detected_with_proof_rows(self):
+        from nfield.pipeline.s4_extract import _axis_starved_fields
+
+        revenue, cost = _dim_field("revenue"), _dim_field("cost")
+        extracted = {
+            "revenue": [{"level": "total", "label": "all", "amount": 100}],
+            "cost": [
+                {"level": "total", "label": "all", "amount": 40},
+                {"level": "regional", "label": "north", "amount": 25},
+                {"level": "regional", "label": "south", "amount": 15},
+            ],
+        }
+        starved = _axis_starved_fields([revenue, cost], extracted)
+        assert len(starved) == 1
+        f, axis, missing, proof = starved[0]
+        assert f.path == "revenue"
+        assert axis == "level"
+        assert missing == {"regional"}
+        assert len(proof) == 2
+
+    def test_empty_array_not_reported(self):
+        from nfield.pipeline.s4_extract import _axis_starved_fields
+
+        revenue, cost = _dim_field("revenue"), _dim_field("cost")
+        extracted = {
+            "revenue": [],
+            "cost": [{"level": "regional", "label": "north", "amount": 25}],
+        }
+        assert _axis_starved_fields([revenue, cost], extracted) == []
+
+    def test_equal_coverage_not_reported(self):
+        from nfield.pipeline.s4_extract import _axis_starved_fields
+
+        revenue, cost = _dim_field("revenue"), _dim_field("cost")
+        row = {"level": "total", "label": "all", "amount": 1}
+        extracted = {"revenue": [row], "cost": [dict(row)]}
+        assert _axis_starved_fields([revenue, cost], extracted) == []
+
+    def test_different_axis_definitions_not_compared(self):
+        from nfield.pipeline.s4_extract import _axis_starved_fields
+
+        revenue = _dim_field("revenue")
+        other_items = {
+            "type": "object",
+            "properties": {
+                "level": {"type": "string", "enum": ["high", "low"]},
+                "amount": {"type": "number"},
+            },
+        }
+        other = Field("other", "array", {"items": other_items}, "", {"items": other_items})
+        extracted = {
+            "revenue": [{"level": "total", "label": "all", "amount": 1}],
+            "other": [{"level": "high", "amount": 2}],
+        }
+        assert _axis_starved_fields([revenue, other], extracted) == []
+
+
+class TestWindowsHoldingRows:
+    """A sibling row places in the window whose text carries its leaves."""
+
+    def test_window_with_two_row_leaves_matches(self):
+        from nfield.pipeline.s4_extract import _windows_holding_rows
+
+        rows = [{"level": "regional", "label": "north region", "amount": 2666}]
+        windows = [
+            "unrelated prose about the business overall",
+            "breakdown table: north region 2666 south region 1500",
+        ]
+        assert _windows_holding_rows(windows, rows) == [1]
+
+    def test_no_match_returns_empty(self):
+        from nfield.pipeline.s4_extract import _windows_holding_rows
+
+        rows = [{"level": "regional", "label": "north region", "amount": 2666}]
+        assert _windows_holding_rows(["nothing relevant here"], rows) == []
+
+
+class TestAxisDeconflictReask:
+    """The starved array is re-asked alone and its missing rows merged."""
+
+    @pytest.mark.asyncio
+    async def test_starved_array_filled_from_sibling_window(self):
+        from nfield.pipeline.s4_extract import _extend_arrays_over_windows
+
+        revenue, cost = _dim_field("revenue"), _dim_field("cost")
+        body = "breakdown table: north region revenue 9090 north region cost 2555"
+        state = _state()
+        state.segments = [
+            Segment(text=body, start=0, end=len(body), segment_type="unstructured", segment_id=0)
+        ]
+        leaf = CapacityLeaf(
+            fields=[revenue, cost],
+            groups=[],
+            document_excerpt=body,
+            overhead=10.0,
+            safe_output=1024,
+            leaf_id=0,
+        )
+        extracted = {
+            "revenue": [{"level": "total", "label": "all", "amount": 100}],
+            "cost": [
+                {"level": "total", "label": "all", "amount": 40},
+                {"level": "regional", "label": "north region", "amount": 2555},
+            ],
+        }
+
+        class DeconflictProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("")
+                self.solo_revenue_calls = 0
+
+            async def complete(self, messages, *, max_tokens):
+                self.calls += 1
+                text = "\n".join(m.get("content", "") for m in messages)
+                if "revenue (array)" in text and "cost (array)" not in text:
+                    self.solo_revenue_calls += 1
+                    return (
+                        'revenue = [{"level": "regional", "label": "north region", "amount": 90}]'
+                    )
+                return "revenue = []\ncost = []"
+
+        provider = DeconflictProvider()
+        await _extend_arrays_over_windows(leaf, provider, state, extracted)
+        assert provider.solo_revenue_calls >= 1
+        levels = {r["level"] for r in extracted["revenue"]}
+        assert levels == {"total", "regional"}
+
+
+class TestRescueCapBonus:
+    """A rescue pass runs even after the general sweep exhausted the window budget."""
+
+    @pytest.mark.asyncio
+    async def test_rescue_runs_at_exhausted_cap(self):
+        from nfield.pipeline.s4_extract import (
+            _max_continuation_windows_per_doc,
+            _sweep_array_windows,
+        )
+
+        state = _state()
+        leaf = _leaf()
+        state.continuation_windows_used = _max_continuation_windows_per_doc(leaf, state)
+        provider = ContinuationProvider(f'refs = ["{ENTRY_1}"]')
+        extracted: dict[str, object] = {"refs": []}
+        await _sweep_array_windows(
+            ["window"], [REFS], leaf, provider, state, extracted, cap_bonus=1
+        )
+        assert provider.calls == 1
+        assert extracted["refs"] == [ENTRY_1]
+
+    @pytest.mark.asyncio
+    async def test_no_bonus_stays_capped(self):
+        from nfield.pipeline.s4_extract import (
+            _max_continuation_windows_per_doc,
+            _sweep_array_windows,
+        )
+
+        state = _state()
+        leaf = _leaf()
+        state.continuation_windows_used = _max_continuation_windows_per_doc(leaf, state)
+        provider = ContinuationProvider(f'refs = ["{ENTRY_1}"]')
+        extracted: dict[str, object] = {"refs": []}
+        await _sweep_array_windows(["window"], [REFS], leaf, provider, state, extracted)
+        assert provider.calls == 0
+
+
+class TestDeconflictRowFilter:
+    """Rescue rows are kept only for the axis values the rescue asked for."""
+
+    @pytest.mark.asyncio
+    async def test_reworded_existing_rows_dropped_missing_axis_rows_kept(self):
+        from nfield.pipeline.s4_extract import _extend_arrays_over_windows
+
+        revenue, cost = _dim_field("revenue"), _dim_field("cost")
+        body = "breakdown table: north region revenue 9090 north region cost 2555"
+        state = _state()
+        state.segments = [
+            Segment(text=body, start=0, end=len(body), segment_type="unstructured", segment_id=0)
+        ]
+        leaf = CapacityLeaf(
+            fields=[revenue, cost],
+            groups=[],
+            document_excerpt=body,
+            overhead=10.0,
+            safe_output=1024,
+            leaf_id=0,
+        )
+        extracted = {
+            "revenue": [{"level": "total", "label": "all", "amount": 100}],
+            "cost": [
+                {"level": "total", "label": "all", "amount": 40},
+                {"level": "regional", "label": "north region", "amount": 2555},
+            ],
+        }
+
+        class RewordingProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("")
+
+            async def complete(self, messages, *, max_tokens):
+                self.calls += 1
+                text = "\n".join(m.get("content", "") for m in messages)
+                if "revenue (array)" in text and "cost (array)" not in text:
+                    # One real regional row plus the total row re-worded.
+                    return (
+                        'revenue = [{"level": "regional", "label": "north region", '
+                        '"amount": 9090}, {"level": "total", "label": "ALL SEGMENTS", '
+                        '"amount": 100}]'
+                    )
+                return "revenue = []\ncost = []"
+
+        await _extend_arrays_over_windows(leaf, RewordingProvider(), state, extracted)
+        labels = [r["label"] for r in extracted["revenue"]]
+        assert "north region" in labels
+        assert "ALL SEGMENTS" not in labels
+        assert [r["level"] for r in extracted["revenue"]].count("total") == 1
+
+
+class TestKinSiteProbe:
+    """An unvisited window where several known items recur is probed outright."""
+
+    @pytest.mark.asyncio
+    async def test_signature_style_window_probed_after_patience(self):
+        from nfield.pipeline.s4_extract import (
+            _CONTINUATION_STOP_AFTER_EMPTY,
+            _sweep_array_windows,
+        )
+
+        known_1 = "First Global Finance Corporation, N.A."
+        known_2 = "Second Continental Trust Company PLC"
+        tail_entry = "Distant Harbour Lending Partners LLC"
+        # Enough empty prose windows to exhaust patience, then the signature window.
+        windows = ["prose only " * 30] * (_CONTINUATION_STOP_AFTER_EMPTY + 2)
+        windows.append(f"IN WITNESS WHEREOF\n{known_1}\n{known_2}\n{tail_entry}")
+        windows.append("exhibit boilerplate " * 30)
+
+        class SignatureProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("")
+
+            async def complete(self, messages, *, max_tokens):
+                self.calls += 1
+                text = "\n".join(m.get("content", "") for m in messages)
+                if "WITNESS" in text:
+                    return f'refs = ["{known_1}", "{known_2}", "{tail_entry}"]'
+                return "refs = []"
+
+        state = _state()
+        state.segments = [_big_segment()]
+        leaf = _leaf()
+        provider = SignatureProvider()
+        extracted: dict[str, object] = {"refs": [known_1, known_2]}
+        await _sweep_array_windows(windows, [REFS], leaf, provider, state, extracted)
+        assert tail_entry in extracted["refs"]
+
+    def test_single_recurring_name_is_not_a_site(self):
+        from nfield.pipeline.s4_extract import _windows_holding_rows
+
+        rows = ["First Global Finance Corporation, N.A.", "Second Continental Trust Company"]
+        windows = [
+            "prose mentioning First Global Finance Corporation, N.A. as agent hereunder",
+            "First Global Finance Corporation, N.A.\nSecond Continental Trust Company",
+        ]
+        assert _windows_holding_rows(windows, rows, min_rows=2) == [1]
+
+    def test_densest_window_ranks_first(self):
+        from nfield.pipeline.s4_extract import _windows_holding_rows
+
+        rows = ["Alpha Partners Limited", "Beta Holdings Incorporated", "Gamma Capital Group"]
+        windows = [
+            "Alpha Partners Limited and Beta Holdings Incorporated",
+            "Alpha Partners Limited, Beta Holdings Incorporated, Gamma Capital Group",
+        ]
+        assert _windows_holding_rows(windows, rows, min_rows=2) == [1, 0]
+
+
+class TestPreambleOnlyForDimensionArrays:
+    """The head context reaches dimension-array sweeps only; entry lists sweep bare."""
+
+    @pytest.mark.asyncio
+    async def test_scalar_array_sweep_carries_no_preamble(self):
+        from nfield.pipeline.s4_extract import _extend_arrays_over_windows
+
+        state = _state()
+        state.segments = [
+            Segment(
+                text="OPENING IDENTITY BLOCK for the record",
+                start=0,
+                end=37,
+                segment_type="unstructured",
+                segment_id=0,
+            ),
+            Segment(
+                text=f"[1] {ENTRY_1}\n[2] {ENTRY_2}\n" + "entry filler line\n" * 160,
+                start=100,
+                end=3200,
+                segment_type="unstructured",
+                segment_id=1,
+            ),
+            Segment(
+                text="closing prose paragraph\n" * 130,
+                start=3300,
+                end=6400,
+                segment_type="unstructured",
+                segment_id=2,
+            ),
+        ]
+        leaf = _leaf()
+
+        class CapturingProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("refs = []")
+                self.prompts: list[str] = []
+
+            async def complete(self, messages, *, max_tokens):
+                self.prompts.append("\n".join(m.get("content", "") for m in messages))
+                return await super().complete(messages, max_tokens=max_tokens)
+
+        provider = CapturingProvider()
+        extracted: dict[str, object] = {"refs": []}
+        await _extend_arrays_over_windows(leaf, provider, state, extracted)
+        assert provider.prompts
+        assert all("context only" not in p for p in provider.prompts)
+
+    @pytest.mark.asyncio
+    async def test_dimension_array_sweep_carries_preamble(self):
+        from nfield.pipeline.s4_extract import _extend_arrays_over_windows
+
+        field = _dim_field("sales")
+        state = _state()
+        state.segments = [
+            Segment(
+                text="OPENING IDENTITY BLOCK for the record",
+                start=0,
+                end=37,
+                segment_type="unstructured",
+                segment_id=0,
+            ),
+            Segment(
+                text="north 120 south 80 " * 160,
+                start=100,
+                end=3200,
+                segment_type="unstructured",
+                segment_id=1,
+            ),
+            Segment(
+                text="east 40 west 30 " * 190,
+                start=3300,
+                end=6400,
+                segment_type="unstructured",
+                segment_id=2,
+            ),
+        ]
+        leaf = CapacityLeaf(
+            fields=[field],
+            groups=[],
+            document_excerpt="",
+            overhead=10.0,
+            safe_output=1024,
+            leaf_id=0,
+        )
+
+        class CapturingProvider(ContinuationProvider):
+            def __init__(self):
+                super().__init__("sales = []")
+                self.prompts: list[str] = []
+
+            async def complete(self, messages, *, max_tokens):
+                self.prompts.append("\n".join(m.get("content", "") for m in messages))
+                return await super().complete(messages, max_tokens=max_tokens)
+
+        provider = CapturingProvider()
+        extracted: dict[str, object] = {"sales": []}
+        await _extend_arrays_over_windows(leaf, provider, state, extracted)
+        assert provider.prompts
+        assert any("OPENING IDENTITY BLOCK" in p and "context only" in p for p in provider.prompts)

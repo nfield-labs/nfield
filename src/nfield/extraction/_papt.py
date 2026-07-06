@@ -100,6 +100,8 @@ def select_template(
 def describe_field(
     field: Field,
     template_type: TemplateType,
+    *,
+    shape_labels: dict[str, str] | None = None,
 ) -> str:
     """Produce a complete, human-readable description line for a single field.
 
@@ -119,6 +121,10 @@ def describe_field(
         field: The field to describe.
         template_type: Retained for prompt-scaffolding selection; does not strip
             any part of a field's spec.
+        shape_labels: Optional mapping of a rendered item shape to the name of a
+            shared definition stated once above the field list; a field whose item
+            shape is in the map references the name instead of repeating the shape;
+            the field's dimension directive stays inline either way.
 
     Returns:
         A single-line string fully describing the field.
@@ -152,8 +158,12 @@ def describe_field(
 
     item_text = _format_array_items(field)
     if item_text:
-        parts.append(f" | items: {item_text}")
+        shape_label = (shape_labels or {}).get(item_text)
+        parts.append(f" | items: {shape_label or item_text}")
 
+    # The dimension directive always stays on the field's own line: it is per-field
+    # steering, and hoisting it into a shared definition turns it into a blanket
+    # command the model over-enumerates against.
     dimension_text = _dimension_directive(field)
     if dimension_text:
         parts.append(f" | {dimension_text}")
@@ -360,6 +370,50 @@ def _describe_item_field(name: str, sub: Any, depth: int = 1) -> str:
             # Kept in full: per-key conventions tell the model which rows to emit.
             text += f" ({desc})"
     return text
+
+
+# An item shape must repeat across at least this many sibling arrays before it is
+# worth naming once and referencing; a shape used once reads best inline.
+_MIN_SHARED_SHAPE_FIELDS: int = 2
+
+
+def shared_item_shapes(fields: list[Field]) -> tuple[str, dict[str, str]]:
+    """Factor item shapes repeated across sibling arrays into named definitions.
+
+    A schema often gives many array fields the same item schema; repeating the
+    rendered shape per field makes the model re-read identical text once per field
+    and buries each field's own meaning. Shapes shared by at least
+    :data:`_MIN_SHARED_SHAPE_FIELDS` object arrays are stated once and fields
+    reference the name. Only the SHAPE is shared - each field keeps its own
+    dimension directive inline, since steering hoisted into a blanket definition
+    over-enumerates. Driven by shape equality, never field names.
+
+    Args:
+        fields: The fields of one extraction call.
+
+    Returns:
+        ``(definitions block, {rendered shape: name})``; both empty when no shape
+        repeats.
+    """
+    by_shape: dict[str, list[Field]] = {}
+    for f in fields:
+        text = _format_array_items(f)
+        if text.startswith("object {"):
+            by_shape.setdefault(text, []).append(f)
+    shared = {t: fs for t, fs in by_shape.items() if len(fs) >= _MIN_SHARED_SHAPE_FIELDS}
+    if not shared:
+        return "", {}
+    labels: dict[str, str] = {}
+    lines: list[str] = []
+    for i, text in enumerate(shared, start=1):
+        name = f"entry shape S{i}"
+        labels[text] = name
+        lines.append(f"{name} = {text}")
+    block = (
+        "Shared entry shapes (fields below reference these by name; expand the "
+        "named shape exactly as defined here):\n" + "\n".join(lines)
+    )
+    return block, labels
 
 
 def _format_array_items(field: Field) -> str:

@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from nfield.extraction._papt import TemplateType, describe_field
+from nfield.extraction._papt import TemplateType, describe_field, shared_item_shapes
 
 if TYPE_CHECKING:
     from nfield.schema._types import Field
@@ -63,7 +63,8 @@ early, never skip items. Each item must be that entry's COMPLETE text as written
 document, from the entry's start to where the next entry begins - keep every name, initial, \
 and date; never shorten, summarise, or reword an item, and never output only an entry's \
 label, key, or number in place of its text.
-- For array fields whose items are objects (shown as "items: object {{...}}"): output the \
+- For array fields whose items are objects (shown as "items: object {{...}}", or as \
+"items: entry shape Sn" naming a shared shape defined once above the field list): output the \
 value as ONE line of compact, valid JSON - a single array of objects - using the exact keys \
 and the nested shape shown. Emit ONE object for EVERY distinct entry the document lists \
 (every row, record, period, or line item) and never merge or summarise several entries into \
@@ -429,12 +430,14 @@ def _format_field_list(
         Multi-line string with one field description per line.
     """
     reasons = field_reasons or {}
+    shape_block, shape_labels = shared_item_shapes(fields)
     lines: list[str] = []
     for f in fields:
-        line = describe_field(f, template_type)
+        line = describe_field(f, template_type, shape_labels=shape_labels)
         reason = reasons.get(f.path)
         lines.append(f"{line}  [{reason}]" if reason else line)
-    return "\n".join(lines)
+    body = "\n".join(lines)
+    return f"{shape_block}\n\n{body}" if shape_block else body
 
 
 def _format_document_excerpt(excerpt: str) -> str:

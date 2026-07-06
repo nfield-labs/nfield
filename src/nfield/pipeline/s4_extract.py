@@ -84,6 +84,18 @@ _CONTINUATION_MIN_YIELD: int = 3
 _WINDOW_OUTPUT_HEADROOM: float = 1.25
 # Top-relevance windows re-asked for a single array left empty beside yielding siblings.
 _FOCUSED_REASK_WINDOWS: int = 2
+# Placing a sibling's row in a window: leaves shorter than this are too generic to
+# match, and a window must hold this many of one row's leaves to count as its source.
+_DECONFLICT_LEAF_MIN_CHARS: int = 4
+_DECONFLICT_MIN_LEAF_MATCHES: int = 2
+# An unvisited window is an enumeration site only when several known items recur in
+# it together; one recurring name is ordinary prose (an agent is named everywhere).
+_KIN_SITE_MIN_ROWS: int = 2
+# A document states its global identity once, at the top (what it is, what period or
+# scope it covers); a bare mid-document window forces the model to re-infer those
+# facts per row. Each window lends at most this fraction to that head context, so
+# content keeps the rest.
+_PREAMBLE_WINDOW_FRACTION: float = 0.15
 # At most this many items all restating the field key = the document's mention of
 # the field, not its entries.
 _PLACEHOLDER_MAX_ITEMS: int = 2
@@ -519,7 +531,14 @@ async def _extend_arrays_over_windows(
     for g in leaf.groups:
         for seg, sc in zip(g.matched_segments, g.segment_scores, strict=False):
             score_by_id[seg.segment_id] = max(score_by_id.get(seg.segment_id, 0.0), sc)
-    windows = _pack_windows(region, _window_chars(leaf, state), score_by_id)
+    window_chars = _window_chars(leaf, state)
+    # The head supplies row-LABELLING facts (period, units, scope), which only
+    # dimensioned rows carry; an entry list is copied verbatim and gains nothing,
+    # while the extra head text measurably depresses its enumeration yield.
+    preamble = ""
+    if dimensioned:
+        preamble = _document_preamble(state, _preamble_cap(leaf, state, window_chars))
+    windows = _pack_windows(region, window_chars, score_by_id)
     visit_order = sorted(range(len(windows)), key=lambda i: windows[i][1], reverse=True)
     await _sweep_array_windows(
         [text for text, _ in windows],
@@ -529,6 +548,7 @@ async def _extend_arrays_over_windows(
         state,
         extracted,
         visit_order=visit_order,
+        preamble=preamble,
     )
 
     # Under output pressure a window fills some arrays and leaves siblings empty; a
@@ -537,7 +557,155 @@ async def _extend_arrays_over_windows(
     if still_empty and len(still_empty) < len(array_fields):
         top = [windows[i][0] for i in visit_order[:_FOCUSED_REASK_WINDOWS]]
         for f in still_empty:
-            await _sweep_array_windows(top, [f], leaf, provider, state, extracted)
+            await _sweep_array_windows(
+                top, [f], leaf, provider, state, extracted, preamble=preamble
+            )
+
+    # A dimension array lacking an axis value a sibling's rows prove the document
+    # reports (same axis, same allowed values) was starved by shared output, not
+    # absence. All starved arrays are re-asked in ONE pass - together they face far
+    # less output competition than the full sweep that starved them, and one call
+    # per window replaces one call per field per window. No fallback: when the proof
+    # rows locate nowhere, there is no target worth a call.
+    window_texts = [text for text, _ in windows]
+    starved_fields: list[Field] = []
+    starved_reasons: dict[str, str] = {}
+    wanted_axis_values: dict[str, list[tuple[str, set[str]]]] = {}
+    target_union: list[int] = []
+    for f, axis, missing, proof in _axis_starved_fields(array_fields, extracted):
+        targets = _windows_holding_rows(window_texts, proof)
+        if not targets:
+            continue
+        if f.path not in wanted_axis_values:
+            starved_fields.append(f)
+        wanted_axis_values.setdefault(f.path, []).append((axis, missing))
+        starved_reasons[f.path] = (
+            _continuation_reason(f)
+            + f". Related fields show this document reports {axis} values "
+            + f"[{', '.join(sorted(missing))}]; this field's own value may be reported "
+            + "for those as well - emit an entry for each such figure shown here"
+        )
+        target_union.extend(i for i in targets if i not in target_union)
+    if starved_fields:
+        target_union = target_union[: _FOCUSED_REASK_WINDOWS * 2]
+        logger.info(
+            "axis-starved arrays %s: re-asking together over %d window(s)",
+            sorted(f.path for f in starved_fields),
+            len(target_union),
+        )
+        # The pass asks ONLY for the missing axis values; a returned row covering an
+        # already-held value is the same row re-worded (label order drifts between
+        # calls), and merging it would give two variants of one entry.
+        row_filters = {
+            path: _axis_membership_filter(wanted) for path, wanted in wanted_axis_values.items()
+        }
+        await _sweep_array_windows(
+            [window_texts[i] for i in target_union],
+            starved_fields,
+            leaf,
+            provider,
+            state,
+            extracted,
+            preamble=preamble,
+            reasons=starved_reasons,
+            cap_bonus=len(target_union),
+            row_filters=row_filters,
+        )
+
+
+def _axis_membership_filter(wanted: list[tuple[str, set[str]]]) -> Any:
+    """Predicate keeping only object rows whose axis value is one asked for."""
+
+    def keep(row: Any) -> bool:
+        return isinstance(row, dict) and any(
+            str(row.get(axis)) in missing for axis, missing in wanted
+        )
+
+    return keep
+
+
+def _axis_starved_fields(
+    array_fields: list[Field], extracted: dict[str, Any]
+) -> list[tuple[Field, str, set[str], list[Any]]]:
+    """Dimension arrays missing an axis value a sibling's rows prove is reported.
+
+    Two arrays sharing an axis definition (same property name, same allowed values)
+    describe the same labelled breakdown; when one holds rows for an axis value the
+    other lacks entirely, the document demonstrably reports that breakdown, so the
+    lack is under-emission rather than absence. Empty arrays are excluded - they are
+    the focused re-ask's case, and an axis read from zero rows proves nothing.
+
+    Returns:
+        ``(field, axis name, missing values, sibling proof rows)`` per starved array.
+    """
+    out: list[tuple[Field, str, set[str], list[Any]]] = []
+    for f in array_fields:
+        mine_items = extracted.get(f.path)
+        if not isinstance(mine_items, list) or not mine_items:
+            continue
+        for axis, allowed in dimension_axes(f):
+            allowed_key = (axis, tuple(allowed))
+            mine = _axis_values(mine_items, axis)
+            missing: set[str] = set()
+            proof: list[Any] = []
+            for g in array_fields:
+                if g is f or (axis, tuple(dict(dimension_axes(g)).get(axis, ()))) != allowed_key:
+                    continue
+                sib_items = extracted.get(g.path)
+                if not isinstance(sib_items, list):
+                    continue
+                for item in sib_items:
+                    if not isinstance(item, dict):
+                        continue
+                    value = str(item.get(axis))
+                    if value in allowed and value not in mine:
+                        missing.add(value)
+                        proof.append(item)
+            if missing:
+                out.append((f, axis, missing, proof))
+    return out
+
+
+def _axis_values(items: list[Any], axis: str) -> set[str]:
+    """Distinct values an array's object items carry for one axis property."""
+    return {
+        str(item[axis])
+        for item in items
+        if isinstance(item, dict) and item.get(axis) not in (None, "")
+    }
+
+
+def _windows_holding_rows(
+    window_texts: list[str], rows: list[Any], min_rows: int = 1
+) -> list[int]:
+    """Indices of windows holding at least *min_rows* of the rows, densest first.
+
+    A row places in a window when at least :data:`_DECONFLICT_MIN_LEAF_MATCHES` of
+    its leaves (each at least :data:`_DECONFLICT_LEAF_MIN_CHARS` chars, folded the
+    same way grounding folds) appear in the window text; a scalar row has one leaf,
+    so its full text placing suffices.
+    """
+    leaf_sets = [
+        [
+            _ground_norm(s)
+            for s in _string_leaves(row)
+            if len(s.strip()) >= _DECONFLICT_LEAF_MIN_CHARS
+        ]
+        for row in rows
+    ]
+    counts: dict[int, int] = {}
+    for i, text in enumerate(window_texts):
+        norm = _ground_norm(text)
+        matched = 0
+        for leaves in leaf_sets:
+            if not leaves:
+                continue
+            required = min(_DECONFLICT_MIN_LEAF_MATCHES, len(leaves))
+            if sum(1 for lf in leaves if lf and lf in norm) >= required:
+                matched += 1
+        if matched >= min_rows:
+            counts[i] = matched
+    return sorted(counts, key=lambda i: (-counts[i], i))
 
 
 async def _continue_truncated_arrays(
@@ -583,9 +751,19 @@ async def _continue_truncated_arrays(
         len(tail),
         " from last salvaged item" if anchor_start is not None else " (full document)",
     )
-    windows = _pack_windows(tail, _window_chars(leaf, state), {})
+    window_chars = _window_chars(leaf, state)
+    preamble = ""
+    if any(dimension_axes(f) for f in array_fields):
+        preamble = _document_preamble(state, _preamble_cap(leaf, state, window_chars))
+    windows = _pack_windows(tail, window_chars, {})
     await _sweep_array_windows(
-        [text for text, _ in windows], array_fields, leaf, provider, state, extracted
+        [text for text, _ in windows],
+        array_fields,
+        leaf,
+        provider,
+        state,
+        extracted,
+        preamble=preamble,
     )
 
 
@@ -638,6 +816,50 @@ def _window_chars(leaf: CapacityLeaf, state: PipelineState) -> int:
     output_chars = int(leaf.safe_output * cpt * _OUTPUT_WINDOW_FACTOR)
     # Fall back to the input bound if the output bound rounds to zero.
     return max(1, min(input_chars, output_chars) or input_chars)
+
+
+def _preamble_cap(leaf: CapacityLeaf, state: PipelineState, window_chars: int) -> int:
+    """Characters the document-head preamble may add on top of a window.
+
+    The window is output-bound (items are copied verbatim), so input capacity
+    usually has slack beyond the window text; the preamble rides in that slack and
+    never displaces content. Capped at the window fraction so a huge input budget
+    still cannot bury the window under head text.
+    """
+    cpt = max(state.chars_per_token, 1.0)
+    input_chars = int(max(0.0, state.C_usable - leaf.overhead) * cpt)
+    safe_chars = safe_excerpt_chars(state.C_eff, leaf.overhead, leaf.safe_output, cpt)
+    slack = max(0, min(input_chars, safe_chars) - window_chars)
+    return min(int(window_chars * _PREAMBLE_WINDOW_FRACTION), slack)
+
+
+def _document_preamble(state: PipelineState, cap: int) -> str:
+    """Document-head context prepended to continuation windows.
+
+    Values deep in a document are labelled by facts its opening states once (title
+    block, covered period, declared units or scope); a window cut below them loses
+    those facts. Leading whole segments are taken until the cap; a first segment
+    larger than the cap is cut at it, since identity lines sit at its top.
+
+    Args:
+        state: Pipeline state carrying the document segments.
+        cap: Maximum preamble characters (see :func:`_preamble_cap`).
+
+    Returns:
+        The head text, or ``""`` when there are no segments or no budget.
+    """
+    if cap <= 0 or not state.segments:
+        return ""
+    parts: list[str] = []
+    size = 0
+    for seg in sorted(state.segments, key=lambda s: s.start):
+        if not parts and len(seg.text) > cap:
+            return seg.text[:cap]
+        if size + len(seg.text) > cap:
+            break
+        parts.append(seg.text)
+        size += len(seg.text)
+    return "\n\n".join(parts)
 
 
 def _pack_windows(
@@ -714,6 +936,10 @@ async def _sweep_array_windows(
     state: PipelineState,
     extracted: dict[str, Any],
     visit_order: list[int] | None = None,
+    preamble: str = "",
+    reasons: dict[str, str] | None = None,
+    cap_bonus: int = 0,
+    row_filters: dict[str, Any] | None = None,
 ) -> None:
     """Ask each window only for the array fields and merge new items with dedupe.
 
@@ -723,13 +949,20 @@ async def _sweep_array_windows(
     the whole cluster is walked before the ordering moves elsewhere. Stops after
     :data:`_CONTINUATION_STOP_AFTER_EMPTY` consecutive windows yield almost
     nothing, never exceeding the document-sized per-document window budget.
+
+    *preamble* (the document head) is prepended to every window except one that
+    already starts with it, so each call keeps the document's global identity.
     """
-    reasons = {f.path: _continuation_reason(f) for f in array_fields}
+    reasons = reasons or {f.path: _continuation_reason(f) for f in array_fields}
     from nfield.schema._types import CapacityLeaf
 
     # Document-sized shared budget: a schema with many empty arrays would otherwise
-    # sweep once per leaf and multiply the call count without bound.
+    # sweep once per leaf and multiply the call count without bound. A rescue pass
+    # (deterministic trigger, few windows) is granted its own headroom over whatever
+    # is already spent, so earlier passes exhausting the budget cannot silence it.
     per_doc_cap = _max_continuation_windows_per_doc(leaf, state)
+    if cap_bonus:
+        per_doc_cap = max(per_doc_cap, state.continuation_windows_used + cap_bonus)
 
     async def probe_text(window_text: str, idx: int) -> tuple[int, int] | None:
         """One window call; merge new items; return (raw count, new-item yield)."""
@@ -743,10 +976,20 @@ async def _sweep_array_windows(
             leaf.safe_output,
             max(1, math.ceil(len(window_text) * _WINDOW_OUTPUT_HEADROOM / cpt)),
         )
+        # The head is context for interpreting rows (labels, periods, units), never a
+        # source of entries: a document opening often SUMMARISES its lists ("...and
+        # the other parties hereto"), and unlabelled it displaces real enumeration.
+        excerpt = window_text
+        if preamble and not window_text.startswith(preamble):
+            excerpt = (
+                "[Document opening - context only for labels, periods, units; do not "
+                f"extract entries from it:]\n{preamble}\n"
+                f"[Portion to extract from:]\n{window_text}"
+            )
         window_leaf = CapacityLeaf(
             fields=array_fields,
             groups=[],
-            document_excerpt=window_text,
+            document_excerpt=excerpt,
             overhead=leaf.overhead,
             safe_output=window_output,
             leaf_id=leaf.leaf_id,
@@ -765,6 +1008,11 @@ async def _sweep_array_windows(
             more = parsed.get(f.path)
             if not isinstance(more, list) or not more or _is_ordinal_run(more):
                 continue
+            keep = (row_filters or {}).get(f.path)
+            if keep is not None:
+                more = [row for row in more if keep(row)]
+                if not more:
+                    continue
             raw_count += len(more)
             base = extracted.get(f.path)
             merged = list(base) if isinstance(base, list) else []
@@ -843,6 +1091,31 @@ async def _sweep_array_windows(
                 if 0 <= nb < len(window_texts) and nb not in visited:
                     visited.add(nb)
                     await probe(nb)
+
+    # Entities recur where their kin enumerate: a signature block or schedule deep in
+    # the document lists again the names the opening already gave. An unvisited window
+    # holding SEVERAL already-found items is such a site; patience alone reaches it
+    # only by luck, so those windows are probed outright.
+    known: list[Any] = []
+    for f in array_fields:
+        items = extracted.get(f.path)
+        if isinstance(items, list):
+            known.extend(items)
+    unvisited = [i for i in range(len(window_texts)) if i not in visited]
+    if known and unvisited:
+        hits = _windows_holding_rows(
+            [window_texts[i] for i in unvisited], known, min_rows=_KIN_SITE_MIN_ROWS
+        )
+        for pos in hits[: _FOCUSED_REASK_WINDOWS * 2]:
+            idx = unvisited[pos]
+            if idx in visited:
+                continue
+            visited.add(idx)
+            if await probe(idx):
+                for nb in (idx - 1, idx + 1):
+                    if 0 <= nb < len(window_texts) and nb not in visited:
+                        visited.add(nb)
+                        await probe(nb)
 
     async def split_reprobe(idx: int) -> None:
         """Re-ask window *idx* in two halves; each half is short enough to enumerate."""

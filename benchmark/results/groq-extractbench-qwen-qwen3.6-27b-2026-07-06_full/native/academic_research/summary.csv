@@ -1,0 +1,7 @@
+document,gold_fields,coverage,value_accuracy,K,status,seconds,value_accuracy_judged
+[fan24] rag survey,237,1.0,0.9747,4,success,126.9,0.9831
+[li25] vlm survey,295,0.9898,0.9729,4,partial,103.2,0.9864
+[zhao25] a survey of LLMs,1116,0.9525,0.9489,27,partial,735.1,0.9489
+NIPS-1989-handwritten-digit-recognition-with-a-back-propagation-network-Paper,29,1.0,0.9655,7,partial,62.5,0.9655
+shah24--flashattention-3,90,0.9889,0.9778,7,success,44.3,0.9778
+survey of dimensionality reduction techniques,178,0.9719,0.9213,5,partial,66.1,0.9326
