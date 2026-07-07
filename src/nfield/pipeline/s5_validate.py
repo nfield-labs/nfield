@@ -2,10 +2,11 @@
 
 Zero API calls. For every leaf, validates extracted values against type and
 constraint rules. Filled values that fail are marked ``FAILED``; fields the model
-left ``PENDING`` are marked ``FAILED`` too. When grounding is enabled, a filled value
-the leaf's excerpt does not support is also marked ``FAILED`` (anti-hallucination), so
-the recovery pass re-extracts it. All re-extraction is performed by the recovery pass
-(Stage 5.5), so this stage only settles state.
+left ``PENDING`` are marked ``FAILED`` too. When grounding is enabled, each filled
+value is additionally labelled with how well the leaf's excerpt supports it - a
+non-destructive signal, never a drop, since a correct value is often not verbatim
+(units, derived period labels, enum choices). All re-extraction is performed by the
+recovery pass (Stage 5.5), so this stage only settles state.
 """
 
 from __future__ import annotations
@@ -13,7 +14,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from nfield.validation._grounding import grounding_score, is_groundable
+from nfield.validation._grounding import ground_value
 from nfield.validation._type_check import validate_field
 
 if TYPE_CHECKING:
@@ -131,41 +132,34 @@ def _restates_field_name(value: str, path: str) -> bool:
 
 
 def _ground_all(state: PipelineState) -> None:
-    """Score each filled, groundable value against the excerpt it was extracted from.
+    """Label each filled, groundable value by how well its excerpt supports it.
 
     Runs after type/constraint validation has settled every leaf. For each filled
-    value of a groundable type, the support score is taken as the **maximum** over the
-    excerpts of all leaves that contain the field (a field split across leaves is
-    grounded if any of its excerpts supports it). The score is recorded on
-    ``state.grounding_scores`` for the Stage 6 hallucination metric; a value scoring
-    below ``state.grounding_min_score`` is marked ``FAILED`` so the recovery pass
-    re-extracts it (``EMPTY``/``FAILED``/``None`` and non-groundable types are skipped).
+    value, the support label is taken as the **best** over the excerpts of all leaves
+    that contain the field (a field split across leaves is supported if any of its
+    excerpts supports it). The label is recorded on ``state.grounding_results`` for the
+    Stage 6 metric. This is non-destructive: nothing is marked ``FAILED`` or
+    re-extracted here. A correct value is frequently not verbatim (units, derived period
+    labels, enum choices), so a low label is reported, not acted on. Genuine-fabrication
+    rejection is left to the stronger tiers (self-citation, entailment).
 
     Args:
-        state: Pipeline state (blackboard, leaves, grounding threshold/scores).
+        state: Pipeline state (blackboard, leaves, grounding results).
     """
-    from nfield.assembly._blackboard import FieldState
-
     bb = state.blackboard
     if bb is None:
         return
     filled = bb.get_filled()
 
-    best: dict[str, float] = {}
     for leaf in state.leaves:
         excerpt = leaf.document_excerpt
         for f in leaf.fields:
             value = filled.get(f.path)
-            if value is None or not is_groundable(f, value):
+            if value is None:
                 continue
-            score = grounding_score(value, excerpt, f.type)
-            if score > best.get(f.path, -1.0):
-                best[f.path] = score
-
-    for path, score in best.items():
-        state.grounding_scores[path] = score
-        if score < state.grounding_min_score and bb.get_state(path) == FieldState.FILLED:
-            bb.mark_failed(
-                path,
-                f"ungrounded: value not supported by the document (score {score:.2f})",
-            )
+            result = ground_value(value, excerpt, f)
+            if result is None:
+                continue
+            prior = state.grounding_results.get(f.path)
+            if prior is None or result.score > prior.score:
+                state.grounding_results[f.path] = result

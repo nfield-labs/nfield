@@ -80,8 +80,9 @@ Provider factory routed by the prefix before `/`.
 |-----------|------|---------|
 | `data` | `dict` | Extracted fields as nested JSON. |
 | `status` | `ExtractionStatus` | `SUCCESS` / `PARTIAL` / `FAILED`. |
-| `metadata` | `Metadata` | `K`, `K_min`, `optimality_gap`, `quality_score`, `confidence_level`, field counts, `per_field_confidence`, `retry_rounds`. |
+| `metadata` | `Metadata` | `K`, `K_min`, `optimality_gap`, `quality_score`, `confidence_level`, field counts, `per_field_confidence`, `retry_rounds`, and (when `ground_values` is on) `fields_grounded`, `fields_ungrounded`, `hallucination_rate`. |
 | `fields` | `tuple[FieldResult, ...]` | Optional per-field detail. |
+| `provenance` | `dict[str, list[int]] \| None` | Present only when `provenance` is on: each value's dot-path mapped to its `[start, end)` char offsets in the source. `None` otherwise. |
 
 ## `ExtractionConfig`
 
@@ -100,6 +101,62 @@ dependents `NEEDS_REVALIDATION` when a retry changes an upstream value),
 be filled from the model's own well-established knowledge instead of left `NULL`;
 use only for documents about well-known subject matter, as it can produce
 confident-but-unsourced values on private documents).
+
+Opt-in flags (all default off / behaviour-preserving unless noted):
+`ground_values` (False - label each value's source support; see below),
+`grounding_min_score` (0.5 - support threshold used by the metric; only read when
+`ground_values` is on),
+`provenance` (False - attach source char offsets; see below),
+`strict_validation` (False - store values exactly as extracted, skipping the
+lenient normalisation that accepts `"$1,234"` as `1234`),
+`closed_book` (False - fill the schema from the model's own knowledge with **no**
+document, answering `NULL` when unsure; reports `answer_rate` / `abstain_rate`;
+forces grounding and provenance off),
+`self_consistency` (False - sample each closed-book leaf twice and keep a value
+only if both agree; doubles calls; no-op unless `closed_book`),
+`fallback_model` (None - a stronger model to re-try still-failing fields once
+after recovery; `None` keeps the run single-model),
+`use_advanced_sfr` (False - enable the targeted re-retrieval path for failed
+fields),
+`recover_conflicts` (True - re-extract conflicting / revalidation-flagged fields
+in the recovery pass instead of reporting them unresolved),
+`recover_call_failed` (True - give fields whose Stage 4 call hit a transient
+429/timeout one more try in recovery),
+`validate_schema` (True - reject a provably-unsatisfiable schema before any API
+call). Tuning ints: `max_fields_per_call`, `max_concurrent_calls`,
+`max_api_retries`.
+
+### Grounding and provenance
+
+Both are off by default and cost **no extra API calls** (grounding is in-memory
+string matching; provenance is a document scan). They are independent.
+
+`ground_values=True` labels every filled value by how well its source excerpt
+supports it and reports a `hallucination_rate`. It is **non-destructive**: a value
+is never dropped for a weak label, because a correct value is often not verbatim
+(a unit written `USD` when the document prints `$`, a derived period like
+`FY2025 Q2`). Enum values are `schema_derived` (chosen from the schema, already
+validated) and excluded from the metric. Read the rate as a lexical *support*
+signal, not a truth verdict.
+
+`provenance=True` adds `result.provenance`, mapping each value's dot-path to its
+`[start, end)` char offsets in the document. Only values found verbatim (including
+numeric comma/scale forms and currency/unit aliases) get an entry, so a reported
+offset always indexes the real source text.
+
+```python
+from nfield import nfield
+from nfield.config import ExtractionConfig
+
+result = nfield(
+    document,
+    schema,
+    "groq/llama-3.3-70b-versatile",
+    config=ExtractionConfig(ground_values=True, provenance=True),
+)
+result.metadata.hallucination_rate       # e.g. 0.25 (lexical support signal)
+start, end = result.provenance["revenue"]  # -> document[start:end] is the value
+```
 
 ### Reasoning models
 

@@ -439,6 +439,8 @@ class AsyncNField:
         # Closed-book has no source to ground against, so grounding is forced off.
         state.ground_values = config.ground_values and not config.closed_book
         state.grounding_min_score = config.grounding_min_score
+        # Closed-book has no document to locate values in, so provenance is forced off.
+        state.include_provenance = config.provenance and not config.closed_book
         state.max_concurrent_calls = config.max_concurrent_calls
         state.closed_book = config.closed_book
         state.self_consistency = config.self_consistency

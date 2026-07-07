@@ -119,14 +119,19 @@ class ExtractionConfig:
             (field re-extraction). Default 10 (outlasts a rolling-window TPM storm);
             lower for fail-fast. Must be > 0.
         ground_values: When ``True``, every filled value of a groundable type (string /
-            number / integer / enum) is checked against the excerpt the model was shown;
-            a value the text does not support (score below ``grounding_min_score``) is
-            marked ``FAILED`` so the recovery pass re-extracts it, and the run reports a
-            ``hallucination_rate``. Booleans and structural types are never grounded
-            (they are inferred, not quoted). Default ``False`` (no behaviour change).
+            number / integer) is labelled with how well the excerpt supports it and the
+            run reports a ``hallucination_rate``. Non-destructive: a weak label is
+            reported, never dropped, because a correct value is often not verbatim (units,
+            derived periods). Enum values are ``schema_derived`` (chosen from the schema,
+            already validated) and excluded from the metric; booleans and structural types
+            are never grounded. Default ``False``.
         grounding_min_score: Minimum grounding score in ``[0, 1]`` for a value to count
             as supported by the source. Only consulted when ``ground_values`` is
             ``True``. Default 0.5.
+        provenance: When ``True``, the result carries ``provenance``, a map of each
+            value's dot-path to its ``[start, end)`` char offsets in the source
+            document (a value located verbatim only). Adds one document scan per value;
+            independent of ``ground_values``. Default ``False``.
         fallback_model: Optional stronger model to escalate to. After the recovery pass
             exhausts its retries, any field still failing is re-extracted **once** on
             this model (e.g. a larger model the primary could not satisfy). ``None``
@@ -185,9 +190,14 @@ class ExtractionConfig:
     # any API call. On by default: the checks are necessary contradictions, so a valid
     # schema is never rejected; set False to skip the preflight entirely.
     validate_schema: bool = True
-    # Grounding gate (anti-hallucination): off by default so behaviour is unchanged.
+    # Grounding (anti-hallucination): off by default so behaviour is unchanged. When on,
+    # it labels each value's support non-destructively (never drops), since correct
+    # values are often not verbatim; enum choices are schema-derived and exempt.
     ground_values: bool = False
     grounding_min_score: float = DEFAULT_GROUNDING_MIN_SCORE
+    # Attach source char offsets [start, end) per value to the result (result.provenance).
+    # Off by default; adds a document scan per value when on. Independent of grounding.
+    provenance: bool = False
     # Stronger model to escalate still-failing fields to after recovery; None disables.
     fallback_model: str | None = None
     # Fill the schema from model knowledge, no document; the prompt answers NULL when

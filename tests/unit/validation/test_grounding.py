@@ -7,6 +7,9 @@ import pytest
 from nfield.schema._types import Field
 from nfield.validation._grounding import (
     GROUNDABLE_TYPES,
+    GroundingStatus,
+    find_span,
+    ground_value,
     grounding_score,
     is_groundable,
     is_grounded,
@@ -133,3 +136,111 @@ def test_is_grounded_rejects_partial_and_absent() -> None:
         is False
     )
     assert is_grounded("Zeta", "nothing here", "string", min_score=0.5) is False
+
+
+# ---------------------------------------------------------------------------
+# ground_value - non-destructive label (status + score)
+# ---------------------------------------------------------------------------
+
+
+def test_ground_value_exact() -> None:
+    result = ground_value("Acme Corp", "Issued by Acme Corp.", _field("string"))
+    assert result is not None
+    assert result.status is GroundingStatus.EXACT
+    assert result.score == 1.0
+
+
+def test_ground_value_unsupported_is_none_status_not_dropped() -> None:
+    result = ground_value("Globex", "nothing relevant", _field("string"))
+    assert result is not None
+    assert result.status is GroundingStatus.NONE
+    assert result.score == 0.0
+
+
+def test_ground_value_skips_non_groundable_and_none() -> None:
+    assert ground_value(True, "text", _field("boolean")) is None
+    assert ground_value(None, "text", _field("string")) is None
+
+
+def test_ground_value_enum_is_schema_derived_regardless_of_text() -> None:
+    # An enum choice is validated against the schema set, never quoted from prose.
+    result = ground_value("business_segment", "unrelated text", _field("enum"))
+    assert result is not None
+    assert result.status is GroundingStatus.SCHEMA_DERIVED
+    assert result.score == 1.0
+
+
+def test_ground_value_enum_constrained_string_is_schema_derived() -> None:
+    # {"type": "string", "enum": [...]} is typed "string" but is still schema-restricted.
+    field = _field("string", {"enum": ["active", "inactive"]})
+    result = ground_value("active", "unrelated text", field)
+    assert result is not None
+    assert result.status is GroundingStatus.SCHEMA_DERIVED
+
+
+def test_ground_value_unit_alias_grounds_currency_code() -> None:
+    # "USD" is correct even when the document prints "$".
+    result = ground_value("USD", "amounts in $ thousands", _field("string"))
+    assert result is not None
+    assert result.status is GroundingStatus.EXACT
+
+
+def test_ground_value_percent_alias() -> None:
+    result = ground_value("percent", "grew 5 % this year", _field("string"))
+    assert result is not None
+    assert result.status is GroundingStatus.EXACT
+
+
+# ---------------------------------------------------------------------------
+# find_span - source char offsets (provenance)
+# ---------------------------------------------------------------------------
+
+
+def test_find_span_exact() -> None:
+    text = "Issued by Acme Corp on Friday"
+    span = find_span("Acme Corp", text, _field("string"))
+    assert span == (10, 19)
+    assert text[span[0] : span[1]] == "Acme Corp"
+
+
+def test_find_span_number_comma_form() -> None:
+    text = "Revenue was 1,234,568 dollars"
+    span = find_span(1234568, text, _field("integer"))
+    assert span is not None
+    assert text[span[0] : span[1]] == "1,234,568"
+
+
+def test_find_span_unit_alias() -> None:
+    text = "amounts in $ thousands"
+    span = find_span("USD", text, _field("string"))
+    assert span is not None
+    assert text[span[0] : span[1]] == "$"
+
+
+def test_find_span_absent_or_exempt_is_none() -> None:
+    assert find_span("Globex", "nothing here", _field("string")) is None
+    assert find_span(None, "text", _field("string")) is None
+    assert find_span(True, "true", _field("boolean")) is None
+
+
+def test_find_span_locates_verbatim_enum() -> None:
+    # Provenance is reported for any value found verbatim, including an enum choice.
+    span = find_span("active", "status: active now", _field("enum"))
+    assert span is not None
+    assert "status: active now"[span[0] : span[1]] == "active"
+
+
+def test_find_span_offsets_index_original_text_under_casefold() -> None:
+    # A length-changing lowercase codepoint (U+0130) before the match must not shift
+    # the reported offsets: the span must index the original text exactly.
+    doc = "a" + chr(0x0130) + " Acme Corp"
+    span = find_span("Acme", doc, _field("string"))
+    assert span is not None
+    assert doc[span[0] : span[1]] == "Acme"
+
+
+def test_find_span_escapes_regex_special_currency_symbol() -> None:
+    # "$" is regex-special; the search must treat it literally.
+    span = find_span("USD", "amounts in $ thousands", _field("string"))
+    assert span is not None
+    assert "amounts in $ thousands"[span[0] : span[1]] == "$"

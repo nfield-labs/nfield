@@ -365,16 +365,17 @@ class Blackboard:
         return sorted(p for p in self._call_failed if self._states.get(p) == FieldState.FAILED)
 
     def get_filled(self) -> dict[str, Any]:
-        """Return fields that hold a real (non-``None``) extracted value.
+        """Return fields that hold a real (non-empty) extracted value.
 
-        ``None`` is excluded on purpose: the recovery pass marks tree-backtracked
-        "confirmed absent" fields ``FILLED`` with ``None`` (:meth:`write_raw`), but
-        such a field has no value - it was confirmed missing, not extracted. Counting
-        it as filled would overstate the extraction rate, so it is omitted here and
-        therefore counted as missing by the quality metrics.
+        ``None`` and ``""`` are excluded on purpose: the recovery pass marks
+        tree-backtracked "confirmed absent" fields ``FILLED`` with ``None``
+        (:meth:`write_raw`), and an empty string carries no extracted value. Both
+        would overstate the extraction rate, so they are omitted here and counted
+        as missing by the quality metrics - the same empties the scorer discounts.
 
         Returns:
-            Dict of ``{path: value}`` for ``FILLED`` fields whose value is not ``None``.
+            Dict of ``{path: value}`` for ``FILLED`` fields whose value is not
+            ``None`` or ``""``.
 
         Example:
             >>> bb = Blackboard(["name", "nickname"])
@@ -386,7 +387,7 @@ class Blackboard:
         return {
             p: self._values[p]
             for p, s in self._states.items()
-            if s == FieldState.FILLED and self._values.get(p) is not None
+            if s == FieldState.FILLED and self._values.get(p) not in (None, "")
         }
 
     def get_value(self, path: str) -> Any:

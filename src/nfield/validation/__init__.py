@@ -11,8 +11,10 @@ Public surface
 * :func:`split_retry_batches` - group failed fields by dependency closure.
 * :func:`handle_missing_fields` - tree backtrack for absent fields.
 * :class:`FailureCause` - enum of the 4 failure causes.
-* :func:`grounding_score` / :func:`is_grounded` / :func:`is_groundable` - score whether
-  an extracted value is supported by the source text (anti-hallucination).
+* :func:`ground_value` / :class:`GroundingResult` / :class:`GroundingStatus` - label how
+  well an extracted value is supported by the source (non-destructive anti-hallucination).
+* :func:`grounding_score` / :func:`is_grounded` / :func:`is_groundable` - the underlying
+  support score and predicates.
 """
 
 from __future__ import annotations
@@ -21,7 +23,15 @@ import importlib
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ._grounding import grounding_score, is_groundable, is_grounded
+    from ._grounding import (
+        GroundingResult,
+        GroundingStatus,
+        find_span,
+        ground_value,
+        grounding_score,
+        is_groundable,
+        is_grounded,
+    )
     from ._retry import (
         FailureCause,
         build_retry_prompt,
@@ -35,9 +45,13 @@ if TYPE_CHECKING:
 
 __all__ = [
     "FailureCause",
+    "GroundingResult",
+    "GroundingStatus",
     "build_retry_prompt",
     "classify_failure",
     "constraint_check",
+    "find_span",
+    "ground_value",
     "grounding_score",
     "handle_missing_fields",
     "is_groundable",
@@ -58,6 +72,10 @@ _dynamic_imports: dict[str, str] = {
     "surgical_field_retry": "._retry",
     "constraint_check": "._type_check",
     "validate_field": "._type_check",
+    "GroundingResult": "._grounding",
+    "GroundingStatus": "._grounding",
+    "find_span": "._grounding",
+    "ground_value": "._grounding",
     "grounding_score": "._grounding",
     "is_grounded": "._grounding",
     "is_groundable": "._grounding",
