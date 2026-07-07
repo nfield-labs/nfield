@@ -230,7 +230,7 @@ class TestTypecastString:
 
     def test_empty_string(self):
         f = make_field("notes", "string")
-        assert typecast("", f) == ""
+        assert typecast("", f) is None
 
 
 class TestTypecastNull:

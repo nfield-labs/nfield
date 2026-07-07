@@ -44,11 +44,11 @@ class TestEmptyRawValueHandling:
         result = typecast("", f)
         assert result is None
 
-    def test_empty_string_for_string_field_returns_empty_string(self):
-        """Empty raw_value on string field returns '' - empty string is a valid string value."""
+    def test_empty_string_for_string_field_returns_none(self):
+        """Empty raw_value on string field returns None - an empty emission is absent, not a value."""
         f = make_field("notes", "string")
         result = typecast("", f)
-        assert result == ""
+        assert result is None
 
     def test_empty_string_for_boolean_field_returns_none(self):
         """Empty raw_value on boolean field returns None."""
