@@ -247,11 +247,11 @@ class TestNoneIsNotFilled:
         bb.write("x", 0)  # 0 / False are real values, not None
         assert bb.get_filled() == {"x": 0}
 
-    def test_false_and_empty_string_are_real(self):
+    def test_false_is_real_empty_string_is_not(self):
         bb = Blackboard(["flag", "note"])
-        bb.write("flag", False)
-        bb.write("note", "")
-        assert bb.get_filled() == {"flag": False, "note": ""}
+        bb.write("flag", False)  # False is a real boolean value
+        bb.write("note", "")  # "" carries nothing extracted
+        assert bb.get_filled() == {"flag": False}
 
 
 # ---------------------------------------------------------------------------
