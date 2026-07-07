@@ -20,6 +20,7 @@ from nfield.schema._flatten import (
     WILDCARD_SUFFIX,
 )
 from nfield.types import ExtractionResult, ExtractionStatus, Metadata
+from nfield.validation._grounding import GroundingStatus, find_span
 
 if TYPE_CHECKING:
     from nfield.pipeline._state import PipelineState
@@ -118,33 +119,68 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
     # --- 5. Determine status ---
     status = _determine_status(fields_extracted, fields_total, fields_missing)
 
-    return ExtractionResult(data=data, metadata=metadata, status=status)
+    provenance = _compute_provenance(state) if state.include_provenance else None
+
+    return ExtractionResult(data=data, metadata=metadata, status=status, provenance=provenance)
+
+
+def _compute_provenance(state: PipelineState) -> dict[str, list[int]]:
+    """Locate each filled value in the source and map its path to ``[start, end)``.
+
+    Searches the whole document, so offsets are document-absolute. Only values found
+    verbatim (including numeric and unit renderings) get an entry; non-verbatim values,
+    enum choices, and non-groundable types are omitted.
+
+    Args:
+        state: Pipeline state (blackboard values, field types, segments).
+
+    Returns:
+        A ``{path: [start, end]}`` map; empty if nothing was located.
+    """
+    bb = state.blackboard
+    if bb is None:
+        return {}
+    doc_text = "\n".join(s.text for s in state.segments)
+    spans: dict[str, list[int]] = {}
+    for path, value in bb.get_filled().items():
+        field = state.field_by_path.get(path)
+        if field is None:
+            continue
+        span = find_span(value, doc_text, field)
+        if span is not None:
+            spans[path] = [span[0], span[1]]
+    return spans
 
 
 def _grounding_metric(state: PipelineState) -> tuple[int, int, float | None]:
-    """Summarise the per-field grounding scores into the run's hallucination metric.
+    """Summarise the per-field grounding labels into the run's support metric.
 
-    Counts every grounding-checked value (those Stage 5 scored when grounding was
-    enabled) as grounded or ungrounded by the same threshold the gate used, then
-    reports the unsupported fraction. A value counts as ungrounded if the source did
-    not support it on its best excerpt, even if it was later dropped - that is exactly
-    the model's hallucination signal.
+    Counts every grounding-checked value (those Stage 5 labelled when grounding was
+    enabled) as supported or unsupported by the configured threshold, then reports the
+    unsupported fraction. Schema-derived values (enum choices, validated against the
+    allowed set) are excluded: they are not quoted from the prose, so a literal search
+    is not a support signal for them. The value is never dropped; this is a reported
+    signal, not a gate.
 
     Args:
-        state: Pipeline state carrying ``grounding_scores`` and the threshold.
+        state: Pipeline state carrying ``grounding_results`` and the threshold.
 
     Returns:
         ``(fields_grounded, fields_ungrounded, hallucination_rate)``; the rate is
-        ``None`` when nothing was grounding-checked (grounding off or no groundable
-        field).
+        ``None`` when nothing was grounding-checked (grounding off, or only
+        schema-derived / non-groundable fields).
     """
-    scores = state.grounding_scores
-    if not scores:
-        return 0, 0, None
     threshold = state.grounding_min_score
-    grounded = sum(1 for s in scores.values() if s >= threshold)
-    ungrounded = len(scores) - grounded
-    return grounded, ungrounded, ungrounded / len(scores)
+    checked = [
+        r
+        for r in state.grounding_results.values()
+        if r.status is not GroundingStatus.SCHEMA_DERIVED
+    ]
+    if not checked:
+        return 0, 0, None
+    grounded = sum(1 for r in checked if r.score >= threshold)
+    ungrounded = len(checked) - grounded
+    return grounded, ungrounded, ungrounded / len(checked)
 
 
 def _determine_status(

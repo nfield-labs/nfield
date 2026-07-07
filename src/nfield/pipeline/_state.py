@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from nfield.assembly._blackboard import Blackboard
     from nfield.retrieval._bmx import BMXIndex
     from nfield.schema._types import CapacityLeaf, Field, FieldGroup, Segment
+    from nfield.validation._grounding import GroundingResult
 
 __all__ = ["PipelineState"]
 
@@ -49,11 +50,15 @@ class PipelineState:
     # formatted values to the schema type before writing (from ExtractionConfig).
     strict_validation: bool = False
 
-    # When True, Stage 5 scores each filled value against the excerpt the model saw and
-    # marks an unsupported value FAILED (anti-hallucination; from ExtractionConfig).
+    # When True, Stage 5 labels each filled value with how well the excerpt supports it
+    # (anti-hallucination signal; from ExtractionConfig). Non-destructive: a weak label
+    # is reported, never dropped.
     ground_values: bool = False
     # Accept threshold for the grounding score (from ExtractionConfig).
     grounding_min_score: float = 0.5
+    # When True, Stage 6 attaches per-value source char offsets to the result
+    # (from ExtractionConfig). Independent of grounding.
+    include_provenance: bool = False
     # Closed-book mode: extract from model knowledge, no document (from ExtractionConfig).
     closed_book: bool = False
     # Opt-in two-sample self-consistency abstention for closed-book (from ExtractionConfig).
@@ -101,10 +106,10 @@ class PipelineState:
     # so a schema with many empty arrays cannot multiply into an unbounded call count.
     continuation_windows_used: int = 0
 
-    # Grounding score in [0, 1] per filled groundable field, written by Stage 5 when
-    # ``ground_values`` is set; read by Stage 6 to report the hallucination rate. A path
-    # is present only if it was grounding-checked (filled and of a groundable type).
-    grounding_scores: dict[str, float] = field(default_factory=dict)
+    # Grounding label per filled groundable field, written by Stage 5 when
+    # ``ground_values`` is set; read by Stage 6 to report the support/hallucination rate.
+    # A path is present only if it was grounding-checked (filled, groundable type).
+    grounding_results: dict[str, GroundingResult] = field(default_factory=dict)
 
     # Count of SFEP output lines whose path was not in the schema (the model emitted a
     # field outside the requested set) - a format-drift signal accumulated across all
