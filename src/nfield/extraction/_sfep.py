@@ -421,14 +421,14 @@ def typecast(raw_value: str, field: Field) -> Any:
     stripped = raw_value.strip()
 
     # Universal sentinels - checked before type-specific logic.
-    # NULL maps to None for all types.
-    # An empty value maps to None for non-string types; for string fields the
-    # empty string is a legitimate value and is returned as-is.
+    # NULL and an empty emission both map to None for every type: an empty value
+    # carries nothing extracted, so the field routes to recovery instead of
+    # banking "" as a filled result the scorer counts as missing.
     if stripped.upper() == _SFEP_NULL_SENTINEL:
         return None
     if stripped == _SFEP_NEEDS_REVALIDATION_SENTINEL:
         return NEEDS_REVALIDATION
-    if not stripped and field.type != "string":
+    if not stripped:
         return None
 
     field_type = field.type
