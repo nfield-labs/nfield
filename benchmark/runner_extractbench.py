@@ -86,6 +86,7 @@ def run_dataset(
     doc_filter: str = "",
     limit: int = 0,
     llm_judge: bool = False,
+    ground_values: bool = False,
 ) -> dict[str, Any]:
     """Run nfield on every document of one dataset and write raw/scored/summary.
 
@@ -136,6 +137,7 @@ def run_dataset(
                 model=model,
                 reasoning_model=reasoning_model,
                 llm_judge=llm_judge,
+                ground_values=ground_values,
             )
         except Exception as exc:  # a failed document scores zero, never aborts the sweep
             row = {"document": doc_name, "status": f"error: {exc}"[:120]}
@@ -178,6 +180,7 @@ def _run_document(
     model: str,
     reasoning_model: bool,
     llm_judge: bool = False,
+    ground_values: bool = False,
 ) -> dict[str, Any]:
     """Extract one PDF, score it, and write its raw and scored artifacts."""
     from nfield import nfield
@@ -195,7 +198,11 @@ def _run_document(
         context_window=_CONTEXT_WINDOW,
         max_output_tokens=_MAX_OUTPUT_TOKENS,
         instructions=instructions,
-        config=ExtractionConfig(max_retry_rounds=1, reasoning_model=reasoning_model),
+        config=ExtractionConfig(
+            max_retry_rounds=1,
+            reasoning_model=reasoning_model,
+            ground_values=ground_values,
+        ),
     )
     # Write the raw extraction before scoring so a scorer failure cannot lose a
     # finished run.
@@ -360,6 +367,12 @@ def main(argv: list[str] | None = None) -> None:
         help="re-judge string_semantic / array_llm misses with the model, as the "
         "official ExtractBench harness does (costs extra API calls)",
     )
+    parser.add_argument(
+        "--ground-values",
+        default=False,
+        action=argparse.BooleanOptionalAction,
+        help="enable the grounding gate: re-extract values the source text does not support",
+    )
     args = parser.parse_args(argv)
 
     _load_env()
@@ -388,6 +401,7 @@ def main(argv: list[str] | None = None) -> None:
                 doc_filter=args.doc,
                 limit=args.limit,
                 llm_judge=args.llm_judge,
+                ground_values=args.ground_values,
             )
         )
 
