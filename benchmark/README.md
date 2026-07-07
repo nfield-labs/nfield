@@ -75,6 +75,26 @@ flattened gold field including each array element (8,830 fields on SEC 10-K/Q ag
 paper's 2,583 schema keys), a larger and stricter denominator. The gap is too wide to be an
 artifact of that difference.
 
+### Accuracy vs field count
+
+There is a companion picture to the table: plot each ExtractBench document as a point, its gold
+field count on the x-axis and nfield's value accuracy on the y-axis, and lay the published
+IFScale curves beside it. IFScale ([arXiv:2507.11538](https://arxiv.org/abs/2507.11538)) measures
+how well a single call follows instructions as the count climbs from 10 to 500; even the best
+frontier model there falls to 68% by 500, and the curve stops. nfield's points keep going: the
+same accuracy band holds out past a thousand fields, where every single-call curve has already
+ended.
+
+```
+python -m benchmark.fieldcount benchmark/results/<a-run-dir> [--judged]
+```
+
+It reads the per-document `scored/` files a run already wrote (no API calls) and saves the chart
+under `<run>/ifscale/`. On the 2026-07-06 qwen run the mean is 0.89 below 500 fields and 0.83 at
+500 and above: essentially flat where the reference curves are in free fall. The two axes are not
+the same task, so read it as the shape of the story, not a matched head-to-head; the reference
+numbers are transcribed with their source in `benchmark/reference.py`.
+
 ## How nfield holds up as the schema grows
 
 Beyond ExtractBench, the suite stress-tests the one thing the method exists for: staying
