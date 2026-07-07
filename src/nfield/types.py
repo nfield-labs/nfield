@@ -160,6 +160,10 @@ class ExtractionResult:
         status: Overall outcome of the extraction (SUCCESS / PARTIAL / FAILED).
         fields: Tuple of per-field results for detailed inspection.
             Defaults to an empty tuple when per-field details are not needed.
+        provenance: Optional map of dot-path to the ``[start, end)`` char offsets of
+            the value in the source document. Present only when provenance was
+            requested (``ExtractionConfig.provenance``); ``None`` otherwise. A path is
+            included only when its value was located verbatim in the document.
 
     Example:
         >>> from nfield.types import ExtractionResult, ExtractionStatus, Metadata
@@ -181,6 +185,7 @@ class ExtractionResult:
     metadata: Metadata
     status: ExtractionStatus
     fields: tuple[FieldResult, ...] = field(default_factory=tuple)
+    provenance: dict[str, list[int]] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Return a plain-dict form of the result, ready for JSON serialisation.
@@ -200,6 +205,7 @@ class ExtractionResult:
             "metadata": asdict(self.metadata),
             "status": self.status.value,
             "fields": [asdict(f) for f in self.fields],
+            "provenance": self.provenance,
         }
 
     @classmethod
@@ -220,4 +226,5 @@ class ExtractionResult:
             metadata=Metadata(**payload["metadata"]),
             status=ExtractionStatus(payload["status"]),
             fields=tuple(FieldResult(**f) for f in payload.get("fields", [])),
+            provenance=payload.get("provenance"),
         )
