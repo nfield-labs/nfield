@@ -70,6 +70,7 @@ bench = [
     "pypdfium2",
     "pymupdf>=1.28",
     "rapidocr-onnxruntime>=1.4.4",
+    "matplotlib>=3.8",
 ]
 
 [tool.hatch.version]
