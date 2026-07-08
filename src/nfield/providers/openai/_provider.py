@@ -41,6 +41,11 @@ _TRANSIENT_ERROR_NAMES: frozenset[str] = frozenset(
 )
 _TRANSIENT_ERROR_KEYWORDS: tuple[str, ...] = ("timed out", "timeout", "connection")
 
+# Per-request timeout, sized to the booked output so it does not expire mid-decode:
+# floor for prompt+connect, then max_tokens at a worst-case decode rate.
+_REQUEST_TIMEOUT_FLOOR_S: float = 120.0
+_DECODE_FLOOR_TOKENS_PER_S: float = 50.0
+
 
 def _is_transient_error(exc: Exception) -> bool | None:
     """Whether *exc* is a transient network failure that should be retried.
@@ -198,9 +203,11 @@ class OpenAIProvider(BaseProvider):
             ) from e
 
         try:
-            # Pass api_key/base_url through; None lets the SDK fall back to its
-            # defaults (OPENAI_API_KEY env, standard base URL).
-            self._client = openai.OpenAI(api_key=self._api_key, base_url=self._base_url)
+            # None api_key/base_url lets the SDK use OPENAI_API_KEY env + default URL.
+            # max_retries=0: BaseProvider.complete is the sole retry owner.
+            self._client = openai.OpenAI(
+                api_key=self._api_key, base_url=self._base_url, max_retries=0
+            )
         except Exception as e:
             raise ProviderError(
                 f"Failed to initialize OpenAI client: {e}. "
@@ -240,6 +247,7 @@ class OpenAIProvider(BaseProvider):
             "model": self.model_name,
             "messages": messages,
             "max_tokens": max_tokens,
+            "timeout": max(_REQUEST_TIMEOUT_FLOOR_S, max_tokens / _DECODE_FLOOR_TOKENS_PER_S),
         }
         # Turn thinking off for a declared reasoning model so it does not consume
         # the answer's output budget.

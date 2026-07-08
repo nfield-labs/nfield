@@ -5,6 +5,8 @@ from __future__ import annotations
 import sys
 import types
 
+import pytest
+
 from nfield.providers.groq import GroqProvider
 
 
@@ -13,9 +15,10 @@ def _install_fake_groq(monkeypatch) -> dict:
     captured: dict = {}
 
     class _FakeGroq:
-        def __init__(self, *, api_key=None, base_url=None) -> None:
+        def __init__(self, *, api_key=None, base_url=None, max_retries=None) -> None:
             captured["api_key"] = api_key
             captured["base_url"] = base_url
+            captured["max_retries"] = max_retries
 
     fake_module = types.ModuleType("groq")
     fake_module.Groq = _FakeGroq  # type: ignore[attr-defined]
@@ -151,13 +154,13 @@ class TestGroqProviderCredentials:
         captured = _install_fake_groq(monkeypatch)
         provider = GroqProvider("llama-3.1-8b", api_key="gsk_x", base_url="https://proxy/v1")
         provider._get_client()
-        assert captured == {"api_key": "gsk_x", "base_url": "https://proxy/v1"}
+        assert captured == {"api_key": "gsk_x", "base_url": "https://proxy/v1", "max_retries": 0}
 
     def test_get_client_passes_none_for_env_fallback(self, monkeypatch) -> None:
         captured = _install_fake_groq(monkeypatch)
         GroqProvider("llama-3.1-8b")._get_client()
         # None for both → the SDK falls back to GROQ_API_KEY env + default URL.
-        assert captured == {"api_key": None, "base_url": None}
+        assert captured == {"api_key": None, "base_url": None, "max_retries": 0}
 
 
 class TestGroqProviderMissingDependencies:
@@ -171,3 +174,51 @@ class TestGroqProviderMissingDependencies:
         # For now, we test that the method exists and can be called.
         assert hasattr(provider, "_get_client")
         assert callable(provider._get_client)
+
+
+class _KwargsClient:
+    """Stub chat-completions client recording the kwargs of each create call."""
+
+    def __init__(self) -> None:
+        self.seen: dict = {}
+
+        outer = self
+
+        class _Completions:
+            def create(self, **kwargs):
+                outer.seen = kwargs
+
+                class _Message:
+                    content = "ok"
+
+                class _Choice:
+                    message = _Message()
+
+                response = types.SimpleNamespace(choices=[_Choice()])
+                return response
+
+        class _Chat:
+            completions = _Completions()
+
+        self.chat = _Chat()
+
+
+class TestRequestTimeout:
+    @pytest.mark.asyncio
+    async def test_timeout_scales_with_booked_output(self) -> None:
+        # A call booking 24K output tokens needs 24000/50 = 480s at the worst-case
+        # decode rate; the SDK default (60s) would expire mid-generation and the
+        # server would complete and bill a request the client abandoned.
+        provider = GroqProvider("llama-3.1-8b", api_key="key")
+        client = _KwargsClient()
+        provider._client = client
+        await provider._raw_complete([{"role": "user", "content": "x"}], max_tokens=24_000)
+        assert client.seen["timeout"] == 24_000 / 50
+
+    @pytest.mark.asyncio
+    async def test_timeout_floor_covers_small_outputs(self) -> None:
+        provider = GroqProvider("llama-3.1-8b", api_key="key")
+        client = _KwargsClient()
+        provider._client = client
+        await provider._raw_complete([{"role": "user", "content": "x"}], max_tokens=500)
+        assert client.seen["timeout"] == 120.0
