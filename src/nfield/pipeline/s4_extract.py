@@ -17,6 +17,7 @@ import json
 import logging
 import math
 import re
+from decimal import Decimal
 from typing import TYPE_CHECKING, Any
 
 from nfield.extraction._papt import dimension_axes, select_template
@@ -82,6 +83,10 @@ _CONTINUATION_MIN_YIELD: int = 3
 # Output reservation covers item text plus JSON structure; exact window_chars/cpt
 # truncates every dense window's tail, so add this structural headroom.
 _WINDOW_OUTPUT_HEADROOM: float = 1.25
+# A truncated window is re-asked as halves; depth d resolves a 2^d overrun of the
+# verbatim-size assumption, and each split funds exactly the two halves it spawns.
+_TRUNCATION_SPLIT_DEPTH: int = 3
+_TRUNCATION_CAP_BONUS: int = 2
 # Top-relevance windows re-asked for a single array left empty beside yielding siblings.
 _FOCUSED_REASK_WINDOWS: int = 2
 # Placing a sibling's row in a window: leaves shorter than this are too generic to
@@ -430,6 +435,44 @@ def _array_quality_error(items: list[Any], excerpt: str) -> str | None:
 def _ground_norm(text: str) -> str:
     """Casefold, fold punctuation variants, and collapse whitespace for substring match."""
     return _WS.sub(" ", text.translate(_GROUND_FOLD)).casefold()
+
+
+# A whole-string numeric token in any of the formats a model flips between while
+# re-emitting one figure: digit-grouping separators (comma, space, NBSP and narrow
+# NBSP per the SI convention), an accounting-parenthesis negative, an explicit sign,
+# one leading currency mark, a decimal part, a trailing percent. Grouping must be
+# consistent 3-digit blocks, so a locale decimal comma ("1,5") never matches.
+_NUMERIC_TOKEN: re.Pattern[str] = re.compile(
+    r"^(?P<neg>\()?\s*(?P<sign>[+-])?\s*(?P<cur>[$€£¥₹])?\s*"
+    r"(?P<int>\d{1,3}(?:(?P<sep>[,\u00a0\u202f\u2009 ])\d{3}(?:(?P=sep)\d{3})*)|\d+)"
+    r"(?:\.(?P<frac>\d+))?\s*(?P<pct>%)?\s*(?(neg)\))$"
+)
+
+
+def _canonical_number(text: str) -> str | None:
+    """Canonical value form of a numeric token, or ``None`` for non-numeric text.
+
+    Two emissions of one figure differ only in formatting - "1,817" / "1817",
+    "( 42,820 )" / "-42820", "36.10" / "36.1" - so the duplicate test compares
+    numeric tokens by VALUE, the normalization reading-comprehension evaluators
+    apply to number answers (DROP, arXiv:1903.00161). Only formatting folds:
+    sign, percent, and currency marks carry meaning and are preserved, so
+    "15%" never merges with "15" nor "-36" with "36".
+    """
+    m = _NUMERIC_TOKEN.match(text.strip())
+    if m is None:
+        return None
+    digits = m["int"].replace(m["sep"], "") if m["sep"] else m["int"]
+    if m["frac"]:
+        digits += "." + m["frac"]
+    value = format(Decimal(digits).normalize(), "f")
+    sign = "-" if (m["neg"] or m["sign"] == "-") else ""
+    return f"{sign}{m['cur'] or ''}{value}{m['pct'] or ''}"
+
+
+def _dedup_norm(text: str) -> str:
+    """Duplicate-test key for one string leaf: numeric value form, else ground norm."""
+    return _canonical_number(text) or _ground_norm(text)
 
 
 def _is_scarce(value: Any) -> bool:
@@ -964,17 +1007,26 @@ async def _sweep_array_windows(
     if cap_bonus:
         per_doc_cap = max(per_doc_cap, state.continuation_windows_used + cap_bonus)
 
-    async def probe_text(window_text: str, idx: int) -> tuple[int, int] | None:
+    async def probe_text(
+        window_text: str, idx: int, *, depth: int = 0, full_output: bool = False
+    ) -> tuple[int, int] | None:
         """One window call; merge new items; return (raw count, new-item yield)."""
+        nonlocal per_doc_cap
         if state.continuation_windows_used >= per_doc_cap:
             return None
         state.continuation_windows_used += 1
         # Reserve output sized to the window, not the array's ceiling: items are copied
         # verbatim, and booking the ceiling eats the provider's per-minute token budget.
+        # A truncation re-probe books the ceiling: the cut is proof the verbatim
+        # sizing under-reserved for this window's row density.
         cpt = max(state.chars_per_token, 1.0)
-        window_output = min(
-            leaf.safe_output,
-            max(1, math.ceil(len(window_text) * _WINDOW_OUTPUT_HEADROOM / cpt)),
+        window_output = (
+            leaf.safe_output
+            if full_output
+            else min(
+                leaf.safe_output,
+                max(1, math.ceil(len(window_text) * _WINDOW_OUTPUT_HEADROOM / cpt)),
+            )
         )
         # The head is context for interpreting rows (labels, periods, units), never a
         # source of entries: a document opening often SUMMARISES its lists ("...and
@@ -1002,8 +1054,9 @@ async def _sweep_array_windows(
         state.record_calls("array_continuation")
         parsed = parse_sfep(raw, array_fields)
         parsed = await _retry_ordinal_runs(parsed, window_leaf, provider, state, reasons)
+        truncated = bool(truncated_json_arrays(raw, array_fields))
+        salvage: dict[str, list[Any]] = {}
         raw_count = 0
-        window_yield = 0
         for f in array_fields:
             more = parsed.get(f.path)
             if not isinstance(more, list) or not more or _is_ordinal_run(more):
@@ -1014,10 +1067,38 @@ async def _sweep_array_windows(
                 if not more:
                     continue
             raw_count += len(more)
-            base = extracted.get(f.path)
+            salvage[f.path] = more
+        # A truncated cut repeats on re-ask, so each half is probed with the full
+        # output budget until the answer fits. The halves re-cover the parent's whole
+        # span and REPLACE its partial list (merging both would pile format variants);
+        # the parent salvage is used only when the halves return nothing.
+        if truncated and raw_count and depth < _TRUNCATION_SPLIT_DEPTH:
+            logger.info(
+                "continuation window %d/%d (doc idx %d) on leaf %d (%d chars): "
+                "TRUNCATED at %d raw item(s) - re-asking as two halves",
+                state.continuation_windows_used,
+                per_doc_cap,
+                idx,
+                leaf.leaf_id,
+                len(window_text),
+                raw_count,
+            )
+            per_doc_cap = max(per_doc_cap, state.continuation_windows_used + _TRUNCATION_CAP_BONUS)
+            half_raw = 0
+            half_yield = 0
+            for part in _halve_window(window_text):
+                sub = await probe_text(part, idx, depth=depth + 1, full_output=True)
+                if sub is not None:
+                    half_raw += sub[0]
+                    half_yield += sub[1]
+            if half_raw:
+                return raw_count + half_raw, half_yield
+        window_yield = 0
+        for path, more in salvage.items():
+            base = extracted.get(path)
             merged = list(base) if isinstance(base, list) else []
             window_yield += _merge_window_items(merged, more)
-            extracted[f.path] = merged
+            extracted[path] = merged
         logger.info(
             "continuation window %d/%d (doc idx %d) on leaf %d (%d chars): +%d item(s), %d raw%s for %s",
             state.continuation_windows_used,
@@ -1027,7 +1108,7 @@ async def _sweep_array_windows(
             len(window_text),
             window_yield,
             raw_count,
-            " TRUNCATED" if truncated_json_arrays(raw, array_fields) else "",
+            " TRUNCATED" if truncated else "",
             [f.path for f in array_fields],
         )
         return raw_count, window_yield
@@ -1119,12 +1200,8 @@ async def _sweep_array_windows(
 
     async def split_reprobe(idx: int) -> None:
         """Re-ask window *idx* in two halves; each half is short enough to enumerate."""
-        text = window_texts[idx]
-        cut = text.rfind("\n\n", 0, len(text) // 2)
-        if cut <= 0:
-            cut = len(text) // 2
         recovered = 0
-        for part in (text[:cut], text[cut:]):
+        for part in _halve_window(window_texts[idx]):
             result = await probe_text(part, idx)
             if result is not None:
                 recovered += result[1]
@@ -1154,6 +1231,14 @@ async def _sweep_array_windows(
         items = extracted.get(f.path)
         if isinstance(items, list) and len(items) > 1:
             extracted[f.path] = _document_order(items, state)
+
+
+def _halve_window(text: str) -> tuple[str, str]:
+    """Split a window near its midpoint, preferring a segment boundary."""
+    cut = text.rfind("\n\n", 0, len(text) // 2)
+    if cut <= 0:
+        cut = len(text) // 2
+    return text[:cut], text[cut:]
 
 
 def _document_order(items: list[Any], state: PipelineState) -> list[Any]:
@@ -1255,7 +1340,9 @@ def _merge_window_items(merged: list[Any], more: list[Any]) -> int:
     )
     drop_bare = long_text >= max(3, (len(merged) + len(more)) // 2)
     keys = {_item_key(x) for x in merged}
-    norms: list[str | None] = [_ground_norm(x) if isinstance(x, str) else None for x in merged]
+    norms: list[tuple[str, bool] | None] = [
+        _string_norm(x) if isinstance(x, str) else None for x in merged
+    ]
     leaves: list[frozenset[str] | None] = [
         _object_leaves(x) if isinstance(x, dict) else None for x in merged
     ]
@@ -1270,18 +1357,28 @@ def _merge_window_items(merged: list[Any], more: list[Any]) -> int:
         if drop_bare and bare_number:
             continue
         item_leaves: frozenset[str] | None = None
+        item_norm: tuple[str, bool] | None = None
         if isinstance(item, str):
-            norm = _ground_norm(item)
+            item_norm = _string_norm(item)
+            norm, canonical = item_norm
             dup = False
-            for i, existing in enumerate(norms):
-                if existing is None or not existing or not norm:
+            for i, entry in enumerate(norms):
+                if entry is None or not entry[0] or not norm:
+                    continue
+                existing, existing_canonical = entry
+                if norm == existing:
+                    dup = True  # the same entry, possibly a reformatted numeric token
+                    break
+                if canonical or existing_canonical:
+                    # A numeric token duplicates only by exact value equality:
+                    # containment would read "36" as a copy of any text mentioning 36.
                     continue
                 if norm in existing:
                     dup = True  # a shorter copy of an entry already aboard
                     break
                 if existing in norm:
                     merged[i] = item  # keep the longer copy of the same entry
-                    norms[i] = norm
+                    norms[i] = item_norm
                     dup = True
                     break
             if dup:
@@ -1307,15 +1404,27 @@ def _merge_window_items(merged: list[Any], more: list[Any]) -> int:
                     continue
         keys.add(key)
         merged.append(item)
-        norms.append(_ground_norm(item) if isinstance(item, str) else None)
+        norms.append(item_norm)
         leaves.append(item_leaves)
         added += 1
     return added
 
 
+def _string_norm(text: str) -> tuple[str, bool]:
+    """Duplicate-test key for a string item: ``(norm, is_numeric_token)``."""
+    canonical = _canonical_number(text)
+    if canonical is not None:
+        return canonical, True
+    return _ground_norm(text), False
+
+
 def _object_leaves(obj: Any) -> frozenset[str]:
-    """Normalized non-empty string values of an object, for near-duplicate detection."""
-    return frozenset(n for s in _string_leaves(obj) if (n := _ground_norm(s)))
+    """Normalized non-empty string values of an object, for near-duplicate detection.
+
+    Leaves fold through :func:`_dedup_norm`, so one row re-emitted with a
+    reformatted figure ("1,817" beside "1817") reads as the same row.
+    """
+    return frozenset(n for s in _string_leaves(obj) if (n := _dedup_norm(s)))
 
 
 def _is_unbounded_list_leaf(f: Field) -> bool:
