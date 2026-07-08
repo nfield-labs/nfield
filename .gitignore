@@ -47,6 +47,11 @@ benchmark/datasets/closed_book/*.dat
 benchmark/results/**/raw/
 benchmark/results/**/scored/
 
+# FinTagging per-size folders hold raw calls and per-document outputs (regenerable,
+# can carry source text); only the run-level MANIFEST, README, summary.csv/md and plot
+# are tracked.
+benchmark/results/fintagging/*/*table/
+
 # Vendored third-party benchmark datasets (cloned on demand; large, separately licensed)
 benchmark/external/
 
