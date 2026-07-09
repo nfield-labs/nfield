@@ -1,0 +1,6 @@
+method,value_accuracy,value_accuracy_judged,coverage,gold_fields,fields_extracted,K,elapsed_s,error_category
+nfield,0.7441,0.7626,0.8451,1407,55,41,198.5,
+native_json,0.2011,0.2217,0.2331,1407,341,1,65.3,
+instructor,0.1891,0.2353,0.1933,1407,276,1,35.8,
+langchain,0.2011,0.2246,0.2331,1407,341,1,41.7,
+langstruct,0.0014,0.0014,0.0021,1407,150,1,583.6,
