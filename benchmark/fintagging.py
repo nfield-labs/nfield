@@ -385,25 +385,46 @@ def plot_wide_curve(rows: list[WideComparison], path: Path) -> Path | None:
     if not rows:
         return None
 
+    from . import _figstyle
+
     ordered = sorted(rows, key=lambda r: r.gold_facts)
     facts = [r.gold_facts for r in ordered]
     path.parent.mkdir(parents=True, exist_ok=True)
-    figure, axis = plt.subplots(figsize=(8, 5))
-    axis.plot(facts, [r.nfield_f1 for r in ordered], marker="o", color="#1f77b4", label="NField")
+
+    _figstyle.apply_rcparams()
+    figure, axis = plt.subplots(figsize=(9, 5.4))
+    _figstyle.style_axes(axis, grid_axis="both")
+    axis.plot(
+        facts,
+        [r.nfield_f1 for r in ordered],
+        marker="o",
+        markersize=7,
+        linewidth=2.4,
+        color=_figstyle.NFIELD,
+        label="nfield",
+        zorder=3,
+    )
     axis.plot(
         facts,
         [r.baseline_f1 for r in ordered],
         marker="s",
+        markersize=6,
+        linewidth=2.0,
         linestyle="--",
-        color="#7f7f7f",
+        color=_figstyle.BASELINE,
         label="single call",
+        zorder=3,
     )
-    axis.set_xlabel("gold facts in one extraction task")
-    axis.set_ylabel("pair-level F1")
-    axis.set_ylim(0.0, 1.02)
-    axis.grid(True, linestyle=":", alpha=0.4)
-    axis.legend()
-    figure.savefig(path, dpi=150, bbox_inches="tight")
+    axis.set_xlabel("gold facts in one extraction task", fontsize=10.5)
+    axis.set_ylabel("pair-level F1", fontsize=10.5)
+    axis.set_ylim(0.0, 1.04)
+    _figstyle.title_block(
+        axis,
+        "nfield holds F1 as facts scale; a single call collapses",
+        "FinTagging FinNI wide, qwen3.6-27b  ·  pair-level (fact, type) F1 vs facts in one task",
+    )
+    axis.legend(frameon=False, fontsize=10, loc="lower left", handlelength=1.8)
+    figure.savefig(path, dpi=200, bbox_inches="tight", facecolor="white")
     plt.close(figure)
     return path
 

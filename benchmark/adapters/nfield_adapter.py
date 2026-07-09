@@ -39,6 +39,7 @@ class NfieldAdapter:
     max_retry_rounds: int = DEFAULT_MAX_RETRY_ROUNDS
     closed_book: bool = False
     reasoning_model: bool = False
+    max_concurrent_calls: int | None = None
     api_key: str | None = None
     base_url: str | None = None
 
@@ -59,8 +60,20 @@ class NfieldAdapter:
         as a failed :class:`AdapterOutput`, never raised - a failed run scores as a
         miss and stays in the denominator.
         """
+        from dataclasses import replace
+
         from nfield import nfield
         from nfield.config import ExtractionConfig
+
+        config = ExtractionConfig(
+            max_retry_rounds=self.max_retry_rounds,
+            closed_book=self.closed_book,
+            reasoning_model=self.reasoning_model,
+        )
+        # None keeps the pipeline default; a lower value throttles a rate-limited
+        # provider so leaves are not lost to 429 storms.
+        if self.max_concurrent_calls is not None:
+            config = replace(config, max_concurrent_calls=self.max_concurrent_calls)
 
         started = time.perf_counter()
         try:
@@ -73,16 +86,11 @@ class NfieldAdapter:
                 api_key=self.api_key,
                 base_url=self.base_url,
                 instructions=instructions,
-                config=ExtractionConfig(
-                    max_retry_rounds=self.max_retry_rounds,
-                    closed_book=self.closed_book,
-                    reasoning_model=self.reasoning_model,
-                ),
+                config=config,
             )
         except Exception as exc:  # a baseline-fair failure: record, never abort the sweep
-            # A whole-engine failure means no leaf returned, so every targeted field
-            # was lost to the call, not to the model - credit it all to call-failed
-            # (design §4.3 / §7). The category is labelled honestly like the baselines.
+            # No leaf returned, so every targeted field was lost to the call, not the
+            # model - credit it all to call-failed, category labelled like the baselines.
             kind, message = classify_exc(exc)
             total = _schema_field_count(schema)
             return AdapterOutput(
