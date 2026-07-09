@@ -25,11 +25,8 @@ from nfield.providers._reasoning import (
 # ---------------------------------------------------------------------------
 
 # Conservative fallback for an unknown model behind an OpenAI-compatible endpoint.
-# Kept small on purpose: under-stating the window only costs throughput (more,
-# smaller leaves), while over-stating it overflows the real window and fails the
-# call. Cloud models are far larger (gpt-4o ~128K), local servers often smaller
-# (Ollama default ~2-8K), so there is no safe larger blind default - pass the
-# real context_window / max_output_tokens to plan capacity against the true size.
+# Endpoints vary from ~2-8K (local Ollama) to 128K+ (gpt-4o), so there is no safe
+# larger blind default - pass the real context_window / max_output_tokens.
 _DEFAULT_OPENAI_CONTEXT_WINDOW: int = 8_192
 _DEFAULT_OPENAI_MAX_OUTPUT_TOKENS: int = 8_192
 
@@ -285,11 +282,8 @@ class OpenAIProvider(BaseProvider):
     def context_window(self) -> int:
         """Total context window size (input + output) in tokens.
 
-        Returns the user-provided value if available, otherwise a conservative
-        default. Override this for accuracy with a specific model.
-
         Returns:
-            Context window in tokens (default 8192 if not specified).
+            The caller-provided value, else a conservative default (8192).
         """
         if self._context_window is not None:
             return self._context_window
@@ -299,11 +293,8 @@ class OpenAIProvider(BaseProvider):
     def max_output_tokens(self) -> int:
         """Maximum output tokens for a single API call.
 
-        Returns the user-provided value if available, otherwise a conservative
-        default. Override this for accuracy with a specific model.
-
         Returns:
-            Max output tokens (default 8192 if not specified).
+            The caller-provided value, else a conservative default (8192).
         """
         if self._max_output_tokens is not None:
             return self._max_output_tokens
