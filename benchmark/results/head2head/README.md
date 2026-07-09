@@ -42,4 +42,4 @@ adds nothing the document does not state (zero hallucinated fields).
   scores reflect extraction, not reasoning. llama-3.3-70b is non-reasoning, so that
   question does not arise there.
 - Numbers are per-field accuracy under the shared scorer, not a whole-document pass
-  rate. Reproduce a run with `uv run python -m benchmark.head2head --judge`.
+  rate. Reproduce a run with `uv run python -m benchmark.benchmarks.head2head --judge`.

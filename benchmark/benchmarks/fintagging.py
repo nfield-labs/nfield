@@ -22,8 +22,8 @@ exactly matches a gold pair, as a multiset (Precision / Recall / F1). Concept li
 (FinCL) is out of scope - it maps an entity to one of 10k+ US-GAAP concepts, a taxonomy
 classification, not the wide extraction measured here.
 
-    uv run python -m benchmark.fintagging --sizes 1,3,6
-    uv run python -m benchmark.fintagging               # 1,3,6,10,15 tables
+    uv run python -m benchmark.benchmarks.fintagging --sizes 1,3,6
+    uv run python -m benchmark.benchmarks.fintagging               # 1,3,6,10,15 tables
 """
 
 from __future__ import annotations
@@ -41,9 +41,9 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
-from .adapters import _common
+from ..adapters import _common
 
-_RESULTS_ROOT = Path(__file__).resolve().parent / "results"
+_RESULTS_ROOT = Path(__file__).resolve().parent.parent / "results"
 
 __all__ = [
     "FINNI_TYPES",
@@ -62,7 +62,7 @@ _MODEL = "groq/qwen/qwen3.6-27b"
 _CONTEXT_WINDOW = 131_000
 _MAX_OUTPUT_TOKENS = 24_000
 
-_FIXTURE = Path(__file__).resolve().parent / "datasets" / "fintagging" / "finni_wide.jsonl"
+_FIXTURE = Path(__file__).resolve().parent.parent / "datasets" / "fintagging" / "finni_wide.jsonl"
 
 # The five XBRL numeric item types FinNI classifies each fact into.
 FINNI_TYPES: tuple[str, ...] = (
@@ -385,7 +385,7 @@ def plot_wide_curve(rows: list[WideComparison], path: Path) -> Path | None:
     if not rows:
         return None
 
-    from . import _figstyle
+    from ..figures import _figstyle
 
     ordered = sorted(rows, key=lambda r: r.gold_facts)
     facts = [r.gold_facts for r in ordered]
@@ -479,7 +479,7 @@ def _write_csv(rows: list[WideComparison], path: Path) -> None:
 
 def _load_env() -> None:
     # A live run needs GROQ_API_KEY; mirror the sweeps and read a local .env.
-    env = Path(__file__).resolve().parent.parent / ".env"
+    env = Path(__file__).resolve().parent.parent.parent / ".env"
     if not env.exists():
         return
     for line in env.read_text(encoding="utf-8").splitlines():
@@ -495,9 +495,9 @@ def _parse_sizes(spec: str) -> tuple[int, ...]:
 
 
 def main(argv: list[str] | None = None) -> None:
-    """Entry point for ``python -m benchmark.fintagging``."""
+    """Entry point for ``python -m benchmark.benchmarks.fintagging``."""
     _load_env()
-    parser = argparse.ArgumentParser(prog="benchmark.fintagging", description=__doc__)
+    parser = argparse.ArgumentParser(prog="benchmark.benchmarks.fintagging", description=__doc__)
     parser.add_argument(
         "--sizes", default=",".join(map(str, _DEFAULT_SIZES)), help="table counts per document"
     )

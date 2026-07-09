@@ -30,26 +30,28 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
-from . import datasets
-from .adapters.instructor_adapter import InstructorAdapter
-from .adapters.langchain_adapter import LangChainAdapter
-from .adapters.native_json_adapter import NativeJsonAdapter
-from .adapters.nfield_adapter import NfieldAdapter
-from .adapters.raw_prompt_adapter import RawPromptAdapter
-from .budget import BUDGET_MODES, BudgetMode, resolve_budget
-from .score import score
+from .. import datasets
+from ..adapters.instructor_adapter import InstructorAdapter
+from ..adapters.langchain_adapter import LangChainAdapter
+from ..adapters.native_json_adapter import NativeJsonAdapter
+from ..adapters.nfield_adapter import NfieldAdapter
+from ..adapters.raw_prompt_adapter import RawPromptAdapter
+from ..budget import BUDGET_MODES, BudgetMode, resolve_budget
+from ..scoring.score import score
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from .adapters import Adapter, AdapterOutput
-    from .datasets import LoadedDataset
-    from .score import ScoreReport
+    from ..adapters import Adapter, AdapterOutput
+    from ..datasets import LoadedDataset
+    from ..scoring.score import ScoreReport
 
 __all__ = ["ADAPTERS", "RunArtifacts", "result_dir", "run_sweep", "score_existing"]
 
 _DEFAULT_MODEL = "groq/llama-3.3-70b-versatile"
-_RESULTS_ROOT = Path(__file__).resolve().parent / "results"
+# All four runners land under results/runners/ so the sweep outputs stay grouped
+# apart from the extractbench / fintagging / head2head result trees.
+_RESULTS_ROOT = Path(__file__).resolve().parent.parent / "results" / "runners"
 
 # The committed error field is a short diagnostic, not a raw SDK dump: provider
 # SDK exceptions can be tens of KB and echo back document text / internal ids, so
@@ -58,10 +60,15 @@ _RESULTS_ROOT = Path(__file__).resolve().parent / "results"
 _ERROR_MAX_CHARS: int = 300
 _ORG_ID = re.compile(r"org_[A-Za-z0-9]{6,}")
 
+# Concurrent leaf calls for nfield. Below the pipeline default (4) so a wide
+# fixture's many sub-calls stay under a shared hosted tokens-per-minute limit
+# instead of losing leaves to rate-limit retries. Baselines make one call each.
+_NFIELD_THROTTLE: int = 2
+
 # Method name -> zero-arg factory. nfield plus the Track-A (orchestration-layer)
 # baselines, all on the same hosted model. Each is a thin Adapter wrapper.
 ADAPTERS: dict[str, Callable[[], Adapter]] = {
-    "nfield": NfieldAdapter,
+    "nfield": lambda: NfieldAdapter(max_concurrent_calls=_NFIELD_THROTTLE),
     "raw_prompt": RawPromptAdapter,
     "native_json": NativeJsonAdapter,
     "instructor": InstructorAdapter,
@@ -405,7 +412,7 @@ def _cmd_run(args: argparse.Namespace) -> None:
 
 
 def _cmd_sweep(args: argparse.Namespace) -> None:
-    from . import report
+    from ..figures import report
 
     methods = [m.strip() for m in args.methods.split(",") if m.strip()]
     fixtures = [f.strip() for f in args.fixtures.split(",") if f.strip()]
@@ -469,7 +476,7 @@ def _load_env() -> None:
     # Mirror the repo's other live tooling and read it from a local .env.
     import os
 
-    env = Path(__file__).resolve().parent.parent / ".env"
+    env = Path(__file__).resolve().parent.parent.parent / ".env"
     if not env.exists():
         return
     for line in env.read_text(encoding="utf-8").splitlines():
@@ -480,9 +487,9 @@ def _load_env() -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    """Entry point for ``python -m benchmark.runner``."""
+    """Entry point for ``python -m benchmark.runners.runner``."""
     _load_env()
-    parser = argparse.ArgumentParser(prog="benchmark.runner", description=__doc__)
+    parser = argparse.ArgumentParser(prog="benchmark.runners.runner", description=__doc__)
     parser.add_argument("--model", default=_DEFAULT_MODEL)
     parser.add_argument(
         "--date",

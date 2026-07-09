@@ -208,8 +208,8 @@ def _optional_str(value: object) -> str | None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    """Entry point for ``python -m benchmark.report <result_dir>``."""
-    parser = argparse.ArgumentParser(prog="benchmark.report", description=__doc__)
+    """Entry point for ``python -m benchmark.figures.report <result_dir>``."""
+    parser = argparse.ArgumentParser(prog="benchmark.figures.report", description=__doc__)
     parser.add_argument("result_dir", type=Path)
     parser.add_argument("--plot", action="store_true", help="also write plots/va_vs_n.png")
     args = parser.parse_args(argv)

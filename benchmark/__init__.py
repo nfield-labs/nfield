@@ -16,6 +16,6 @@ substrates. See ``benchmark/README.md`` for the full honest-claims charter.
 
 from __future__ import annotations
 
-from .score import FieldType, Outcome, ScoreReport, score
+from .scoring.score import FieldType, Outcome, ScoreReport, score
 
 __all__ = ["FieldType", "Outcome", "ScoreReport", "score"]

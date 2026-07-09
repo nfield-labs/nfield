@@ -16,7 +16,7 @@ they are materialised by ``datasets/closed_book/build_fixtures.py``. nfield runs
 the baselines generate from the empty-document + instruction prompt. Manual, budgeted tool -
 the sweep costs live API calls. Run:
 
-    uv run python -m benchmark.runner4
+    uv run python -m benchmark.runners.runner4
 """
 
 from __future__ import annotations
@@ -26,28 +26,29 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from . import datasets, report
-from .adapters.instructor_adapter import InstructorAdapter
-from .adapters.langchain_adapter import LangChainAdapter
-from .adapters.native_json_adapter import NativeJsonAdapter
-from .adapters.nfield_adapter import NfieldAdapter
-from .adapters.raw_prompt_adapter import RawPromptAdapter
-from .budget import BUDGET_MODES, resolve_budget
-from .runner import run_sweep
+from .. import datasets
+from ..adapters.instructor_adapter import InstructorAdapter
+from ..adapters.langchain_adapter import LangChainAdapter
+from ..adapters.native_json_adapter import NativeJsonAdapter
+from ..adapters.nfield_adapter import NfieldAdapter
+from ..adapters.raw_prompt_adapter import RawPromptAdapter
+from ..budget import BUDGET_MODES, resolve_budget
+from ..figures import report
+from .runner import _NFIELD_THROTTLE, run_sweep
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from .adapters import Adapter
+    from ..adapters import Adapter
 
 __all__ = ["ADAPTERS", "main"]
 
 _MODEL = "groq/llama-3.3-70b-versatile"
-_RESULTS = Path(__file__).resolve().parent / "results"
+_RESULTS = Path(__file__).resolve().parent.parent / "results" / "runners"
 
 # nfield runs closed-book; the baselines take the same empty-document + instruction prompt.
 ADAPTERS: dict[str, Callable[[], Adapter]] = {
-    "nfield": lambda: NfieldAdapter(closed_book=True),
+    "nfield": lambda: NfieldAdapter(closed_book=True, max_concurrent_calls=_NFIELD_THROTTLE),
     "instructor": InstructorAdapter,
     "langchain": LangChainAdapter,
     "native_json": NativeJsonAdapter,
@@ -56,7 +57,7 @@ ADAPTERS: dict[str, Callable[[], Adapter]] = {
 
 
 def _load_env() -> None:
-    env = Path(__file__).resolve().parent.parent / ".env"
+    env = Path(__file__).resolve().parent.parent.parent / ".env"
     if not env.exists():
         return
     for line in env.read_text(encoding="utf-8").splitlines():

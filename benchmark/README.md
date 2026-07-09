@@ -86,7 +86,7 @@ same accuracy band holds out past a thousand fields, where every single-call cur
 ended.
 
 ```
-python -m benchmark.fieldcount benchmark/results/<a-run-dir> [--judged]
+python -m benchmark.figures.fieldcount benchmark/results/<a-run-dir> [--judged]
 ```
 
 It reads the per-document `scored/` files a run already wrote (no API calls) and saves the chart
@@ -94,6 +94,28 @@ under `<run>/ifscale/`. On the 2026-07-06 qwen run the mean is 0.89 below 500 fi
 500 and above: essentially flat where the reference curves are in free fall. The two axes are not
 the same task, so read it as the shape of the story, not a matched head-to-head; the reference
 numbers are transcribed with their source in `benchmark/reference.py`.
+
+## FinTagging
+
+[FinTagging](https://arxiv.org/abs/2505.20650) asks a model to pull every numeric fact from a
+financial filing's tables and tag each with its XBRL type. We take the real XBRL contexts from
+its FinNI split (`TheFinAI/FinNI-eval`), concatenate them into one wide document, and run nfield
+and a single call on the same model and budget: **`qwen/3.6-27b` on Groq**, 2026-07-08. The
+metric is the paper's pair-level (fact, type) F1.
+
+| Tables | Distinct facts | nfield F1 | Recall | Single-call F1 |
+|-------:|---------------:|----------:|-------:|---------------:|
+| 1  |   292 | 0.965 | 1.000 | 0.965 |
+| 3  |   727 | 0.984 | 1.000 | 0.581 |
+| 6  | 1,138 | **0.991** | 0.999 | 0.160 |
+| 10 | 1,474 | 0.981 | 0.999 | 0.456 |
+| 15 | 1,970 | 0.988 | 0.998 | 0.389 |
+
+nfield recovers every distinct fact the filing states and holds F1 above 0.96 out to nearly two
+thousand facts. A single call keeps pace only on the smallest document; once the answer overruns
+one response it falls to 0.16-0.58, the same wide-output wall as SEC 10-K/Q above. The paper's
+best model reaches 0.72. Same cause, same fix: nfield splits the extraction into bounded calls
+and reassembles, so the output never truncates.
 
 ## How nfield holds up as the schema grows
 
@@ -118,9 +140,9 @@ system's job (value accuracy is the model's), so the scale runs report coverage 
 
 | Fields | Coverage | Calls (minimum) |
 |-------:|---------:|----------------:|
-| 2,523 | 100% | 61 (61) |
+| 2,523 | 100% | 62 (61) |
 | 4,000 | 100% | 95 (94) |
-| 5,641 | 100% | 126 (124) |
+| 5,641 | ~100% | 127 (124) |
 
 The schema is split exactly as much as the budget requires, so the call count stays within a
 couple of the computed minimum with no call storm, even at 5,641 fields.
@@ -145,19 +167,20 @@ hand.
 
 ```bash
 # ExtractBench: run nfield over one domain (needs GROQ_API_KEY):
-uv run python -m benchmark.runner_extractbench --datasets sport_swimming
+uv run python -m benchmark.benchmarks.runner_extractbench --datasets sport_swimming
 
 # Re-score a finished run under the paper's LLM-judge tiers (small judge cost):
-uv run python -m benchmark.rejudge_extractbench results/<run>/native
+uv run python -m benchmark.scoring.rejudge_extractbench results/<run>/native
 
 # Field-count scaling sweep:
-uv run python -m benchmark.runner run --method nfield --fixture clinicaltrial --seeds 1
+uv run python -m benchmark.runners.runner run --method nfield --fixture clinicaltrial --seeds 1
 ```
 
 ## Results
 
-Results live under `results/<model>_<date>/` with raw outputs, scored aggregates, a
-`summary.csv`, and a `MANIFEST.json`, all committed so a run can be reproduced and checked. The
+Results are grouped by benchmark: `results/runners/` (the wide-schema sweeps), `results/extractbench/`,
+`results/fintagging/`, and `results/head2head/`. Each run directory holds raw outputs, scored
+aggregates, a `summary.csv`, and a `MANIFEST.json`, all committed so a run can be reproduced and checked. The
 ExtractBench documents under `external/extract-bench/` are vendored from Contextual AI's public
 repository; the field-count fixtures under `datasets/real/` are public-domain sources. No
 credentials are stored in the repo (the key is read from a gitignored `.env`).

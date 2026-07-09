@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from benchmark.fieldcount import (
+from benchmark.figures.fieldcount import (
     FieldCountPoint,
     collect_points,
     format_summary,

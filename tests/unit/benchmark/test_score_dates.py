@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from benchmark.score import _dates_match, _parse_dates
+from benchmark.scoring.score import _dates_match, _parse_dates
 
 
 def _match(gold: str, predicted: str) -> bool:

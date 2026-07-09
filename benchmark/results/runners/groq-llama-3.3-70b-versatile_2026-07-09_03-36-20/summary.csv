@@ -1,0 +1,61 @@
+budget,method,fixture,seed,n_fields,coverage,value_accuracy,k,k_min,optimality_gap,elapsed_seconds,error_category,error
+constrained,instructor,chemical_element,0,20,1.0,1.0,1,1,0.0,1.773,,
+constrained,instructor,clinicaltrial,0,304,0.0,0.0,0,0,0.0,24.852,output_truncated,output_truncated: output truncated at the token limit; the method returned no usable object
+constrained,instructor,factbook_multi,0,1045,0.0,0.0,0,0,0.0,2.398,request_exceeds_context,request_exceeds_context: request exceeds the context window (messages + max_tokens too large for one call)
+constrained,instructor,factbook_us,0,335,0.0,0.0,0,0,0.0,32.886,output_truncated,output_truncated: output truncated at the token limit; the method returned no usable object
+constrained,instructor,smartphone_spec,0,111,1.0,1.0,1,1,0.0,5.14,,
+constrained,instructor,war_and_peace,0,200,0.98,,1,1,0.0,8.674,,
+constrained,langchain,chemical_element,0,20,1.0,1.0,1,1,0.0,2.412,,
+constrained,langchain,clinicaltrial,0,304,0.5032894736842105,0.5,1,1,0.0,23.539,,
+constrained,langchain,factbook_multi,0,1045,0.1923444976076555,0.1722488038277512,1,1,0.0,34.429,,
+constrained,langchain,factbook_us,0,335,0.7402985074626866,0.6686567164179105,1,1,0.0,32.222,,
+constrained,langchain,smartphone_spec,0,111,1.0,1.0,1,1,0.0,5.247,,
+constrained,langchain,war_and_peace,0,200,0.99,,1,1,0.0,8.205,,
+constrained,native_json,chemical_element,0,20,1.0,1.0,1,1,0.0,1.492,,
+constrained,native_json,clinicaltrial,0,304,0.5032894736842105,0.5,1,1,0.0,22.289,,
+constrained,native_json,factbook_multi,0,1045,0.18277511961722487,0.16363636363636364,1,1,0.0,32.971,,
+constrained,native_json,factbook_us,0,335,0.6865671641791045,0.6179104477611941,1,1,0.0,30.087,,
+constrained,native_json,smartphone_spec,0,111,1.0,1.0,1,1,0.0,4.334,,
+constrained,native_json,war_and_peace,0,200,0.985,,1,1,0.0,7.607,,
+constrained,nfield,chemical_element,0,20,1.0,1.0,1,1,0.0,1.239,,
+constrained,nfield,clinicaltrial,0,304,0.9210526315789473,0.8782894736842105,12,9,0.3333333333333333,26.871,,
+constrained,nfield,factbook_multi,0,1045,0.999043062200957,0.7569377990430622,34,29,0.1724137931034483,81.784,,
+constrained,nfield,factbook_us,0,335,1.0,0.9074626865671642,11,10,0.1,26.72,,
+constrained,nfield,smartphone_spec,0,111,1.0,1.0,4,3,0.3333333333333333,2.917,,
+constrained,nfield,war_and_peace,0,200,1.0,,7,6,0.16666666666666666,47.44,,
+constrained,raw_prompt,chemical_element,0,20,1.0,1.0,1,1,0.0,1.5,,
+constrained,raw_prompt,clinicaltrial,0,304,0.0,0.0,0,0,0.0,22.928,json_truncated,json_truncated: model output was not valid JSON (truncated or malformed)
+constrained,raw_prompt,factbook_multi,0,1045,0.0,0.0,0,0,0.0,33.185,json_truncated,json_truncated: model output was not valid JSON (truncated or malformed)
+constrained,raw_prompt,factbook_us,0,335,0.0,0.0,0,0,0.0,32.965,json_truncated,json_truncated: model output was not valid JSON (truncated or malformed)
+constrained,raw_prompt,smartphone_spec,0,111,1.0,1.0,1,1,0.0,4.335,,
+constrained,raw_prompt,war_and_peace,0,200,0.98,,1,1,0.0,7.613,,
+native,instructor,chemical_element,0,20,1.0,1.0,1,1,0.0,1.632,,
+native,instructor,clinicaltrial,0,304,0.930921052631579,0.9276315789473685,1,1,0.0,39.189,,
+native,instructor,factbook_multi,0,1045,0.0,0.0,0,0,0.0,2.009,request_exceeds_context,request_exceeds_context: request exceeds the context window (messages + max_tokens too large for one call)
+native,instructor,factbook_us,0,335,0.0,0.0,0,0,0.0,47.517,schema_validation_failed,schema_validation_failed: output rejected by schema validation
+native,instructor,smartphone_spec,0,111,1.0,1.0,1,1,0.0,5.151,,
+native,instructor,war_and_peace,0,200,0.0,,0,0,0.0,24.459,schema_validation_failed,schema_validation_failed: output rejected by schema validation
+native,langchain,chemical_element,0,20,1.0,1.0,1,1,0.0,2.258,,
+native,langchain,clinicaltrial,0,304,0.930921052631579,0.9276315789473685,1,1,0.0,37.459,,
+native,langchain,factbook_multi,0,1045,0.7043062200956938,0.6334928229665072,1,1,0.0,94.079,,
+native,langchain,factbook_us,0,335,0.9970149253731343,0.9134328358208955,1,1,0.0,42.63,,
+native,langchain,smartphone_spec,0,111,1.0,1.0,1,1,0.0,5.894,,
+native,langchain,war_and_peace,0,200,0.97,,1,1,0.0,23.068,,
+native,native_json,chemical_element,0,20,1.0,1.0,1,1,0.0,1.553,,
+native,native_json,clinicaltrial,0,304,0.930921052631579,0.9276315789473685,1,1,0.0,37.829,,
+native,native_json,factbook_multi,0,1045,0.615311004784689,0.5435406698564593,1,1,0.0,94.648,,
+native,native_json,factbook_us,0,335,0.9970149253731343,0.9194029850746268,1,1,0.0,131.609,,
+native,native_json,smartphone_spec,0,111,1.0,1.0,1,1,0.0,5.037,,
+native,native_json,war_and_peace,0,200,0.94,,1,1,0.0,17.392,,
+native,nfield,chemical_element,0,20,1.0,1.0,1,1,0.0,3.121,,
+native,nfield,clinicaltrial,0,304,0.9210526315789473,0.881578947368421,12,9,0.3333333333333333,25.156,,
+native,nfield,factbook_multi,0,1045,1.0,0.7779904306220096,30,29,0.034482758620689655,174.716,,
+native,nfield,factbook_us,0,335,1.0,0.9104477611940298,10,10,0.0,23.076,,
+native,nfield,smartphone_spec,0,111,1.0,1.0,4,3,0.3333333333333333,3.312,,
+native,nfield,war_and_peace,0,200,1.0,,7,6,0.16666666666666666,62.522,,
+native,raw_prompt,chemical_element,0,20,1.0,1.0,1,1,0.0,1.602,,
+native,raw_prompt,clinicaltrial,0,304,0.930921052631579,0.9276315789473685,1,1,0.0,37.454,,
+native,raw_prompt,factbook_multi,0,1045,0.0,0.0,0,0,0.0,97.016,json_truncated,json_truncated: model output was not valid JSON (truncated or malformed)
+native,raw_prompt,factbook_us,0,335,0.9432835820895522,0.8686567164179104,1,1,0.0,42.147,,
+native,raw_prompt,smartphone_spec,0,111,1.0,1.0,1,1,0.0,4.846,,
+native,raw_prompt,war_and_peace,0,200,0.0,,0,0,0.0,40.029,json_truncated,json_truncated: model output was not valid JSON (truncated or malformed)

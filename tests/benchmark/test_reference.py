@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from benchmark.reference import EXTRACTBENCH_WALL, IFSCALE_CURVES
+from benchmark.figures.reference import EXTRACTBENCH_WALL, IFSCALE_CURVES
 
 
 def test_ifscale_curves_are_present_and_cited() -> None:
