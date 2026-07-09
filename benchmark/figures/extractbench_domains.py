@@ -12,7 +12,7 @@ comparable. nfield runs on one open model (qwen3.6-27b); the frontier numbers ar
 best of six flagship models asked for the whole schema in one call - so the gap is
 the extraction strategy, not the model.
 
-    uv run python -m benchmark.extractbench_domains <result_dir>
+    uv run python -m benchmark.figures.extractbench_domains <result_dir>
 """
 
 from __future__ import annotations
@@ -173,7 +173,9 @@ def plot_domains(result_dir: Path, out: Path) -> Path:
 
 def main(argv: list[str] | None = None) -> None:
     """CLI: draw the comparison into ``benchmark/results/extractbench/figures/``."""
-    parser = argparse.ArgumentParser(prog="benchmark.extractbench_domains", description=__doc__)
+    parser = argparse.ArgumentParser(
+        prog="benchmark.figures.extractbench_domains", description=__doc__
+    )
     parser.add_argument("result_dir", type=Path, help="a completed ExtractBench sweep directory")
     parser.add_argument("--out", type=Path, default=None, help="output image path")
     args = parser.parse_args(argv)

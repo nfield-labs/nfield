@@ -2,7 +2,7 @@
 
 Reads the per-document ``scored/*.json`` an ExtractBench run wrote and plots one
 point per real document (x = the document's gold field count, y = value accuracy)
-against the published single-call decay curves in :mod:`benchmark.reference`.
+against the published single-call decay curves in :mod:`benchmark.figures.reference`.
 
 The story the plot tells is structural, not a same-setup head-to-head: NField's
 accuracy stays high as the field count grows into the thousands, while the
@@ -221,8 +221,8 @@ def _mean(values: list[float]) -> float:
 
 
 def main(argv: list[str] | None = None) -> None:
-    """Entry point for ``python -m benchmark.fieldcount <result_dir>``."""
-    parser = argparse.ArgumentParser(prog="benchmark.fieldcount", description=__doc__)
+    """Entry point for ``python -m benchmark.figures.fieldcount <result_dir>``."""
+    parser = argparse.ArgumentParser(prog="benchmark.figures.fieldcount", description=__doc__)
     parser.add_argument("result_dir", type=Path, help="an ExtractBench result directory")
     parser.add_argument("--judged", action="store_true", help="use judged accuracy")
     parser.add_argument(
