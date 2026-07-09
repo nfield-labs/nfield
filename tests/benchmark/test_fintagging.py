@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from benchmark.fintagging import (
+from benchmark.benchmarks.fintagging import (
     FINNI_TYPES,
     build_wide_documents,
     finni_f1,
