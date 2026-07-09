@@ -23,6 +23,8 @@ if TYPE_CHECKING:
 _PROVIDER_REGISTRY: dict[str, tuple[str, str]] = {
     "groq": ("nfield.providers.groq", "GroqProvider"),
     "openai": ("nfield.providers.openai", "OpenAIProvider"),
+    "google": ("nfield.providers.gemini", "GeminiProvider"),
+    "anthropic": ("nfield.providers.anthropic", "AnthropicProvider"),
 }
 
 
@@ -43,11 +45,14 @@ def from_model(
 ) -> LLMProvider:
     """Create an LLM provider from a model string identifier.
 
-    Supports model strings of the form "provider/model-name", where the
-    provider prefix routes to the correct provider class (``groq/`` and
-    ``openai/`` today; others as they are added). The ``openai/`` prefix paired
-    with ``base_url`` reaches any OpenAI-compatible endpoint - hosted gateways or
-    a local server. The model name after "/" is passed straight to the provider.
+    Supports model strings of the form "provider/model-name". The prefix routes
+    to a native provider (``groq/``, ``openai/``, ``google/`` for Gemini,
+    ``anthropic/`` for Claude) or to an OpenAI-compatible preset (``openrouter/``,
+    ``deepseek/``, ``together/``, ``fireworks/``, ``mistral/``, ``xai/``,
+    ``perplexity/``, ``cerebras/``, ``ollama/``), each reading its own key
+    variable. The ``openai/`` prefix paired with ``base_url`` reaches any other
+    OpenAI-compatible endpoint. Only the first "/" selects the provider, so the
+    rest is passed straight through as the model name.
 
     The model's real context window and output ceiling are caller-supplied -
     pass ``context_window`` and ``max_output_tokens`` so capacity planning uses
@@ -101,9 +106,24 @@ def from_model(
             f"Invalid model string: {model_string!r}. Provider and model name must be non-empty."
         )
 
+    # OpenAI-compatible presets route to OpenAIProvider with a preset base URL.
+    from nfield.providers._presets import OPENAI_COMPATIBLE_PRESETS, build_preset_provider
+
+    if provider_name in OPENAI_COMPATIBLE_PRESETS:
+        return build_preset_provider(
+            provider_name,
+            model_name,
+            context_window=context_window,
+            max_output_tokens=max_output_tokens,
+            max_retries=max_retries,
+            api_key=api_key,
+            base_url=base_url,
+            reasoning_model=reasoning_model,
+        )
+
     # Look up provider in registry
     if provider_name not in _PROVIDER_REGISTRY:
-        registered = ", ".join(sorted(_PROVIDER_REGISTRY.keys()))
+        registered = ", ".join(sorted(set(_PROVIDER_REGISTRY) | set(OPENAI_COMPATIBLE_PRESETS)))
         raise ProviderError(
             f"Unknown provider: {provider_name!r}. "
             f"Registered providers: {registered}. "

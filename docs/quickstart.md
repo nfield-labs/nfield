@@ -95,12 +95,20 @@ Loading is text and JSON only; PDF or DOCX parsing stays your job. `load_schema`
 ## Command line
 
 ```bash
-nfield inspect schema.json
+nfield inspect schema.json                 # offline: field count, types, K_min estimate
 nfield extract doc.txt --schema schema.json --model groq/llama-3.1-8b-instant
+nfield extract doc.txt -s schema.json -m groq/llama-3.1-8b-instant \
+    --ground-values --show-metadata --format jsonl     # opt-ins + run summary on stderr
+nfield batch ./docs -s schema.json -m groq/llama-3.1-8b-instant -o out.jsonl
 ```
 
 With no `--model`, nfield reads `NFIELD_MODEL` from the environment, then
 `ExtractionConfig(default_model=...)`.
+
+Every `ExtractionConfig` setting is a flag on `extract` (see `nfield extract --help`, grouped
+into panels). `--format` is `json`, `jsonl`, or `csv`. `batch` runs a directory or a list of
+files through one reused engine and streams JSON Lines that round-trip with `load_results`.
+Both commands exit non-zero when an API/call failure leaves the result incomplete.
 
 ## Model limits for large schemas
 

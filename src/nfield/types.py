@@ -119,6 +119,8 @@ class Metadata:
     # Both ``None`` for document extraction.
     answer_rate: float | None = None
     abstain_rate: float | None = None
+    # Representative provider error when a call failed; None when every call succeeded.
+    error: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

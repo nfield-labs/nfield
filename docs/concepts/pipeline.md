@@ -9,7 +9,7 @@ the model, so the LLM is asked to do one thing: read the relevant text and fill 
 | Calibrate | Read the model's context and output limits; estimate characters per token. | no |
 | Analyze schema | Flatten the schema to dot-notation paths and estimate each field's token cost. | no |
 | Group | Group the fields by where they sit in the schema. | no |
-| Retrieve | Chunk the document and score each chunk against each group (BM25-style). | no |
+| Retrieve | Chunk the document and score each chunk against each group with lexical retrieval (BMX, a BM25 variant). | no |
 | Pack | Split the groups into calls that fit the context and output budget. | no |
 | Excerpt | For each call, gather, dedup, and trim the document spans it needs. | no |
 | Extract | Build the prompt, call the model, and parse the `key = value` reply. | **yes** |

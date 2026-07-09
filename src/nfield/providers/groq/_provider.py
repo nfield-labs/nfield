@@ -21,11 +21,8 @@ from nfield.providers._reasoning import (
 # Default model specifications
 # ---------------------------------------------------------------------------
 
-# Conservative fallback for unknown Groq models. Kept small on purpose:
-# under-stating the window only costs throughput (more, smaller leaves), while
-# over-stating it overflows the real window and fails the call. Groq models are
-# far larger (llama-3.3-70b ~128K), so pass the real context_window /
-# max_output_tokens to plan capacity against the true size.
+# Conservative fallback for an unknown Groq model; models vary (up to ~131K), so
+# pass the real context_window / max_output_tokens for capacity planning.
 _DEFAULT_GROQ_CONTEXT_WINDOW: int = 8_192
 _DEFAULT_GROQ_MAX_OUTPUT_TOKENS: int = 8_192
 
@@ -95,11 +92,9 @@ def _retry_after_seconds(exc: Exception) -> float | None:
 class GroqProvider(BaseProvider):
     """Groq LLM provider implementation.
 
-    Connects to Groq's API for low-latency inference. The groq SDK is
-    imported lazily only when a call is made, not at import time.
-
-    Allows users to override model specs (context_window, max_output_tokens)
-    for flexibility with new or updated models.
+    Connects to Groq's API for low-latency inference. The groq SDK is imported
+    lazily only when a call is made, not at import time. Model specs are
+    caller-supplied; conservative defaults apply otherwise.
 
     Attributes:
         model_name: Name of the Groq model (e.g., "llama-3.1-8b").
@@ -270,11 +265,8 @@ class GroqProvider(BaseProvider):
     def context_window(self) -> int:
         """Total context window size (input + output) in tokens.
 
-        Returns user-provided value if available, otherwise conservative default.
-        Users should override this for accuracy with specific models.
-
         Returns:
-            Context window in tokens (default 8192 if not specified).
+            The caller-provided value, else a conservative default (8192).
         """
         if self._context_window is not None:
             return self._context_window
@@ -284,11 +276,8 @@ class GroqProvider(BaseProvider):
     def max_output_tokens(self) -> int:
         """Maximum output tokens for a single API call.
 
-        Returns user-provided value if available, otherwise conservative default.
-        Users should override this for accuracy with specific models.
-
         Returns:
-            Max output tokens (default 8192 if not specified).
+            The caller-provided value, else a conservative default (8192).
         """
         if self._max_output_tokens is not None:
             return self._max_output_tokens
