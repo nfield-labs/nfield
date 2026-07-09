@@ -24,12 +24,18 @@ theme:
 
 nav:
   - Home: index.md
-  - Quickstart: quickstart.md
+  - Getting started:
+      - Quickstart: quickstart.md
+      - Configuration: configuration.md
+      - Examples: examples.md
+  - Guides:
+      - CLI: cli.md
+      - Errors and troubleshooting: errors.md
   - Concepts:
       - Pipeline: concepts/pipeline.md
       - SFEP: concepts/sfep.md
-  - API:
-      - nfield: api/nfield.md
+  - Reference:
+      - Python API: api/nfield.md
 
 markdown_extensions:
   - admonition
