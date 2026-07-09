@@ -28,8 +28,8 @@ Output, one folder per run::
       raw/<method>.json      extracted data + run metrics
       scored/<method>.json   value accuracy, coverage, outcome counts
 
-    uv run python -m benchmark.head2head
-    uv run python -m benchmark.head2head --judge --methods nfield,instructor
+    uv run python -m benchmark.benchmarks.head2head
+    uv run python -m benchmark.benchmarks.head2head --judge --methods nfield,instructor
 """
 
 from __future__ import annotations
@@ -43,20 +43,20 @@ import time
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from .adapters.instructor_adapter import InstructorAdapter
-from .adapters.langchain_adapter import LangChainAdapter
-from .adapters.langstruct_adapter import LangStructAdapter
-from .adapters.native_json_adapter import NativeJsonAdapter
-from .adapters.nfield_adapter import NfieldAdapter
-from .pdf_router import extract
-from .score import _flatten
-from .score_extractbench import score_extractbench
+from ..adapters.instructor_adapter import InstructorAdapter
+from ..adapters.langchain_adapter import LangChainAdapter
+from ..adapters.langstruct_adapter import LangStructAdapter
+from ..adapters.native_json_adapter import NativeJsonAdapter
+from ..adapters.nfield_adapter import NfieldAdapter
+from ..pdf_router import extract
+from ..scoring.score import _flatten
+from ..scoring.score_extractbench import score_extractbench
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from .adapters import Adapter, AdapterOutput
-    from .score import ScoreReport
+    from ..adapters import Adapter, AdapterOutput
+    from ..scoring.score import ScoreReport
 
 __all__ = ["combine_runs", "load_task", "main", "regen_reports", "run_head_to_head"]
 
@@ -68,8 +68,8 @@ _MODEL = "groq/llama-3.3-70b-versatile"
 _CONTEXT_WINDOW = 131_000
 _MAX_OUTPUT_TOKENS = 24_000
 
-_DATASET_ROOT = Path(__file__).resolve().parent / "external" / "extract-bench" / "dataset"
-_RESULTS_ROOT = Path(__file__).resolve().parent / "results" / "head2head"
+_DATASET_ROOT = Path(__file__).resolve().parent.parent / "external" / "extract-bench" / "dataset"
+_RESULTS_ROOT = Path(__file__).resolve().parent.parent / "results" / "head2head"
 # Flagship task: the 369-field 10-Q where single-call pass rate is 0% (ExtractBench).
 _TASK_SCHEMA = _DATASET_ROOT / "finance" / "10kq" / "10kq-schema.json"
 _TASK_PDF = _DATASET_ROOT / "finance" / "10kq" / "pdf+gold" / "nke_10q_fy2025q2.pdf"
@@ -277,7 +277,7 @@ def _judge_report(
 
     from nfield.providers.groq._provider import GroqProvider
 
-    from .score_extractbench import llm_rejudge
+    from ..scoring.score_extractbench import llm_rejudge
 
     judge = GroqProvider(model.split("/", 1)[1])
 
@@ -470,7 +470,7 @@ def _plot_grouped(path: Path, models: list[tuple[str, dict[str, float]]]) -> Non
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    from . import _figstyle
+    from ..figures import _figstyle
 
     method_order = list(ROSTER)
     nfield_top = max((s.get("nfield", 0.0) for _, s in models), default=1.0)
@@ -526,7 +526,7 @@ def _git_commit() -> str:
             capture_output=True,
             text=True,
             check=True,
-            cwd=Path(__file__).resolve().parent,
+            cwd=Path(__file__).resolve().parent.parent,
         )
         return out.stdout.strip()
     except (OSError, subprocess.CalledProcessError):
@@ -535,7 +535,7 @@ def _git_commit() -> str:
 
 def _load_env() -> None:
     """Load ``.env`` at the repo root so GROQ_API_KEY is available, if present."""
-    env = Path(__file__).resolve().parent.parent / ".env"
+    env = Path(__file__).resolve().parent.parent.parent / ".env"
     if not env.exists():
         return
     for line in env.read_text(encoding="utf-8").splitlines():
@@ -550,7 +550,7 @@ def _load_env() -> None:
 
 def main(argv: list[str] | None = None) -> None:
     """CLI: run the head-to-head and write the result folder."""
-    parser = argparse.ArgumentParser(prog="benchmark.head2head", description=__doc__)
+    parser = argparse.ArgumentParser(prog="benchmark.benchmarks.head2head", description=__doc__)
     parser.add_argument("--model", default=_MODEL, help="provider-qualified model id")
     parser.add_argument("--methods", default=",".join(ROSTER), help="comma-separated method names")
     parser.add_argument(
