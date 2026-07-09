@@ -216,6 +216,25 @@ wheels = [
 ]
 
 [[package]]
+name = "anthropic"
+version = "0.116.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "distro" },
+    { name = "docstring-parser" },
+    { name = "httpx" },
+    { name = "jiter" },
+    { name = "pydantic" },
+    { name = "sniffio" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/66/a2/d31f14e28d49bae983a3634e38dfb4b31c50110b5e403596c5c6a20b23f8/anthropic-0.116.0.tar.gz", hash = "sha256:5fc248fbb9fe03ef686f8a774f81586bca31a043260aab88b387ea3660f4a396", size = 949149, upload-time = "2026-07-02T19:08:10.534Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c7/dd/2a1e81cf1b163acc340afc4ec74ed1d86f5eed1a809fabdeed3e0997b346/anthropic-0.116.0-py3-none-any.whl", hash = "sha256:6c0a7698e8d652455da3499978279bb2588c7264d0a35be3666009a4258c8256", size = 956896, upload-time = "2026-07-02T19:08:08.756Z" },
+]
+
+[[package]]
 name = "anyio"
 version = "4.13.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3195,17 +3214,50 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+anthropic = [
+    { name = "anthropic" },
+]
+cerebras = [
+    { name = "openai" },
+]
 cli = [
     { name = "typer" },
+]
+deepseek = [
+    { name = "openai" },
 ]
 export = [
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "pandas", version = "3.0.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
+fireworks = [
+    { name = "openai" },
+]
+google = [
+    { name = "google-genai" },
+]
 groq = [
     { name = "groq" },
 ]
+mistral = [
+    { name = "openai" },
+]
+ollama = [
+    { name = "openai" },
+]
 openai = [
+    { name = "openai" },
+]
+openrouter = [
+    { name = "openai" },
+]
+perplexity = [
+    { name = "openai" },
+]
+together = [
+    { name = "openai" },
+]
+xai = [
     { name = "openai" },
 ]
 
@@ -3243,13 +3295,24 @@ docs = [
 
 [package.metadata]
 requires-dist = [
+    { name = "anthropic", marker = "extra == 'anthropic'", specifier = ">=0.40" },
+    { name = "google-genai", marker = "extra == 'google'", specifier = ">=1.0" },
     { name = "groq", marker = "extra == 'groq'", specifier = ">=0.9" },
     { name = "json-repair", specifier = ">=0.61.0" },
+    { name = "openai", marker = "extra == 'cerebras'", specifier = ">=1.0" },
+    { name = "openai", marker = "extra == 'deepseek'", specifier = ">=1.0" },
+    { name = "openai", marker = "extra == 'fireworks'", specifier = ">=1.0" },
+    { name = "openai", marker = "extra == 'mistral'", specifier = ">=1.0" },
+    { name = "openai", marker = "extra == 'ollama'", specifier = ">=1.0" },
     { name = "openai", marker = "extra == 'openai'", specifier = ">=1.0" },
+    { name = "openai", marker = "extra == 'openrouter'", specifier = ">=1.0" },
+    { name = "openai", marker = "extra == 'perplexity'", specifier = ">=1.0" },
+    { name = "openai", marker = "extra == 'together'", specifier = ">=1.0" },
+    { name = "openai", marker = "extra == 'xai'", specifier = ">=1.0" },
     { name = "pandas", marker = "extra == 'export'", specifier = ">=2.0" },
     { name = "typer", marker = "extra == 'cli'", specifier = ">=0.12" },
 ]
-provides-extras = ["cli", "export", "groq", "openai"]
+provides-extras = ["anthropic", "cerebras", "cli", "deepseek", "export", "fireworks", "google", "groq", "mistral", "ollama", "openai", "openrouter", "perplexity", "together", "xai"]
 
 [package.metadata.requires-dev]
 bench = [

@@ -29,6 +29,18 @@ dependencies = [
 [project.optional-dependencies]
 groq = ["groq>=0.9"]
 openai = ["openai>=1.0"]
+google = ["google-genai>=1.0"]
+anthropic = ["anthropic>=0.40"]
+# OpenAI-compatible presets: same SDK, different base URL and key variable.
+openrouter = ["openai>=1.0"]
+deepseek = ["openai>=1.0"]
+together = ["openai>=1.0"]
+fireworks = ["openai>=1.0"]
+mistral = ["openai>=1.0"]
+xai = ["openai>=1.0"]
+perplexity = ["openai>=1.0"]
+cerebras = ["openai>=1.0"]
+ollama = ["openai>=1.0"]
 cli = ["typer>=0.12"]
 export = ["pandas>=2.0"]
 
@@ -115,7 +127,7 @@ warn_unused_ignores = true
 exclude = ["benchmark/datasets/gen/", "benchmark/external/"]
 
 [[tool.mypy.overrides]]
-module = ["groq.*", "openai.*"]
+module = ["groq.*", "openai.*", "anthropic.*"]
 ignore_missing_imports = true
 
 # matplotlib is an optional, plot-only dependency of the dev benchmark harness;
