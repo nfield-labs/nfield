@@ -1,27 +1,34 @@
 """Direct-competitor head-to-head - nfield vs the real extraction libraries.
 
-Separate from :mod:`benchmark.runner` (orchestration-layer baselines: raw_prompt,
-native_json, instructor, langchain) and :mod:`benchmark.runner2` (nfield-only scale
+Separate from :mod:`benchmark.runners.runner` (orchestration-layer baselines: raw_prompt,
+native_json, instructor, langchain) and :mod:`benchmark.runners.runner2` (nfield-only scale
 fixtures). This runs nfield against the *direct* structured-extraction competitors
 (LangStruct, ExtractThinker, ContextGem, LangExtract) on the standard fixtures,
 each on the SAME hosted model and the SAME shared budget, so the only variable is
 how each library decomposes/retrieves. Output mirrors the main runner:
 ``results/<model>_<stamp>/<budget>/{raw,scored}`` + MANIFEST + summary.csv.
 
-    uv run python -m benchmark.runner3
+    uv run python -m benchmark.runners.runner3
 """
 
 from __future__ import annotations
 
 import argparse
+from typing import TYPE_CHECKING
 
-from . import datasets, report
-from .adapters.contextgem_adapter import ContextGemAdapter
-from .adapters.langextract_adapter import LangExtractAdapter
-from .adapters.langstruct_adapter import LangStructAdapter
-from .adapters.nfield_adapter import NfieldAdapter
-from .budget import BUDGET_MODES, resolve_budget
-from .runner import _load_env, _now_stamp, result_dir, run_sweep
+from .. import datasets
+from ..adapters.contextgem_adapter import ContextGemAdapter
+from ..adapters.langextract_adapter import LangExtractAdapter
+from ..adapters.langstruct_adapter import LangStructAdapter
+from ..adapters.nfield_adapter import NfieldAdapter
+from ..budget import BUDGET_MODES, resolve_budget
+from ..figures import report
+from .runner import _NFIELD_THROTTLE, _load_env, _now_stamp, result_dir, run_sweep
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from ..adapters import Adapter
 
 _MODEL = "groq/llama-3.3-70b-versatile"
 _SEEDS = 1
@@ -29,19 +36,19 @@ _SEEDS = 1
 # nfield plus the direct competitors that run fairly on the shared Groq model.
 # Each value is a zero-arg adapter factory (Adapter protocol). Add a competitor here
 # once its adapter passes a live smoke test on the shared model.
-ADAPTERS = {
-    "nfield": NfieldAdapter,
+ADAPTERS: dict[str, Callable[[], Adapter]] = {
+    "nfield": lambda: NfieldAdapter(max_concurrent_calls=_NFIELD_THROTTLE),
     "langstruct": LangStructAdapter,
     "langextract": LangExtractAdapter,
     "contextgem": ContextGemAdapter,
 }
 
-# The standard competitor fixtures (same as benchmark.runner).
+# The standard competitor fixtures (same as benchmark.runners.runner).
 _FIXTURES = datasets.available()
 
 
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(prog="benchmark.runner3", description=__doc__)
+    parser = argparse.ArgumentParser(prog="benchmark.runners.runner3", description=__doc__)
     parser.add_argument(
         "--methods", default=",".join(ADAPTERS), help="comma-separated method names"
     )

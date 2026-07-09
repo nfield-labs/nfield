@@ -1,20 +1,20 @@
 """Scale benchmark - nfield on the large in-house fixtures (2.5k, 4k, 5.6k, and future).
 
-Separate from :mod:`benchmark.runner` (which pits nfield against the competitor
+Separate from :mod:`benchmark.runners.runner` (which pits nfield against the competitor
 baselines on the standard fixtures). These are big, record-structured documents that
 stress nfield's N-field path, so only nfield runs, under both budgets. Output mirrors
 the main runner: ``results/<model>_<stamp>/<budget>/{raw,scored}`` + MANIFEST.
 
-    uv run python -m benchmark.runner2
+    uv run python -m benchmark.runners.runner2
 """
 
 from __future__ import annotations
 
-from . import report
-from .adapters.nfield_adapter import NfieldAdapter
-from .budget import BUDGET_MODES, resolve_budget
-from .datasets import Dataset
-from .runner import _load_env, _now_stamp, result_dir, run_sweep
+from ..adapters.nfield_adapter import NfieldAdapter
+from ..budget import BUDGET_MODES, resolve_budget
+from ..datasets import Dataset
+from ..figures import report
+from .runner import _NFIELD_THROTTLE, _load_env, _now_stamp, result_dir, run_sweep
 
 _MODEL = "groq/llama-3.3-70b-versatile"
 _SEEDS = 1
@@ -59,7 +59,7 @@ def main() -> None:
             dataset = fixture.load()
             print(f"  [{budget}] nfield x {dataset.name} (seeds={_SEEDS}) ...", flush=True)
             run_sweep(
-                NfieldAdapter(),
+                NfieldAdapter(max_concurrent_calls=_NFIELD_THROTTLE),
                 dataset,
                 model=_MODEL,
                 seeds=_SEEDS,
