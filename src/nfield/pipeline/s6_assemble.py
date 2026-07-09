@@ -83,6 +83,10 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
         0, fields_total - fields_extracted - fields_conflicted - fields_needs_revalidation
     )
 
+    # First recorded call-failure reason, so a failed run carries its cause.
+    call_failed_paths = bb.get_call_failed()
+    call_failure_error = next((err for p in call_failed_paths if (err := bb.get_error(p))), None)
+
     # --- 4a. Grounding metric (only meaningful when grounding ran) ---
     grounded, ungrounded, hallucination_rate = _grounding_metric(state)
 
@@ -106,7 +110,7 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
         fields_needs_revalidation=fields_needs_revalidation,
         per_field_confidence=report.per_field_confidence,
         retry_rounds=state.retry_rounds,
-        fields_call_failed=len(bb.get_call_failed()),
+        fields_call_failed=len(call_failed_paths),
         calls_by_origin=dict(state.calls_by_origin),
         fields_grounded=grounded,
         fields_ungrounded=ungrounded,
@@ -114,6 +118,7 @@ def run_stage_6(state: PipelineState) -> ExtractionResult:
         unknown_output_lines=state.unknown_lines,
         answer_rate=answer_rate,
         abstain_rate=abstain_rate,
+        error=call_failure_error,
     )
 
     # --- 5. Determine status ---
