@@ -8,7 +8,7 @@ flip a miss to correct, so the judged score is always >= the deterministic one.
 
 Usage::
 
-    uv run python -m benchmark.rejudge_extractbench <results>/native [--model ...]
+    uv run python -m benchmark.scoring.rejudge_extractbench <results>/native [--model ...]
 
 Updates each dataset's ``scored/<doc>.json`` in place - ``value_accuracy_judged``
 lands beside ``value_accuracy``, and the judged mismatch list replaces the
@@ -25,7 +25,12 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .runner_extractbench import _GOLD_SUFFIX, _SCHEMA_SUFFIX, _load_env, discover_datasets
+from ..benchmarks.runner_extractbench import (
+    _GOLD_SUFFIX,
+    _SCHEMA_SUFFIX,
+    _load_env,
+    discover_datasets,
+)
 from .score_extractbench import llm_rejudge, score_extractbench
 
 DEFAULT_JUDGE_MODEL = "groq/qwen/qwen3.6-27b"
