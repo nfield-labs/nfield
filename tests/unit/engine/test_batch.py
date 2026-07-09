@@ -78,6 +78,10 @@ class TestAsyncBatch:
         results = await engine.extract_batch(_DOCS)
         assert len(results) == len(_DOCS)
         assert all(r.status is ExtractionStatus.FAILED for r in results)
+        # The failure reason is surfaced on the result, not only in the logs, so a bad
+        # model or missing key is not a silent empty result.
+        assert all(r.metadata.fields_call_failed > 0 for r in results)
+        assert all("synthetic failure" in (r.metadata.error or "") for r in results)
 
     async def test_return_exceptions_keeps_escaping_errors_in_place(
         self, install_provider
