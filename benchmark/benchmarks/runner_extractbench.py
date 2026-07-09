@@ -3,7 +3,7 @@
 Self-contained: discovers every ``domain/schema`` group under
 ``benchmark/external/extract-bench/dataset``, turns each task PDF into text through
 :mod:`benchmark.pdf_router` (text layer, two-engine OCR for scans), runs nfield, and
-scores against the human gold with :mod:`benchmark.score`. Results use their own
+scores against the human gold with :mod:`benchmark.scoring.score`. Results use their own
 layout, one folder per dataset::
 
     results/<provider>-extractbench-<model>-<stamp>/
@@ -20,8 +20,8 @@ Rate handling: nfield retries 429s honouring Retry-After and caps in-flight call
 the sweep adds a short pause between documents and records a failed document as a
 zero-score row instead of aborting.
 
-    uv run python -m benchmark.runner_extractbench
-    uv run python -m benchmark.runner_extractbench --datasets sport_swimming --limit 1
+    uv run python -m benchmark.benchmarks.runner_extractbench
+    uv run python -m benchmark.benchmarks.runner_extractbench --datasets sport_swimming --limit 1
 """
 
 from __future__ import annotations
@@ -35,9 +35,9 @@ import time
 from pathlib import Path
 from typing import Any
 
-from .pdf_router import MIN_CHARS_PER_PAGE, extract, text_layer
-from .score import _flatten
-from .score_extractbench import score_extractbench
+from ..pdf_router import MIN_CHARS_PER_PAGE, extract, text_layer
+from ..scoring.score import _flatten
+from ..scoring.score_extractbench import score_extractbench
 
 __all__ = ["discover_datasets", "main", "run_dataset"]
 
@@ -45,8 +45,8 @@ _MODEL = "groq/qwen/qwen3.6-27b"
 _CONTEXT_WINDOW = 131_000
 _MAX_OUTPUT_TOKENS = 24_000
 _BUDGET = "native"
-_DATASET_ROOT = Path(__file__).resolve().parent / "external" / "extract-bench" / "dataset"
-_RESULTS_ROOT = Path(__file__).resolve().parent / "results"
+_DATASET_ROOT = Path(__file__).resolve().parent.parent / "external" / "extract-bench" / "dataset"
+_RESULTS_ROOT = Path(__file__).resolve().parent.parent / "results"
 _SCHEMA_SUFFIX = "-schema.json"
 _GOLD_SUFFIX = ".gold.json"
 # Pause between documents so per-minute token windows recover between large calls.
@@ -273,7 +273,7 @@ def _rejudge_with_llm(
 
     from nfield.providers.groq._provider import GroqProvider
 
-    from .score_extractbench import llm_rejudge
+    from ..scoring.score_extractbench import llm_rejudge
 
     judge = GroqProvider(model.split("/", 1)[1], reasoning_model=reasoning_model)
 
@@ -327,7 +327,7 @@ def _git_commit() -> str:
             capture_output=True,
             text=True,
             check=True,
-            cwd=Path(__file__).resolve().parent,
+            cwd=Path(__file__).resolve().parent.parent,
         )
         return out.stdout.strip()
     except (OSError, subprocess.CalledProcessError):
@@ -337,7 +337,7 @@ def _git_commit() -> str:
 def _load_env() -> None:
     import os
 
-    env = Path(__file__).resolve().parent.parent / ".env"
+    env = Path(__file__).resolve().parent.parent.parent / ".env"
     if not env.exists():
         return
     for line in env.read_text(encoding="utf-8").splitlines():
@@ -348,8 +348,10 @@ def _load_env() -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    """Entry point for ``python -m benchmark.runner_extractbench`` (costs API calls)."""
-    parser = argparse.ArgumentParser(prog="benchmark.runner_extractbench", description=__doc__)
+    """Entry point for ``python -m benchmark.benchmarks.runner_extractbench`` (costs API calls)."""
+    parser = argparse.ArgumentParser(
+        prog="benchmark.benchmarks.runner_extractbench", description=__doc__
+    )
     parser.add_argument("--model", default=_MODEL)
     parser.add_argument(
         "--reasoning-model",
