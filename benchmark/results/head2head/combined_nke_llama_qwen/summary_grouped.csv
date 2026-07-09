@@ -1,0 +1,6 @@
+method,llama-3.3-70b-versatile,qwen/qwen3.6-27b
+nfield,0.5444,0.8238
+native_json,0.0023,0.2206
+instructor,0.1235,0.3675
+langchain,0.0023,0.2206
+langstruct,0.0151,0.0136
