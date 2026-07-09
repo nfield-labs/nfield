@@ -1,0 +1,609 @@
+{
+  "model": "groq/llama-3.3-70b-versatile",
+  "date": "2026-07-09",
+  "temperature": 0,
+  "library_version": "0.1.1.dev79+ga1b1b6914.d20260707",
+  "python_version": "3.12.0",
+  "runs": [
+    {
+      "method": "nfield",
+      "fixture": "chemical_element",
+      "budget": "native",
+      "n_fields": 20,
+      "seeds": 1,
+      "schema_sha256": "f46d86c1648b1a2a923caedee5a165fc1e85284666c06626086753e210fe3c85",
+      "document_sha256": "631edeb24a36fb78b796f0ab182dff2ea19243b8cb9b1da2d72ca4d7eaf9ded3",
+      "recorded_at": "2026-07-09T03:36:23+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "chemical_element",
+      "budget": "native",
+      "n_fields": 20,
+      "seeds": 1,
+      "schema_sha256": "f46d86c1648b1a2a923caedee5a165fc1e85284666c06626086753e210fe3c85",
+      "document_sha256": "631edeb24a36fb78b796f0ab182dff2ea19243b8cb9b1da2d72ca4d7eaf9ded3",
+      "recorded_at": "2026-07-09T03:36:25+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "chemical_element",
+      "budget": "native",
+      "n_fields": 20,
+      "seeds": 1,
+      "schema_sha256": "f46d86c1648b1a2a923caedee5a165fc1e85284666c06626086753e210fe3c85",
+      "document_sha256": "631edeb24a36fb78b796f0ab182dff2ea19243b8cb9b1da2d72ca4d7eaf9ded3",
+      "recorded_at": "2026-07-09T03:36:26+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "chemical_element",
+      "budget": "native",
+      "n_fields": 20,
+      "seeds": 1,
+      "schema_sha256": "f46d86c1648b1a2a923caedee5a165fc1e85284666c06626086753e210fe3c85",
+      "document_sha256": "631edeb24a36fb78b796f0ab182dff2ea19243b8cb9b1da2d72ca4d7eaf9ded3",
+      "recorded_at": "2026-07-09T03:36:35+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "chemical_element",
+      "budget": "native",
+      "n_fields": 20,
+      "seeds": 1,
+      "schema_sha256": "f46d86c1648b1a2a923caedee5a165fc1e85284666c06626086753e210fe3c85",
+      "document_sha256": "631edeb24a36fb78b796f0ab182dff2ea19243b8cb9b1da2d72ca4d7eaf9ded3",
+      "recorded_at": "2026-07-09T03:36:38+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "clinicaltrial",
+      "budget": "native",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-07-09T03:37:12+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "clinicaltrial",
+      "budget": "native",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-07-09T03:38:14+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "clinicaltrial",
+      "budget": "native",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-07-09T03:39:15+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "clinicaltrial",
+      "budget": "native",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-07-09T03:40:22+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "clinicaltrial",
+      "budget": "native",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-07-09T03:41:22+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "factbook_multi",
+      "budget": "native",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-07-09T03:44:39+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "factbook_multi",
+      "budget": "native",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-07-09T03:46:16+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "factbook_multi",
+      "budget": "native",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-07-09T03:48:13+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "factbook_multi",
+      "budget": "native",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-07-09T03:48:15+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "factbook_multi",
+      "budget": "native",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-07-09T03:50:08+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "factbook_us",
+      "budget": "native",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-07-09T03:50:34+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "factbook_us",
+      "budget": "native",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-07-09T03:51:19+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "factbook_us",
+      "budget": "native",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-07-09T03:53:38+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "factbook_us",
+      "budget": "native",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-07-09T03:54:25+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "factbook_us",
+      "budget": "native",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-07-09T03:55:15+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "smartphone_spec",
+      "budget": "native",
+      "n_fields": 111,
+      "seeds": 1,
+      "schema_sha256": "40a5f7cb0803182ca65719b7775ee053d4efbbdd754911bb32b7ed5d19c870fa",
+      "document_sha256": "1018df69b983751844eeb7f44374555f5649ccd5688df851957c0c755a55d410",
+      "recorded_at": "2026-07-09T03:55:19+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "smartphone_spec",
+      "budget": "native",
+      "n_fields": 111,
+      "seeds": 1,
+      "schema_sha256": "40a5f7cb0803182ca65719b7775ee053d4efbbdd754911bb32b7ed5d19c870fa",
+      "document_sha256": "1018df69b983751844eeb7f44374555f5649ccd5688df851957c0c755a55d410",
+      "recorded_at": "2026-07-09T03:55:23+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "smartphone_spec",
+      "budget": "native",
+      "n_fields": 111,
+      "seeds": 1,
+      "schema_sha256": "40a5f7cb0803182ca65719b7775ee053d4efbbdd754911bb32b7ed5d19c870fa",
+      "document_sha256": "1018df69b983751844eeb7f44374555f5649ccd5688df851957c0c755a55d410",
+      "recorded_at": "2026-07-09T03:55:29+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "smartphone_spec",
+      "budget": "native",
+      "n_fields": 111,
+      "seeds": 1,
+      "schema_sha256": "40a5f7cb0803182ca65719b7775ee053d4efbbdd754911bb32b7ed5d19c870fa",
+      "document_sha256": "1018df69b983751844eeb7f44374555f5649ccd5688df851957c0c755a55d410",
+      "recorded_at": "2026-07-09T03:55:34+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "smartphone_spec",
+      "budget": "native",
+      "n_fields": 111,
+      "seeds": 1,
+      "schema_sha256": "40a5f7cb0803182ca65719b7775ee053d4efbbdd754911bb32b7ed5d19c870fa",
+      "document_sha256": "1018df69b983751844eeb7f44374555f5649ccd5688df851957c0c755a55d410",
+      "recorded_at": "2026-07-09T03:55:40+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "war_and_peace",
+      "budget": "native",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-07-09T03:56:42+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "war_and_peace",
+      "budget": "native",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-07-09T03:57:22+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "war_and_peace",
+      "budget": "native",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-07-09T03:57:40+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "war_and_peace",
+      "budget": "native",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-07-09T03:58:04+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "war_and_peace",
+      "budget": "native",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-07-09T03:58:27+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "chemical_element",
+      "budget": "constrained",
+      "n_fields": 20,
+      "seeds": 1,
+      "schema_sha256": "f46d86c1648b1a2a923caedee5a165fc1e85284666c06626086753e210fe3c85",
+      "document_sha256": "631edeb24a36fb78b796f0ab182dff2ea19243b8cb9b1da2d72ca4d7eaf9ded3",
+      "recorded_at": "2026-07-09T03:58:29+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "chemical_element",
+      "budget": "constrained",
+      "n_fields": 20,
+      "seeds": 1,
+      "schema_sha256": "f46d86c1648b1a2a923caedee5a165fc1e85284666c06626086753e210fe3c85",
+      "document_sha256": "631edeb24a36fb78b796f0ab182dff2ea19243b8cb9b1da2d72ca4d7eaf9ded3",
+      "recorded_at": "2026-07-09T03:58:30+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "chemical_element",
+      "budget": "constrained",
+      "n_fields": 20,
+      "seeds": 1,
+      "schema_sha256": "f46d86c1648b1a2a923caedee5a165fc1e85284666c06626086753e210fe3c85",
+      "document_sha256": "631edeb24a36fb78b796f0ab182dff2ea19243b8cb9b1da2d72ca4d7eaf9ded3",
+      "recorded_at": "2026-07-09T03:58:32+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "chemical_element",
+      "budget": "constrained",
+      "n_fields": 20,
+      "seeds": 1,
+      "schema_sha256": "f46d86c1648b1a2a923caedee5a165fc1e85284666c06626086753e210fe3c85",
+      "document_sha256": "631edeb24a36fb78b796f0ab182dff2ea19243b8cb9b1da2d72ca4d7eaf9ded3",
+      "recorded_at": "2026-07-09T03:58:33+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "chemical_element",
+      "budget": "constrained",
+      "n_fields": 20,
+      "seeds": 1,
+      "schema_sha256": "f46d86c1648b1a2a923caedee5a165fc1e85284666c06626086753e210fe3c85",
+      "document_sha256": "631edeb24a36fb78b796f0ab182dff2ea19243b8cb9b1da2d72ca4d7eaf9ded3",
+      "recorded_at": "2026-07-09T03:58:36+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "clinicaltrial",
+      "budget": "constrained",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-07-09T03:59:10+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "clinicaltrial",
+      "budget": "constrained",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-07-09T03:59:32+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "clinicaltrial",
+      "budget": "constrained",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-07-09T04:00:00+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "clinicaltrial",
+      "budget": "constrained",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-07-09T04:00:24+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "clinicaltrial",
+      "budget": "constrained",
+      "n_fields": 304,
+      "seeds": 1,
+      "schema_sha256": "292e1df64e9f225578f08d058a90682878a36dc2405c41481dd2e489fe28c1b9",
+      "document_sha256": "57b09e33dcc244466cb28953f6c9f307ff1508c4ca65094deb6910cd4cb7e962",
+      "recorded_at": "2026-07-09T04:00:54+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-07-09T04:02:30+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-07-09T04:03:04+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-07-09T04:03:38+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-07-09T04:03:40+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "factbook_multi",
+      "budget": "constrained",
+      "n_fields": 1045,
+      "seeds": 1,
+      "schema_sha256": "46a0af40e67b48f3301150b1c6945cec0d7169a6f7daa4e86d8fc6cbc448e33d",
+      "document_sha256": "d9ec237311c6c30d2a5756ad2c5371e1caac4afadb8a06c1c3eff56676e1a71f",
+      "recorded_at": "2026-07-09T04:04:16+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "factbook_us",
+      "budget": "constrained",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-07-09T04:04:46+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "factbook_us",
+      "budget": "constrained",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-07-09T04:05:19+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "factbook_us",
+      "budget": "constrained",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-07-09T04:05:50+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "factbook_us",
+      "budget": "constrained",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-07-09T04:06:23+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "factbook_us",
+      "budget": "constrained",
+      "n_fields": 335,
+      "seeds": 1,
+      "schema_sha256": "1145b0d2208f9168bca984830f6bfc3030f87aee6903b557e7e6e27c3aff4c9b",
+      "document_sha256": "b7babcb017b43e6a5963592bcef9bdfe4f358f0da4e00f69bc959a7e759b0e36",
+      "recorded_at": "2026-07-09T04:06:57+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "smartphone_spec",
+      "budget": "constrained",
+      "n_fields": 111,
+      "seeds": 1,
+      "schema_sha256": "40a5f7cb0803182ca65719b7775ee053d4efbbdd754911bb32b7ed5d19c870fa",
+      "document_sha256": "1018df69b983751844eeb7f44374555f5649ccd5688df851957c0c755a55d410",
+      "recorded_at": "2026-07-09T04:07:00+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "smartphone_spec",
+      "budget": "constrained",
+      "n_fields": 111,
+      "seeds": 1,
+      "schema_sha256": "40a5f7cb0803182ca65719b7775ee053d4efbbdd754911bb32b7ed5d19c870fa",
+      "document_sha256": "1018df69b983751844eeb7f44374555f5649ccd5688df851957c0c755a55d410",
+      "recorded_at": "2026-07-09T04:07:04+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "smartphone_spec",
+      "budget": "constrained",
+      "n_fields": 111,
+      "seeds": 1,
+      "schema_sha256": "40a5f7cb0803182ca65719b7775ee053d4efbbdd754911bb32b7ed5d19c870fa",
+      "document_sha256": "1018df69b983751844eeb7f44374555f5649ccd5688df851957c0c755a55d410",
+      "recorded_at": "2026-07-09T04:07:09+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "smartphone_spec",
+      "budget": "constrained",
+      "n_fields": 111,
+      "seeds": 1,
+      "schema_sha256": "40a5f7cb0803182ca65719b7775ee053d4efbbdd754911bb32b7ed5d19c870fa",
+      "document_sha256": "1018df69b983751844eeb7f44374555f5649ccd5688df851957c0c755a55d410",
+      "recorded_at": "2026-07-09T04:07:14+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "smartphone_spec",
+      "budget": "constrained",
+      "n_fields": 111,
+      "seeds": 1,
+      "schema_sha256": "40a5f7cb0803182ca65719b7775ee053d4efbbdd754911bb32b7ed5d19c870fa",
+      "document_sha256": "1018df69b983751844eeb7f44374555f5649ccd5688df851957c0c755a55d410",
+      "recorded_at": "2026-07-09T04:07:19+00:00"
+    },
+    {
+      "method": "nfield",
+      "fixture": "war_and_peace",
+      "budget": "constrained",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-07-09T04:08:07+00:00"
+    },
+    {
+      "method": "raw_prompt",
+      "fixture": "war_and_peace",
+      "budget": "constrained",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-07-09T04:08:14+00:00"
+    },
+    {
+      "method": "native_json",
+      "fixture": "war_and_peace",
+      "budget": "constrained",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-07-09T04:08:22+00:00"
+    },
+    {
+      "method": "instructor",
+      "fixture": "war_and_peace",
+      "budget": "constrained",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-07-09T04:08:31+00:00"
+    },
+    {
+      "method": "langchain",
+      "fixture": "war_and_peace",
+      "budget": "constrained",
+      "n_fields": 0,
+      "seeds": 1,
+      "schema_sha256": "7584203694215ded3661d763eec9198804ca023c7921062f39be4b28d5202463",
+      "document_sha256": "07e7d16c993ab0d37c346e88981748df836a64bb824af5df82fe0cb1c7fc3c74",
+      "recorded_at": "2026-07-09T04:08:39+00:00"
+    }
+  ]
+}
