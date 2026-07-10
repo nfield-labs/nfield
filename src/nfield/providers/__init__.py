@@ -12,13 +12,19 @@ from typing import TYPE_CHECKING
 from nfield.providers._registry import from_model, register_provider
 
 if TYPE_CHECKING:
+    from nfield.providers._cache import DiskCache, MemoryCache, ResponseCache
     from nfield.providers._protocol import LLMProvider
 
 __all__ = [
+    "DiskCache",
     "LLMProvider",
+    "MemoryCache",
+    "ResponseCache",
     "from_model",
     "register_provider",
 ]
+
+_CACHE_EXPORTS = frozenset({"DiskCache", "MemoryCache", "ResponseCache"})
 
 
 def __getattr__(name: str) -> object:
@@ -41,5 +47,9 @@ def __getattr__(name: str) -> object:
         from nfield.providers._protocol import LLMProvider
 
         return LLMProvider
+    if name in _CACHE_EXPORTS:
+        from nfield.providers import _cache
+
+        return getattr(_cache, name)
     msg = f"module {__name__!r} has no attribute {name!r}"
     raise AttributeError(msg)
