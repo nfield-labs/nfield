@@ -315,6 +315,16 @@ class TestExtractConfigWiring:
         assert cfg.reasoning_model is True
         assert cfg.fallback_model == "mock/big"
 
+    def test_cache_dir_builds_disk_cache(self, tmp_path, monkeypatch):
+        from nfield.providers._cache import DiskCache
+
+        spy = self._run(tmp_path, monkeypatch, ["--cache-dir", str(tmp_path / "c")])
+        assert isinstance(spy.kwargs["config"].cache, DiskCache)
+
+    def test_no_cache_dir_leaves_cache_off(self, tmp_path, monkeypatch):
+        spy = self._run(tmp_path, monkeypatch, [])
+        assert spy.kwargs["config"].cache is False
+
     def test_connection_flags_reach_engine(self, tmp_path, monkeypatch):
         spy = self._run(
             tmp_path,
