@@ -41,6 +41,7 @@ from nfield.pipeline.s5b_recover import run_recovery_pass
 from nfield.pipeline.s6_assemble import run_stage_6
 from nfield.providers import from_model
 from nfield.providers._cache import resolve_cache
+from nfield.providers._usage import start_usage
 from nfield.schema._preflight import preflight_schema
 
 if TYPE_CHECKING:
@@ -376,19 +377,21 @@ class AsyncNField:
             reasoning_model=self._config.reasoning_model,
             cache=self._cache,
         )
-        # Optional stronger model the recovery pass escalates stragglers to. Built once
-        # here (not per call); it uses its own default specs and the same credentials.
-        self._fallback_provider: LLMProvider | None = (
+        # Optional stronger model(s) the recovery pass escalates stragglers to, tried in
+        # order. Built once here (not per call); each uses its own default specs and the
+        # same credentials.
+        fallback = self._config.fallback_model
+        fallback_models = [fallback] if isinstance(fallback, str) else list(fallback or [])
+        self._fallback_providers: tuple[LLMProvider, ...] = tuple(
             from_model(
-                self._config.fallback_model,
+                name,
                 max_retries=self._config.max_api_retries,
                 api_key=api_key,
                 base_url=base_url,
                 reasoning_model=self._config.reasoning_model,
                 cache=self._cache,
             )
-            if self._config.fallback_model
-            else None
+            for name in fallback_models
         )
         self._instructions = instructions
         self._schema: dict[str, Any] | None = (
@@ -436,6 +439,9 @@ class AsyncNField:
         if config.validate_schema:
             preflight_schema(schema_dict)
 
+        # Fresh per-run counter; every leaf task under this call inherits it, so
+        # concurrent batch documents each keep an exact, isolated tally.
+        usage = start_usage()
         state = run_stage_0(self._provider, self._config)
         state.instructions = self._instructions
         state.inject_dependencies = config.inject_dependencies
@@ -459,9 +465,17 @@ class AsyncNField:
         state = await run_stage_4(state, provider)
         state = await run_stage_5(state, provider, config)
         state = await run_recovery_pass(
-            state, provider, config, fallback_provider=self._fallback_provider
+            state, provider, config, fallback_provider=self._fallback_providers
         )
-        return run_stage_6(state)
+        result = run_stage_6(state)
+        # Fold what the run actually spent into the result; cache hits added nothing.
+        metadata = dataclasses.replace(
+            result.metadata,
+            tokens_prompt=usage.prompt_tokens,
+            tokens_completion=usage.completion_tokens,
+            cost=usage.cost(config.pricing) if config.pricing is not None else None,
+        )
+        return dataclasses.replace(result, metadata=metadata)
 
     @overload
     async def extract_batch(
