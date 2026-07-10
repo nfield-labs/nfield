@@ -66,7 +66,13 @@ class Metadata:
         fields_needs_revalidation: Number of fields flagged for revalidation.
         per_field_confidence: Mapping of field path → confidence score [0, 1].
         retry_rounds: Number of retry rounds performed (0 = first pass only).
-        cost: Estimated token cost in USD, or ``None`` if not tracked.
+        cost: The run's API cost in USD, computed from the real token usage when
+            ``ExtractionConfig.pricing`` is set; ``None`` otherwise.
+        tokens_prompt: Input tokens across every API call in the run, as reported
+            by the provider. ``0`` when no call reported usage. Cache hits make no
+            call, so they add nothing.
+        tokens_completion: Output tokens across every API call in the run, as
+            reported by the provider. ``0`` when no call reported usage.
         fields_call_failed: Number of fields left unextracted because an API/call
             error never returned (transient), as distinct from fields genuinely
             absent from the document. ``0`` when every call succeeded.
@@ -109,6 +115,8 @@ class Metadata:
     per_field_confidence: dict[str, float]
     retry_rounds: int
     cost: float | None = None
+    tokens_prompt: int = 0
+    tokens_completion: int = 0
     fields_call_failed: int = 0
     calls_by_origin: dict[str, int] = field(default_factory=dict)
     fields_grounded: int = 0
