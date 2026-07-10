@@ -40,6 +40,7 @@ from nfield.pipeline.s5_validate import run_stage_5
 from nfield.pipeline.s5b_recover import run_recovery_pass
 from nfield.pipeline.s6_assemble import run_stage_6
 from nfield.providers import from_model
+from nfield.providers._cache import resolve_cache
 from nfield.schema._preflight import preflight_schema
 
 if TYPE_CHECKING:
@@ -363,6 +364,8 @@ class AsyncNField:
     ) -> None:
         self._config: ExtractionConfig = config or ExtractionConfig()
         self._model: str = _resolve_model(model, self._config)
+        # Shared by both providers; keys carry the model name, so they never collide.
+        self._cache = resolve_cache(self._config.cache)
         self._provider: LLMProvider = from_model(
             self._model,
             context_window=context_window,
@@ -371,6 +374,7 @@ class AsyncNField:
             api_key=api_key,
             base_url=base_url,
             reasoning_model=self._config.reasoning_model,
+            cache=self._cache,
         )
         # Optional stronger model the recovery pass escalates stragglers to. Built once
         # here (not per call); it uses its own default specs and the same credentials.
@@ -381,6 +385,7 @@ class AsyncNField:
                 api_key=api_key,
                 base_url=base_url,
                 reasoning_model=self._config.reasoning_model,
+                cache=self._cache,
             )
             if self._config.fallback_model
             else None
