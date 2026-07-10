@@ -32,6 +32,7 @@ from nfield.engine import NField
 from nfield.exceptions import NFieldError
 from nfield.io import save_results
 from nfield.pipeline.s2c_packing import compute_K_min
+from nfield.providers._cache import DiskCache
 from nfield.schema._flatten import flatten_schema
 from nfield.schema._tau import compute_tau
 
@@ -219,6 +220,7 @@ def _build_config(
     fallback_model: str | None = None,
     closed_book: bool | None = None,
     self_consistency: bool | None = None,
+    cache_dir: Path | None = None,
 ) -> ExtractionConfig:
     """Build an ``ExtractionConfig`` from CLI flags, honouring config defaults.
 
@@ -254,6 +256,7 @@ def _build_config(
         fallback_model: Stronger model to escalate still-failing fields to.
         closed_book: Fill the schema from model knowledge with no document.
         self_consistency: Sample each closed-book leaf twice and keep agreeing values.
+        cache_dir: Directory for an on-disk response cache; ``None`` leaves caching off.
 
     Returns:
         A fully-formed :class:`~nfield.config.ExtractionConfig`.
@@ -301,6 +304,8 @@ def _build_config(
         kwargs["confidence_thresholds"] = thresholds
     if think_budget_min is not None and think_budget_max is not None:
         kwargs["think_phase_budget"] = (think_budget_min, think_budget_max)
+    if cache_dir is not None:
+        kwargs["cache"] = DiskCache(cache_dir)
 
     return ExtractionConfig(**kwargs)
 
@@ -620,6 +625,14 @@ def extract(
             rich_help_panel=_PANEL_TUNING,
         ),
     ] = None,
+    cache_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--cache-dir",
+            help="On-disk response cache directory; reuses identical model calls across runs.",
+            rich_help_panel=_PANEL_TUNING,
+        ),
+    ] = None,
     confidence: Annotated[
         list[str] | None,
         typer.Option(
@@ -812,6 +825,7 @@ def extract(
         fallback_model=fallback_model,
         closed_book=closed_book,
         self_consistency=self_consistency,
+        cache_dir=cache_dir,
     )
     # Closed-book ignores the document; every other mode requires one.
     document_text = "" if config.closed_book else _read_text_file(document, "Document")
@@ -927,6 +941,10 @@ def batch(
         str | None,
         typer.Option("--fallback-model", help="Stronger model to escalate stragglers to."),
     ] = None,
+    cache_dir: Annotated[
+        Path | None,
+        typer.Option("--cache-dir", help="On-disk response cache directory (reused across runs)."),
+    ] = None,
     show_metadata: Annotated[
         bool,
         typer.Option("--show-metadata", help="Print a per-document run summary to stderr."),
@@ -952,6 +970,7 @@ def batch(
         provenance=provenance,
         knowledge_fallback=knowledge_fallback,
         fallback_model=fallback_model,
+        cache_dir=cache_dir,
     )
     try:
         engine = NField(
