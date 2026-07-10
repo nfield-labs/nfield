@@ -31,21 +31,24 @@ if TYPE_CHECKING:
     )
     from .export import result_to_dataframe, results_to_csv, results_to_dataframe
     from .io import load_document, load_results, load_schema, save_results
-    from .providers import from_model
+    from .providers import DiskCache, MemoryCache, ResponseCache, from_model
     from .types import ExtractionResult, ExtractionStatus, FieldResult, Metadata
 
 __all__ = [
     "AssemblyError",
     "AsyncNField",
+    "DiskCache",
     "ExtractionConfig",
     "ExtractionError",
     "ExtractionResult",
     "ExtractionStatus",
     "FieldResult",
+    "MemoryCache",
     "Metadata",
     "NField",
     "NFieldError",
     "ProviderError",
+    "ResponseCache",
     "SchemaError",
     "ValidationError",
     "__version__",
@@ -76,8 +79,11 @@ _dynamic_imports: dict[str, str] = {
     "results_to_dataframe": ".export",
     "result_to_dataframe": ".export",
     "results_to_csv": ".export",
-    # Provider factory
+    # Provider factory and response caches
     "from_model": ".providers",
+    "ResponseCache": ".providers",
+    "MemoryCache": ".providers",
+    "DiskCache": ".providers",
     # Config
     "ExtractionConfig": ".config",
     # Types
