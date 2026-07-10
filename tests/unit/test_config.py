@@ -32,6 +32,15 @@ class TestExtractionConfigDefaults:
         assert cfg.max_api_retries == DEFAULT_MAX_API_RETRIES
         assert cfg.max_api_retries == 10  # outlasts a rolling-window TPM storm
 
+    def test_cache_defaults_off(self) -> None:
+        assert ExtractionConfig().cache is False
+
+    def test_cache_accepts_an_instance(self) -> None:
+        from nfield.providers._cache import MemoryCache
+
+        cache = MemoryCache()
+        assert ExtractionConfig(cache=cache).cache is cache
+
     def test_default_model_is_none(self) -> None:
         cfg = ExtractionConfig()
         assert cfg.default_model is None
