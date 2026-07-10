@@ -136,10 +136,17 @@ class ExtractionConfig:
             value's dot-path to its ``[start, end)`` char offsets in the source
             document (a value located verbatim only). Adds one document scan per value;
             independent of ``ground_values``. Default ``False``.
-        fallback_model: Optional stronger model to escalate to. After the recovery pass
-            exhausts its retries, any field still failing is re-extracted **once** on
-            this model (e.g. a larger model the primary could not satisfy). ``None``
-            (default) disables escalation, keeping the run single-model.
+        fallback_model: Optional stronger model(s) to escalate to. After the recovery
+            pass exhausts its retries, any field still failing is re-extracted **once**
+            per fallback (e.g. a larger model the primary could not satisfy). A list is
+            tried in order - cheapest first - and each model only sees what the previous
+            one left unresolved. ``None`` (default) disables escalation, keeping the run
+            single-model.
+        pricing: ``(input, output)`` USD prices per **million** tokens for the model in
+            use. When set, ``Metadata.cost`` reports the run's real API cost, computed
+            from the token usage every response already carries. ``None`` (default)
+            leaves ``cost`` unset. Token counts themselves (``Metadata.tokens_prompt`` /
+            ``tokens_completion``) are always tracked, price or not.
         validate_schema: When ``True`` (default), a provably-unsatisfiable schema
             (``minimum > maximum``, empty ``enum``, ``minLength > maxLength``,
             uncompilable ``pattern``, …) raises a ``SchemaError`` before any API call,
@@ -208,8 +215,12 @@ class ExtractionConfig:
     # Attach source char offsets [start, end) per value to the result (result.provenance).
     # Off by default; adds a document scan per value when on. Independent of grounding.
     provenance: bool = False
-    # Stronger model to escalate still-failing fields to after recovery; None disables.
-    fallback_model: str | None = None
+    # Stronger model(s) to escalate still-failing fields to after recovery, tried in
+    # order; None disables.
+    fallback_model: str | list[str] | None = None
+    # (input, output) USD per million tokens; when set, Metadata.cost is computed from
+    # the run's reported token usage.
+    pricing: tuple[float, float] | None = None
     # Fill the schema from model knowledge, no document; the prompt answers NULL when
     # unsure (arXiv:2404.10960). Grounding off; reports answer/abstain rates. One call/leaf.
     closed_book: bool = False
@@ -223,7 +234,10 @@ class ExtractionConfig:
         """Validate settings that have no safe non-positive value.
 
         Raises:
-            ValueError: If ``chars_per_token`` is set to a non-positive ratio.
+            ValueError: If ``chars_per_token`` is set to a non-positive ratio, or
+                ``pricing`` holds a negative price.
         """
         if self.chars_per_token is not None and self.chars_per_token <= 0:
             raise ValueError(f"chars_per_token must be > 0, got {self.chars_per_token}")
+        if self.pricing is not None and any(price < 0 for price in self.pricing):
+            raise ValueError(f"pricing must be non-negative, got {self.pricing}")
