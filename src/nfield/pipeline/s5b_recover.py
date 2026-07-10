@@ -21,6 +21,7 @@ self-correction risks.
 from __future__ import annotations
 
 import logging
+from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from nfield.pipeline.s2c_packing import run_stage_2c, safe_excerpt_chars
@@ -57,7 +58,7 @@ async def run_recovery_pass(
     provider: LLMProvider,
     config: ExtractionConfig,
     *,
-    fallback_provider: LLMProvider | None = None,
+    fallback_provider: LLMProvider | Sequence[LLMProvider] | None = None,
 ) -> PipelineState:
     """Recover still-missing fields in one bounded pass (Stage 5.5).
 
@@ -68,9 +69,11 @@ async def run_recovery_pass(
         state: Pipeline state after Stage 5 (blackboard populated).
         provider: LLM provider for the single recovery extraction call.
         config: Extraction configuration (retry rounds for the recovery leaf).
-        fallback_provider: Optional stronger model. Any field still failing after the
-            primary recovery round is re-extracted once on this provider (escalation).
-            ``None`` keeps recovery single-model.
+        fallback_provider: Optional stronger model(s). Any field still failing after
+            the primary recovery round is re-extracted once per fallback, in order;
+            each model only sees what the previous one left unresolved. A single
+            provider behaves as a one-element chain. ``None`` keeps recovery
+            single-model.
 
     Returns:
         The same ``PipelineState`` with any recovered fields written to the
@@ -81,14 +84,20 @@ async def run_recovery_pass(
     """
     if state.blackboard is None:
         return state
-    return await _run_consolidated_recovery(state, provider, config, fallback_provider)
+    if fallback_provider is None:
+        fallbacks: tuple[LLMProvider, ...] = ()
+    elif isinstance(fallback_provider, Sequence):
+        fallbacks = tuple(fallback_provider)
+    else:
+        fallbacks = (fallback_provider,)
+    return await _run_consolidated_recovery(state, provider, config, fallbacks)
 
 
 async def _run_consolidated_recovery(
     state: PipelineState,
     provider: LLMProvider,
     config: ExtractionConfig,
-    fallback_provider: LLMProvider | None,
+    fallback_providers: tuple[LLMProvider, ...],
 ) -> PipelineState:
     """Recover every non-filled field in one pooled, bounded retry loop.
 
@@ -181,22 +190,26 @@ async def _run_consolidated_recovery(
                 round_offset=_RECOVERY_ROUNDS,
                 boundary=True,
             )
-        # Escalation: re-extract whatever the primary still could not produce on a
-        # stronger fallback model, once - only the stragglers pay the higher cost, not
-        # the whole document.
-        if fallback_provider is not None and still:
+        # Escalation: re-extract whatever the primary still could not produce on the
+        # fallback chain, once per model in order - only the stragglers pay the higher
+        # cost, and each model only sees what the previous one left unresolved.
+        for index, fallback in enumerate(fallback_providers):
+            if not still:
+                break
             logger.debug(
-                "Recovery fallback: escalating %d field(s) to a stronger model", len(still)
+                "Recovery fallback %d: escalating %d field(s) to a stronger model",
+                index + 1,
+                len(still),
             )
             still = await _recover_rounds(
                 state,
-                fallback_provider,
+                fallback,
                 config,
                 bb,
                 still,
                 reasons,
                 rounds=_FALLBACK_ROUNDS,
-                round_offset=_RECOVERY_ROUNDS + 1,
+                round_offset=_RECOVERY_ROUNDS + 1 + index,
             )
     finally:
         (
