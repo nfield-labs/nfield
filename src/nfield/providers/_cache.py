@@ -12,6 +12,7 @@ store satisfying :class:`ResponseCache` (e.g. Redis-backed).
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
 import os
@@ -122,14 +123,27 @@ class MemoryCache:
         self.max_size = max_size
         self._store: OrderedDict[str, str] = OrderedDict()
         self._lock = threading.Lock()
+        self._hits = 0
+        self._misses = 0
 
     def get(self, key: str) -> str | None:
         """Return the cached response for *key* and mark it most-recently-used."""
         with self._lock:
             if key not in self._store:
+                self._misses += 1
                 return None
+            self._hits += 1
             self._store.move_to_end(key)
             return self._store[key]
+
+    def stats(self) -> dict[str, int]:
+        """Return ``{"hits", "misses", "entries"}`` counters for this cache.
+
+        Returns:
+            Hit/miss counts since construction and the current entry count.
+        """
+        with self._lock:
+            return {"hits": self._hits, "misses": self._misses, "entries": len(self._store)}
 
     def set(self, key: str, value: str) -> None:
         """Store *value* for *key*, evicting the least-recently-used entry if full."""
@@ -170,6 +184,9 @@ class DiskCache:
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
         self._resolved_dir = self.directory.resolve()
+        self._lock = threading.Lock()
+        self._hits = 0
+        self._misses = 0
 
     def _path(self, key: str) -> Path:
         """Return the on-disk path for *key*, rejecting any key that escapes the directory."""
@@ -181,17 +198,53 @@ class DiskCache:
     def get(self, key: str) -> str | None:
         """Return the cached response for *key*, or ``None`` on a miss or read error."""
         try:
-            return self._path(key).read_text(encoding="utf-8")
+            value = self._path(key).read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
             # Fail-open: a missing, unreadable, or non-UTF-8 entry is a miss, not a crash.
+            with self._lock:
+                self._misses += 1
             return None
+        with self._lock:
+            self._hits += 1
+        return value
+
+    def stats(self) -> dict[str, int]:
+        """Return ``{"hits", "misses", "entries", "size_bytes"}`` for this cache.
+
+        Hit/miss counts are per-instance (since construction); entries and bytes are
+        read from the directory, so they reflect every process writing to it.
+
+        Returns:
+            The counter dict described above.
+        """
+        entries = 0
+        size_bytes = 0
+        for entry in self.directory.glob(f"*{_DISK_ENTRY_SUFFIX}"):
+            # A concurrent writer may replace or remove an entry mid-scan.
+            with contextlib.suppress(OSError):
+                size_bytes += entry.stat().st_size
+                entries += 1
+        with self._lock:
+            return {
+                "hits": self._hits,
+                "misses": self._misses,
+                "entries": entries,
+                "size_bytes": size_bytes,
+            }
 
     def set(self, key: str, value: str) -> None:
-        """Store *value* for *key* via an atomic temp-file replace."""
+        """Store *value* for *key* via an atomic temp-file replace (best-effort)."""
         path = self._path(key)
         tmp = path.with_name(f"{path.name}.{uuid.uuid4().hex}.tmp")
-        tmp.write_text(value, encoding="utf-8")
-        os.replace(tmp, path)
+        try:
+            tmp.write_text(value, encoding="utf-8")
+            os.replace(tmp, path)
+        except OSError:
+            # Best-effort: a failed write (same-key replace race on Windows, full disk)
+            # becomes a future miss. It must never raise into the caller, who already
+            # paid the API call for this value.
+            with contextlib.suppress(OSError):
+                tmp.unlink(missing_ok=True)
 
     def clear(self) -> None:
         """Delete every entry file in the cache directory."""
