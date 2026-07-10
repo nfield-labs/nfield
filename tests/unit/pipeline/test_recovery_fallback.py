@@ -81,3 +81,34 @@ def test_no_fallback_leaves_straggler_unrecovered() -> None:
 
     # Without escalation, the field the primary cannot produce stays unrecovered.
     assert "year" not in state.blackboard.get_filled()
+
+
+def test_chain_walks_to_the_model_that_can() -> None:
+    state = _settled_state_with_failed_year()
+    assert state.blackboard is not None
+
+    primary = _FixedProvider("company = Acme Corp\nyear = not_a_number\n")
+    weak = _FixedProvider("year = still_not_a_number\n")
+    strong = _FixedProvider("year = 1947\n")
+    config = ExtractionConfig()
+    asyncio.run(run_recovery_pass(state, primary, config, fallback_provider=[weak, strong]))
+
+    # The first fallback fails the same way; the second in the chain rescues it.
+    assert state.blackboard.get_filled().get("year") == 1947
+    assert weak.calls >= 1
+    assert strong.calls >= 1
+
+
+def test_chain_stops_once_resolved() -> None:
+    state = _settled_state_with_failed_year()
+    assert state.blackboard is not None
+
+    primary = _FixedProvider("company = Acme Corp\nyear = not_a_number\n")
+    first = _FixedProvider("year = 1947\n")
+    second = _FixedProvider("year = 2000\n")
+    config = ExtractionConfig()
+    asyncio.run(run_recovery_pass(state, primary, config, fallback_provider=[first, second]))
+
+    # The first fallback resolves the field; the rest of the chain is never called.
+    assert state.blackboard.get_filled().get("year") == 1947
+    assert second.calls == 0
