@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 
 from nfield.exceptions import ProviderError
 from nfield.providers._cache import make_cache_key
+from nfield.providers._usage import record_usage
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable
@@ -136,6 +137,19 @@ class BaseProvider(ABC):
             ProviderError: On API failure.
         """
         ...
+
+    def _record_usage(self, prompt_tokens: int | None, completion_tokens: int | None) -> None:
+        """Publish one call's reported token counts to calibration and the run tally.
+
+        Called by each provider right after the SDK returns, with no await in
+        between, so under asyncio the write is atomic per call.
+
+        Args:
+            prompt_tokens: The call's input-token count, or ``None`` if unreported.
+            completion_tokens: The call's output-token count, or ``None`` if unreported.
+        """
+        self.last_prompt_tokens = prompt_tokens
+        record_usage(prompt_tokens, completion_tokens)
 
     @abstractmethod
     def _get_client(self) -> Any:

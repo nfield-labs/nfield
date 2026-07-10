@@ -238,7 +238,10 @@ class GeminiProvider(BaseProvider):
             ) from e
 
         usage = getattr(response, "usage_metadata", None)
-        self.last_prompt_tokens = getattr(usage, "prompt_token_count", None) if usage else None
+        self._record_usage(
+            getattr(usage, "prompt_token_count", None) if usage else None,
+            getattr(usage, "candidates_token_count", None) if usage else None,
+        )
         # response.text raises if the reply was blocked or has no text part.
         try:
             text = response.text
