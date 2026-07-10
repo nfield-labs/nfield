@@ -45,6 +45,7 @@ Single-file examples you can run directly.
 | [scripts/agent_tool.py](scripts/agent_tool.py) | nfield used as a tool an agent can call. |
 | [scripts/async_batch.py](scripts/async_batch.py) | Extract many documents concurrently with `AsyncNField`. |
 | [scripts/response_cache.py](scripts/response_cache.py) | Cache responses so a repeated extraction is free. |
+| [scripts/full_tour.py](scripts/full_tour.py) | Every headline feature in one run: grounding, provenance, caching, cost, fallback, HTML viewer. |
 
 ```bash
 python examples/scripts/quickstart.py
