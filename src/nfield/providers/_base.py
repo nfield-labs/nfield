@@ -13,9 +13,12 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from nfield.exceptions import ProviderError
+from nfield.providers._cache import make_cache_key
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable
+
+    from nfield.providers._cache import ResponseCache
 
 T = TypeVar("T")
 
@@ -113,6 +116,8 @@ class BaseProvider(ABC):
         # the API usage report. Lets the pipeline calibrate its chars-per-token
         # estimate to this model's real tokenizer (None until the first call).
         self.last_prompt_tokens: int | None = None
+        # Optional exact-match cache attached by the engine; a hit skips the API call.
+        self.cache: ResponseCache | None = None
 
     # --- Abstract methods (subclasses must implement) ---
 
@@ -173,10 +178,23 @@ class BaseProvider(ABC):
         Raises:
             ProviderError: After max retries or on non-transient failure.
         """
+        cache = self.cache
+        if cache is None:
+            return await self._retry_with_backoff(
+                lambda: self._raw_complete(messages, max_tokens=max_tokens),
+                operation_name="complete",
+            )
+
+        key = make_cache_key(self.model_name, messages, max_tokens)
+        cached = cache.get(key)
+        if cached is not None:
+            return cached
+        # A failure raises before set(), so an error or partial result is never cached.
         result: str = await self._retry_with_backoff(
             lambda: self._raw_complete(messages, max_tokens=max_tokens),
             operation_name="complete",
         )
+        cache.set(key, result)
         return result
 
     # --- Retry logic ---

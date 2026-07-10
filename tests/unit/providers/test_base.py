@@ -7,6 +7,7 @@ import pytest
 from nfield.exceptions import ProviderError
 from nfield.providers import _base
 from nfield.providers._base import BaseProvider
+from nfield.providers._cache import MemoryCache
 
 
 class MockProvider(BaseProvider):
@@ -262,6 +263,53 @@ class TestRetryBehavior:
         # base=2.0 → ceilings min(2**0, 30)=1, min(2**1, 30)=2; full jitter = uniform(0, ceiling).
         assert ranges == [(0, 1.0), (0, 2.0)]
         assert sleeps == [1.0, 2.0]
+
+
+class _CountingProvider(MockProvider):
+    """Counts _raw_complete calls and returns a distinct response each time."""
+
+    def __init__(self) -> None:
+        super().__init__("counter")
+        self.calls = 0
+
+    async def _raw_complete(self, messages: list[dict[str, str]], *, max_tokens: int) -> str:
+        self.calls += 1
+        return f"response {self.calls}"
+
+
+class TestResponseCacheIntegration:
+    """complete() consults the attached cache: hit skips the call, miss stores it."""
+
+    async def test_no_cache_always_calls(self) -> None:
+        provider = _CountingProvider()
+        await provider.complete([{"role": "user", "content": "hi"}], max_tokens=10)
+        await provider.complete([{"role": "user", "content": "hi"}], max_tokens=10)
+        assert provider.calls == 2
+
+    async def test_repeat_request_hits_cache(self) -> None:
+        provider = _CountingProvider()
+        provider.cache = MemoryCache()
+        first = await provider.complete([{"role": "user", "content": "hi"}], max_tokens=10)
+        second = await provider.complete([{"role": "user", "content": "hi"}], max_tokens=10)
+        assert first == second == "response 1"
+        assert provider.calls == 1
+
+    async def test_different_request_misses(self) -> None:
+        provider = _CountingProvider()
+        provider.cache = MemoryCache()
+        await provider.complete([{"role": "user", "content": "a"}], max_tokens=10)
+        await provider.complete([{"role": "user", "content": "b"}], max_tokens=10)
+        assert provider.calls == 2
+
+    async def test_failure_is_not_cached(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr(_base.asyncio, "sleep", _no_sleep())
+        provider = _FlakyProvider(fail_times=1, error=ProviderError("rate", status_code=429))
+        provider.cache = MemoryCache()
+        # First call fails once then succeeds; a second identical call hits the stored
+        # success (calls stays at 2), proving the transient error was never cached.
+        assert await provider.complete([], max_tokens=10) == "ok"
+        assert await provider.complete([], max_tokens=10) == "ok"
+        assert provider.calls == 2
 
 
 def _no_sleep():

@@ -7,6 +7,10 @@ ratios, retry rounds, model selection, and more.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from nfield.providers._cache import ResponseCache
 
 __all__ = ["ExtractionConfig"]
 
@@ -141,6 +145,12 @@ class ExtractionConfig:
             uncompilable ``pattern``, …) raises a ``SchemaError`` before any API call,
             with the field path and a fix hint. The checks are *necessary*
             contradictions, so a valid schema is never rejected. Set ``False`` to skip.
+        cache: Response cache. ``False`` (default) makes every model call live;
+            ``True`` builds an in-process LRU cache; a ``ResponseCache`` instance
+            (e.g. ``DiskCache("path")``) persists across runs or plugs a custom
+            backend. Keyed on the exact request (model, messages, output ceiling), so
+            an identical call returns the stored text and no different request is ever
+            served a cached answer.
 
     Example:
         >>> cfg = ExtractionConfig(default_model="groq/llama-3.1-8b")
@@ -206,6 +216,8 @@ class ExtractionConfig:
     # Opt-in stronger abstention: sample each leaf twice, keep a value only if both agree
     # (arXiv:2602.04853). Doubles calls; no-op unless closed_book is set.
     self_consistency: bool = False
+    # Exact-match response cache; False off, True in-memory LRU, or a ResponseCache (see docstring).
+    cache: bool | ResponseCache = False
 
     def __post_init__(self) -> None:
         """Validate settings that have no safe non-positive value.

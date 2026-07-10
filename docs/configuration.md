@@ -201,6 +201,61 @@ result = nfield(document, schema, "groq/llama-3.1-8b-instant", config=config)
 | `inject_dependencies` | bool | `True` | Feed a dependent field's prompt the values its upstream dependencies produced. No-op without cross-leaf dependencies. |
 | `cascade_dependency_invalidation` | bool | `False` | When an upstream value changes on retry, flag its dependents `NEEDS_REVALIDATION`. Requires `inject_dependencies`. |
 
+## Response caching
+
+Extracting a document costs a set of model calls. Run the same document again and, by
+default, you pay for all of them again. Turn on the cache and nfield remembers each
+response, so a repeat of the same extraction returns the saved answer for free. It is off
+until you ask for it.
+
+| `cache` value | What you get |
+|---------------|--------------|
+| `False` (default) | No cache. Every call goes to the model. |
+| `True` | A cache in memory, living as long as the engine does. |
+| a `ResponseCache` | Whatever store you hand it, e.g. `DiskCache("path")` to keep entries between runs, or your own Redis backend. Pass one instance to share it across engines. |
+
+Caching is **exact-match**: the key is the request itself (model, messages, output ceiling),
+so the smallest change to any of them is a new key. A hit is therefore the same text the
+model would have given you, never a near-miss from a similar prompt the way a semantic cache
+would. That is what makes it safe to leave on while you iterate on the same document and
+schema, or re-run a benchmark.
+
+```python
+from nfield import NField, ExtractionConfig, DiskCache
+
+# Kept in memory, gone when the process exits.
+nf = NField("groq/llama-3.3-70b-versatile", schema, config=ExtractionConfig(cache=True))
+
+# Kept on disk, so the next run reads it back. Re-running the same extraction is free.
+nf = NField(
+    "groq/llama-3.3-70b-versatile",
+    schema,
+    config=ExtractionConfig(cache=DiskCache(".nfield_cache")),
+)
+```
+
+Call `.clear()` on either cache to empty it. The key carries a format version, so a
+version of nfield never reads stale entries written by an older one. Keep one `DiskCache`
+directory per model setup: if two runs differ in something the request does not spell out,
+such as reasoning-model handling, give them separate directories.
+
+On the command line, hand `--cache-dir` a directory to cache on disk:
+
+```bash
+nfield extract invoice.txt --schema invoice.json -m groq/llama-3.3-70b-versatile \
+  --cache-dir .nfield_cache
+```
+
+Any object with a `get` and a `set` is a `ResponseCache`, so a custom backend is two methods:
+
+```python
+class RedisCache:
+    def get(self, key: str) -> str | None: ...
+    def set(self, key: str, value: str) -> None: ...
+```
+
+Pass an instance as `cache=...` and nfield uses it.
+
 ## The result object
 
 Every call returns an `ExtractionResult`.

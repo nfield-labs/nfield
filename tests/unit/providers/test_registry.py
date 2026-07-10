@@ -5,7 +5,26 @@ from __future__ import annotations
 import pytest
 
 from nfield.exceptions import ProviderError
+from nfield.providers._cache import MemoryCache
 from nfield.providers._registry import from_model, register_provider
+
+
+class TestFromModelCache:
+    """The factory attaches an optional response cache to the built provider."""
+
+    def test_cache_is_attached(self) -> None:
+        cache = MemoryCache()
+        provider = from_model("groq/llama-3.1-8b", cache=cache)
+        assert provider.cache is cache  # type: ignore[attr-defined]
+
+    def test_cache_defaults_to_none(self) -> None:
+        provider = from_model("groq/llama-3.1-8b")
+        assert provider.cache is None  # type: ignore[attr-defined]
+
+    def test_cache_attaches_to_preset_provider(self) -> None:
+        cache = MemoryCache()
+        provider = from_model("openrouter/some/model", cache=cache)
+        assert provider.cache is cache  # type: ignore[attr-defined]
 
 
 class TestFromModel:

@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Any
 from nfield.exceptions import ProviderError
 
 if TYPE_CHECKING:
+    from nfield.providers._cache import ResponseCache
     from nfield.providers._protocol import LLMProvider
 
 # ---------------------------------------------------------------------------
@@ -42,6 +43,7 @@ def from_model(
     api_key: str | None = None,
     base_url: str | None = None,
     reasoning_model: bool = False,
+    cache: ResponseCache | None = None,
 ) -> LLMProvider:
     """Create an LLM provider from a model string identifier.
 
@@ -77,6 +79,9 @@ def from_model(
             environment by the provider SDK. Never logged.
         base_url: Override the provider API base URL. ``None`` → SDK default.
         reasoning_model: When ``True``, disable the model's thinking per call.
+        cache: Optional response cache attached to the provider. ``None`` (default)
+            leaves caching off; a built-in provider extends ``BaseProvider`` and
+            gets it, a foreign Protocol-only provider is left uncached.
 
     Returns:
         Instantiated provider object.
@@ -109,8 +114,9 @@ def from_model(
     # OpenAI-compatible presets route to OpenAIProvider with a preset base URL.
     from nfield.providers._presets import OPENAI_COMPATIBLE_PRESETS, build_preset_provider
 
+    provider: LLMProvider
     if provider_name in OPENAI_COMPATIBLE_PRESETS:
-        return build_preset_provider(
+        provider = build_preset_provider(
             provider_name,
             model_name,
             context_window=context_window,
@@ -120,46 +126,56 @@ def from_model(
             base_url=base_url,
             reasoning_model=reasoning_model,
         )
+    else:
+        # Look up provider in registry
+        if provider_name not in _PROVIDER_REGISTRY:
+            registered = ", ".join(
+                sorted(set(_PROVIDER_REGISTRY) | set(OPENAI_COMPATIBLE_PRESETS))
+            )
+            raise ProviderError(
+                f"Unknown provider: {provider_name!r}. "
+                f"Registered providers: {registered}. "
+                f"Model string was: {model_string!r}"
+            )
 
-    # Look up provider in registry
-    if provider_name not in _PROVIDER_REGISTRY:
-        registered = ", ".join(sorted(set(_PROVIDER_REGISTRY) | set(OPENAI_COMPATIBLE_PRESETS)))
-        raise ProviderError(
-            f"Unknown provider: {provider_name!r}. "
-            f"Registered providers: {registered}. "
-            f"Model string was: {model_string!r}"
-        )
+        module_name, class_name = _PROVIDER_REGISTRY[provider_name]
 
-    module_name, class_name = _PROVIDER_REGISTRY[provider_name]
+        # Dynamic import to avoid hard dependency
+        try:
+            import importlib
 
-    # Dynamic import to avoid hard dependency
-    try:
-        import importlib
+            module = importlib.import_module(module_name)
+            provider_class = getattr(module, class_name)
+        except (ImportError, AttributeError) as e:
+            raise ProviderError(f"Failed to import {provider_name} provider: {e}") from e
 
-        module = importlib.import_module(module_name)
-        provider_class = getattr(module, class_name)
-    except (ImportError, AttributeError) as e:
-        raise ProviderError(f"Failed to import {provider_name} provider: {e}") from e
+        # Forward only the specs the caller actually set, so providers keep their
+        # own defaults otherwise (and a provider that doesn't accept api_key/base_url
+        # is only handed them when the caller explicitly passes one).
+        kwargs: dict[str, Any] = {}
+        if context_window is not None:
+            kwargs["context_window"] = context_window
+        if max_output_tokens is not None:
+            kwargs["max_output_tokens"] = max_output_tokens
+        if max_retries is not None:
+            kwargs["max_retries"] = max_retries
+        if api_key is not None:
+            kwargs["api_key"] = api_key
+        if base_url is not None:
+            kwargs["base_url"] = base_url
+        if reasoning_model:
+            kwargs["reasoning_model"] = True
 
-    # Forward only the specs the caller actually set, so providers keep their
-    # own defaults otherwise (and a provider that doesn't accept api_key/base_url
-    # is only handed them when the caller explicitly passes one).
-    kwargs: dict[str, Any] = {}
-    if context_window is not None:
-        kwargs["context_window"] = context_window
-    if max_output_tokens is not None:
-        kwargs["max_output_tokens"] = max_output_tokens
-    if max_retries is not None:
-        kwargs["max_retries"] = max_retries
-    if api_key is not None:
-        kwargs["api_key"] = api_key
-    if base_url is not None:
-        kwargs["base_url"] = base_url
-    if reasoning_model:
-        kwargs["reasoning_model"] = True
+        provider = provider_class(model_name, **kwargs)
 
-    # Instantiate and return
-    return provider_class(model_name, **kwargs)  # type: ignore[no-any-return]
+    # Every built-in provider extends BaseProvider; a foreign one is left uncached.
+    if cache is not None:
+        from nfield.providers._base import BaseProvider
+
+        if isinstance(provider, BaseProvider):
+            provider.cache = cache
+
+    return provider
 
 
 # ---------------------------------------------------------------------------
