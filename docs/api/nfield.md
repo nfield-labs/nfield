@@ -109,6 +109,8 @@ Everything on `result.metadata`:
 - **Counts** - `fields_extracted`, `fields_total`, `fields_missing`, `fields_conflicted`,
   `fields_needs_revalidation`, `fields_call_failed`.
 - **Calls** - `K`, `K_min`, `optimality_gap`, `calls_by_origin`.
+- **Spend** - `tokens_prompt`, `tokens_completion` (always tracked, from the provider's
+  own counts), and `cost` in USD when `ExtractionConfig.pricing` is set.
 - **Quality** - `quality_score`, `confidence_level`, `per_field_confidence`, `retry_rounds`.
 - **`error`** - a representative provider error when a call failed, else `None`.
 - **Grounding** (when `ground_values` is on) - `fields_grounded`, `fields_ungrounded`,
@@ -150,6 +152,17 @@ results_to_csv(results, path, *, include_metadata=False) -> None
 
 One row per result; columns are the flat dot-notation field paths. Install with
 `pip install "nfield[export]"`. pandas is imported only when you call these.
+
+## Grounding viewer (`nfield.viz`)
+
+```python
+save_html(result, document, path=None) -> str
+```
+
+Renders a result's provenance spans over the source document as one self-contained
+HTML page: each located value highlighted in place with its field path on hover, plus
+a table of exact spans. Needs a result produced with `provenance=True`; raises
+`ValueError` otherwise. Stdlib only - no extra install.
 
 ## Exceptions
 
