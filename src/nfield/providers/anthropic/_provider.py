@@ -223,7 +223,10 @@ class AnthropicProvider(BaseProvider):
             ) from e
 
         usage = getattr(response, "usage", None)
-        self.last_prompt_tokens = getattr(usage, "input_tokens", None) if usage else None
+        self._record_usage(
+            getattr(usage, "input_tokens", None) if usage else None,
+            getattr(usage, "output_tokens", None) if usage else None,
+        )
         # The reply is a list of content blocks; concatenate their text parts.
         text = "".join(
             getattr(block, "text", "") for block in getattr(response, "content", None) or []

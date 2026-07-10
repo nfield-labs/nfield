@@ -256,7 +256,10 @@ class GroqProvider(BaseProvider):
             ) from e
 
         usage = getattr(response, "usage", None)
-        self.last_prompt_tokens = getattr(usage, "prompt_tokens", None) if usage else None
+        self._record_usage(
+            getattr(usage, "prompt_tokens", None) if usage else None,
+            getattr(usage, "completion_tokens", None) if usage else None,
+        )
         return strip_reasoning(response.choices[0].message.content or "")
 
     # --- Properties ---

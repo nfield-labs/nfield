@@ -39,7 +39,7 @@ intact.
 - [Quickstart](#quickstart) · [Install](#install) · [Set your API key](#set-your-api-key)
 - [Benchmarks](#benchmarks) · [Why nfield](#why-nfield) · [How nfield compares](#how-nfield-compares)
 - [Working with files](#working-with-files) · [Reusing an engine](#reusing-an-engine) · [Command line](#command-line)
-- [Grounding](#grounding-and-provenance) · [Configuration](#configuration) · [Reasoning models](#reasoning-models)
+- [Grounding](#grounding-and-provenance) · [Cost tracking](#know-what-you-spent) · [Configuration](#configuration) · [Reasoning models](#reasoning-models)
 - [How it works](#how-it-works) · [Documentation](#documentation) · [Contributing](#contributing)
 
 ## Quickstart
@@ -346,6 +346,32 @@ print(result.provenance)
 Grounding is non-destructive: a weakly-supported value is reported, never silently dropped,
 because a correct value is often not verbatim (units, derived dates, enum choices).
 
+With provenance on, one call renders the whole extraction as a reviewable page - every
+located value highlighted in the source document, field names on hover:
+
+```python
+from nfield import save_html
+
+save_html(result, document, "review.html")   # self-contained, open in any browser
+```
+
+## Know what you spent
+
+Every result carries the run's real token usage, straight from the provider's own counts -
+no setup. Add your model's prices and nfield does the billing math:
+
+```python
+config = ExtractionConfig(pricing=(0.05, 0.08))   # (input, output) USD per million tokens
+result = nfield(document, schema, "groq/llama-3.1-8b-instant", config=config)
+
+result.metadata.tokens_prompt       # 712
+result.metadata.tokens_completion   # 25
+result.metadata.cost                # 3.76e-05
+```
+
+Cache hits make no API call, so a warm rerun reports zero tokens and a cost of `0.0` -
+the metadata is your receipt that the cache worked.
+
 ## Configuration
 
 Tune behaviour with `ExtractionConfig`, passed as `config=...`. Everything is opt-in with a
@@ -357,7 +383,8 @@ sane default, and each setting is also a CLI flag. The ones you reach for most:
 | `provenance` | `False` | Attach `[start, end)` source char offsets per value. |
 | `reasoning_model` | `False` | Disable a reasoning model's thinking so it does not eat the output budget. |
 | `max_concurrent_calls` | `4` | Leaf calls in flight at once; raise on higher-throughput plans. |
-| `fallback_model` | `None` | Stronger model to escalate still-failing fields to after recovery. |
+| `fallback_model` | `None` | Stronger model(s) to escalate still-failing fields to after recovery; a list is tried in order. |
+| `pricing` | `None` | `(input, output)` USD per million tokens; fills `metadata.cost` from real usage. |
 | `knowledge_fallback` | `False` | Fill fields absent from the document from the model's own knowledge. |
 | `closed_book` | `False` | Fill the schema from model knowledge with no document at all. |
 

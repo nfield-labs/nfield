@@ -33,6 +33,7 @@ if TYPE_CHECKING:
     from .io import load_document, load_results, load_schema, save_results
     from .providers import DiskCache, MemoryCache, ResponseCache, from_model
     from .types import ExtractionResult, ExtractionStatus, FieldResult, Metadata
+    from .viz import save_html
 
 __all__ = [
     "AssemblyError",
@@ -61,6 +62,7 @@ __all__ = [
     "result_to_dataframe",
     "results_to_csv",
     "results_to_dataframe",
+    "save_html",
     "save_results",
 ]
 
@@ -79,6 +81,8 @@ _dynamic_imports: dict[str, str] = {
     "results_to_dataframe": ".export",
     "result_to_dataframe": ".export",
     "results_to_csv": ".export",
+    # Grounding visualization (stdlib only)
+    "save_html": ".viz",
     # Provider factory and response caches
     "from_model": ".providers",
     "ResponseCache": ".providers",

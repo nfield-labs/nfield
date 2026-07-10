@@ -21,9 +21,11 @@ nfield is middleware between your document and an LLM provider. Two things are w
 - **Your document text is sent to the provider you choose.** For sensitive documents, point
   nfield at a local model instead of a hosted API by setting a `base_url` on the OpenAI
   provider (Ollama, vLLM, or LM Studio), so the text never leaves your machine.
-- **API keys are read from the environment**, never from the document or the schema. Set
-  `GROQ_API_KEY` or `OPENAI_API_KEY` (and `OPENAI_BASE_URL` for a custom endpoint). Keep keys
-  out of source control and out of code.
+- **API keys are read from the environment**, never from the document or the schema. nfield
+  reads each provider's standard variable (`GROQ_API_KEY`, `OPENAI_API_KEY`,
+  `ANTHROPIC_API_KEY`, and so on), so you set the key the same way you would for that
+  provider's own SDK. You can also pass the key directly in code for a secret vault; it is
+  never logged. Keep keys out of source control either way.
 
 ## Handling untrusted input
 

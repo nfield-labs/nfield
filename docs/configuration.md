@@ -152,6 +152,12 @@ result = nfield(document, schema, "groq/llama-3.1-8b-instant", config=config)
 | `grounding_min_score` | float | `0.5` | Minimum grounding score in `[0, 1]` for a value to count as supported. |
 | `provenance` | bool | `False` | Attach `result.provenance`: each value's `[start, end)` char offsets in the source (verbatim values only). |
 
+With provenance on, `save_html(result, document, "review.html")` renders the whole
+extraction as one self-contained HTML page - every located value highlighted in the
+source, with its field name on hover and a table of exact spans underneath. No
+dependencies, nothing sent anywhere; open it in any browser to eyeball what the model
+grounded and where.
+
 ### Reliability and recovery
 
 | Setting | Type | Default | What it does |
@@ -162,8 +168,29 @@ result = nfield(document, schema, "groq/llama-3.1-8b-instant", config=config)
 | `recover_conflicts` | bool | `True` | Re-extract conflicting fields during the recovery pass. |
 | `recover_call_failed` | bool | `True` | Retry transiently-failed fields during the recovery pass. |
 | `validate_schema` | bool | `True` | Reject a provably-unsatisfiable schema (e.g. `minimum > maximum`) before any API call. |
-| `fallback_model` | str \| None | `None` | Stronger model to escalate still-failing fields to once, after recovery. |
+| `fallback_model` | str \| list \| None | `None` | Stronger model(s) to escalate still-failing fields to once, after recovery. A list is a chain, tried cheapest-first; each model only sees what the previous one left unresolved. |
 | `strict_validation` | bool | `False` | Validate values exactly as extracted (no lenient coercion of formatted numbers/booleans). |
+
+### Tokens and cost
+
+Every result reports what the run actually spent, straight from the token counts each
+provider response carries: `result.metadata.tokens_prompt` and `tokens_completion` are
+always filled, no setup needed. Give nfield your model's prices and it does the billing
+math too:
+
+```python
+# (input, output) in USD per million tokens - from your provider's pricing page.
+config = ExtractionConfig(pricing=(0.05, 0.08))
+result = nfield(document, schema, "groq/llama-3.1-8b-instant", config=config)
+print(result.metadata.cost)   # e.g. 3.76e-05
+```
+
+Cache hits make no API call, so a fully warm rerun reports zero tokens and a cost of
+`0.0` - the metadata is your receipt that the cache worked.
+
+| Setting | Type | Default | What it does |
+|---------|------|---------|--------------|
+| `pricing` | (float, float) \| None | `None` | `(input, output)` USD per **million** tokens. When set, `metadata.cost` reports the run's real cost. Token counts are tracked either way. |
 
 ### Reasoning and thinking
 
@@ -234,10 +261,11 @@ nf = NField(
 )
 ```
 
-Call `.clear()` on either cache to empty it. The key carries a format version, so a
-version of nfield never reads stale entries written by an older one. Keep one `DiskCache`
-directory per model setup: if two runs differ in something the request does not spell out,
-such as reasoning-model handling, give them separate directories.
+Call `.clear()` on either cache to empty it, and `.stats()` to see how it is doing:
+hits, misses, and entry count (plus `size_bytes` on disk). The key carries a format
+version, so a version of nfield never reads stale entries written by an older one. Keep
+one `DiskCache` directory per model setup: if two runs differ in something the request
+does not spell out, such as reasoning-model handling, give them separate directories.
 
 On the command line, hand `--cache-dir` a directory to cache on disk:
 
@@ -277,6 +305,8 @@ Useful `metadata` fields:
 | `fields_call_failed` | Fields left unextracted by an API/call failure (distinct from absent). |
 | `quality_score` | Aggregate run quality in `[0, 1]`. |
 | `K` / `K_min` | Model calls used vs the computed minimum. |
+| `tokens_prompt` / `tokens_completion` | Real input/output tokens the run spent, from the provider's own counts. Cache hits add nothing. |
+| `cost` | The run's cost in USD when `pricing` is set; `None` otherwise. |
 | `hallucination_rate` | Fraction of grounded-checked values the source did not support (`None` if grounding off). |
 | `per_field_confidence` | Map of field path to confidence in `[0, 1]`. |
 
