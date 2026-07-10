@@ -44,6 +44,7 @@ Single-file examples you can run directly.
 | [scripts/grounding_provenance.py](scripts/grounding_provenance.py) | Grounding scores and character-level provenance. |
 | [scripts/agent_tool.py](scripts/agent_tool.py) | nfield used as a tool an agent can call. |
 | [scripts/async_batch.py](scripts/async_batch.py) | Extract many documents concurrently with `AsyncNField`. |
+| [scripts/response_cache.py](scripts/response_cache.py) | Cache responses so a repeated extraction is free. |
 
 ```bash
 python examples/scripts/quickstart.py
