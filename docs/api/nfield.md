@@ -81,11 +81,13 @@ escapes `extract()` is kept in that document's slot instead.
 ```python
 from_model(model_string, *,
     context_window=None, max_output_tokens=None,
-    api_key=None, base_url=None, reasoning_model=False, max_retries=None) -> LLMProvider
+    api_key=None, base_url=None, reasoning_model=False, max_retries=None,
+    cache=None) -> LLMProvider
 ```
 
 The provider factory, routed by the prefix before `/`. The engines call it for you; you rarely
-need it directly.
+need it directly. `cache` attaches a `ResponseCache` to the provider (see
+[Response caching](../configuration.md#response-caching)).
 
 ## `ExtractionResult`
 

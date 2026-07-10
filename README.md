@@ -285,6 +285,23 @@ async with AsyncNField("groq/llama-3.1-8b-instant", schema) as engine:
     results = await engine.extract_batch(documents)
 ```
 
+## Response caching
+
+Run the same extraction twice and the second run is free. Turn on the cache and nfield
+saves each model response; a repeat request reads it back instead of calling the model.
+It is off by default and keyed on the exact request, so a hit is the text the model would
+have returned, never a similar prompt's answer:
+
+```python
+from nfield import NField, ExtractionConfig, DiskCache
+
+# In memory for this process, or DiskCache("path") to keep it between runs.
+engine = NField("groq/llama-3.1-8b-instant", schema, config=ExtractionConfig(cache=True))
+```
+
+On the command line, add `--cache-dir .nfield_cache` to `extract` or `batch`. See
+**[docs/configuration.md](docs/configuration.md)** for disk and custom backends.
+
 ## Command line
 
 Install the `cli` extra, then:
