@@ -1,5 +1,5 @@
 # Dependencies to run the example scripts and notebooks.
 # Install with: pip install -r examples/requirements.txt
 nfield[groq,cli]
-pydantic>=2
+pydantic>=2.13.4
 jupyter
